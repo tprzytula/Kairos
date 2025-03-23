@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "apply": "yarn build && terraform apply",
+    "build": "cd ../lambdas && yarn build"
+  }
+}

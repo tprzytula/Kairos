@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "workspaces": [
+    "sources/*"
+  ],
+  "scripts": {
+    "build": "yarn bundle && yarn package",
+    "bundle": "rm -rf dist && esbuild ./sources/* --entry-names=[dir]/[name]/index --bundle --minify --sourcemap --platform=node --target=node20 --outdir=dist",
+    "package": "cd dist && for f in * ; do ([ -d \"$f\" ] && cd $f && zip $f.zip *) ; done"
+  },
+  "dependencies": {
+    "esbuild": "^0.20.0",
+    "lerna": "^8.1.2"
+  }
+}

@@ -1,0 +1,29 @@
+name: Test Website
+
+on:
+  push:
+    paths:
+      - "packages/web/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/web
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+      - name: Install Node.js and yarn
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+          cache-dependency-path: packages/web/yarn.lock
+      - name: Install Modules
+        run: yarn
+      - name: Build
+        run: yarn build
+      - name: Test
+        run: yarn test
