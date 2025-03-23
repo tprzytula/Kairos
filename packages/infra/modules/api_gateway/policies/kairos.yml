@@ -10,7 +10,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
-        uri: ${get_grocery_list}
+        uri: ${get_grocery_items}
         passthroughBehavior: when_no_match
         contentHandling: CONVERT_TO_TEXT
       responses:
