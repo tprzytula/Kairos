@@ -1,37 +1,16 @@
-import { Context, APIGatewayProxyResult, APIGatewayEvent } from "aws-lambda";
-import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
+import { APIGatewayProxyEvent, Handler } from "aws-lambda";
+import { parseItems } from "./parser";
+import { middleware } from "../../libs/middleware";
+import { getItems } from "./database/index";
 
-const client = new DynamoDBClient({ region: "eu-west-2" });
+export const handler: Handler<APIGatewayProxyEvent> = middleware(
+  async (event) => {
+    console.info("Event received", JSON.stringify(event));
 
-const getItems = async () => {
-  const command = new ScanCommand({
-    TableName: "grocery_list",
-  });
-
-  const { Items } = (await client.send(command)) ?? {};
-
-  return Items;
-};
-
-const parseItems = (Items) => {
-  return Items.map(({ quantity, id, name }) => ({
-    quantity: parseInt(quantity.N, 10),
-    id: id.S,
-    name: name.S,
-  }));
-};
-
-export const handler = async (
-  event: APIGatewayEvent,
-  _context: Context
-): Promise<APIGatewayProxyResult> => {
-  console.info("Event received", event);
-
-  try {
-    const items = (await getItems()) ?? [];
+    const items = await getItems();
     const parsedItems = parseItems(items);
 
-    console.info("Returning items", parsedItems);
+    console.info("Returning items", JSON.stringify(parsedItems));
 
     return {
       statusCode: 200,
@@ -40,9 +19,5 @@ export const handler = async (
         "Access-Control-Allow-Origin": "*",
       },
     };
-  } catch (error) {
-    console.log("Encountered error:", error);
-
-    return { body: "Internal Server Error", statusCode: 500 };
-  }
-};
+  },
+);

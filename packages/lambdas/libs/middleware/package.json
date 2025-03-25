@@ -1,0 +1,13 @@
+{
+  "name": "@kairos-lambdas-libs/middleware",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "@kairos-lambdas-libs/response": "1.0.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.148"
+  }
+}
