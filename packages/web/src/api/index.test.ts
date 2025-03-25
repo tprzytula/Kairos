@@ -21,7 +21,7 @@ describe('Given the retrieveItems function', () => {
 
     await retrieveGroceryList()
 
-    expect(fetchMock).toHaveBeenCalledWith('TBD/grocery_list/items')
+    expect(fetchMock).toHaveBeenCalledWith('https://crff1u9wbc.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items')
   })
 
   it('should return the items on success', async () => {
@@ -30,5 +30,15 @@ describe('Given the retrieveItems function', () => {
     const result = await retrieveGroceryList()
 
     expect(result).toStrictEqual(exampleResponse)
+  })
+
+  describe('When the API call fails', () => {
+    it('should return an empty array', async () => {
+      fetchMock.mockResponse(JSON.stringify({ error: 'API call failed' }), { status: 500 })
+
+      const result = await retrieveGroceryList()
+
+      expect(result).toStrictEqual([])
+    })
   })
 })

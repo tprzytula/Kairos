@@ -7,7 +7,7 @@ import { createRoot } from 'react-dom/client'
 import { ThemeProvider } from '@mui/material/styles'
 import { App } from './App'
 import theme from './theme'
-import { StateComponent } from './state'
+import { AppStateProvider } from './providers/AppStateProvider'
 import { HashRouter } from 'react-router-dom'
 
 const container = document.getElementById('app')
@@ -16,11 +16,11 @@ if (container) {
   const root = createRoot(container)
   root.render(
     <ThemeProvider theme={theme}>
-      <StateComponent>
+      <AppStateProvider>
         <HashRouter>
           <App />
         </HashRouter>
-      </StateComponent>
+      </AppStateProvider>
     </ThemeProvider>
   )
 }

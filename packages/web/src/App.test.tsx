@@ -1,18 +1,18 @@
 import { screen, render } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from '@mui/material/styles'
-import { StateComponent } from './state'
+import { AppStateProvider } from './providers/AppStateProvider'
 import theme from './theme'
 import { App } from './App'
 
 const renderApp = () => {
   render(
     <ThemeProvider theme={theme}>
-      <StateComponent>
+      <AppStateProvider>
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </StateComponent>
+      </AppStateProvider>
     </ThemeProvider>
   )
 }

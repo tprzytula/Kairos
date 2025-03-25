@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
-import { StateComponent } from '../state'
+import { AppStateProvider } from '../providers/AppStateProvider'
 import theme from '../theme'
 import { BrowserRouter } from 'react-router-dom'
 import Root from './Root'
@@ -8,11 +8,11 @@ import Root from './Root'
 const renderRoot = () => {
   render(
     <ThemeProvider theme={theme}>
-      <StateComponent>
+      <AppStateProvider>
         <BrowserRouter>
           <Root />
         </BrowserRouter>
-      </StateComponent>
+      </AppStateProvider>
     </ThemeProvider>
   )
 }
