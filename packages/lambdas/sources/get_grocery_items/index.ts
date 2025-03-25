@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent, Handler } from "aws-lambda";
 import { parseItems } from "./parser";
 import { middleware } from "../../libs/middleware";
 import { getItems } from "./database/index";
+import { createResponse } from "@kairos-lambdas-libs/response";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event) => {
@@ -12,12 +13,9 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
 
     console.info("Returning items", JSON.stringify(parsedItems));
 
-    return {
+    return createResponse({
       statusCode: 200,
-      body: JSON.stringify(parsedItems),
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-    };
+      message: parsedItems,
+    });
   },
 );
