@@ -8,7 +8,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { App } from './App'
 import theme from './theme'
 import { AppStateProvider } from './providers/AppStateProvider'
-import { HashRouter } from 'react-router-dom'
+import { BrowserRouter } from 'react-router'
 
 const container = document.getElementById('app')
 
@@ -17,9 +17,9 @@ if (container) {
   root.render(
     <ThemeProvider theme={theme}>
       <AppStateProvider>
-        <HashRouter>
+        <BrowserRouter>
           <App />
-        </HashRouter>
+        </BrowserRouter>
       </AppStateProvider>
     </ThemeProvider>
   )

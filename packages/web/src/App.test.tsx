@@ -1,5 +1,5 @@
 import { screen, render } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter } from 'react-router'
 import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider } from './providers/AppStateProvider'
 import theme from './theme'
