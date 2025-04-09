@@ -24,7 +24,7 @@ const createBody: CreateBodyFn = (statusCode, message) => {
     return TEMPLATES[statusCode];
   }
 
-  return 'No response';
+  return "No response";
 };
 
 export const createResponse: CreateResponseFn = ({

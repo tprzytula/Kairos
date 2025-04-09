@@ -4,10 +4,7 @@ export interface ITemplates {
 
 type Message = string | { [key: string]: any };
 
-export type CreateBodyFn = (
-  statusCode: number,
-  message?: Message,
-) => string;
+export type CreateBodyFn = (statusCode: number, message?: Message) => string;
 
 export interface ICreateResponseParams {
   statusCode?: number;
