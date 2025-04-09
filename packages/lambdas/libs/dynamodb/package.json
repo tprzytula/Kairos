@@ -8,6 +8,6 @@
     "@aws-sdk/client-dynamodb": "^3.782.0"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.148"
+    "@kairos-lambdas-libs/types": "1.0.0"
   }
 }
