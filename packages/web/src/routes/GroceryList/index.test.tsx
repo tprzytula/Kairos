@@ -6,7 +6,6 @@ import { BrowserRouter } from 'react-router'
 import GroceryList from '.'
 import * as API from '../../api'
 
-
 jest.mock('../../api')
 
 const renderComponent = () => {

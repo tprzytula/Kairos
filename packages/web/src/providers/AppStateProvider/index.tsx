@@ -12,7 +12,7 @@ export const AppState = createContext<Context>({
   dispatch: () => null,
 })
 
-export const useAppState = () => useContext(AppState);
+export const useAppState = () => useContext(AppState)
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
