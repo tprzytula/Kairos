@@ -1,61 +1,34 @@
-import { randomUUID } from "crypto";
-import { Context, APIGatewayProxyResult, APIGatewayEvent } from "aws-lambda";
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { APIGatewayProxyEvent, Handler } from "aws-lambda";
+import { middleware } from "@kairos-lambdas-libs/middleware";
+import { createResponse } from "@kairos-lambdas-libs/response";
+import { DynamoDBTables, putItem } from "@kairos-lambdas-libs/dynamodb";
+import { randomUUID } from "node:crypto";
 
-const client = new DynamoDBClient({ region: "eu-west-2" });
+export const handler: Handler<APIGatewayProxyEvent> = middleware(
+  async (event) => {
+    if (!event.body) {
+      return createResponse({
+        statusCode: 400,
+      });
+    }
 
-const addItemDynamoDB = async ({ name, quantity }) => {
-  const id = randomUUID();
-  const command = new PutItemCommand({
-    TableName: "items",
-    Item: {
-      id: { S: id },
-      name: { S: name },
-      quantity: { N: `${quantity}` },
-    },
-  });
+    const id = randomUUID();
+    const { name, quantity } = JSON.parse(event.body);
 
-  await client.send(command);
-
-  return {
-    id,
-    name,
-    quantity,
-  };
-};
-
-export const handler = async (
-  event: APIGatewayEvent,
-  _context: Context,
-): Promise<APIGatewayProxyResult> => {
-  console.info("Event received", event);
-
-  const { name, quantity } = JSON.parse(event.body as any);
-
-  console.info("Adding name: ", name, "quantity:", quantity);
-
-  try {
-    const addedItem = await addItemDynamoDB({
-      name,
-      quantity,
+    await putItem({
+      tableName: DynamoDBTables.GROCERY_LIST,
+      item: {
+        id: { S: id },
+        name: { S: name },
+        quantity: { N: `${quantity}` },
+      },
     });
 
-    return {
+    return createResponse({
       statusCode: 201,
-      body: JSON.stringify(addedItem),
-      headers: {
-        "Access-Control-Allow-Origin": "*",
+      message: {
+        id,
       },
-    };
-  } catch (error) {
-    console.log("Encountered error:", error);
-
-    return {
-      body: "Internal Server Error",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-      statusCode: 500,
-    };
-  }
-};
+    });
+  },
+);
