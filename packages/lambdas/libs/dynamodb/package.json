@@ -1,0 +1,13 @@
+{
+  "name": "@kairos-lambdas-libs/dynamodb",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.782.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.148"
+  }
+}
