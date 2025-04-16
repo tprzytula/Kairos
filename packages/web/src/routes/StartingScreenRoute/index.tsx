@@ -2,7 +2,7 @@ import { Container, Header, GroceryListButton, Content } from './index.styled'
 import { useNavigate } from 'react-router'
 import { useCallback } from 'react'
 
-export const StartingScreen = () => {
+export const StartingScreenRoute = () => {
   const navigate = useNavigate()
 
   const navigateToGroceryList = useCallback(() => {
@@ -23,4 +23,4 @@ export const StartingScreen = () => {
   )
 }
 
-export default StartingScreen;
+export default StartingScreenRoute;

@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
-import GroceryList from '.'
+import GroceryListRoute from '.'
 import * as API from '../../api'
 import * as ReactRouter from 'react-router'
 
@@ -13,7 +13,7 @@ jest.mock('react-router', () => ({
   useNavigate: jest.fn(),
 }))
 
-describe('Given the GroceryList component', () => {
+describe('Given the GroceryListRoute component', () => {
   it('should have the correct title', async () => {
     jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
 
@@ -110,7 +110,7 @@ const renderComponent = () => {
     <ThemeProvider theme={theme}>
       <AppStateProvider>
         <BrowserRouter>
-          <GroceryList />
+          <GroceryListRoute />
         </BrowserRouter>
       </AppStateProvider>
     </ThemeProvider>

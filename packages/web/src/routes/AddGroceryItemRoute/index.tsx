@@ -1,7 +1,7 @@
 import { Container, Header } from './index.styled'
 import Navigation from '../../components/Navigation'
 
-export const AddGroceryItem = () => {
+export const AddGroceryItemRoute = () => {
   return (
     <Container>
       <Header>
@@ -12,4 +12,4 @@ export const AddGroceryItem = () => {
   )
 }
 
-export default AddGroceryItem;
+export default AddGroceryItemRoute;
