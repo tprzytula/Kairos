@@ -2,11 +2,7 @@ import { createContext, useReducer, useContext } from 'react'
 import { StateComponentProps, State, Context } from './types'
 import { reducer } from './reducer'
 
-export { Actions } from './types'
-
-export const initialState: State = {
-  groceryList: [],
-}
+export const initialState: State = {}
 
 export const AppState = createContext<Context>({
   state: initialState,
