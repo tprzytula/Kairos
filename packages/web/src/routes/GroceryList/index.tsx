@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { retrieveGroceryList } from '../../api'
 import { GroceryItem } from '../../providers/AppStateProvider/types'
-import { Container } from './index.styled'
+import { Container, Header } from './index.styled'
+import Navigation from '../../components/Navigation'
+import AddItemButton from '../../components/AddItemButton'
 
-const Root: React.FC = () => {
+export const GroceryList = () => {
   const [groceryList, setGroceryList] = useState<GroceryItem[]>([])
 
   const fetchGroceryList = useCallback(async () => {
@@ -22,14 +24,17 @@ const Root: React.FC = () => {
 
   return (
     <Container>
-      <h1>Grocery List</h1>
+      <Header>
+        Grocery List
+      </Header>
       <ul>
         {groceryList.map((item) => (
           <li key={item.id}>{item.name}</li>
         ))}
       </ul>
+      <Navigation previousRoute="/" actionButton={<AddItemButton ariaLabel="Add Item" route="/groceries/add" />} />
     </Container>
   )
 }
 
-export default Root
+export default GroceryList;
