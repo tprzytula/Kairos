@@ -45,7 +45,7 @@ describe("Given the middleware", () => {
 
   describe("When invoked with a lambda handler that throws an exception", () => {
     it("should log the error", async () => {
-      const logSpy = jest.spyOn(console, "log");
+      const logSpy = jest.spyOn(console, "error");
       const myExceptionFunction = () => {
         throw Error("EXCEPTION");
       };
@@ -59,7 +59,7 @@ describe("Given the middleware", () => {
 
       expect(logSpy).toHaveBeenCalledWith(
         "Handler Threw Exception:",
-        expect.any(Object), // TODO: Turn into something more specific
+        new Error("EXCEPTION"),
       );
     });
 
