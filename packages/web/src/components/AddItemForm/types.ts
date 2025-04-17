@@ -1,7 +1,4 @@
-export enum FormFieldType {
-    TEXT = 'text',
-    NUMBER = 'number',
-}
+import { FormFieldType } from "./enums";
 
 export interface IFormField {
     name: string;
@@ -9,7 +6,7 @@ export interface IFormField {
     label: string;
     value?: string | number;
     required?: boolean;
-    validate?: (value: string | number) => string | undefined;
+    validate?: (value: string) => string | undefined;
 }
 
 export interface IAddItemFormProps {
