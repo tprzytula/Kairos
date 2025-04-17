@@ -4,6 +4,8 @@ import Header from '../../components/Header'
 import AddItemForm from '../../components/AddItemForm'
 import { FormFieldType } from '../../components/AddItemForm/enums'
 import { IFormField } from '../../components/AddItemForm/types'
+import { createGroceryItem } from '../../api'
+import { validateFields } from './utils'
 
 const FIELDS: Array<IFormField> = [
   {
@@ -11,18 +13,29 @@ const FIELDS: Array<IFormField> = [
     label: 'Name',
     type: FormFieldType.TEXT,
     required: true,
+    value: '',
   },
   {
     name: 'quantity',
     label: 'Quantity',
     type: FormFieldType.NUMBER,
     required: true,
+    value: 0,
   },
 ]
 export const AddGroceryItemRoute = () => {
   const onSubmit = async (fields: Array<IFormField>) => {
-    // TODO: Add logic to call the API to create the grocery item
-    console.log(fields)
+    try {
+      const [name, quantity] = validateFields(fields)
+
+      const item = await createGroceryItem({
+        name: name.value,
+        quantity: quantity.value,
+      })
+      console.log(item)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (

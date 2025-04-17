@@ -1,12 +1,12 @@
 import { FormFieldType } from "./enums";
 
-export interface IFormField {
+export interface IFormField<T extends string | number | undefined = string | number | undefined> {
     name: string;
     type: FormFieldType;
     label: string;
-    value?: string | number;
+    value: T;
     required?: boolean;
-    validate?: (value: string) => string | undefined;
+    validate?: (value: T) => string | undefined;
 }
 
 export interface IAddItemFormProps {
