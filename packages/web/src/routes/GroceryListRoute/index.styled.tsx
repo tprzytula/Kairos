@@ -8,13 +8,3 @@ export const Container = styled('div')({
   alignItems: 'center',
   flexDirection: 'column',
 })
-
-export const Header = styled('div')({
-  padding: '1em',
-  fontSize: '2em',
-  fontWeight: 'bold',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  width: '100%',
-})
