@@ -1,6 +1,7 @@
 import { IFormField, IUpdateFieldValueParams } from '../../types';
 import { ClearFieldErrorParams, CreateFieldPropsParams } from './types';
 import { FormFieldType } from '../../enums';
+
 const processValue = (value: string | number, type: FormFieldType): string | number => 
     type === FormFieldType.NUMBER ? parseInt(String(value)) : value;
 

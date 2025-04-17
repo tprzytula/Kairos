@@ -4,6 +4,7 @@ import { validateFields } from '../../utils';
 import { createFieldProps, updateFormFields, clearFieldError } from './utils';
 import { IUseFormProps, IUseFormReturn } from './types';
 import { FormFieldType } from '../../enums';
+
 export const useForm = ({
     initialFields,
     onSubmit
