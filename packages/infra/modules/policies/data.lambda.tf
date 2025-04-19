@@ -45,7 +45,6 @@ data "aws_iam_policy_document" "lambda_policies" {
       effect = "Allow"
       resources = [
         var.dynamodb_grocery_list_arn,
-        "arn:aws:dynamodb:*:*:table/grocery_list"
       ]
     }
   }
