@@ -13,3 +13,10 @@ resource "aws_s3_bucket_website_configuration" "kairos_web_website_configuration
     key = "error.html"
   }
 }
+
+resource "aws_s3_bucket_versioning" "kairos_web_bucket_versioning" {
+  bucket = aws_s3_bucket.kairos_web_bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
