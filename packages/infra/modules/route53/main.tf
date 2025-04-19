@@ -22,18 +22,12 @@ resource "aws_acm_certificate_validation" "validation" {
 
 
 resource "aws_route53_record" "validation_record" {
-  for_each = {
-    for idx, dvo in var.domain_validation_options : idx => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
+  count = length(var.domain_validation_options)
 
   allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
+  name            = var.domain_validation_options[count.index].resource_record_name
+  records         = [var.domain_validation_options[count.index].resource_record_value]
   ttl             = 60
-  type            = each.value.type
+  type            = var.domain_validation_options[count.index].resource_record_type
   zone_id         = aws_route53_zone.zone.zone_id
 }
