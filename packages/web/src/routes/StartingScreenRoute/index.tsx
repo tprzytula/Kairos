@@ -2,12 +2,13 @@ import { Container, GroceryListButton, Content } from './index.styled'
 import { useNavigate } from 'react-router'
 import { useCallback } from 'react'
 import Header from '../../components/Header'
+import { Route } from '../../enums/route'
 
 export const StartingScreenRoute = () => {
   const navigate = useNavigate()
 
   const navigateToGroceryList = useCallback(() => {
-    navigate('/groceries')
+    navigate(Route.GroceryList)
   }, [navigate])
 
   return (

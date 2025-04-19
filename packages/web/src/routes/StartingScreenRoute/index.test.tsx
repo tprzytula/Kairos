@@ -5,6 +5,7 @@ import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
 import StartingScreenRoute from '.'
 import * as ReactRouter from 'react-router'
+import { Route } from '../../enums/route'
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
@@ -34,7 +35,7 @@ describe('Given the StartingScreenRoute component', () => {
         screen.getByText('Grocery List').click()
       })
 
-      expect(navigateSpy).toHaveBeenCalledWith('/groceries')
+      expect(navigateSpy).toHaveBeenCalledWith(Route.GroceryList)
     })
   })
 })

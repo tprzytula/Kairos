@@ -7,4 +7,10 @@ if (!global.TextEncoder) {
   global.TextEncoder = TextEncoder
 }
 
+Object.defineProperty(window, 'crypto', {
+  value: {
+    randomUUID: () => 'random-uuid',
+  },
+})
+
 jestFetchMock.enableMocks()

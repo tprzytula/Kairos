@@ -7,6 +7,11 @@ import { IFormField } from '../../components/AddItemForm/types'
 import { createGroceryItem } from '../../api'
 import { validateFields } from './utils'
 import { useNavigate } from 'react-router'
+import { useAppState } from '../../providers/AppStateProvider'
+import { useCallback } from 'react'
+import { AlertColor } from '@mui/material'
+import { Route } from '../../enums/route'
+import { showAlert } from '../../utils/alert'
 
 const FIELDS: Array<IFormField> = [
   {
@@ -25,7 +30,12 @@ const FIELDS: Array<IFormField> = [
   },
 ]
 export const AddGroceryItemRoute = () => {
+  const { dispatch } = useAppState()
   const navigate = useNavigate()
+
+  const createAlert = useCallback((description: string, severity: AlertColor) => {
+    showAlert({ description, severity }, dispatch)
+  }, [dispatch])
 
   const onSubmit = async (fields: Array<IFormField>) => {
     try {
@@ -36,9 +46,11 @@ export const AddGroceryItemRoute = () => {
         quantity: quantity.value,
       })
 
-      navigate('/groceries')
+      createAlert(`${name.value} has been added to your grocery list`, 'success')
+      navigate(Route.GroceryList)
     } catch (error) {
       console.error(error)
+      createAlert('Error creating grocery item', 'error')
     }
   }
 
@@ -46,7 +58,7 @@ export const AddGroceryItemRoute = () => {
     <Container>
       <Header title="Add Grocery Item" />
       <AddItemForm fields={FIELDS} onSubmit={onSubmit} />
-      <Navigation previousRoute="/groceries" />
+      <Navigation previousRoute={Route.GroceryList} />
     </Container>
   )
 }
