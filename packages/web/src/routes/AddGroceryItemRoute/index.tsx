@@ -6,6 +6,7 @@ import { FormFieldType } from '../../components/AddItemForm/enums'
 import { IFormField } from '../../components/AddItemForm/types'
 import { createGroceryItem } from '../../api'
 import { validateFields } from './utils'
+import { useNavigate } from 'react-router'
 
 const FIELDS: Array<IFormField> = [
   {
@@ -24,15 +25,18 @@ const FIELDS: Array<IFormField> = [
   },
 ]
 export const AddGroceryItemRoute = () => {
+  const navigate = useNavigate()
+
   const onSubmit = async (fields: Array<IFormField>) => {
     try {
       const [name, quantity] = validateFields(fields)
 
-      const item = await createGroceryItem({
+      await createGroceryItem({
         name: name.value,
         quantity: quantity.value,
       })
-      console.log(item)
+
+      navigate('/groceries')
     } catch (error) {
       console.error(error)
     }
