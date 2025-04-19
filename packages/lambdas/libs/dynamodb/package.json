@@ -5,7 +5,8 @@
   "main": "index.js",
   "private": true,
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.782.0"
+    "@aws-sdk/client-dynamodb": "^3.782.0",
+    "@aws-sdk/lib-dynamodb": "^3.789.0"
   },
   "devDependencies": {
     "@kairos-lambdas-libs/types": "1.0.0"

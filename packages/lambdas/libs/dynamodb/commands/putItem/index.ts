@@ -1,16 +1,18 @@
-import { PutItemCommand, PutItemCommandOutput } from "@aws-sdk/client-dynamodb";
+import { PutItemCommandOutput } from "@aws-sdk/client-dynamodb";
 import { IPutItemOptions } from "./types";
-import { client } from "../../client";
+import { getDocumentClient } from "../../client";
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
 
 export const putItem = async ({
   item,
   tableName,
 }: IPutItemOptions): Promise<PutItemCommandOutput> => {
-  console.log("putItem", item, tableName);
-  const command = new PutItemCommand({
+  const documentClient = getDocumentClient();
+
+  const command = new PutCommand({
     TableName: tableName,
     Item: item,
   });
 
-  return await client.send(command);
+  return await documentClient.send(command);
 };
