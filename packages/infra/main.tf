@@ -47,10 +47,11 @@ module "acm" {
 module "cloudfront" {
   source = "./modules/cloudfront"
 
-  kairos_web_bucket_name = module.s3.kairos_web_bucket_name
-  kairos_web_bucket_regional_domain_name = module.s3.kairos_web_bucket_regional_domain_name
+  bucket_name = module.s3.kairos_web_bucket_name
+  bucket_regional_domain_name = module.s3.kairos_web_bucket_regional_domain_name
   region                 = "eu-west-2"
-  kairos_certificate_arn = module.acm.certificate_arn
+  certificate_arn = module.acm.certificate_arn
+  aliases = ["www.kairos.dev"]
 }
 
 module "route53" {

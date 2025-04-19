@@ -1,10 +1,10 @@
-resource "aws_cloudfront_distribution" "kairos_web_distribution" {
+resource "aws_cloudfront_distribution" "distribution" {
   origin {
-    domain_name              = var.kairos_web_bucket_regional_domain_name
+    domain_name              = var.bucket_regional_domain_name
     origin_id   = "S3-Origin"
   }
 
-  aliases = ["www.kairos.dev"]
+  aliases = var.aliases
 
   enabled = true
     default_root_object = "index.html"
@@ -30,7 +30,7 @@ resource "aws_cloudfront_distribution" "kairos_web_distribution" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = var.kairos_certificate_arn
+    acm_certificate_arn = var.certificate_arn
     ssl_support_method = "sni-only"
   }
 
