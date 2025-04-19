@@ -1,3 +1,7 @@
-variable "kairos_zone_id" {
+variable "domain_name" {
   type = string
+}
+
+variable "subject_alternative_names" {
+  type = list(string)
 }

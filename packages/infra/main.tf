@@ -40,7 +40,8 @@ module "policies" {
 module "acm" {
   source = "./modules/acm"
 
-  kairos_zone_id = module.route53.kairos_zone_id
+  domain_name = "kairos.dev"
+  subject_alternative_names = ["www.kairos.dev", "kairos.dev"]
 }
 
 module "cloudfront" {
@@ -49,12 +50,14 @@ module "cloudfront" {
   kairos_web_bucket_name = module.s3.kairos_web_bucket_name
   kairos_web_bucket_regional_domain_name = module.s3.kairos_web_bucket_regional_domain_name
   region                 = "eu-west-2"
-  kairos_certificate_arn = module.acm.kairos_certificate_arn
+  kairos_certificate_arn = module.acm.certificate_arn
 }
 
 module "route53" {
   source = "./modules/route53"
 
+  zone_name = "kairos.dev."
+  certificate_arn = module.acm.certificate_arn
   cloudfront_distribution_domain_name = module.cloudfront.cloudfront_distribution_domain_name
   cloudfront_distribution_hosted_zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
 }
