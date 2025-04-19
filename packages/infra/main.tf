@@ -57,6 +57,7 @@ module "route53" {
   source = "./modules/route53"
 
   zone_name = "kairos.dev."
+  domain_validation_options = module.acm.domain_validation_options
   certificate_arn = module.acm.certificate_arn
   cloudfront_distribution_domain_name = module.cloudfront.cloudfront_distribution_domain_name
   cloudfront_distribution_hosted_zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
