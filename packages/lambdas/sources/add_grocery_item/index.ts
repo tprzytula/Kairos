@@ -18,9 +18,9 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
     await putItem({
       tableName: DynamoDBTables.GROCERY_LIST,
       item: {
-        id: { S: id },
-        name: { S: name },
-        quantity: { N: `${quantity}` },
+        id,
+        name,
+        quantity,
       },
     });
 

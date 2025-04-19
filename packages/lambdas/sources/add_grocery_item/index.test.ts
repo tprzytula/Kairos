@@ -28,9 +28,9 @@ describe('Given the add_grocery_item lambda handler', () => {
         expect(putSpy).toHaveBeenCalledWith({
             tableName: DynamoDBTables.GROCERY_LIST,
             item: {
-                id: { S: expect.any(String) },
-                name: { S: "Apple" },
-                quantity: { N: "1" },
+                id: EXAMPLE_ID,
+                name: "Apple",
+                quantity: 1,
             },
         });
     });
