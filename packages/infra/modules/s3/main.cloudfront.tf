@@ -6,7 +6,6 @@ resource "aws_cloudfront_origin_access_identity" "kairos_web_distribution" {
 resource "aws_cloudfront_distribution" "kairos_web_distribution" {
   enabled             = true
   default_root_object = "index.html"
-  aliases             = [aws_s3_bucket.kairos_web_bucket.bucket]
 
   default_cache_behavior {
     allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
