@@ -20,14 +20,17 @@ resource "aws_acm_certificate_validation" "validation" {
   validation_record_fqdns = [for record in aws_route53_record.validation_record : record.fqdn]
 }
 
+locals {
+  validation_records = var.domain_validation_options != null ? var.domain_validation_options : []
+}
 
 resource "aws_route53_record" "validation_record" {
-  count = length(var.domain_validation_options)
+  count = length(local.validation_records)
 
   allow_overwrite = true
-  name            = var.domain_validation_options[count.index].resource_record_name
-  records         = [var.domain_validation_options[count.index].resource_record_value]
+  name            = local.validation_records[count.index].resource_record_name
+  records         = [local.validation_records[count.index].resource_record_value]
   ttl             = 60
-  type            = var.domain_validation_options[count.index].resource_record_type
+  type            = local.validation_records[count.index].resource_record_type
   zone_id         = aws_route53_zone.zone.zone_id
 }
