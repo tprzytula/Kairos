@@ -1,11 +1,11 @@
 import { render, screen, renderHook, waitFor, act } from '@testing-library/react'
 import { useGroceryListContext } from './index'
 import { GroceryListProvider } from './index'
-import * as API from '../../api'
+import * as API from '../../api/groceryList'
 import { GroceryItem } from '../AppStateProvider/types'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 
-jest.mock('../../api')
+jest.mock('../../api/groceryList')
 
 describe('Given the GroceryListProvider component', () => {
   it('should render the component', async () => {

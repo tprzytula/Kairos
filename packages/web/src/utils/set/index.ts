@@ -6,10 +6,10 @@ export const addToSet = (set: Set<string>, item: string) => {
   return newSet
 }
 
-export const removeFromSet = (set: Set<string>, item: string) => {
+export const removeFromSet = (set: Set<string>, ...items: Array<string>) => {
   const newSet = new Set(set)
 
-  newSet.delete(item)
+  items.forEach(item => newSet.delete(item))
 
   return newSet
 }

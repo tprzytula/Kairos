@@ -4,11 +4,11 @@ import { AppStateProvider } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
 import GroceryListRoute from '.'
-import * as API from '../../api'
+import * as API from '../../api/groceryList'
 import * as ReactRouter from 'react-router'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 
-jest.mock('../../api')
+jest.mock('../../api/groceryList')
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(),

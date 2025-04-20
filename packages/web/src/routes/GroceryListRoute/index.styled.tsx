@@ -8,3 +8,11 @@ export const Container = styled('div')({
   alignItems: 'center',
   flexDirection: 'column',
 })
+
+export const ActionArea = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  flexDirection: 'column',
+  gap: '1em',
+})

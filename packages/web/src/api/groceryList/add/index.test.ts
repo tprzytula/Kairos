@@ -1,6 +1,6 @@
-import { createGroceryItem, retrieveGroceryList } from '.'
+import { addGroceryItem } from '.'
 import { FetchMock } from 'jest-fetch-mock'
-import { GroceryItemUnit } from '../enums/groceryItem'
+import { GroceryItemUnit } from '../../../enums/groceryItem'
 
 const fetchMock = fetch as FetchMock
 const exampleResponse = [
@@ -18,43 +18,11 @@ const exampleResponse = [
   },
 ]
 
-describe('Given the retrieveItems function', () => {
-  it('should make the correct request to the API', async () => {
-    fetchMock.mockResponse(JSON.stringify(exampleResponse))
-
-    await retrieveGroceryList()
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://crff1u9wbc.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items'
-    )
-  })
-
-  it('should return the items on success', async () => {
-    fetchMock.mockResponse(JSON.stringify(exampleResponse))
-
-    const result = await retrieveGroceryList()
-
-    expect(result).toStrictEqual(exampleResponse)
-  })
-
-  describe('When the API call fails', () => {
-    it('should return an empty array', async () => {
-      fetchMock.mockResponse(JSON.stringify({ error: 'API call failed' }), {
-        status: 500,
-      })
-
-      const result = await retrieveGroceryList()
-
-      expect(result).toStrictEqual([])
-    })
-  })
-})
-
-describe('Given the createGroceryItem function', () => {
+describe('Given the addGroceryItem function', () => {
   it('should make the correct request to the API', async () => {
     fetchMock.mockResponse(JSON.stringify(exampleResponse[0]))
 
-    await createGroceryItem({
+    await addGroceryItem({
       name: 'Milk',
       quantity: 5,
       unit: GroceryItemUnit.LITER,
@@ -72,7 +40,7 @@ describe('Given the createGroceryItem function', () => {
   it('should return the created item', async () => {
     fetchMock.mockResponse(JSON.stringify(exampleResponse[0]))
 
-    const result = await createGroceryItem({
+    const result = await addGroceryItem({
       name: 'Milk',
       quantity: 5,
       unit: GroceryItemUnit.LITER,
@@ -87,11 +55,11 @@ describe('Given the createGroceryItem function', () => {
         status: 500,
       })
 
-      await expect(createGroceryItem({
+      await expect(addGroceryItem({
         name: 'Milk',
         quantity: 5,
         unit: GroceryItemUnit.LITER,
-      })).rejects.toThrow('Failed to create grocery item')
+      })).rejects.toThrow('Failed to add a grocery item')
     })
   })
 
@@ -101,7 +69,7 @@ describe('Given the createGroceryItem function', () => {
         status: 200,
       })
 
-      await expect(createGroceryItem({
+      await expect(addGroceryItem({
         name: 'Milk',
         quantity: 5,
         unit: GroceryItemUnit.LITER,
