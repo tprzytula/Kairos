@@ -123,8 +123,29 @@ describe('Given the validateFields function', () => {
             const errors = validateFields(fields)
 
             expect(errors).toStrictEqual({
-                quantity: 'Quantity must be a number'
+                quantity: 'Quantity must be a number greater than 0'
             })
+        })
+
+        test.each([
+            [-1, 'Quantity must be a number greater than 0'],
+            [0, 'Quantity must be a number greater than 0'],
+            [1, undefined],
+        ])('should return an error if the field is %s', (value, expected) => {
+            const fields = [
+                {
+                    name: 'quantity',
+                    value,
+                    type: FormFieldType.NUMBER,
+                    label: 'Quantity'
+                }
+            ]
+
+            const errors = validateFields(fields)
+
+            expect(errors).toStrictEqual(expected ? {
+                quantity: expected
+            } : {})
         })
     })
 
