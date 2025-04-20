@@ -4,6 +4,7 @@
   "start_url": "https://d1568c842iynon.cloudfront.net",
   "display": "standalone",
   "background_color": "#F5E1C2",
+  "theme_color": "#F5E1C2",
   "description": "Kairos is a tool that helps you manage your grocery list.",
   "icons": [
     {
