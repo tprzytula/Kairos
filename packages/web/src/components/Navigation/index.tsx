@@ -10,6 +10,8 @@ const Navigation = ({ previousRoute, nextRoute }: INavigationProps) => {
         display: 'flex',
         justifyContent: 'space-between',
         width: '100%',
+        height: '5em',
+        padding: '1em',
       }}
     >
       <BackButton route={previousRoute} />

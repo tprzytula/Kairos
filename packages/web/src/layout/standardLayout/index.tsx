@@ -1,7 +1,7 @@
 import { Container, Content } from './index.styled'
+import { IStandardLayoutProps } from './types'
 import Header from '../../components/Header'
 import Navigation from '../../components/Navigation'
-import { IStandardLayoutProps } from './types'
 
 const StandardLayout = ({
   title,
