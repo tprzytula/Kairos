@@ -20,5 +20,11 @@ locals {
         database = "read-write"
       }
     }
+    "delete_grocery_items" = {
+      environment_variables = {}
+      permissions = {
+        database = "read-write"
+      }
+    }
   }
 }
