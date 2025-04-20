@@ -3,7 +3,18 @@
   "short_name": "GroceryListManager",
   "start_url": "http://kairos-web-5rndghxqgv.s3-website.eu-west-2.amazonaws.com",
   "display": "standalone",
-  "background_color": "#fff",
+  "background_color": "#F5E1C2",
   "description": "Grocery List Manager allows you to manage your grocery list.",
-  "icons": []
+  "icons": [
+    {
+      "src": "src/icons/72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "src/icons/96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    }
+  ]
 }
