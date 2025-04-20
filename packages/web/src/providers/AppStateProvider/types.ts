@@ -2,7 +2,7 @@ import { AlertColor } from '@mui/material'
 import { ReactNode } from 'react'
 import { ActionName } from './enums'
 import { IAlert } from '../../components/Alert/types'
-
+import { GroceryItemUnit } from '../../enums/groceryItem'
 export type Context = {
   state: State
   dispatch: React.Dispatch<Action>
@@ -20,6 +20,8 @@ export type GroceryItem = {
   id: string
   name: string
   quantity: number
+  imagePath: string
+  unit: GroceryItemUnit
 }
 
 export type Action = {

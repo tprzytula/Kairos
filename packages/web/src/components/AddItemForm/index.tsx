@@ -1,8 +1,10 @@
-import { Button, Container, TextField, Stack, CircularProgress, Alert } from "@mui/material";
+import { Button, Container, Stack, CircularProgress, Alert, MenuItem, FormControl, InputLabel, SelectChangeEvent } from "@mui/material";
 import { useCallback, useMemo } from "react";
 import { IAddItemFormProps, IFormField } from "./types";
 import { useForm } from "./hooks/useForm";
-
+import { TextField } from "./components/TextField";
+import { Select } from "./components/Select";
+import { FormFieldType } from "./enums";
 const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
     const {
         errors,
@@ -19,20 +21,25 @@ const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
     const renderFormField = useCallback((field: IFormField) => {
         const fieldProps = getFieldProps(field);
         
+        if (field.type === FormFieldType.SELECT) {
+            return (
+                <Select
+                    key={field.name}
+                    field={field}
+                    fieldProps={fieldProps}
+                    errors={errors}
+                    isSubmitting={isSubmitting}
+                />
+            );
+        }
+
         return (
             <TextField 
                 key={field.name}
-                fullWidth
-                label={field.label}
-                {...fieldProps}
-                type={field.type}
-                error={!!errors[field.name]}
-                helperText={errors[field.name]}
-                required={field.required}
-                disabled={isSubmitting}
-                aria-label={field.label}
-                aria-required={field.required}
-                aria-invalid={!!errors[field.name]}
+                field={field}
+                fieldProps={fieldProps}
+                errors={errors}
+                isSubmitting={isSubmitting}
             />
         );
     }, [errors, getFieldProps, isSubmitting]);

@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react"
 import GroceryList from "."
 import * as GroceryListProvider from '../../providers/GroceryListProvider'
 import { IState } from "../../providers/GroceryListProvider/types"
+import { GroceryItemUnit } from "../../enums/groceryItem"
 
 describe('Given the GroceryList component', () => {
   it('should render the grocery list', () => {
@@ -20,11 +21,15 @@ const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
       id: '1',
       name: 'Milk',
       quantity: 5,
+      unit: GroceryItemUnit.LITER,
+      imagePath: 'https://hostname.com/image.png',
     },
     {
       id: '2',
       name: 'Bread',
       quantity: 2,
+      unit: GroceryItemUnit.UNIT,
+      imagePath: 'https://hostname.com/image.png',
     },
   ],
 }

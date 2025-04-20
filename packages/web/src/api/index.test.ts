@@ -1,5 +1,6 @@
 import { createGroceryItem, retrieveGroceryList } from '.'
 import { FetchMock } from 'jest-fetch-mock'
+import { GroceryItemUnit } from '../enums/groceryItem'
 
 const fetchMock = fetch as FetchMock
 const exampleResponse = [
@@ -7,11 +8,13 @@ const exampleResponse = [
     id: '1',
     name: 'Milk',
     quantity: 5,
+    unit: GroceryItemUnit.LITER,
   },
   {
     id: '2',
     name: 'Paper Towel',
     quantity: 2,
+    unit: GroceryItemUnit.UNIT,
   },
 ]
 
@@ -54,13 +57,14 @@ describe('Given the createGroceryItem function', () => {
     await createGroceryItem({
       name: 'Milk',
       quantity: 5,
+      unit: GroceryItemUnit.LITER,
     })
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://crff1u9wbc.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items',
       {
         method: 'PUT',
-        body: JSON.stringify({ name: 'Milk', quantity: 5 }),
+        body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER }),
       }
     )
   })
@@ -71,6 +75,7 @@ describe('Given the createGroceryItem function', () => {
     const result = await createGroceryItem({
       name: 'Milk',
       quantity: 5,
+      unit: GroceryItemUnit.LITER,
     })
 
     expect(result).toStrictEqual(exampleResponse[0])
@@ -85,6 +90,7 @@ describe('Given the createGroceryItem function', () => {
       await expect(createGroceryItem({
         name: 'Milk',
         quantity: 5,
+        unit: GroceryItemUnit.LITER,
       })).rejects.toThrow('Failed to create grocery item')
     })
   })
@@ -98,6 +104,7 @@ describe('Given the createGroceryItem function', () => {
       await expect(createGroceryItem({
         name: 'Milk',
         quantity: 5,
+        unit: GroceryItemUnit.LITER,
       })).rejects.toThrow('Unexpected response from API')
     })
   })

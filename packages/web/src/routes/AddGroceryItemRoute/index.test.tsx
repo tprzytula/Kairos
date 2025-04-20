@@ -8,6 +8,7 @@ import * as ReactRouter from 'react-router'
 import AddItemForm from '../../components/AddItemForm'
 import { createGroceryItem } from '../../api'
 import { FormFieldType } from '../../components/AddItemForm/enums'
+import { GroceryItemUnit } from '../../enums/groceryItem'
 
 jest.mock('../../api');
 jest.mock('../../components/AddItemForm');
@@ -69,13 +70,20 @@ describe('Given the AddGroceryItemRoute component', () => {
             required: true,
             value: 1,
           },
+          {
+            name: 'GroceryItemUnit',
+            type: FormFieldType.SELECT,
+            required: true,
+            value: 'kg',
+          },
         ])
       })
 
       expect(createGroceryItem).toHaveBeenCalledWith({
         name: 'Test',
         quantity: 1,
-      })
+        unit: GroceryItemUnit.KILOGRAM,
+      })  
     })
 
     describe('And the createGroceryItem call succeeds', () => {
@@ -106,6 +114,12 @@ describe('Given the AddGroceryItemRoute component', () => {
               type: FormFieldType.NUMBER,
               required: true,
               value: 1,
+            },
+            {
+              name: 'GroceryItemUnit',
+              type: FormFieldType.SELECT,
+              required: true,
+              value: 'kg',
             },
           ])
         })
@@ -140,6 +154,12 @@ describe('Given the AddGroceryItemRoute component', () => {
               type: FormFieldType.NUMBER,
               required: true,
               value: 1,
+            },
+            {
+              name: 'GroceryItemUnit',
+              type: FormFieldType.SELECT,
+              required: true,
+              value: 'kg',
             },
           ])
         })

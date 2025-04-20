@@ -33,15 +33,15 @@ export const createFieldProps = ({
     onValueChange,
     onErrorClear
 }: CreateFieldPropsParams) => {
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.target;
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | { value: unknown }>) => {
+        const value = event.target.value;
         onErrorClear(field.name);
         
         const processedValue = field.type === FormFieldType.NUMBER 
             ? Number(value) 
             : value;
 
-        onValueChange(field.name, processedValue, field.type);
+        onValueChange(field.name, processedValue as string | number, field.type);
     };
 
     return {

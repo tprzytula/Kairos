@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router'
 import GroceryListRoute from '.'
 import * as API from '../../api'
 import * as ReactRouter from 'react-router'
+import { GroceryItemUnit } from '../../enums/groceryItem'
 
 jest.mock('../../api')
 jest.mock('react-router', () => ({
@@ -36,8 +37,8 @@ describe('Given the GroceryListRoute component', () => {
 
   it('should display the grocery list', async () => {
     const mockGroceryList = [
-      { id: '1', name: 'Milk', quantity: 1 },
-      { id: '2', name: 'Bread', quantity: 2 },
+      { id: '1', name: 'Milk', quantity: 1, unit: GroceryItemUnit.LITER, imagePath: 'https://hostname.com/image.png' },
+      { id: '2', name: 'Bread', quantity: 2, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png' },
     ]
 
     jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)

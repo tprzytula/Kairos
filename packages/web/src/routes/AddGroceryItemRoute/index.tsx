@@ -12,6 +12,7 @@ import { useCallback } from 'react'
 import { AlertColor } from '@mui/material'
 import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
+import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 
 const FIELDS: Array<IFormField> = [
   {
@@ -28,6 +29,17 @@ const FIELDS: Array<IFormField> = [
     required: true,
     value: 0,
   },
+  {
+    name: 'unit',
+    label: 'Unit',
+    type: FormFieldType.SELECT,
+    required: true,
+    value: GroceryItemUnit.UNIT,
+    options: Object.entries(GroceryItemUnitLabelMap).map(([key, label]) => ({
+      label,
+      value: key,
+    })),
+  },
 ]
 export const AddGroceryItemRoute = () => {
   const { dispatch } = useAppState()
@@ -39,11 +51,12 @@ export const AddGroceryItemRoute = () => {
 
   const onSubmit = async (fields: Array<IFormField>) => {
     try {
-      const [name, quantity] = validateFields(fields)
+      const [name, quantity, unit] = validateFields(fields)
 
       await createGroceryItem({
         name: name.value,
         quantity: quantity.value,
+        unit: unit.value as GroceryItemUnit,
       })
 
       createAlert(`${name.value} has been added to your grocery list`, 'success')
