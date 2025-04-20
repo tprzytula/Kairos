@@ -3,11 +3,10 @@ import { StateComponentProps } from '../AppStateProvider/types'
 import { GroceryItem } from '../AppStateProvider/types'
 import { retrieveGroceryList } from '../../api/groceryList'
 import { IState } from './types'
-import { useAppState } from '../AppStateProvider'
-import { ActionName } from '../AppStateProvider/enums'
+import { convertListToMap } from '../../utils/map'
 
 export const initialState: IState = {
-  groceryList: [],
+  groceryList: new Map(),
   refetchGroceryList: async () => {},
 }
 
@@ -16,16 +15,16 @@ export const GroceryListContext = createContext<IState>(initialState)
 export const useGroceryListContext = () => useContext(GroceryListContext)
 
 export const GroceryListProvider = ({ children }: StateComponentProps) => {
-  const [groceryList, setGroceryList] = useState<Array<GroceryItem>>([])
-  const { state: { purchasedItems }, dispatch } = useAppState()
+  const [groceryList, setGroceryList] = useState<Map<string, GroceryItem>>(new Map())
 
   const fetchGroceryList = useCallback(async () => {
     try {
       const list = await retrieveGroceryList()
-      setGroceryList(list)
+      const map = convertListToMap<string, GroceryItem>(list, 'id')
+      setGroceryList(map)
     } catch (error) {
       console.error('Failed to fetch grocery list:', error)
-      setGroceryList([])
+      setGroceryList(new Map())
     }
   }, [setGroceryList])
 
@@ -33,26 +32,9 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     await fetchGroceryList()
   }, [fetchGroceryList])
 
-  const clearRemovedItemsFromPurchasedItems = useCallback(() => {
-    const mismatchedItems = Array.from(purchasedItems).filter(
-      purchasedItemId => !groceryList.some(({ id }) => id === purchasedItemId)
-    )
-    
-    if (mismatchedItems.length) {
-      dispatch({ 
-        type: ActionName.CLEAR_PURCHASED_ITEMS, 
-        payload: mismatchedItems 
-      })
-    }
-  }, [purchasedItems, groceryList, dispatch])
-
   useEffect(() => {
     fetchGroceryList()
   }, [fetchGroceryList])
-
-  useEffect(() => {
-    clearRemovedItemsFromPurchasedItems()
-  }, [clearRemovedItemsFromPurchasedItems])
 
   const value = useMemo(() => ({ groceryList, refetchGroceryList }), [groceryList, refetchGroceryList])
 
