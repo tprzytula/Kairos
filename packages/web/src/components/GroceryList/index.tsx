@@ -7,7 +7,7 @@ export const GroceryList = () => {
 
   return (
     <Container>
-      {Array.from(groceryList.values()).map(({ id, name, quantity, imagePath, unit }) => (
+      {groceryList.map(({ id, name, quantity, imagePath, unit }) => (
         <GroceryItem 
           key={id} 
           id={id}

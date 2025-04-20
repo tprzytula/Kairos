@@ -53,6 +53,44 @@ describe('Given the useGroceryListContext hook', () => {
     })
   })
 
+  it('should allow you to refetch the grocery list', async () => {
+    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+
+    const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
+      wrapper: GroceryListProvider,
+    }))
+
+    await waitFor(() => {
+      expect(result.current.groceryList).toStrictEqual(EXAMPLE_GROCERY_LIST)
+    })
+
+    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([
+      {
+        id: '1',
+        name: 'Something Else',
+        quantity: 5,
+        imagePath: 'https://hostname.com/image.png',
+        unit: GroceryItemUnit.LITER,
+      },
+    ])
+
+    await act(async () => {
+      await result.current.refetchGroceryList()
+    })
+
+    await waitFor(() => {
+      expect(result.current.groceryList).toStrictEqual([
+        {
+          id: '1',
+          name: 'Something Else',
+          quantity: 5,
+          imagePath: 'https://hostname.com/image.png',
+          unit: GroceryItemUnit.LITER,
+        },
+      ])
+    })
+  })
+
   describe('When the API request fails', () => {
     it('should return an empty array', async () => {
       jest.spyOn(API, 'retrieveGroceryList').mockRejectedValue(new Error('It is what it is'))
