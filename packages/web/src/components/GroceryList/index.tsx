@@ -10,6 +10,7 @@ export const GroceryList = () => {
       {groceryList.map(({ id, name, quantity, imagePath, unit }) => (
         <GroceryItem 
           key={id} 
+          id={id}
           name={name} 
           quantity={quantity} 
           imagePath={imagePath} 

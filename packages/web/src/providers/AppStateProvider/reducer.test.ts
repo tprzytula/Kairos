@@ -50,10 +50,43 @@ describe('Given the reducer', () => {
       expect(result.alerts).toStrictEqual(new Map())
     })
   })
+
+  describe('When the PURCHASE_GROCERY_ITEM action is invoked', () => {
+    it('should add an item to the purchasedItems set', () => {
+      const result = reducer(initialState, {
+        type: ActionName.PURCHASE_GROCERY_ITEM,
+        payload: { id: EXAMPLE_GROCERY_ITEM.id },
+      })
+
+      expect(result.purchasedItems).toStrictEqual(new Set([EXAMPLE_GROCERY_ITEM.id]))
+    })
+  })  
+
+  describe('When the CLEAR_PURCHASED_ITEM action is invoked', () => {
+    it('should remove an item from the purchasedItems set', () => {
+      const state = {
+        ...initialState,
+        purchasedItems: new Set([EXAMPLE_GROCERY_ITEM.id]),
+      }
+      const result = reducer(state, {
+        type: ActionName.CLEAR_PURCHASED_ITEM,
+        payload: { id: EXAMPLE_GROCERY_ITEM.id },
+      })
+
+      expect(result.purchasedItems).toStrictEqual(new Set())
+    })
+  })
 })
 
 const EXAMPLE_ALERT: IAlert = {
   id: 'random-uuid',
   description: 'Test',
   severity: 'success',
+}
+
+const EXAMPLE_GROCERY_ITEM = {
+  id: 'random-uuid',
+  name: 'Test',
+  quantity: 1,
+  unit: 'kg',
 }

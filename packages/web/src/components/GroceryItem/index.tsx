@@ -1,18 +1,43 @@
 import { Container, ActionArea, Content, Media, Name, QuantityContainer, Quantity, Unit } from './index.styled'
-import { useState } from 'react'
 import { IGroceryItemProps } from './types'
+import { useAppState } from '../../providers/AppStateProvider';
+import { ActionName } from '../../providers/AppStateProvider/enums';
+import { useMemo, useCallback } from 'react';
 
-const GroceryItem = ({ name, quantity, imagePath, unit }: IGroceryItemProps) => {
-  const [isPurchased, setIsPurchased] = useState(false)
+const GroceryItem = ({ id, name, quantity, imagePath, unit }: IGroceryItemProps) => {
+  const { state: { purchasedItems }, dispatch } = useAppState()
+  const isPurchased = useMemo(() => purchasedItems.has(id), [purchasedItems, id])
 
-  const markAsPurchased = () => {
-    setIsPurchased((prev) => !prev)
-  }
+  const markAsPurchased = useCallback(  () => {
+    dispatch({
+      type: ActionName.PURCHASE_GROCERY_ITEM,
+      payload: {
+        id,
+      },
+    })
+  }, [dispatch, id])
+
+  const clearPurchasedItem = useCallback(() => {
+    dispatch({
+      type: ActionName.CLEAR_PURCHASED_ITEM,
+      payload: {
+        id,
+      },
+    })
+  }, [dispatch, id])
+
+  const handleClick = useCallback(() => {
+    if (isPurchased) {
+      clearPurchasedItem()
+    } else {
+      markAsPurchased()
+    }
+  }, [isPurchased, clearPurchasedItem, markAsPurchased])
 
   return (
     <Container isPurchased={isPurchased}>
       <ActionArea
-        onClick={markAsPurchased}
+        onClick={handleClick}
       >  
         <Media 
           image={imagePath}
