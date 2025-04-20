@@ -65,7 +65,7 @@ describe('Given the GroceryListRoute component', () => {
       })
 
       await act(async () => { 
-        screen.getByLabelText('Add Item').click()
+        screen.getByLabelText('Navigate to route').click()
       })
 
       expect(navigateSpy).toHaveBeenCalledWith('/groceries/add')

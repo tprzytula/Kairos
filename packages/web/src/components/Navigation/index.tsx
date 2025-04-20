@@ -1,13 +1,9 @@
 import { Box } from '@mui/material'
 import BackButton from '../BackButton'
-import { ReactNode } from 'react'
+import NavigateButton from '../NavigateButton'
+import { INavigationProps } from './types'
 
-type NavigationProps = {
-  previousRoute: string
-  actionButton?: ReactNode
-}
-
-const Navigation = ({ actionButton, previousRoute }: NavigationProps) => {
+const Navigation = ({ previousRoute, nextRoute }: INavigationProps) => {
   return (
     <Box
       sx={{
@@ -16,8 +12,8 @@ const Navigation = ({ actionButton, previousRoute }: NavigationProps) => {
         width: '100%',
       }}
     >
-      <BackButton route={previousRoute} />
-      {actionButton}
+      {previousRoute && <BackButton route={previousRoute} />}
+      {nextRoute && <NavigateButton route={nextRoute} />}
     </Box>
   )
 }
