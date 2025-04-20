@@ -78,12 +78,14 @@ const EXAMPLE_DB_GROCERY_ITEMS: Record<string, AttributeValue>[] = [
         name: { S: "Apple" },
         quantity: { N: "1" },
         imagePath: { S: "Image 1" },
+        unit: { S: "kg" },
     },
     {
         id: { S: "2" },
         name: { S: "Banana" },
         quantity: { N: "2" },
         imagePath: { S: "Image 2" },
+        unit: { S: "kg" },
     },
 ];
 
@@ -93,11 +95,13 @@ const EXAMPLE_EXPECTED_GROCERY_ITEMS = [
         id: "1",
         name: "Apple",
         imagePath: "Image 1",
+        unit: "kg",
     },
     {
         quantity: 2,
         id: "2",
         name: "Banana",
         imagePath: "Image 2",
+        unit: "kg",
     },
 ];
