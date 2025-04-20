@@ -1,10 +1,10 @@
 {
-  "name": "Grocery List Manager",
-  "short_name": "GroceryListManager",
-  "start_url": "http://kairos-web-5rndghxqgv.s3-website.eu-west-2.amazonaws.com",
+  "name": "Kairos",
+  "short_name": "Kairos",
+  "start_url": "https://d1568c842iynon.cloudfront.net",
   "display": "standalone",
   "background_color": "#F5E1C2",
-  "description": "Grocery List Manager allows you to manage your grocery list.",
+  "description": "Kairos is a tool that helps you manage your grocery list.",
   "icons": [
     {
       "src": "src/icons/72x72.png",
