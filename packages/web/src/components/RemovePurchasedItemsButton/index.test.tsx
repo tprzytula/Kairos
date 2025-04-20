@@ -74,6 +74,7 @@ const mockUseAppState = ({ purchasedItems }: { purchasedItems: Set<string> }) =>
         state: {
             purchasedItems,
             alerts: new Map(),
+            skipStartingScreen: true,
         },
         dispatch,
     })

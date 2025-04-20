@@ -1,11 +1,16 @@
 import { render, screen, act } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
-import { AppStateProvider } from '../../providers/AppStateProvider'
+import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
 import StartingScreenRoute from '.'
 import * as ReactRouter from 'react-router'
 import { Route } from '../../enums/route'
+import { useAppState } from '../../providers/AppStateProvider'
+jest.mock('../../providers/AppStateProvider', () => ({
+  ...jest.requireActual('../../providers/AppStateProvider'),
+  useAppState: jest.fn(),
+}))
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
@@ -41,6 +46,14 @@ describe('Given the StartingScreenRoute component', () => {
 })
 
 const renderComponent = () => {
+  jest.mocked(useAppState).mockReturnValue({
+    state: {
+      ...initialState,
+      skipStartingScreen: false,
+    },
+    dispatch: jest.fn(),
+  })
+
   render(
     <ThemeProvider theme={theme}>
       <AppStateProvider>

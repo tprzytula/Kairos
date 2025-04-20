@@ -1,15 +1,23 @@
 import { GroceryListButton } from './index.styled'
 import { useNavigate } from 'react-router'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { Route } from '../../enums/route'
 import StandardLayout from '../../layout/standardLayout'
+import { useAppState } from '../../providers/AppStateProvider'
 
 export const StartingScreenRoute = () => {
+  const { state: { skipStartingScreen } } = useAppState()
   const navigate = useNavigate()
 
   const navigateToGroceryList = useCallback(() => {
     navigate(Route.GroceryList)
   }, [navigate])
+
+  useEffect(() => {
+    if (skipStartingScreen) {
+      navigate(Route.GroceryList)
+    }
+  }, [skipStartingScreen, navigate])
 
   return (
     <StandardLayout

@@ -1,12 +1,18 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
-import { AppStateProvider } from '../../providers/AppStateProvider'
+import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
 import GroceryListRoute from '.'
 import * as API from '../../api/groceryList'
 import * as ReactRouter from 'react-router'
 import { GroceryItemUnit } from '../../enums/groceryItem'
+import { useAppState } from '../../providers/AppStateProvider'
+
+jest.mock('../../providers/AppStateProvider', () => ({
+  ...jest.requireActual('../../providers/AppStateProvider'),
+  useAppState: jest.fn(),
+}))
 
 jest.mock('../../api/groceryList')
 jest.mock('react-router', () => ({
@@ -107,6 +113,14 @@ describe('Given the GroceryListRoute component', () => {
 })
 
 const renderComponent = () => {
+  jest.mocked(useAppState).mockReturnValue({
+    state: {
+      ...initialState,
+      skipStartingScreen: false,
+    },
+    dispatch: jest.fn(),
+  })
+
   render(
     <ThemeProvider theme={theme}>
       <AppStateProvider>
