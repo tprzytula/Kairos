@@ -37,3 +37,9 @@ module "policies" {
   s3_kairos_web_arn                = module.s3.kairos_web_arn
   s3_kairos_lambdas_arn            = module.s3.kairos_lambdas_arn
 }
+
+module "assets" {
+  source              = "./modules/assets"
+  bucket_id           = module.s3.kairos_web_bucket_id
+  dynamodb_table_name = module.dynamodb.grocery_items_icons_name
+}
