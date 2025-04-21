@@ -39,6 +39,6 @@ module "policies" {
 }
 
 module "assets" {
-  source              = "./modules/assets"
-  bucket_id           = module.s3.kairos_web_bucket_id
+  source    = "./modules/assets"
+  bucket_id = module.s3.kairos_web_bucket_id
 }
