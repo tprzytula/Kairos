@@ -11,4 +11,8 @@ resource "aws_dynamodb_table_item" "grocery_items_icons_entries" {
     name     = { S = each.value.name }
     iconPath = { S = each.value.iconPath }
   })
+
+  lifecycle {
+    ignore_changes = [item]
+  }
 }
