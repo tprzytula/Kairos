@@ -1,4 +1,5 @@
 locals {
-  icons     = fileset("${path.module}/icons", "*.png")
-  iconsPath = "assets/icons"
+  icons     = fileset("${path.module}/${locals.icons_path}", "*.png")
+  iconsPath = "icons"
+  iconsTargetPath = "assets/icons"
 }
