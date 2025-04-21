@@ -12,20 +12,19 @@ import { GroceryItemUnit } from '../../enums/groceryItem'
 
 jest.mock('../../api/groceryList');
 jest.mock('../../components/AddItemForm');
-
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(),
 }))
 
 describe('Given the AddGroceryItemRoute component', () => {
-  it('should have the correct title', () => {
-    renderComponent()
+  it('should have the correct title', async () => {
+    await renderComponent()
     expect(screen.getByText('Add Grocery Item')).toBeVisible()
   })
 
-  it('should render the AddItemForm component', () => {
-    renderComponent()
+  it('should render the AddItemForm component', async () => {
+    await renderComponent()
     expect(AddItemForm).toHaveBeenCalled()
   })
 
@@ -100,7 +99,6 @@ describe('Given the AddGroceryItemRoute component', () => {
         })
 
         renderComponent()
-
         await act(async () => {
           onSubmitCallback([
             {

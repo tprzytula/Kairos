@@ -1,5 +1,5 @@
 import { useForm } from "."
-import { act, renderHook, waitFor } from "@testing-library/react"
+import { act, renderHook } from "@testing-library/react"
 import { IFormField } from "../../types"
 import { FormFieldType } from "../../enums"
 
@@ -7,7 +7,8 @@ describe('Given the useForm hook', () => {
     it('should return the form fields', () => {
         const { result } = renderHook(() => useForm({
             initialFields: EXAMPLE_FIELDS,
-            onSubmit: jest.fn()
+            onSubmit: jest.fn(),
+            onValueChange: jest.fn()
         }))
 
         expect(result.current.formFields).toEqual(EXAMPLE_FIELDS)
@@ -19,7 +20,8 @@ describe('Given the useForm hook', () => {
             const onSubmit = jest.fn()
             const { result } = renderHook(() => useForm({
                 initialFields: EXAMPLE_FIELDS,
-                onSubmit
+                onSubmit,
+                onValueChange: jest.fn()
             }))
 
             await act(async () => {
@@ -35,7 +37,8 @@ describe('Given the useForm hook', () => {
             const onSubmit = jest.fn().mockImplementation(() => new Promise(() => {}))
             const { result } = renderHook(() => useForm({
                 initialFields: EXAMPLE_FIELDS,
-                onSubmit
+                onSubmit,
+                onValueChange: jest.fn()
             }))
 
             await act(async () => {
@@ -57,7 +60,8 @@ describe('Given the useForm hook', () => {
                             value: 'not a number'
                         }
                     ],
-                    onSubmit
+                    onSubmit,
+                    onValueChange: jest.fn()
                 }))
 
                 await act(async () => {
@@ -78,7 +82,8 @@ describe('Given the useForm hook', () => {
                             value: 'not a number'
                         }
                     ],
-                    onSubmit
+                    onSubmit,
+                    onValueChange: jest.fn()
                 }))
                 
                 await act(async () => {
@@ -102,7 +107,8 @@ describe('Given the useForm hook', () => {
                                 value: 'not a number'
                             }
                         ],
-                        onSubmit
+                        onSubmit,
+                        onValueChange: jest.fn()
                     }))
                     
                     await act(async () => {
@@ -130,7 +136,8 @@ describe('Given the useForm hook', () => {
                 const onSubmit = jest.fn().mockImplementation(() => Promise.resolve())
                 const { result } = renderHook(() => useForm({
                     initialFields: EXAMPLE_FIELDS,
-                    onSubmit
+                    onSubmit,
+                    onValueChange: jest.fn()
                 }))
 
                 await act(async () => {
@@ -147,7 +154,8 @@ describe('Given the useForm hook', () => {
                 const onSubmit = jest.fn().mockImplementation(() => Promise.reject(new Error('Error')))
                 const { result } = renderHook(() => useForm({
                     initialFields: EXAMPLE_FIELDS,
-                    onSubmit
+                    onSubmit,
+                    onValueChange: jest.fn()
                 }))
 
                 await act(async () => {
@@ -163,7 +171,8 @@ describe('Given the useForm hook', () => {
                     const onSubmit = jest.fn().mockImplementation(() => Promise.reject('Error'))
                     const { result } = renderHook(() => useForm({
                         initialFields: EXAMPLE_FIELDS,
-                        onSubmit
+                        onSubmit,
+                        onValueChange: jest.fn()
                     }))
 
                     await act(async () => {
@@ -180,7 +189,8 @@ describe('Given the useForm hook', () => {
         it('should update the form fields', async () => {
             const { result } = renderHook(() => useForm({
                 initialFields: EXAMPLE_FIELDS,
-                onSubmit: jest.fn()
+                onSubmit: jest.fn(),
+                onValueChange: jest.fn()
             }))
 
             await act(async () => {
