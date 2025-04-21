@@ -22,11 +22,11 @@ describe('Given the AddItemForm component', () => {
 
     it('should pass the initial fields to the useForm hook', () => {
         mockUseForm();
-        const { onSubmit } = renderAddItemForm();
+        renderAddItemForm();
 
         expect(jest.mocked(useForm)).toHaveBeenCalledWith({
             initialFields: EXAMPLE_FIELDS,
-            onSubmit,
+            onSubmit: expect.any(Function),
             onValueChange: expect.any(Function)
         })
     })

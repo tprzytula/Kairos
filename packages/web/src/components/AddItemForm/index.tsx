@@ -12,7 +12,7 @@ import { IGroceryItemIcon } from "../../api/groceryList/icons/types";
 const DEFAULT_ICON = '/assets/images/generic-grocery-item.png';
 
 const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
-    const [icon, setIcon] = useState<string>(DEFAULT_ICON);
+    const [imagePath, setImagePath] = useState<string>(DEFAULT_ICON);
     const [icons, setIcons] = useState<Array<IGroceryItemIcon>>([]);
 
     useEffect(() => {
@@ -23,17 +23,21 @@ const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
         fetchIcons();
     }, []);
 
-    const handleValueChange = useCallback((name: string, value: string | number, type: FormFieldType) => {
+    const handleValueChange = useCallback((name: string, value: string | number) => {
         if (name === 'name') {
             const icon = icons.find((icon) => value.toString().toLowerCase().includes(icon.name.toLowerCase()));
 
             if (icon) {
-                setIcon(icon.path);
+                setImagePath(icon.path);
             } else {
-                setIcon(DEFAULT_ICON);
+                setImagePath(DEFAULT_ICON);
             }
         }
     }, [icons]);
+
+    const handleOnSubmit = useCallback(async (fields: Array<IFormField>) => {
+        onSubmit(fields, imagePath);
+    }, [onSubmit, imagePath]);     
 
     const {
         errors,
@@ -44,7 +48,7 @@ const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
         submitError,
     } = useForm({
         initialFields: fields,
-        onSubmit,
+        onSubmit: handleOnSubmit,
         onValueChange: handleValueChange
     });
 
@@ -85,7 +89,7 @@ const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
             <form onSubmit={handleSubmit} noValidate>
                 <Stack spacing={3}>
                     <GroceryItemImage
-                        image={icon}
+                        image={imagePath}
                     />
                     {formFieldsComponents}
                     <Button 

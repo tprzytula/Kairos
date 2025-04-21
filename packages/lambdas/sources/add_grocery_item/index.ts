@@ -4,8 +4,6 @@ import { createResponse } from "@kairos-lambdas-libs/response";
 import { DynamoDBTables, putItem } from "@kairos-lambdas-libs/dynamodb";
 import { randomUUID } from "node:crypto";
 
-const defaultImagePath = '/assets/images/generic-grocery-item.png'
-
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event) => {
     if (!event.body) {
@@ -15,7 +13,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
     }
 
     const id = randomUUID();
-    const { name, quantity, unit } = JSON.parse(event.body);
+    const { name, quantity, unit, imagePath } = JSON.parse(event.body);
 
     await putItem({
       tableName: DynamoDBTables.GROCERY_LIST,
@@ -24,7 +22,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
         name,
         quantity,
         unit,
-        imagePath: defaultImagePath,
+        imagePath,
       },
     });
 
