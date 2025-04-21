@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "get_grocery_items",
+  "name": "get_grocery_items_icons",
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
