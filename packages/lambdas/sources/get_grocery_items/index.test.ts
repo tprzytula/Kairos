@@ -3,7 +3,6 @@ import * as DynamoDB from "@kairos-lambdas-libs/dynamodb";
 const { DynamoDBTables } = DynamoDB;
 
 import { handler } from "./index";
-import { AttributeValue } from "@kairos-lambdas-libs/dynamodb";
 
 jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
     ...jest.requireActual("@kairos-lambdas-libs/dynamodb"),
@@ -28,7 +27,7 @@ describe('Given the get_grocery_items lambda handler', () => {
 
         expect(logSpy).toHaveBeenCalledWith('Returning items', {
             count: 2,
-            items: JSON.stringify(EXAMPLE_EXPECTED_GROCERY_ITEMS),
+            items: JSON.stringify(EXAMPLE_DB_GROCERY_ITEMS),
         });
     });
 
@@ -38,7 +37,7 @@ describe('Given the get_grocery_items lambda handler', () => {
         const result = await handler({} as any, {} as any, {} as any);
 
         expect(result.statusCode).toBe(200);
-        expect(result.body).toBe(JSON.stringify(EXAMPLE_EXPECTED_GROCERY_ITEMS));
+        expect(result.body).toBe(JSON.stringify(EXAMPLE_DB_GROCERY_ITEMS));
     });
 
     describe('When the scan request fails', () => {
@@ -72,35 +71,18 @@ describe('Given the get_grocery_items lambda handler', () => {
 
 const mockScan = () => jest.spyOn(DynamoDB, 'scan').mockResolvedValue(EXAMPLE_DB_GROCERY_ITEMS);
 
-const EXAMPLE_DB_GROCERY_ITEMS: Record<string, AttributeValue>[] = [
+const EXAMPLE_DB_GROCERY_ITEMS: Record<string, unknown>[] = [
     {
-        id: { S: "1" },
-        name: { S: "Apple" },
-        quantity: { N: "1" },
-        imagePath: { S: "Image 1" },
-        unit: { S: "kg" },
-    },
-    {
-        id: { S: "2" },
-        name: { S: "Banana" },
-        quantity: { N: "2" },
-        imagePath: { S: "Image 2" },
-        unit: { S: "kg" },
-    },
-];
-
-const EXAMPLE_EXPECTED_GROCERY_ITEMS = [
-    {
-        quantity: 1,
         id: "1",
         name: "Apple",
+        quantity: 1,
         imagePath: "Image 1",
         unit: "kg",
     },
     {
-        quantity: 2,
         id: "2",
         name: "Banana",
+        quantity: 2,
         imagePath: "Image 2",
         unit: "kg",
     },
