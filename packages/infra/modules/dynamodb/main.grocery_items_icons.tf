@@ -9,9 +9,4 @@ resource "aws_dynamodb_table" "grocery_items_icons" {
     name = "name"
     type = "S"
   }
-
-  attribute {
-    name = "iconPath"
-    type = "S"
-  }
 }
