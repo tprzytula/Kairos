@@ -41,5 +41,4 @@ module "policies" {
 module "assets" {
   source              = "./modules/assets"
   bucket_id           = module.s3.kairos_web_bucket_id
-  dynamodb_table_name = module.dynamodb.grocery_items_icons_name
 }
