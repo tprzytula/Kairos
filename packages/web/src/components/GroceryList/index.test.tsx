@@ -32,5 +32,6 @@ const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
       imagePath: 'https://hostname.com/image.png',
     },
   ],
+  isLoading: false,
   refetchGroceryList: jest.fn(),
 }
