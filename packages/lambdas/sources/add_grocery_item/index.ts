@@ -1,33 +1,29 @@
 import { APIGatewayProxyEvent, Handler } from "aws-lambda";
 import { middleware } from "@kairos-lambdas-libs/middleware";
 import { createResponse } from "@kairos-lambdas-libs/response";
-import { DynamoDBTables, putItem } from "@kairos-lambdas-libs/dynamodb";
-import { randomUUID } from "node:crypto";
+import { upsertItem } from "./database";
+import { getBody } from "./body";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event) => {
-    if (!event.body) {
+    const body = getBody(event.body);
+
+    if (!body) {
       return createResponse({
         statusCode: 400,
       });
     }
 
-    const id = randomUUID();
-    const { name, quantity, unit, imagePath } = JSON.parse(event.body);
-
-    await putItem({
-      tableName: DynamoDBTables.GROCERY_LIST,
-      item: {
-        id,
-        name,
-        quantity,
-        unit,
-        imagePath,
-      },
+    const { name, quantity, unit, imagePath } = body; 
+    const { id, statusCode } = await upsertItem({
+      name,
+      quantity,
+      unit,
+      imagePath,
     });
 
     return createResponse({
-      statusCode: 201,
+      statusCode,
       message: {
         id,
       },

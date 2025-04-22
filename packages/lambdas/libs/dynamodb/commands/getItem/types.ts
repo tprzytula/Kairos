@@ -1,5 +1,8 @@
 import { DynamoDBTables } from "../../enums";
 
-export interface IScanOptions {
+export interface IGetItemOptions {
   tableName: DynamoDBTables;
+  item: {
+    [key: string]: string;
+  };
 }
