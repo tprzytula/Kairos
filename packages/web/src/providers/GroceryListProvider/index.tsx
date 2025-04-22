@@ -6,6 +6,7 @@ import { IState } from './types'
 
 export const initialState: IState = {
   groceryList: [],
+  isLoading: false,
   refetchGroceryList: async () => {},
 }
 
@@ -15,14 +16,18 @@ export const useGroceryListContext = () => useContext(GroceryListContext)
 
 export const GroceryListProvider = ({ children }: StateComponentProps) => {
   const [groceryList, setGroceryList] = useState<Array<GroceryItem>>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   const fetchGroceryList = useCallback(async () => {
     try {
+      setIsLoading(true)
       const list = await retrieveGroceryList()
       setGroceryList(list)
     } catch (error) {
       console.error('Failed to fetch grocery list:', error)
       setGroceryList([])
+    } finally {
+      setIsLoading(false)
     }
   }, [setGroceryList])
 
@@ -37,9 +42,10 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
   const value = useMemo(
     () => ({
       groceryList,
+      isLoading,
       refetchGroceryList,
     }),
-    [groceryList, refetchGroceryList]
+    [groceryList, isLoading, refetchGroceryList]
   )
 
   return (
