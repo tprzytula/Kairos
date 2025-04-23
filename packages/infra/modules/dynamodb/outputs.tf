@@ -5,3 +5,7 @@ output "grocery_list_arn" {
 output "grocery_items_icons_arn" {
   value = aws_dynamodb_table.grocery_items_icons.arn
 }
+
+output "grocery_items_default_units_arn" {
+  value = aws_dynamodb_table.grocery_items_default_units.arn
+}
