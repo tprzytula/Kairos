@@ -6,7 +6,7 @@ resource "aws_dynamodb_table" "grocery_items_default_units" {
   hash_key       = "name"
 
   attribute {
-    name = "unit"
+    name = "name"
     type = "S"
   }
 }
