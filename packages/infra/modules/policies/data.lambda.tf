@@ -22,6 +22,7 @@ data "aws_iam_policy_document" "lambda_policies" {
       actions = [
         "dynamodb:GetItem",
         "dynamodb:Scan",
+        "dynamodb:Query",
       ]
       effect = "Allow"
       resources = [
@@ -43,6 +44,7 @@ data "aws_iam_policy_document" "lambda_policies" {
         "dynamodb:Scan",
         "dynamodb:UpdateItem",
         "dynamodb:BatchWriteItem",
+        "dynamodb:Query",
       ]
       effect = "Allow"
       resources = [
