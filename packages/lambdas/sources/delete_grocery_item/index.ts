@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, Handler } from "aws-lambda";
 import { middleware } from "@kairos-lambdas-libs/middleware";
 import { createResponse } from "@kairos-lambdas-libs/response";
-import { DynamoDBTables, deleteItem } from "@kairos-lambdas-libs/dynamodb";
+import { DynamoDBTable, deleteItem } from "@kairos-lambdas-libs/dynamodb";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event) => {
@@ -15,7 +15,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
 
     await deleteItem({
       id,
-      tableName: DynamoDBTables.GROCERY_LIST,
+      tableName: DynamoDBTable.GROCERY_LIST,
     });
 
     return createResponse({

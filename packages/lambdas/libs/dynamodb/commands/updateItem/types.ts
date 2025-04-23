@@ -1,7 +1,7 @@
-import { DynamoDBTables } from "../../enums";
+import { DynamoDBTable } from "../../enums";
 
 export interface IUpdateItemOptions {
-  tableName: DynamoDBTables;
+  tableName: DynamoDBTable;
   key: {
     [key: string]: string;
   };

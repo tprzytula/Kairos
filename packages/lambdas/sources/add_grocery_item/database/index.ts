@@ -1,17 +1,20 @@
 import { IGroceryItem } from "../types";
-import { DynamoDBTables, putItem, getItem, updateItem } from "@kairos-lambdas-libs/dynamodb";
+import { DynamoDBTable, putItem, updateItem, query, DynamoDBIndex } from "@kairos-lambdas-libs/dynamodb";
 import { randomUUID } from "node:crypto";
 
 const findExistingItem = async (itemProperties: Partial<IGroceryItem>): Promise<IGroceryItem | null> => {
-  return await getItem<IGroceryItem>({
-    tableName: DynamoDBTables.GROCERY_LIST,
-    item: itemProperties,
+  const items = await query<IGroceryItem>({
+    tableName: DynamoDBTable.GROCERY_LIST,
+    indexName: DynamoDBIndex.GROCERY_LIST_NAME_UNIT,
+    attributes: itemProperties,
   });
+
+  return items?.[0] ?? null;
 };
 
 const updateExistingItem = async (id: string, fields: Partial<IGroceryItem>) => {
   await updateItem({
-    tableName: DynamoDBTables.GROCERY_LIST,
+    tableName: DynamoDBTable.GROCERY_LIST,
     key: {
       id,
     },
@@ -25,7 +28,7 @@ const createNewItem = async (item: Omit<IGroceryItem, "id">): Promise<string> =>
     const id = randomUUID();
 
     await putItem({
-      tableName: DynamoDBTables.GROCERY_LIST,
+      tableName: DynamoDBTable.GROCERY_LIST,
       item: {
         id,
         ...item,

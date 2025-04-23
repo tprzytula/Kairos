@@ -1,5 +1,5 @@
 import { putItem } from ".";
-import { DynamoDBTables } from "../../enums";
+import { DynamoDBTable } from "../../enums";
 import * as Client from '../../client';
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 
@@ -11,14 +11,14 @@ describe("Given the putItem function", () => {
     mockDocumentClient();
 
     await putItem({
-      tableName: DynamoDBTables.GROCERY_LIST,
+      tableName: DynamoDBTable.GROCERY_LIST,
       item: {
         id: "1",
       },
     });
 
     expect(PutCommand).toHaveBeenCalledWith({
-      TableName: DynamoDBTables.GROCERY_LIST,
+      TableName: DynamoDBTable.GROCERY_LIST,
       Item: {
           id: "1"
       },
@@ -29,7 +29,7 @@ describe("Given the putItem function", () => {
     mockDocumentClient();
 
     const items = await putItem({
-      tableName: DynamoDBTables.GROCERY_LIST,
+      tableName: DynamoDBTable.GROCERY_LIST,
       item: {
         id: "1",
       },

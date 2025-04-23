@@ -1,7 +1,6 @@
-import { getItem, updateItem, putItem } from "@kairos-lambdas-libs/dynamodb";
-import { DynamoDBTables } from "@kairos-lambdas-libs/dynamodb";
+import { updateItem, putItem, query } from "@kairos-lambdas-libs/dynamodb";
+import { DynamoDBTable, DynamoDBIndex } from "@kairos-lambdas-libs/dynamodb";
 import { upsertItem } from ".";
-import { IRequestBody } from "../body/types";
 import { IGroceryItem } from "../types";
 
 jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
@@ -9,15 +8,17 @@ jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
     getItem: jest.fn(),
     putItem: jest.fn(),
     updateItem: jest.fn(),
+    query: jest.fn(),
 }));
 
 describe('Given the upsertItem function', () => {
     it('should check if the item already exists', async () => {
         await upsertItem(EXAMPLE_GROCERY_ITEM);
 
-        expect(jest.mocked(getItem)).toHaveBeenCalledWith({
-            tableName: DynamoDBTables.GROCERY_LIST,
-            item: {
+        expect(jest.mocked(query)).toHaveBeenCalledWith({
+            tableName: DynamoDBTable.GROCERY_LIST,
+            indexName: DynamoDBIndex.GROCERY_LIST_NAME_UNIT,
+            attributes: {
                 name: EXAMPLE_GROCERY_ITEM.name,
                 unit: EXAMPLE_GROCERY_ITEM.unit,
             },
@@ -26,20 +27,19 @@ describe('Given the upsertItem function', () => {
 
     describe('When the item already exists', () => {
         it('should update the existing item', async () => {
-            jest.mocked(getItem).mockResolvedValue(EXAMPLE_GROCERY_ITEM);
+            jest.mocked(query).mockResolvedValue([EXAMPLE_GROCERY_ITEM]);
 
             await upsertItem(EXAMPLE_GROCERY_ITEM);
 
             expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
                 key: { id: "1" },
-                tableName: "GroceryList",
+                tableName: DynamoDBTable.GROCERY_LIST,
                 updatedFields: { quantity: "2" }
             });
         });
 
         it('should return the id of the updated item', async () => {
-            jest.mocked(getItem).mockResolvedValue(EXAMPLE_GROCERY_ITEM);
-
+            jest.mocked(query).mockResolvedValue([EXAMPLE_GROCERY_ITEM]);
             const result = await upsertItem(EXAMPLE_GROCERY_ITEM);
 
             expect(result).toEqual({ id: "1", statusCode: 200 });
@@ -48,12 +48,12 @@ describe('Given the upsertItem function', () => {
 
     describe('When the item does not exist', () => {
         it('should create a new item', async () => {
-            jest.mocked(getItem).mockResolvedValue(null);
+            jest.mocked(query).mockResolvedValue([]);
 
             await upsertItem(EXAMPLE_GROCERY_ITEM);
 
             expect(jest.mocked(putItem)).toHaveBeenCalledWith({
-                tableName: DynamoDBTables.GROCERY_LIST,
+                tableName: DynamoDBTable.GROCERY_LIST,
                 item: expect.objectContaining({
                     name: EXAMPLE_GROCERY_ITEM.name,
                     quantity: EXAMPLE_GROCERY_ITEM.quantity,
@@ -64,7 +64,7 @@ describe('Given the upsertItem function', () => {
         });
 
         it('should return the id of the new item', async () => {
-            jest.mocked(getItem).mockResolvedValue(null);
+            jest.mocked(query).mockResolvedValue([]);
 
             const result = await upsertItem(EXAMPLE_GROCERY_ITEM);
 

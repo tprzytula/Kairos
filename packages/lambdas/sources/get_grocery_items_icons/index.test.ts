@@ -1,6 +1,6 @@
 import * as DynamoDB from "@kairos-lambdas-libs/dynamodb";
 
-const { DynamoDBTables } = DynamoDB;
+const { DynamoDBTable } = DynamoDB;
 
 import { handler } from "./index";
 
@@ -16,7 +16,7 @@ describe('Given the get_grocery_items_icons lambda handler', () => {
         await handler({} as any, {} as any, {} as any);
 
         expect(scanSpy).toHaveBeenCalledWith({
-            tableName: DynamoDBTables.GROCERY_ITEMS_ICONS,
+            tableName: DynamoDBTable.GROCERY_ITEMS_ICONS,
         });
     });
 
