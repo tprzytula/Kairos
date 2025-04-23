@@ -161,7 +161,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/default_units"
+                  $ref: "#/components/schemas/defaultunits"
 components:
   schemas:
     details:
@@ -188,7 +188,7 @@ components:
           type: string
         path:
           type: string
-    default_units:
+    defaultunits:
       title: Grocery Items Default Units
       type: object
       properties:
