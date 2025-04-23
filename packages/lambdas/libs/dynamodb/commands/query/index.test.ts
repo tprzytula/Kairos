@@ -19,8 +19,9 @@ describe("Given the query command", () => {
     expect(QueryCommand).toHaveBeenCalledWith({
       TableName: DynamoDBTable.GROCERY_LIST,
       IndexName: "test",
-      KeyConditionExpression: "name = :name",
+      KeyConditionExpression: "#name = :name",
       ExpressionAttributeValues: { ":name": "test" },
+      ExpressionAttributeNames: { "#name": "name" },
     });
   });
 
