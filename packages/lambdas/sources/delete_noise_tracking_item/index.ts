@@ -5,9 +5,9 @@ import { DynamoDBTable, deleteItem } from "@kairos-lambdas-libs/dynamodb";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event) => {
-    const { id } = event.pathParameters ?? {};
+    const { timestamp } = event.pathParameters ?? {};
 
-    if (!id || typeof id !== "string") {
+    if (!timestamp) {
       return createResponse({
         statusCode: 400,
       });
@@ -15,9 +15,9 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
 
     await deleteItem({
       key: {
-        id,
+        timestamp,
       },
-      tableName: DynamoDBTable.GROCERY_LIST,
+      tableName: DynamoDBTable.NOISE_TRACKING,
     });
 
     return createResponse({

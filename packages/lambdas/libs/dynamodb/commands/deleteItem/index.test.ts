@@ -10,7 +10,7 @@ describe("Given the deleteItem function", () => {
   it("should pass the right table name and id to the deleteItem command", async () => {
     mockDocumentClient();
 
-    await deleteItem({ id: "1", tableName: DynamoDBTable.GROCERY_LIST });
+    await deleteItem({ key: { id: "1" }, tableName: DynamoDBTable.GROCERY_LIST });
 
     expect(DeleteCommand).toHaveBeenCalledWith({
       TableName: DynamoDBTable.GROCERY_LIST,
@@ -24,7 +24,7 @@ describe("Given the deleteItem function", () => {
     mockDocumentClient();
 
     const items = await deleteItem({
-      id: "1",
+      key: { id: "1" },
       tableName: DynamoDBTable.GROCERY_LIST,
     });
 

@@ -9,39 +9,31 @@ jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
     deleteItem: jest.fn(),
 }));
 
-describe('Given the delete_grocery_item lambda handler', () => {
-    it('should make a delete request to the grocery list table', async () => {
+describe('Given the delete_noise_tracking_item lambda handler', () => {
+    it('should make a delete request to the noise tracking table', async () => {
         const deleteSpy = mockDelete();
 
-        await runHandler({ pathParameters: { id: "1" } });
+        await runHandler({ pathParameters: { timestamp: 1714003200000 } });
 
         expect(deleteSpy).toHaveBeenCalledWith({
             key: {
-                id: "1",
+                timestamp: 1714003200000,
             },
-            tableName: DynamoDBTable.GROCERY_LIST,
+            tableName: DynamoDBTable.NOISE_TRACKING,
         });
     });
 
     it('should return status 200', async () => {
         mockDelete();
 
-        const result = await runHandler({ pathParameters: { id: "1" } });
+        const result = await runHandler({ pathParameters: { timestamp: 1714003200000 } });
 
         expect(result.statusCode).toBe(200);
     });
 
-    describe('When the id is not provided', () => {
+    describe('When the timestamp is not provided', () => {
         it('should return status 400', async () => {
             const result = await runHandler({ pathParameters: {} });
-
-            expect(result.statusCode).toBe(400);
-        });
-    });
-
-    describe('When the id is not a string', () => {
-        it('should return status 400', async () => {
-            const result = await runHandler({ pathParameters: { id: 1 } });
 
             expect(result.statusCode).toBe(400);
         });
@@ -54,7 +46,7 @@ describe('Given the delete_grocery_item lambda handler', () => {
             const deleteSpy = mockDelete();
             deleteSpy.mockRejectedValue(new Error('Delete failed'));
 
-            await runHandler({ pathParameters: { id: "1" } });
+            await runHandler({ pathParameters: { timestamp: 1714003200000 } });
 
             expect(logSpy).toHaveBeenCalledWith('Handler Threw Exception:', new Error('Delete failed'));
         });
@@ -63,7 +55,7 @@ describe('Given the delete_grocery_item lambda handler', () => {
             const deleteSpy = mockDelete();
             deleteSpy.mockRejectedValue(new Error('Delete failed'));
 
-            const result = await runHandler({ pathParameters: { id: "1" } });
+            const result = await runHandler({ pathParameters: { timestamp: "1714003200000" } });
 
             expect(result).toEqual({
                 body: "Internal Server Error",
@@ -79,7 +71,7 @@ describe('Given the delete_grocery_item lambda handler', () => {
 const mockDelete = () => jest.spyOn(DynamoDB, 'deleteItem');
 
 interface IAPIGatewayProxyEvent {
-    pathParameters: { id?: unknown };
+    pathParameters: { timestamp?: unknown };
 }
 
 const runHandler = async ({ pathParameters }: IAPIGatewayProxyEvent) => {
