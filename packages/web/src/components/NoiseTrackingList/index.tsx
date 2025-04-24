@@ -9,7 +9,7 @@ const PlaceholderComponent = () => (
   </Container>
 )
 
-export const NoiseTrackingList = () => {
+const NoiseTrackingList = () => {
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
 
   if (isLoading) {

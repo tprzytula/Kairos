@@ -1,37 +1,28 @@
 import { render, screen } from "@testing-library/react"
-import GroceryList from "."
-import * as GroceryListProvider from '../../providers/GroceryListProvider'
-import { IState } from "../../providers/GroceryListProvider/types"
-import { GroceryItemUnit } from "../../enums/groceryItem"
+import NoiseTrackingList from "."
+import * as NoiseTrackingProvider from "../../providers/NoiseTrackingProvider"
+import { IState } from "../../providers/NoiseTrackingProvider/types"
 
-describe('Given the GroceryList component', () => {
-  it('should render the grocery list', () => {
-    jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue(EXAMPLE_GROCERY_LIST_CONTEXT)
+describe('Given the NoiseTrackingList component', () => {
+  it('should render the noise tracking list', () => {
+    jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue(EXAMPLE_NOISE_TRACKING_CONTEXT)
 
-    render(<GroceryList />)
+    render(<NoiseTrackingList />)
 
-    expect(screen.getByText('Milk')).toBeVisible()
-    expect(screen.getByText('Bread')).toBeVisible()
+    expect(screen.getByText('25 April 2024 at 01:00')).toBeVisible()
+    expect(screen.getByText('26 June 2027 at 10:46')).toBeVisible()
   })
 })
 
-const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
-  groceryList: [
+const EXAMPLE_NOISE_TRACKING_CONTEXT: IState = {
+  noiseTrackingItems: [
     {
-      id: '1',
-      name: 'Milk',
-      quantity: 5,
-      unit: GroceryItemUnit.LITER,
-      imagePath: 'https://hostname.com/image.png',
+      timestamp: 1714003200000,
     },
     {
-      id: '2',
-      name: 'Bread',
-      quantity: 2,
-      unit: GroceryItemUnit.UNIT,
-      imagePath: 'https://hostname.com/image.png',
+      timestamp: 1814003200000,
     },
   ],
   isLoading: false,
-  refetchGroceryList: jest.fn(),
+  refetchNoiseTrackingItems: jest.fn(),
 }

@@ -99,10 +99,10 @@ describe('Given the useGroceryListContext hook', () => {
 const EXAMPLE_NOISE_TRACKING_ITEMS: Array<INoiseTrackingItem> = [
   {
     timestamp: 1714003200000,
-    },
-    {
-      timestamp: 1714003200000,
-    },
+  },
+  {
+    timestamp: 1714003200000,
+  },
 ]
 
 const renderNoiseTrackingProvider = () => {
