@@ -26,7 +26,7 @@ describe('Given the get_noise_tracking_items lambda handler', () => {
         await handler({} as any, {} as any, {} as any);
 
         expect(logSpy).toHaveBeenCalledWith('Returning items', {
-            count: 2,
+            count: 3,
             items: JSON.stringify(EXAMPLE_DB_NOISE_TRACKING_ITEMS),
         });
     });
@@ -73,9 +73,12 @@ const mockScan = () => jest.spyOn(DynamoDB, 'scan').mockResolvedValue(EXAMPLE_DB
 
 const EXAMPLE_DB_NOISE_TRACKING_ITEMS: Record<string, unknown>[] = [
     {
-        timestamp: "2021-01-01T00:00:00.000Z",
+        timestamp: 1714003200000,
     },
     {
-        timestamp: "2021-01-01T00:00:00.000Z",
+        timestamp: 1814003200000,
+    },
+    {
+        timestamp: 1614003200000,
     },
 ];

@@ -4,3 +4,7 @@ export const logResponse = (items: Array<Record<string, unknown>>) => {
     items: JSON.stringify(items),
   });
 };
+
+export const sortItems = (items: Array<Record<string, number>>) => {
+  return items.sort((a, b) => a.timestamp - b.timestamp);
+};
