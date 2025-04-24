@@ -30,7 +30,7 @@ const NoiseTrackingList = () => {
       <AddNoiseTrackingItemButton variant="contained" onClick={handleAddNoiseTrackingItem}>
         Add Noise Tracking Item
       </AddNoiseTrackingItemButton>
-      <Typography variant="h6">Noise Tracking Items</Typography>
+      <Typography variant="h6">Noise Tracking Log</Typography>
       {noiseTrackingItems.map(({ timestamp }) => (
         <NoiseTrackingItem key={timestamp} timestamp={timestamp} />
       ))}
