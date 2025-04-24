@@ -25,9 +25,9 @@ describe("Given the sortItems function", () => {
     const sortedItems = sortItems(items);
 
     expect(sortedItems).toEqual([
-      { timestamp: 1614003200000 },
-      { timestamp: 1714003200000 },
       { timestamp: 1814003200000 },
+      { timestamp: 1714003200000 },
+      { timestamp: 1614003200000 },
     ]);
   });
 });

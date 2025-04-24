@@ -6,5 +6,5 @@ export const logResponse = (items: Array<Record<string, unknown>>) => {
 };
 
 export const sortItems = (items: Array<Record<string, number>>) => {
-  return items.sort((a, b) => a.timestamp - b.timestamp);
+  return items.sort((a, b) => b.timestamp - a.timestamp);
 };
