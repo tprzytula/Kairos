@@ -2,3 +2,4 @@ export const NOISE_TRACKING_API_URL = 'https://crff1u9wbc.execute-api.eu-west-2.
 
 export * from './add'
 export * from './retrieve'
+export * from './remove'

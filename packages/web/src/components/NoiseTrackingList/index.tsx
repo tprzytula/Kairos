@@ -1,5 +1,8 @@
 import { useNoiseTrackingContext } from '../../providers/NoiseTrackingProvider';
-import { Container } from './index.styled';
+import { AddNoiseTrackingItemButton, Container } from './index.styled';
+import { addNoiseTrackingItem } from '../../api/noiseTracking';
+import NoiseTrackingItem from '../NoiseTrackingItem';
+import { Typography } from '@mui/material';
 
 const PlaceholderComponent = () => (
   <Container>
@@ -12,20 +15,22 @@ const PlaceholderComponent = () => (
 const NoiseTrackingList = () => {
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
 
+  const handleAddNoiseTrackingItem = () => {
+    addNoiseTrackingItem()
+  }
+
   if (isLoading) {
     return <PlaceholderComponent />
   }
 
   return (
     <Container>
+      <AddNoiseTrackingItemButton variant="contained" onClick={handleAddNoiseTrackingItem}>
+        Add Noise Tracking Item
+      </AddNoiseTrackingItemButton>
+      <Typography variant="h6">Noise Tracking Items</Typography>
       {noiseTrackingItems.map(({ timestamp }) => (
-        <div key={timestamp}>{new Date(timestamp).toLocaleDateString('en-GB', { 
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        })}</div>
+        <NoiseTrackingItem key={timestamp} timestamp={timestamp} />
       ))}
     </Container>
   );
