@@ -13,6 +13,14 @@ const getDateString = (timestamp: number) => {
   })
 }
 
+const isFromToday = (timestamp: number) => {
+  const today = new Date();
+  const itemDate = new Date(timestamp);
+  return today.getDate() === itemDate.getDate() &&
+    today.getMonth() === itemDate.getMonth() &&
+    today.getFullYear() === itemDate.getFullYear();
+}
+
 const NoiseTrackingItem = ({ timestamp }: { timestamp: number }) => {
   const { refetchNoiseTrackingItems } = useNoiseTrackingContext();
 
@@ -25,7 +33,9 @@ const NoiseTrackingItem = ({ timestamp }: { timestamp: number }) => {
   return (
     <Container>
       <Typography variant="body1">{getDateString(timestamp)}</Typography>
-      <DeleteButton color="error" onClick={handleDeleteNoiseTrackingItem}>X</DeleteButton>
+      {isFromToday(timestamp) && (
+        <DeleteButton color="error" onClick={handleDeleteNoiseTrackingItem}>X</DeleteButton>
+      )}
     </Container>
   );
 };
