@@ -1,6 +1,7 @@
 import { Container, DeleteButton } from './index.styled';
 import { Typography } from '@mui/material';
 import { removeNoiseTrackingItem } from '../../api/noiseTracking';
+import { useNoiseTrackingContext } from '../../providers/NoiseTrackingProvider';
 
 const getDateString = (timestamp: number) => {
   return new Date(timestamp).toLocaleDateString('en-GB', { 
@@ -13,8 +14,12 @@ const getDateString = (timestamp: number) => {
 }
 
 const NoiseTrackingItem = ({ timestamp }: { timestamp: number }) => {
+  const { refetchNoiseTrackingItems } = useNoiseTrackingContext();
+
   const handleDeleteNoiseTrackingItem = () => {
-    removeNoiseTrackingItem(timestamp)
+    removeNoiseTrackingItem(timestamp).then(() => {
+      refetchNoiseTrackingItems()
+    })
   }
 
   return (

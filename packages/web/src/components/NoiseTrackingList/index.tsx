@@ -16,8 +16,9 @@ const NoiseTrackingList = () => {
   const { noiseTrackingItems, isLoading, refetchNoiseTrackingItems } = useNoiseTrackingContext();
 
   const handleAddNoiseTrackingItem = () => {
-    addNoiseTrackingItem()
-    refetchNoiseTrackingItems()
+    addNoiseTrackingItem().then(() => {
+      refetchNoiseTrackingItems()
+    })
   }
 
   if (isLoading) {
