@@ -1,7 +1,6 @@
 export enum DynamoDBTable {
   GROCERY_LIST = "GroceryList",
-  GROCERY_ITEMS_ICONS = "GroceryItemsIcons",
-  GROCERY_ITEMS_DEFAULT_UNITS = "GroceryItemsDefaultUnits",
+  GROCERY_ITEMS_DEFAULTS = "GroceryItemsDefaults",
   NOISE_TRACKING = "NoiseTracking",
 }
 

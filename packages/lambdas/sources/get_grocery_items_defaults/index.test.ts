@@ -9,14 +9,14 @@ jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
     scan: jest.fn(),
 }));
 
-describe('Given the get_grocery_items_icons lambda handler', () => {
-    it('should make a scan request to the grocery items icons table', async () => {
+describe('Given the get_grocery_items_defaults lambda handler', () => {
+    it('should make a scan request to the grocery items defaults table', async () => {
         const scanSpy = mockScan();
 
         await handler({} as any, {} as any, {} as any);
 
         expect(scanSpy).toHaveBeenCalledWith({
-            tableName: DynamoDBTable.GROCERY_ITEMS_ICONS,
+            tableName: DynamoDBTable.GROCERY_ITEMS_DEFAULTS,
         });
     });
 
@@ -27,17 +27,17 @@ describe('Given the get_grocery_items_icons lambda handler', () => {
 
         expect(logSpy).toHaveBeenCalledWith('Returning items', {
             count: 2,
-            items: JSON.stringify(EXAMPLE_DB_GROCERY_ITEMS_ICONS),
+            items: JSON.stringify(EXAMPLE_DB_GROCERY_ITEMS_DEFAULTS),
         });
     });
 
-    it('should return status 200 and a list of grocery items icons', async () => {
+    it('should return status 200 and a list of grocery items defaults', async () => {
         mockScan();
 
         const result = await handler({} as any, {} as any, {} as any);
 
         expect(result.statusCode).toBe(200);
-        expect(result.body).toBe(JSON.stringify(EXAMPLE_DB_GROCERY_ITEMS_ICONS));
+        expect(result.body).toBe(JSON.stringify(EXAMPLE_DB_GROCERY_ITEMS_DEFAULTS));
     });
 
     describe('When the scan request fails', () => {
@@ -69,15 +69,17 @@ describe('Given the get_grocery_items_icons lambda handler', () => {
     });
 });
 
-const mockScan = () => jest.spyOn(DynamoDB, 'scan').mockResolvedValue(EXAMPLE_DB_GROCERY_ITEMS_ICONS);
+const mockScan = () => jest.spyOn(DynamoDB, 'scan').mockResolvedValue(EXAMPLE_DB_GROCERY_ITEMS_DEFAULTS);
 
-const EXAMPLE_DB_GROCERY_ITEMS_ICONS: Record<string, unknown>[] = [
+const EXAMPLE_DB_GROCERY_ITEMS_DEFAULTS: Record<string, unknown>[] = [
     {
         name: "Apple",
-        path: "/assets/images/apple.png",
+        unit: "unit(s)",
+        icon: "/assets/images/apple.png",
     },
     {
-        name: "Banana",
-        path: "/assets/images/banana.png",
+        name: "Beef",
+        unit: "kilogram(s)",
+        icon: "/assets/images/beef.png",
     },
 ];
