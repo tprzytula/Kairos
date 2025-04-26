@@ -3,6 +3,8 @@ import AddItemForm from './index'
 import { IFormField } from './types'
 import { FormFieldType } from './enums'
 import { useForm } from './hooks/useForm'
+import { IItemDefault } from '../../hooks/useItemDefaults/types'
+import { GroceryItemUnit } from '../../enums/groceryItem'
 
 jest.mock('../../api/groceryList');
 jest.mock('./hooks/useForm');
@@ -109,10 +111,18 @@ const submitForm = async () => {
 
 const renderAddItemForm = () => {
     const onSubmit = jest.fn()
-    const component = render(<AddItemForm fields={EXAMPLE_FIELDS} onSubmit={onSubmit} />)
+    const component = render(<AddItemForm defaults={EXAMPLE_DEFAULTS} fields={EXAMPLE_FIELDS} onSubmit={onSubmit} />)
 
     return { ...component, onSubmit }
 }
+
+const EXAMPLE_DEFAULTS: Array<IItemDefault> = [
+    {
+        name: 'apple',
+        unit: GroceryItemUnit.KILOGRAM,
+        icon: '/assets/icons/apple.png'
+    }
+]
 
 const EXAMPLE_FIELDS: Array<IFormField> = [
     {
