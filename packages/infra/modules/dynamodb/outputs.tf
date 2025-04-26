@@ -9,3 +9,7 @@ output "noise_tracking_arn" {
 output "grocery_items_defaults_arn" {
   value = aws_dynamodb_table.grocery_items_defaults.arn
 }
+
+output "todo_list_arn" {
+  value = aws_dynamodb_table.todo_list.arn
+}
