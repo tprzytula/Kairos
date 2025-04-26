@@ -1,18 +1,12 @@
 import { ReactNode } from 'react'
-import { GroceryItem } from '../AppStateProvider/types'
-
-export interface IGroceryItem {
-    id: string
-    name: string
-    quantity: number
-}
+import { IGroceryItem } from '../../api/groceryList/retrieve/types'
 
 export interface IGroceryListProviderProps {
     children: ReactNode
 }
 
 export interface IState {
-    groceryList: Array<GroceryItem>
+    groceryList: Array<IGroceryItem>
     isLoading: boolean
     refetchGroceryList: () => Promise<void>
 }

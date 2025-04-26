@@ -6,33 +6,35 @@ import { TextField } from "./components/TextField";
 import { Select } from "./components/Select";
 import { FormFieldType } from "./enums";
 import { GroceryItemImage } from "./index.styled";
-import { retrieveGroceryListIcons } from "../../api/groceryList";
+import { retrieveGroceryListDefaults } from "../../api/groceryList";
+import { IGroceryItemDefault } from "../../api/groceryList/retrieve/types";
 
 const DEFAULT_ICON = '/assets/images/generic-grocery-item.png';
 
 const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
     const [imagePath, setImagePath] = useState<string>(DEFAULT_ICON);
-    const [icons, setIcons] = useState<Array<IIcon>>([]);
+    const [defaults, setDefaults] = useState<Array<IGroceryItemDefault>>([]);
+
+    const fetchDefaults = useCallback(async () => {
+        const defaults = await retrieveGroceryListDefaults();
+        setDefaults(defaults);
+    }, []);
 
     useEffect(() => {
-        const fetchIcons = async () => {
-            const icons = await retrieveGroceryListIcons();
-            setIcons(icons);
-        };
-        fetchIcons();
-    }, []);
+        fetchDefaults();
+    }, [fetchDefaults]);
 
     const handleValueChange = useCallback((name: string, value: string | number) => {
         if (name === 'name') {
-            const icon = icons.find((icon) => value.toString().toLowerCase().includes(icon.name.toLowerCase()));
+            const defaultItem = defaults.find((defaultItem) => value.toString().toLowerCase().includes(defaultItem.name.toLowerCase()));
 
-            if (icon) {
-                setImagePath(icon.path);
+            if (defaultItem && defaultItem.icon) {
+                setImagePath(defaultItem.icon);
             } else {
                 setImagePath(DEFAULT_ICON);
             }
         }
-    }, [icons]);
+    }, [defaults]);
 
     const handleOnSubmit = useCallback(async (fields: Array<IFormField>) => {
         onSubmit(fields, imagePath);
