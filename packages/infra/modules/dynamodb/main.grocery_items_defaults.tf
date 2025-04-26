@@ -1,5 +1,5 @@
-resource "aws_dynamodb_table" "grocery_items_icons" {
-  name           = "GroceryItemsIcons"
+resource "aws_dynamodb_table" "grocery_items_defaults" {
+  name           = "GroceryItemsDefaults"
   billing_mode   = "PROVISIONED"
   read_capacity  = 1
   write_capacity = 1

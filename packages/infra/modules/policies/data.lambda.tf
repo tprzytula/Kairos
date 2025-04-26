@@ -27,11 +27,9 @@ data "aws_iam_policy_document" "lambda_policies" {
       effect = "Allow"
       resources = [
         var.dynamodb_grocery_list_arn,
-        var.dynamodb_grocery_items_icons_arn,
-        var.dynamodb_grocery_items_default_units_arn,
+        var.dynamodb_grocery_items_defaults_arn,
         "${var.dynamodb_grocery_list_arn}/index/*",
-        "${var.dynamodb_grocery_items_icons_arn}/index/*",
-        "${var.dynamodb_grocery_items_default_units_arn}/index/*",
+        "${var.dynamodb_grocery_items_defaults_arn}/index/*",
         var.dynamodb_noise_tracking_arn,
         "${var.dynamodb_noise_tracking_arn}/index/*",
       ]
@@ -55,12 +53,10 @@ data "aws_iam_policy_document" "lambda_policies" {
       effect = "Allow"
       resources = [
         var.dynamodb_grocery_list_arn,
-        var.dynamodb_grocery_items_icons_arn,
-        var.dynamodb_grocery_items_default_units_arn,
+        var.dynamodb_grocery_items_defaults_arn,
         var.dynamodb_noise_tracking_arn,
         "${var.dynamodb_grocery_list_arn}/index/*",
-        "${var.dynamodb_grocery_items_icons_arn}/index/*",
-        "${var.dynamodb_grocery_items_default_units_arn}/index/*",
+        "${var.dynamodb_grocery_items_defaults_arn}/index/*",
         "${var.dynamodb_noise_tracking_arn}/index/*",
       ]
     }
