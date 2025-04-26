@@ -1,7 +1,7 @@
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import GroceryItem from '../GroceryItem';
 import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
-import { Container } from './index.styled';
+import { Container, EmptyListContainer, EmptyListMessage } from './index.styled';
 
 const PlaceholderComponent = () => (
   <Container>
@@ -11,11 +11,21 @@ const PlaceholderComponent = () => (
   </Container>
 )
 
+const EmptyListComponent = () => (
+  <EmptyListContainer>
+    <EmptyListMessage>No items in your grocery list</EmptyListMessage>
+  </EmptyListContainer>
+)
+
 export const GroceryList = () => {
   const { groceryList, isLoading } = useGroceryListContext();
 
   if (isLoading) {
     return <PlaceholderComponent />
+  }
+
+  if (groceryList.length === 0) {
+    return <EmptyListComponent />
   }
 
   return (

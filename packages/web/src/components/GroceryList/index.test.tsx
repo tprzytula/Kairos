@@ -13,6 +13,34 @@ describe('Given the GroceryList component', () => {
     expect(screen.getByText('Milk')).toBeVisible()
     expect(screen.getByText('Bread')).toBeVisible()
   })
+
+  describe('When the grocery list is empty', () => {
+    it('should render the empty list message', () => {
+      jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
+        groceryList: [],
+        isLoading: false,
+        refetchGroceryList: jest.fn(),
+      })
+
+      render(<GroceryList />)
+
+      expect(screen.getByText('No items in your grocery list')).toBeVisible()
+    })
+  })
+
+  describe('When the grocery list is loading', () => {
+    it('should render the loading placeholder', () => {
+      jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
+        groceryList: [],
+        isLoading: true,
+        refetchGroceryList: jest.fn(),
+      })
+
+      render(<GroceryList />)
+
+      expect(screen.getAllByLabelText('Grocery item placeholder')).toHaveLength(20)
+    })
+  })
 })
 
 const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
