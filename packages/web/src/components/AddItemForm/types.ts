@@ -24,3 +24,8 @@ export interface IHandleChangeParams {
 export type IUpdateFieldValueParams = IHandleChangeParams & {
     prevFields: Array<IFormField>;
 }
+
+export interface IIcon {
+    name: string;
+    path: string;
+}

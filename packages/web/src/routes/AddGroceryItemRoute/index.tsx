@@ -48,7 +48,7 @@ export const AddGroceryItemRoute = () => {
     showAlert({ description, severity }, dispatch)
   }, [dispatch])
 
-  const onSubmit = async (fields: Array<IFormField>, imagePath: string) => {
+  const onSubmit = useCallback(async (fields: Array<IFormField>, imagePath: string) => {
     try {
       const [name, quantity, unit] = validateFields(fields)
 
@@ -65,7 +65,7 @@ export const AddGroceryItemRoute = () => {
       console.error(error)
       createAlert('Error creating grocery item', 'error')
     }
-  }
+  }, [createAlert, navigate])
 
   return (
     <StandardLayout
