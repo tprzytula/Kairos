@@ -8,6 +8,7 @@ resource "aws_api_gateway_rest_api" "rest_api" {
     add_noise_tracking_item         = var.lambda_functions["add_noise_tracking_item"].invoke_arn,
     get_noise_tracking_items        = var.lambda_functions["get_noise_tracking_items"].invoke_arn,
     delete_noise_tracking_item      = var.lambda_functions["delete_noise_tracking_item"].invoke_arn,
+    get_grocery_items_defaults      = var.lambda_functions["get_grocery_items_defaults"].invoke_arn,
   })
 
   endpoint_configuration {

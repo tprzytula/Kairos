@@ -130,6 +130,23 @@ paths:
           application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
+  /grocery_list/items_defaults:
+    get:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${get_grocery_items_defaults}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Grocery items defaults retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/groceryItemsDefaults"
   /noise_tracking:
     get:
       x-amazon-apigateway-integration:
@@ -238,8 +255,8 @@ components:
     details:
       title: Grocery Item Details
       required:
+        - id
         - name
-        - quantity
       type: object
       properties:
         id:
@@ -254,10 +271,23 @@ components:
     noiseTrackingItem:
       title: Noise Tracking Item
       type: object
+      required:
+        - timestamp
       properties:
         timestamp:
           type: number
-
+    groceryItemsDefaults:
+      title: Grocery Items Defaults
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        unit:
+          type: string
+        icon:
+          type: string
 x-amazon-apigateway-request-validators:
   Validate body:
     validateRequestParameters: false

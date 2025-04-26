@@ -43,6 +43,12 @@ locals {
       permissions = {
         database = "read-write"
       }
+    },
+    "get_grocery_items_defaults" = {
+      environment_variables = {}
+      permissions = {
+        database = "read-only"
+      }
     }
   }
 }
