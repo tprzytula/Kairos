@@ -26,18 +26,6 @@ locals {
         database = "read-write"
       }
     }
-    "get_grocery_items_icons" = {
-      environment_variables = {}
-      permissions = {
-        database = "read-only"
-      }
-    }
-    "get_grocery_items_default_units" = {
-      environment_variables = {}
-      permissions = {
-        database = "read-only"
-      }
-    }
     "add_noise_tracking_item" = {
       environment_variables = {}
       permissions = {
