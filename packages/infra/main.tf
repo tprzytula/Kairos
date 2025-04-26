@@ -33,8 +33,7 @@ module "policies" {
   random_name                              = module.random.random_name
   lambda_functions                         = module.lambda.lambda_functions
   dynamodb_grocery_list_arn                = module.dynamodb.grocery_list_arn
-  dynamodb_grocery_items_icons_arn         = module.dynamodb.grocery_items_icons_arn
-  dynamodb_grocery_items_default_units_arn = module.dynamodb.grocery_items_default_units_arn
+  dynamodb_grocery_items_defaults_arn      = module.dynamodb.grocery_items_defaults_arn
   dynamodb_noise_tracking_arn              = module.dynamodb.noise_tracking_arn
   s3_kairos_web_arn                        = module.s3.kairos_web_arn
   s3_kairos_lambdas_arn                    = module.s3.kairos_lambdas_arn
