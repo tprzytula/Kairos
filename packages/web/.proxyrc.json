@@ -1,5 +1,5 @@
 {
-    "/assets/images": {
+    "/assets/icons": {
         "target": "https://d1568c842iynon.cloudfront.net",
         "changeOrigin": true
     }

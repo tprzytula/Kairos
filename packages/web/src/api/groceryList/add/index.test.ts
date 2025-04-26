@@ -9,14 +9,14 @@ const exampleResponse = [
     name: 'Milk',
     quantity: 5,
     unit: GroceryItemUnit.LITER,
-    imagePath: '/assets/images/milk.png',
+    imagePath: '/assets/icons/milk.png',
   },
   {
     id: '2',
     name: 'Paper Towel',
     quantity: 2,
     unit: GroceryItemUnit.UNIT,
-    imagePath: '/assets/images/generic-grocery-item.png',
+    imagePath: '/assets/icons/generic-grocery-item.png',
   },
 ]
 
@@ -28,14 +28,14 @@ describe('Given the addGroceryItem function', () => {
       name: 'Milk',
       quantity: 5,
       unit: GroceryItemUnit.LITER,
-      imagePath: '/assets/images/milk.png',
+      imagePath: '/assets/icons/milk.png',
     })
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://crff1u9wbc.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items',
       {
         method: 'PUT',
-        body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, imagePath: '/assets/images/milk.png' }),
+        body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, imagePath: '/assets/icons/milk.png' }),
       }
     )
   })
@@ -47,7 +47,7 @@ describe('Given the addGroceryItem function', () => {
       name: 'Milk',
       quantity: 5,
       unit: GroceryItemUnit.LITER,
-      imagePath: '/assets/images/milk.png',
+      imagePath: '/assets/icons/milk.png',
     })
 
     expect(result).toStrictEqual(exampleResponse[0])
@@ -63,7 +63,7 @@ describe('Given the addGroceryItem function', () => {
         name: 'Milk',
         quantity: 5,
         unit: GroceryItemUnit.LITER,
-        imagePath: '/assets/images/milk.png',
+        imagePath: '/assets/icons/milk.png',
       })).rejects.toThrow('Failed to add a grocery item')
     })
   })
@@ -78,7 +78,7 @@ describe('Given the addGroceryItem function', () => {
         name: 'Milk',
         quantity: 5,
         unit: GroceryItemUnit.LITER,
-        imagePath: '/assets/images/milk.png',
+        imagePath: '/assets/icons/milk.png',
       })).rejects.toThrow('Unexpected response from API')
     })
   })
