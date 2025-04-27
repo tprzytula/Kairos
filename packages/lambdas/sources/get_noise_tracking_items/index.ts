@@ -9,7 +9,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(async () => {
     tableName: DynamoDBTable.NOISE_TRACKING,
   });
 
-  const sortedItems = sortItems(items as Array<Record<string, number>>);
+  const sortedItems = sortItems(items);
 
   logResponse(sortedItems);
 

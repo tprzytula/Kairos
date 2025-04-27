@@ -1,13 +1,14 @@
 import { getDocumentClient } from "../../client";
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { IQueryOptions } from "./types";
 import { getKeyConditionExpression, getExpressionAttributeValues, getExpressionAttributeNames } from "./utils";
+import { TableResponseMap } from "../types";
+import { IQueryOptions } from "./types";
 
-export const query = async <T extends Record<string, any>>({
+export const query = async <T extends keyof TableResponseMap>({
   attributes,
   tableName,
   indexName,
-}: IQueryOptions): Promise<T[]> => {
+}: IQueryOptions & { tableName: T }): Promise<Array<TableResponseMap[T]>> => {
   const documentClient = getDocumentClient();
   const command = new QueryCommand({
     TableName: tableName,
@@ -20,8 +21,8 @@ export const query = async <T extends Record<string, any>>({
   const { Items } = await documentClient.send(command);
 
   if (!Items) {
-    return [];
+    return [] as Array<TableResponseMap[T]>;
   }
 
-  return Items as T[];
+  return Items as Array<TableResponseMap[T]>;
 };

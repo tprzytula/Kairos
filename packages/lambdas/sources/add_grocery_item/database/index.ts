@@ -1,9 +1,9 @@
-import { IGroceryItem } from "../types";
 import { DynamoDBTable, putItem, updateItem, query, DynamoDBIndex } from "@kairos-lambdas-libs/dynamodb";
+import { IGroceryItem } from "@kairos-lambdas-libs/dynamodb/types/index";
 import { randomUUID } from "node:crypto";
 
 const findExistingItem = async (itemProperties: Partial<IGroceryItem>): Promise<IGroceryItem | null> => {
-  const items = await query<IGroceryItem>({
+  const items = await query({
     tableName: DynamoDBTable.GROCERY_LIST,
     indexName: DynamoDBIndex.GROCERY_LIST_NAME_UNIT,
     attributes: itemProperties,

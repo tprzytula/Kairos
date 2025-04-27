@@ -1,10 +1,11 @@
 import { IScanOptions } from "./types";
 import { getDocumentClient } from "../../client";
 import { ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { TableResponseMap } from "../types";
 
-export const scan = async ({
+export const scan = async <T extends keyof TableResponseMap>({
   tableName,
-}: IScanOptions): Promise<Record<string, unknown>[]> => {
+}: IScanOptions & { tableName: T }): Promise<Array<TableResponseMap[T]>> => {
   const documentClient = getDocumentClient();
 
   const command = new ScanCommand({
@@ -13,9 +14,9 @@ export const scan = async ({
 
   const { Items } = await documentClient.send(command);
 
-  if (Items) {
-    return Items;
+  if (!Items) {
+    return [] as Array<TableResponseMap[T]>;
   }
 
-  return [];
+  return Items as Array<TableResponseMap[T]>;
 };
