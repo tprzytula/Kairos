@@ -9,24 +9,119 @@ data "aws_iam_policy_document" "lambda_policies" {
       "logs:PutLogEvents",
     ]
     effect = "Allow"
-    resources = ["*"]
+    resources = [
+      "*"
+    ]
   }
 
   dynamic "statement" {
-    for_each = {
-      grocery_list           = var.dynamodb_grocery_list_arn
-      grocery_items_defaults = var.dynamodb_grocery_items_defaults_arn
-      noise_tracking         = var.dynamodb_noise_tracking_arn
-      todo_list              = var.dynamodb_todo_list_arn
-    }
+    for_each = each.value.permissions.database.grocery_list == local.permissions.read_only ? [each.key] : []
 
     content {
-      sid     = each.value.permissions.database[each.key] == local.permissions.read_only ? "DatabaseReadOnly" : "DatabaseReadWrite"
-      actions = each.value.permissions.database[each.key] == local.permissions.read_only ? local.database_read_only_actions : local.database_read_write_actions
+      sid     = "DatabaseReadOnly"
+      actions = local.database_read_only_actions
       effect  = "Allow"
       resources = [
-        each.value,
-        "${each.value}/index/*"
+        var.dynamodb_grocery_list_arn,
+        "${var.dynamodb_grocery_list_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.grocery_items_defaults == local.permissions.read_only ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadOnly"
+      actions = local.database_read_only_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_grocery_items_defaults_arn,
+        "${var.dynamodb_grocery_items_defaults_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.noise_tracking == local.permissions.read_only ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadOnly"
+      actions = local.database_read_only_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_noise_tracking_arn,
+        "${var.dynamodb_noise_tracking_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.todo_list == local.permissions.read_only ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadOnly"
+      actions = local.database_read_only_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_todo_list_arn,
+        "${var.dynamodb_todo_list_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.grocery_list == local.permissions.read_write ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadWrite"
+      actions = local.database_read_write_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_grocery_list_arn,
+        "${var.dynamodb_grocery_list_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.grocery_items_defaults == local.permissions.read_write ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadWrite"
+      actions = local.database_read_write_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_grocery_items_defaults_arn,
+        "${var.dynamodb_grocery_items_defaults_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.noise_tracking == local.permissions.read_write ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadWrite"
+      actions = local.database_read_write_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_noise_tracking_arn,
+        "${var.dynamodb_noise_tracking_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.todo_list == local.permissions.read_write ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadWrite"
+      actions = local.database_read_write_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_todo_list_arn,
+        "${var.dynamodb_todo_list_arn}/index/*",
       ]
     }
   }
