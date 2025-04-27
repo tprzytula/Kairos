@@ -19,7 +19,7 @@ locals {
   ]
 
   permissions = {
-    read_only = "read-only"
+    read_only  = "read-only"
     read_write = "read-write"
   }
 }
