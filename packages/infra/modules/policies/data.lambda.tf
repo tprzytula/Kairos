@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "lambda_policies" {
     }
 
     content {
-      sid     = each.value.permissions.database[each.key] == local.permissions.read_only ? "DatabaseReadOnly" : "DatabaseReadWrite"
+      sid     = format("%s%s", each.value.permissions.database[each.key] == local.permissions.read_only ? "DatabaseReadOnly" : "DatabaseReadWrite", title(each.key))
       actions = each.value.permissions.database[each.key] == local.permissions.read_only ? local.database_read_only_actions : local.database_read_write_actions
       effect  = "Allow"
       resources = [
