@@ -7,9 +7,6 @@ locals {
       permissions = {
         database = {
           grocery_list = "read-only"
-          grocery_items_defaults = "none"
-          noise_tracking = "none"
-          todo_list = "none"
         }
       }
     }
@@ -18,9 +15,6 @@ locals {
       permissions = {
         database = {
           grocery_list = "read-write"
-          grocery_items_defaults = "none"
-          noise_tracking = "none"
-          todo_list = "none"
         }
       }
     }
@@ -29,9 +23,6 @@ locals {
       permissions = {
         database = {
           grocery_list = "read-write"
-          grocery_items_defaults = "none"
-          noise_tracking = "none"
-          todo_list = "none"
         }
       }
     }
@@ -40,9 +31,6 @@ locals {
       permissions = {
         database = {
           grocery_list = "read-write"
-          grocery_items_defaults = "none"
-          noise_tracking = "none"
-          todo_list = "none"
         }
       }
     }
@@ -51,9 +39,6 @@ locals {
       permissions = {
         database = {
           noise_tracking = "read-write"
-          grocery_list = "none"
-          grocery_items_defaults = "none"
-          todo_list = "none"
         }
       }
     }
@@ -62,9 +47,6 @@ locals {
       permissions = {
         database = {
           noise_tracking = "read-only"
-          grocery_list = "none"
-          grocery_items_defaults = "none"
-          todo_list = "none"
         }
       }
     }
@@ -73,9 +55,6 @@ locals {
       permissions = {
         database = {
           noise_tracking = "read-write"
-          grocery_list = "none"
-          grocery_items_defaults = "none"
-          todo_list = "none"
         }
       }
     },
@@ -84,9 +63,6 @@ locals {
       permissions = {
         database = {
           grocery_items_defaults = "read-only"
-          grocery_list = "none"
-          noise_tracking = "none"
-          todo_list = "none"
         }
       }
     }
