@@ -2,6 +2,7 @@ export enum DynamoDBTable {
   GROCERY_LIST = "GroceryList",
   GROCERY_ITEMS_DEFAULTS = "GroceryItemsDefaults",
   NOISE_TRACKING = "NoiseTracking",
+  TODO_LIST = "TodoList",
 }
 
 export enum DynamoDBIndex {
