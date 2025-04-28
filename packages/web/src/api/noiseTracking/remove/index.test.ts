@@ -8,7 +8,7 @@ describe('Given the removeNoiseTrackingItem function', () => {
     await removeNoiseTrackingItem(1714003200000)
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://crff1u9wbc.execute-api.eu-west-2.amazonaws.com/v1/noise_tracking/items/1714003200000',
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/noise_tracking/items/1714003200000',
       {
         method: 'DELETE',
       }

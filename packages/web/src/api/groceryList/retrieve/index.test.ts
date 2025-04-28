@@ -12,7 +12,7 @@ describe('Given the retrieveItems function', () => {
     await retrieveGroceryList()
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://crff1u9wbc.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items'
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items'
     )
   })
 
@@ -44,7 +44,7 @@ describe('Given the retrieveItemsDefaults function', () => {
     await retrieveGroceryListDefaults()
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://crff1u9wbc.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items_defaults'
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items_defaults'
     )
   })
 
