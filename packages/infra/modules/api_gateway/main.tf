@@ -8,7 +8,9 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
       version = "1.0"
     }
     paths = local.merged_paths
-    components = local.merged_components
+    components = {
+      schemas = local.merged_schemas
+    }
     x-amazon-apigateway-request-validators = {
       "Validate body" = {
         validateRequestParameters = false
