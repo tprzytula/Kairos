@@ -5,7 +5,7 @@ info:
     API for Noise Tracking
   version: "1.0"
 paths:
-  /noise_tracking:
+  /noise_tracking/items:
     get:
       x-amazon-apigateway-integration:
         httpMethod: POST

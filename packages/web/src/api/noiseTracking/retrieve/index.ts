@@ -5,7 +5,7 @@ export interface INoiseTrackingItem {
 }
 
 export const retrieveNoiseTrackingItems = async (): Promise<Array<INoiseTrackingItem>> => {
-  const response = await fetch(`${NOISE_TRACKING_API_URL}/noise_tracking`)
+  const response = await fetch(`${NOISE_TRACKING_API_URL}/noise_tracking/items`)
 
   if (response.ok) {
     return await response.json()
