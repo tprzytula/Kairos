@@ -10,7 +10,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
-        uri: ${get_grocery_items}
+        uri: ${lambda_functions["get_grocery_items"].invoke_arn}
         passthroughBehavior: when_no_match
         contentHandling: CONVERT_TO_TEXT
       responses:
@@ -33,7 +33,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
-        uri: ${add_grocery_item}
+        uri: ${lambda_functions["add_grocery_item"].invoke_arn}
         passthroughBehavior: "when_no_match"
         contentHandling: "CONVERT_TO_TEXT"
       responses:
@@ -49,7 +49,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
-        uri: ${delete_grocery_items}
+        uri: ${lambda_functions["delete_grocery_items"].invoke_arn}
         passthroughBehavior: when_no_match
         contentHandling: CONVERT_TO_TEXT
       responses:
@@ -88,7 +88,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
-        uri: ${delete_grocery_item}
+        uri: ${lambda_functions["delete_grocery_item"].invoke_arn}
         passthroughBehavior: when_no_match
         contentHandling: CONVERT_TO_TEXT
       responses:
@@ -135,7 +135,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
-        uri: ${get_grocery_items_defaults}
+        uri: ${lambda_functions["get_grocery_items_defaults"].invoke_arn}
         passthroughBehavior: when_no_match
         contentHandling: CONVERT_TO_TEXT
       responses:
@@ -152,7 +152,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
-        uri: ${get_noise_tracking_items}
+        uri: ${lambda_functions["get_noise_tracking_items"].invoke_arn}
         passthroughBehavior: when_no_match
         contentHandling: CONVERT_TO_TEXT
       responses:
@@ -168,7 +168,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
-        uri: ${add_noise_tracking_item}
+        uri: ${lambda_functions["add_noise_tracking_item"].invoke_arn}
         passthroughBehavior: when_no_match
         contentHandling: CONVERT_TO_TEXT
       responses:
@@ -207,7 +207,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
-        uri: ${delete_noise_tracking_item}
+        uri: ${lambda_functions["delete_noise_tracking_item"].invoke_arn}
         passthroughBehavior: when_no_match
         contentHandling: CONVERT_TO_TEXT
       responses:
@@ -254,7 +254,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
-        uri: ${get_todo_items}
+        uri: ${lambda_functions["get_todo_items"].invoke_arn}
         passthroughBehavior: when_no_match
         contentHandling: CONVERT_TO_TEXT
       responses:
@@ -277,7 +277,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
-        uri: ${add_todo_item}
+        uri: ${lambda_functions["add_todo_item"].invoke_arn}
         passthroughBehavior: when_no_match
         contentHandling: CONVERT_TO_TEXT
       responses:
@@ -289,7 +289,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
-        uri: ${delete_todo_item}
+        uri: ${lambda_functions["delete_todo_item"].invoke_arn}
         passthroughBehavior: when_no_match
         contentHandling: CONVERT_TO_TEXT
       responses:

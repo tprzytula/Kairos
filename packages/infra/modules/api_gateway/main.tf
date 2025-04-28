@@ -1,17 +1,7 @@
 resource "aws_api_gateway_rest_api" "rest_api" {
   name = "kairos-rest-api"
   body = templatefile("${path.module}/policies/kairos.yml", {
-    add_grocery_item           = var.lambda_functions["add_grocery_item"].invoke_arn,
-    get_grocery_items          = var.lambda_functions["get_grocery_items"].invoke_arn,
-    delete_grocery_item        = var.lambda_functions["delete_grocery_item"].invoke_arn,
-    delete_grocery_items       = var.lambda_functions["delete_grocery_items"].invoke_arn,
-    add_noise_tracking_item    = var.lambda_functions["add_noise_tracking_item"].invoke_arn,
-    get_noise_tracking_items   = var.lambda_functions["get_noise_tracking_items"].invoke_arn,
-    delete_noise_tracking_item = var.lambda_functions["delete_noise_tracking_item"].invoke_arn,
-    get_grocery_items_defaults = var.lambda_functions["get_grocery_items_defaults"].invoke_arn,
-    add_todo_item              = var.lambda_functions["add_todo_item"].invoke_arn,
-    get_todo_items             = var.lambda_functions["get_todo_items"].invoke_arn,
-    delete_todo_item           = var.lambda_functions["delete_todo_item"].invoke_arn,
+    lambda_functions = var.lambda_functions
   })
 
   endpoint_configuration {
