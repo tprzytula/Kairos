@@ -250,7 +250,30 @@ paths:
         passthroughBehavior: "when_no_match"
         type: "mock"
   /todo_list/items:
-    post:
+    get:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${get_todo_items}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Todo items retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/todoItem"
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/todoItem"
+        required: true
+      x-amazon-apigateway-request-validator: Validate body
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
@@ -262,6 +285,18 @@ paths:
           description: Todo item added successfully
         500:
           description: Error adding todo item
+    delete:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${delete_todo_item}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Todo item removed
+        404:
+          description: Todo item does not exist
     options:
       responses:
         200:
@@ -281,7 +316,7 @@ paths:
           default:
             statusCode: "200"
             responseParameters:
-              method.response.header.Access-Control-Allow-Methods: "'POST'"
+              method.response.header.Access-Control-Allow-Methods: "'POST, PUT, DELETE'"
               method.response.header.Access-Control-Allow-Headers: "'*'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:
@@ -326,6 +361,20 @@ components:
           type: string
         icon:
           type: string
+    todoItem:
+      title: Todo Item
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        dueDate:
+          type: number
+        isDone:
+          type: boolean
 x-amazon-apigateway-request-validators:
   Validate body:
     validateRequestParameters: false
