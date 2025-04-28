@@ -4,7 +4,7 @@ import { useCallback, useEffect } from 'react'
 import { Route } from '../../enums/route'
 import StandardLayout from '../../layout/standardLayout'
 import { useAppState } from '../../providers/AppStateProvider'
-import { ShoppingCart, VolumeUp } from '@mui/icons-material'
+import { ShoppingCart, VolumeUp, List } from '@mui/icons-material'
 
 export const StartingScreenRoute = () => {
   const { state: { skipStartingScreen } } = useAppState()
@@ -18,6 +18,10 @@ export const StartingScreenRoute = () => {
     navigate(Route.NoiseTracking)
   }, [navigate])
 
+  const navigateToToDoList = useCallback(() => {
+    navigate(Route.ToDoList)
+  }, [navigate])
+
   useEffect(() => {
     if (skipStartingScreen) {
       navigate(Route.GroceryList)
@@ -28,13 +32,17 @@ export const StartingScreenRoute = () => {
     <StandardLayout
       title="Kairos"
     >
-      <StyledButton onClick={navigateToGroceryList} color="primary">
+      <StyledButton color="primary" onClick={navigateToGroceryList}>
         <ShoppingCart />
         <span>Grocery List</span>
       </StyledButton>
-      <StyledButton onClick={navigateToNoiseTracking} color="secondary">
+      <StyledButton color="success" onClick={navigateToNoiseTracking}>
         <VolumeUp />
         <span>Noise Tracking</span>
+      </StyledButton>
+      <StyledButton color="info" onClick={navigateToToDoList}>
+        <List />
+        <span>To Do List</span>
       </StyledButton>
     </StandardLayout>
   )
