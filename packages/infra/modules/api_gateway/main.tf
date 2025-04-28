@@ -1,7 +1,36 @@
+locals {
+  process_yaml = { for file in ["grocery_list", "noise_tracking", "todo_list"] :
+    file => yamldecode(templatefile("${path.module}/policies/${file}.yml", { lambda_functions = var.lambda_functions }))
+  }
+}
+
 resource "aws_api_gateway_rest_api" "rest_api" {
   name = "kairos-rest-api"
-  body = templatefile("${path.module}/policies/kairos.yml", {
-    lambda_functions = var.lambda_functions
+  body = yamlencode({
+    openapi = "3.0.1"
+    info = {
+      title = "Kairos API"
+      description = "API for Kairos"
+      version = "1.0"
+    }
+    paths = merge(
+      local.process_yaml["grocery_list"].paths,
+      local.process_yaml["noise_tracking"].paths,
+      local.process_yaml["todo_list"].paths
+    )
+    components = {
+      schemas = merge(
+        local.process_yaml["grocery_list"].components.schemas,
+        local.process_yaml["noise_tracking"].components.schemas,
+        local.process_yaml["todo_list"].components.schemas
+      )
+    }
+    x-amazon-apigateway-request-validators = {
+      "Validate body" = {
+        validateRequestParameters = false
+        validateRequestBody = true
+      }
+    }
   })
 
   endpoint_configuration {
