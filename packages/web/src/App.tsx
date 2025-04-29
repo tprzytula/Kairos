@@ -7,6 +7,7 @@ import AlertContainer from './components/AlertContainer'
 import { Route as RouteEnum } from './enums/route'
 import NoiseTrackingRoute from './routes/NoiseTrackingRoute'
 import ToDoListRoute from './routes/ToDoListRoute'
+import AddToDoItemRoute from './routes/AddToDoItemRoute'
 
 export const App = () => {
   return (
@@ -18,6 +19,7 @@ export const App = () => {
           <Route path={RouteEnum.AddGroceryItem} element={<AddGroceryItemRoute />} />
           <Route path={RouteEnum.NoiseTracking} element={<NoiseTrackingRoute />} />
           <Route path={RouteEnum.ToDoList} element={<ToDoListRoute />} />
+          <Route path={RouteEnum.AddToDoItem} element={<AddToDoItemRoute />} />
         </Routes>
         <AlertContainer />
       </Content>
