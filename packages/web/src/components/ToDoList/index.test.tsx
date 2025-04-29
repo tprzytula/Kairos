@@ -2,12 +2,13 @@ import { render, screen } from "@testing-library/react"
 import ToDoList from "."
 import * as ToDoListProvider from '../../providers/ToDoListProvider'
 import { IState } from "../../providers/ToDoListProvider/types"
+import { ThemeProvider, createTheme } from '@mui/material/styles'
 
 describe('Given the ToDoList component', () => {
   it('should render the to do list', () => {
     jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
-    render(<ToDoList />)
+    renderWithTheme(<ToDoList />)
 
     expect(screen.getByText('Buy Groceries')).toBeVisible()
     expect(screen.getByText('Buy Bread')).toBeVisible()
@@ -21,7 +22,7 @@ describe('Given the ToDoList component', () => {
         refetchToDoList: jest.fn(),
       })
 
-      render(<ToDoList />)
+      renderWithTheme(<ToDoList />)
 
       expect(screen.getByText('No items in your to do list')).toBeVisible()
     })
@@ -35,12 +36,22 @@ describe('Given the ToDoList component', () => {
         refetchToDoList: jest.fn(),
       })
 
-      render(<ToDoList />)
+      renderWithTheme(<ToDoList />)
 
       expect(screen.getAllByLabelText('To do item placeholder')).toHaveLength(20)
     })
   })
 })
+
+const theme = createTheme()
+
+const renderWithTheme = (component: React.ReactElement) => {
+  return render(
+    <ThemeProvider theme={theme}>
+      {component}
+    </ThemeProvider>
+  )
+}
 
 const EXAMPLE_TO_DO_LIST_CONTEXT: IState = {
   toDoList: [
@@ -48,14 +59,14 @@ const EXAMPLE_TO_DO_LIST_CONTEXT: IState = {
       id: '1',
       name: 'Buy Groceries',
       description: 'Buy groceries for the week',
-      dueDate: '2021-01-01',
+      dueDate: 1746042442000,
       isDone: false,
     },
     {
       id: '2',
       name: 'Buy Bread',
       description: 'Buy bread for the week',
-      dueDate: '2021-01-01',
+      dueDate: 1746042442000,
       isDone: false,
     },
   ],

@@ -39,6 +39,18 @@ export const reducer = (state: State, action: Action): State => {
         purchasedItems: removeFromSet(state.purchasedItems, ...action.payload),
       }
     }
+    case ActionName.SELECT_TODO_ITEM: {
+      return {
+        ...state,
+        selectedTodoItems: addToSet(state.selectedTodoItems, action.payload.id),
+      }
+    }
+    case ActionName.UNSELECT_TODO_ITEM: {
+      return {
+        ...state,
+        selectedTodoItems: removeFromSet(state.selectedTodoItems, action.payload.id),
+      }
+    }
     default: {
       return state
     }

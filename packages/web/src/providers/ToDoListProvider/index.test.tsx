@@ -69,7 +69,7 @@ describe('Given the useGroceryListContext hook', () => {
         name: 'Something Else',
         description: 'Buy groceries for the week',
         isDone: false,
-        dueDate: '2021-01-01',
+        dueDate: 1746042442000,
       },
     ])
 
@@ -84,7 +84,7 @@ describe('Given the useGroceryListContext hook', () => {
           name: 'Something Else',
           description: 'Buy groceries for the week',
           isDone: false,
-          dueDate: '2021-01-01',
+          dueDate: 1746042442000,
         },
       ])
     })
@@ -111,14 +111,14 @@ const EXAMPLE_TODO_LIST: Array<ITodoItem> = [
     name: 'Buy groceries',
     description: 'Buy groceries for the week',
     isDone: false,
-    dueDate: '2021-01-01',
+    dueDate: 1746042442000,
   },
   {
     id: '2',
     name: 'Buy bread',
     description: 'Buy bread for the week',
     isDone: false,
-    dueDate: '2021-01-01',
+    dueDate: 1746042442000,
   },
 ]
 

@@ -98,6 +98,32 @@ describe('Given the reducer', () => {
       expect(result.purchasedItems).toStrictEqual(new Set(['id-two']))
     })
   })
+
+  describe('When the SELECT_TODO_ITEM action is invoked', () => {
+    it('should add an item to the selectedTodoItems set', () => {
+      const result = reducer(initialState, {
+        type: ActionName.SELECT_TODO_ITEM,
+        payload: { id: EXAMPLE_TODO_ITEM.id },
+      })
+
+      expect(result.selectedTodoItems).toStrictEqual(new Set([EXAMPLE_TODO_ITEM.id]))
+    })
+  })
+
+  describe('When the UNSELECT_TODO_ITEM action is invoked', () => {
+    it('should remove an item from the selectedTodoItems set', () => {
+      const state = {
+        ...initialState,
+        selectedTodoItems: new Set([EXAMPLE_TODO_ITEM.id]),
+      }
+      const result = reducer(state, {
+        type: ActionName.UNSELECT_TODO_ITEM,
+        payload: { id: EXAMPLE_TODO_ITEM.id },
+      })
+
+      expect(result.selectedTodoItems).toStrictEqual(new Set())
+    })
+  })
 })
 
 const EXAMPLE_ALERT: IAlert = {
@@ -111,4 +137,11 @@ const EXAMPLE_GROCERY_ITEM = {
   name: 'Test',
   quantity: 1,
   unit: 'kg',
+}
+
+const EXAMPLE_TODO_ITEM = {
+  id: 'random-uuid',
+  name: 'Test',
+  description: 'Test',
+  dueDate: '2021-01-01',
 }

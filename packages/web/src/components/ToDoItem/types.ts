@@ -3,5 +3,5 @@ export interface ITodoItemProps {
     name: string;
     description?: string;
     isDone: boolean;
-    dueDate?: string;
+    dueDate?: number;
 }
