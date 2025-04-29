@@ -12,6 +12,7 @@ export type Context = {
 export type State = {
   alerts: Map<string, IAlert>
   purchasedItems: Set<string>
+  selectedTodoItems: Set<string>
   skipStartingScreen: boolean
 }
 

@@ -73,6 +73,7 @@ const mockUseAppState = ({ purchasedItems }: { purchasedItems: Set<string> }) =>
     jest.spyOn(AppState, 'useAppState').mockReturnValue({
         state: {
             purchasedItems,
+            selectedTodoItems: new Set(),
             alerts: new Map(),
             skipStartingScreen: true,
         },

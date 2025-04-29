@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
-import NoiseTrackingRoute from '.'
+import ToDoListRoute from '.'
 import * as ReactRouter from 'react-router'
 import { useAppState } from '../../providers/AppStateProvider'
 
@@ -17,7 +17,7 @@ jest.mock('react-router', () => ({
   useNavigate: jest.fn(),
 }))
 
-describe('Given the NoiseTrackingRoute component', () => {
+describe('Given the ToDoListRoute component', () => {
   it('should have the correct title', async () => {
     await act(async () => {
       renderComponent()
@@ -72,7 +72,7 @@ const renderComponent = ({ skipStartingScreen = false }: IRenderComponentProps =
     <ThemeProvider theme={theme}>
       <AppStateProvider>
         <BrowserRouter>
-          <NoiseTrackingRoute />
+          <ToDoListRoute />
         </BrowserRouter>
       </AppStateProvider>
     </ThemeProvider>

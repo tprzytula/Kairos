@@ -5,6 +5,7 @@ import { reducer } from './reducer'
 export const initialState: State = {
   alerts: new Map(),
   purchasedItems: new Set(),
+  selectedTodoItems: new Set(),
   skipStartingScreen: false,
 }
 
