@@ -34,6 +34,12 @@ const ToDoItem = ({ id, name, description, dueDate }: ITodoItemProps) => {
     }
   }, [isSelected, markAsSelected, markAsUnselected])
 
+  const formattedDueDate = useMemo(() => {
+    if (dueDate) {
+      return new Date(dueDate).toLocaleDateString()
+    }
+  }, [dueDate])
+
   return (
     <Container isSelected={isSelected}>
       <ActionArea
@@ -42,7 +48,7 @@ const ToDoItem = ({ id, name, description, dueDate }: ITodoItemProps) => {
         <Content>
           <Name>{name}</Name>
           <Description>{description}</Description>
-          <DueDate>{dueDate}</DueDate>
+          <DueDate>{formattedDueDate}</DueDate>
         </Content>
       </ActionArea>
     </Container>
