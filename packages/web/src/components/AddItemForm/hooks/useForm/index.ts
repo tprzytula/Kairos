@@ -4,6 +4,7 @@ import { validateFields } from '../../utils';
 import { createFieldProps, updateFormFields, clearFieldError } from './utils';
 import { IUseFormProps, IUseFormReturn } from './types';
 import { FormFieldType } from '../../enums';
+import { useThrottle } from '../../../../hooks/useThrottle';
 
 export const useForm = ({
     initialFields,
@@ -33,7 +34,7 @@ export const useForm = ({
         [handleFieldValueChange, handleErrorClear]
     );
 
-    const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
+    const submitForm = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setSubmitError(null);
         
@@ -57,6 +58,8 @@ export const useForm = ({
             setIsSubmitting(false);
         }
     }, [formFields, onSubmit]);
+
+    const handleSubmit = useThrottle(submitForm, 1000);
 
     return {
         formFields,
