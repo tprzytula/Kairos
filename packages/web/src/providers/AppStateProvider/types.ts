@@ -24,7 +24,7 @@ export type GroceryItem = {
   id: string
   name: string
   quantity: number
-  imagePath: string
+  imagePath?: string
   unit: GroceryItemUnit
 }
 
