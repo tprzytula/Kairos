@@ -1,7 +1,16 @@
 import { TextField as MuiTextField } from "@mui/material";
-import { IFormFieldComponentProps } from "../../types";
+import { IFormField } from "../../types";
+import { IFieldProps } from "../../hooks/useForm/types";
 
-export const TextArea = ({ field, fieldProps, errors, isSubmitting }: IFormFieldComponentProps) => {
+export interface ITextAreaProps {
+    field: IFormField
+    fieldProps: IFieldProps
+    errors: Record<string, string>
+    isSubmitting: boolean
+    placeholder?: string
+}
+
+export const TextArea = ({ field, fieldProps, errors, isSubmitting, placeholder }: ITextAreaProps) => {
     const error = errors[field.name];
     
     return (
@@ -14,7 +23,7 @@ export const TextArea = ({ field, fieldProps, errors, isSubmitting }: IFormField
             error={!!error}
             helperText={error}
             disabled={isSubmitting}
-            placeholder={field.placeholder}
+            placeholder={placeholder}
         />
     );
-}; 
+};
