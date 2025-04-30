@@ -25,6 +25,7 @@ const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
 
         if (defaultIcon) {
             setImagePath(defaultIcon);
+            return;
         }
     }, [findItemIcon]);
 
@@ -35,6 +36,12 @@ const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
             if (icon) {
                 setImagePath(icon);
                 return;
+            }
+
+            const genericIcon = findItemIcon('generic');
+
+            if (genericIcon) {
+                setImagePath(genericIcon);
             }
         }
     }, [defaults, findItemIcon]);
