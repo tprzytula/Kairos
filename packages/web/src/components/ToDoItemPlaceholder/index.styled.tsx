@@ -1,8 +1,7 @@
 import { styled } from "@mui/system";
-import { Media, Name, Quantity, Unit } from "../GroceryItem/index.styled";
-import { Description, DueDate } from "../ToDoItem/index.styled";
+import { Name, Description, DueDate } from "../ToDoItem/index.styled";
 
-export { ActionArea, Container, Content, QuantityContainer } from '../GroceryItem/index.styled'
+export { ActionArea, Container, Content } from '../ToDoItem/index.styled'
 
 const shimmerStyles = {
   background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
@@ -18,16 +17,15 @@ const shimmerStyles = {
   },
 }
 
-export const MediaPlaceholder = styled(Media)((shimmerStyles))
 
 export const NamePlaceholder = styled(Name)(({
-  width: '120px',
+  width: '80px',
   height: '20px',
   ...shimmerStyles,
 }))
 
 export const DescriptionPlaceholder = styled(Description)(({
-  width: '120px',
+  width: '250px',
   height: '20px',
   ...shimmerStyles,
 }))
