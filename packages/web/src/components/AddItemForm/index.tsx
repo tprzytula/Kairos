@@ -99,9 +99,9 @@ const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
         <Container maxWidth="sm">
             <form onSubmit={handleSubmit} noValidate>
                 <Stack spacing={3}>
-                    <GroceryItemImage
+                    { imagePath ? <GroceryItemImage
                         image={imagePath}
-                    />
+                    /> : null}
                     {formFieldsComponents}
                     <Button 
                         type="submit" 
