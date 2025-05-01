@@ -1,6 +1,6 @@
 import { Container } from './index.styled'
 import Navigation from '../../components/Navigation'
-import AddItemButton from '../../components/AddItemButton'
+import NavigateButton from '../../components/NavigateButton'
 import { GroceryList } from '../../components/GroceryList'
 import { GroceryListProvider } from '../../providers/GroceryListProvider'
 import Header from '../../components/Header'
@@ -15,7 +15,7 @@ export const GroceryListRoute = () => {
         <Navigation
           previousRoute={Route.Home}
           actionButton={
-            <AddItemButton 
+            <NavigateButton 
               ariaLabel="Add Item" 
               route={Route.AddGroceryItem}
             />

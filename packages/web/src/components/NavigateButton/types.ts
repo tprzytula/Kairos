@@ -1,4 +1,4 @@
-export interface IAddItemButtonProps {
+export interface INavigateButtonProps {
     ariaLabel: string
     route: string
 }

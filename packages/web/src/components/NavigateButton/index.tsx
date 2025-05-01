@@ -2,20 +2,20 @@ import AddIcon from '@mui/icons-material/AddCircleOutline'
 import { IconButton } from '@mui/material'
 import { useNavigate } from 'react-router'
 import { useCallback } from 'react'
-import { IAddItemButtonProps } from './types'
+import { INavigateButtonProps } from './types'
 
-const AddItemButton = ({ ariaLabel, route }: IAddItemButtonProps) => {
+const NavigateButton = ({ ariaLabel, route }: INavigateButtonProps) => {
   const navigate = useNavigate()
 
-  const enterAddItemView = useCallback(() => {
+  const navigateToRoute = useCallback(() => {
     navigate(route)
   }, [navigate, route])
 
   return (
-    <IconButton onClick={enterAddItemView} aria-label={ariaLabel}>
+    <IconButton onClick={navigateToRoute} aria-label={ariaLabel}>
       <AddIcon sx={{ fontSize: '3em' }} />
     </IconButton>
   )
 }
 
-export default AddItemButton;
+export default NavigateButton;
