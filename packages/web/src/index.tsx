@@ -14,6 +14,7 @@ const container = document.getElementById('app')
 
 if (container) {
   const root = createRoot(container)
+
   root.render(
     <ThemeProvider theme={theme}>
       <AppStateProvider>
