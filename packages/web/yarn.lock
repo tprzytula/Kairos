@@ -1451,19 +1451,19 @@
 
 "@mui/core-downloads-tracker@^7.0.2":
   version "7.0.2"
-  resolved "https://artifactory.gamesys.co.uk:443/artifactory/api/npm/gamesys-unicorn-npm-virtual/@mui/core-downloads-tracker/-/core-downloads-tracker-7.0.2.tgz#2e6dcaf5027a3957d37797b8dce5c15c78fd4b82"
+  resolved "https://registry.npmjs.org/@mui/core-downloads-tracker/-/core-downloads-tracker-7.0.2.tgz#2e6dcaf5027a3957d37797b8dce5c15c78fd4b82"
   integrity sha512-TfeFU9TgN1N06hyb/pV/63FfO34nijZRMqgHk0TJ3gkl4Fbd+wZ73+ZtOd7jag6hMmzO9HSrBc6Vdn591nhkAg==
 
 "@mui/icons-material@^7.0.2":
   version "7.0.2"
-  resolved "https://artifactory.gamesys.co.uk:443/artifactory/api/npm/gamesys-unicorn-npm-virtual/@mui/icons-material/-/icons-material-7.0.2.tgz#34a564081238a065ec9c939b50646637816ba98d"
+  resolved "https://registry.npmjs.org/@mui/icons-material/-/icons-material-7.0.2.tgz#34a564081238a065ec9c939b50646637816ba98d"
   integrity sha512-Bo57PFLOqXOqPNrXjd8AhzH5s6TCsNUQbvnQ0VKZ8D+lIlteqKnrk/O1luMJUc/BXONK7BfIdTdc7qOnXYbMdw==
   dependencies:
     "@babel/runtime" "^7.27.0"
 
 "@mui/material@^7.0.2":
   version "7.0.2"
-  resolved "https://artifactory.gamesys.co.uk:443/artifactory/api/npm/gamesys-unicorn-npm-virtual/@mui/material/-/material-7.0.2.tgz#444de6ab1d0856b638f98833f536c80293c66005"
+  resolved "https://registry.npmjs.org/@mui/material/-/material-7.0.2.tgz#444de6ab1d0856b638f98833f536c80293c66005"
   integrity sha512-rjJlJ13+3LdLfobRplkXbjIFEIkn6LgpetgU/Cs3Xd8qINCCQK9qXQIjjQ6P0FXFTPFzEVMj0VgBR1mN+FhOcA==
   dependencies:
     "@babel/runtime" "^7.27.0"
@@ -1481,7 +1481,7 @@
 
 "@mui/private-theming@^7.0.2":
   version "7.0.2"
-  resolved "https://artifactory.gamesys.co.uk:443/artifactory/api/npm/gamesys-unicorn-npm-virtual/@mui/private-theming/-/private-theming-7.0.2.tgz#18bd6c464d5af854e37ac3947f411ac76467c249"
+  resolved "https://registry.npmjs.org/@mui/private-theming/-/private-theming-7.0.2.tgz#18bd6c464d5af854e37ac3947f411ac76467c249"
   integrity sha512-6lt8heDC9wN8YaRqEdhqnm0cFCv08AMf4IlttFvOVn7ZdKd81PNpD/rEtPGLLwQAFyyKSxBG4/2XCgpbcdNKiA==
   dependencies:
     "@babel/runtime" "^7.27.0"
@@ -1490,7 +1490,7 @@
 
 "@mui/styled-engine-sc@^7.0.2":
   version "7.0.2"
-  resolved "https://artifactory.gamesys.co.uk:443/artifactory/api/npm/gamesys-unicorn-npm-virtual/@mui/styled-engine-sc/-/styled-engine-sc-7.0.2.tgz#b4e471f603734dd3956fd0cebf1bef0b1b9eb77b"
+  resolved "https://registry.npmjs.org/@mui/styled-engine-sc/-/styled-engine-sc-7.0.2.tgz#b4e471f603734dd3956fd0cebf1bef0b1b9eb77b"
   integrity sha512-4Gi65feZS9DUaoAdX/pRwKH83/JT+egghN/v8eLhGpkHyT0ewNaI+gjQj2zEDpPVVaT/GuUtWk9bpoioqy+dOg==
   dependencies:
     "@babel/runtime" "^7.27.0"
@@ -1501,7 +1501,7 @@
 
 "@mui/styled-engine@^7.0.2":
   version "7.0.2"
-  resolved "https://artifactory.gamesys.co.uk:443/artifactory/api/npm/gamesys-unicorn-npm-virtual/@mui/styled-engine/-/styled-engine-7.0.2.tgz#7f13cd8b8cd793fbcd02fff5a8bee64069dc9265"
+  resolved "https://registry.npmjs.org/@mui/styled-engine/-/styled-engine-7.0.2.tgz#7f13cd8b8cd793fbcd02fff5a8bee64069dc9265"
   integrity sha512-11Bt4YdHGlh7sB8P75S9mRCUxTlgv7HGbr0UKz6m6Z9KLeiw1Bm9y/t3iqLLVMvSHYB6zL8X8X+LmfTE++gyBw==
   dependencies:
     "@babel/runtime" "^7.27.0"
@@ -1513,7 +1513,7 @@
 
 "@mui/system@^7.0.2":
   version "7.0.2"
-  resolved "https://artifactory.gamesys.co.uk:443/artifactory/api/npm/gamesys-unicorn-npm-virtual/@mui/system/-/system-7.0.2.tgz#e03222375f486d697a4817865a81a1ac7d88f4d2"
+  resolved "https://registry.npmjs.org/@mui/system/-/system-7.0.2.tgz#e03222375f486d697a4817865a81a1ac7d88f4d2"
   integrity sha512-yFUraAWYWuKIISPPEVPSQ1NLeqmTT4qiQ+ktmyS8LO/KwHxB+NNVOacEZaIofh5x1NxY8rzphvU5X2heRZ/RDA==
   dependencies:
     "@babel/runtime" "^7.27.0"
@@ -1527,14 +1527,14 @@
 
 "@mui/types@^7.4.1":
   version "7.4.1"
-  resolved "https://artifactory.gamesys.co.uk:443/artifactory/api/npm/gamesys-unicorn-npm-virtual/@mui/types/-/types-7.4.1.tgz#5611268faa0b46ab0c622c02b54f3f30f9809c2d"
+  resolved "https://registry.npmjs.org/@mui/types/-/types-7.4.1.tgz#5611268faa0b46ab0c622c02b54f3f30f9809c2d"
   integrity sha512-gUL8IIAI52CRXP/MixT1tJKt3SI6tVv4U/9soFsTtAsHzaJQptZ42ffdHZV3niX1ei0aUgMvOxBBN0KYqdG39g==
   dependencies:
     "@babel/runtime" "^7.27.0"
 
 "@mui/utils@^7.0.2":
   version "7.0.2"
-  resolved "https://artifactory.gamesys.co.uk:443/artifactory/api/npm/gamesys-unicorn-npm-virtual/@mui/utils/-/utils-7.0.2.tgz#b6842a9f979a619b65011a84a1964b85b205a9a4"
+  resolved "https://registry.npmjs.org/@mui/utils/-/utils-7.0.2.tgz#b6842a9f979a619b65011a84a1964b85b205a9a4"
   integrity sha512-72gcuQjPzhj/MLmPHLCgZjy2VjOH4KniR/4qRtXTTXIEwbkgcN+Y5W/rC90rWtMmZbjt9svZev/z+QHUI4j74w==
   dependencies:
     "@babel/runtime" "^7.27.0"
