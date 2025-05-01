@@ -6,6 +6,7 @@ export const putItem = async ({
   item,
   tableName,
 }: IPutItemOptions): Promise<PutItemCommandOutput> => {
+  console.log("putItem", item, tableName);
   const command = new PutItemCommand({
     TableName: tableName,
     Item: item,

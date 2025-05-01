@@ -15,9 +15,22 @@ resource "aws_dynamodb_table" "grocery_list" {
     type = "S"
   }
 
+  attribute {
+    name = "quantity"
+    type = "N"
+  }
+
   global_secondary_index {
     name            = "NameIndex"
     hash_key        = "name"
+    write_capacity  = 1
+    read_capacity   = 1
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "QuantityIndex"
+    hash_key        = "quantity"
     write_capacity  = 1
     read_capacity   = 1
     projection_type = "ALL"
