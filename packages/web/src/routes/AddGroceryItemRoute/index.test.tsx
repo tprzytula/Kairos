@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
-import AddGroceryItem from '.'
+import AddGroceryItemRoute from '.'
 import * as ReactRouter from 'react-router'
 
 jest.mock('react-router', () => ({
@@ -11,7 +11,7 @@ jest.mock('react-router', () => ({
   useNavigate: jest.fn(),
 }))
 
-describe('Given the AddGroceryItem component', () => {
+describe('Given the AddGroceryItemRoute component', () => {
   it('should have the correct title', () => {
     renderComponent()
     expect(screen.getByText('Add Grocery Item')).toBeVisible()
@@ -39,7 +39,7 @@ const renderComponent = () => {
     <ThemeProvider theme={theme}>
       <AppStateProvider>
         <BrowserRouter>
-          <AddGroceryItem />
+          <AddGroceryItemRoute />
         </BrowserRouter>
       </AppStateProvider>
     </ThemeProvider>

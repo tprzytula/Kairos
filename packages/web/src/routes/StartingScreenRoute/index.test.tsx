@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
-import StartingScreen from '.'
+import StartingScreenRoute from '.'
 import * as ReactRouter from 'react-router'
 
 jest.mock('react-router', () => ({
@@ -11,7 +11,7 @@ jest.mock('react-router', () => ({
   useNavigate: jest.fn(),
 }))
 
-describe('Given the StartingScreen component', () => {
+describe('Given the StartingScreenRoute component', () => {
   it('should have the correct title', () => {
     renderComponent()
     expect(screen.getByText('Kairos')).toBeVisible()
@@ -44,7 +44,7 @@ const renderComponent = () => {
     <ThemeProvider theme={theme}>
       <AppStateProvider>
         <BrowserRouter>
-          <StartingScreen />
+          <StartingScreenRoute />
         </BrowserRouter>
       </AppStateProvider>
     </ThemeProvider>

@@ -4,8 +4,9 @@ import { GroceryItem } from '../../providers/AppStateProvider/types'
 import { Container, Header } from './index.styled'
 import Navigation from '../../components/Navigation'
 import AddItemButton from '../../components/AddItemButton'
+import { GroceryList } from '../../components/GroceryList'
 
-export const GroceryList = () => {
+export const GroceryListRoute = () => {
   const [groceryList, setGroceryList] = useState<GroceryItem[]>([])
 
   const fetchGroceryList = useCallback(async () => {
@@ -27,14 +28,10 @@ export const GroceryList = () => {
       <Header>
         Grocery List
       </Header>
-      <ul>
-        {groceryList.map((item) => (
-          <li key={item.id}>{item.name}</li>
-        ))}
-      </ul>
+      <GroceryList groceryList={groceryList} />
       <Navigation previousRoute="/" actionButton={<AddItemButton ariaLabel="Add Item" route="/groceries/add" />} />
     </Container>
   )
 }
 
-export default GroceryList;
+export default GroceryListRoute;
