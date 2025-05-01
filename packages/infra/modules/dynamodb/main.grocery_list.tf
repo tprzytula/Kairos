@@ -15,11 +15,6 @@ resource "aws_dynamodb_table" "grocery_list" {
     type = "S"
   }
 
-  attribute {
-    name = "quantity"
-    type = "N"
-  }
-
   global_secondary_index {
     name            = "NameIndex"
     hash_key        = "name"
