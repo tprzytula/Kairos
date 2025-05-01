@@ -13,6 +13,8 @@ export interface ITextAreaProps {
 export const TextArea = ({ field, fieldProps, errors, isSubmitting, placeholder }: ITextAreaProps) => {
     const error = errors[field.name];
     
+    console.log('test)')
+
     return (
         <MuiTextField
             {...fieldProps}
