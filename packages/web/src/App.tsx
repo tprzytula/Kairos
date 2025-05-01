@@ -2,7 +2,7 @@ import './App.module.scss'
 
 import { Routes, Route } from 'react-router-dom'
 import { styled } from '@mui/system'
-import Root from './routes/Root'
+import GroceryList from './routes/GroceryList'
 
 const ApplicationContainer = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -30,7 +30,7 @@ export function App() {
     <ApplicationContainer>
       <Content>
         <Routes>
-          <Route path="/" element={<Root />} />
+          <Route path="/" element={<GroceryList />} />
         </Routes>
       </Content>
     </ApplicationContainer>
