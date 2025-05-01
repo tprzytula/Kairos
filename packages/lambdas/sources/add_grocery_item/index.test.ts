@@ -23,7 +23,7 @@ describe('Given the add_grocery_item lambda handler', () => {
     it('should make a put request to the grocery list table', async () => {
         const putSpy = mockPut();
 
-        await runHandler({ body: JSON.stringify({ name: "Apple", quantity: 1 }) });
+        await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
 
         expect(putSpy).toHaveBeenCalledWith({
             tableName: DynamoDBTables.GROCERY_LIST,
@@ -38,7 +38,7 @@ describe('Given the add_grocery_item lambda handler', () => {
     it('should return status 201 with the generated id', async () => {
         mockPut();
 
-        const result = await runHandler({ body: JSON.stringify({ name: "Apple", quantity: 1 }) });
+        const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
 
         expect(result.statusCode).toBe(201);
         expect(result.body).toEqual(JSON.stringify({ id: EXAMPLE_ID }));
@@ -59,7 +59,7 @@ describe('Given the add_grocery_item lambda handler', () => {
             const putSpy = mockPut();
             putSpy.mockRejectedValue(new Error('Put failed'));
 
-            await runHandler({ body: JSON.stringify({ name: "Apple", quantity: 1 }) });
+            await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
 
             expect(logSpy).toHaveBeenCalledWith('Handler Threw Exception:', new Error('Put failed'));
         });
@@ -68,7 +68,7 @@ describe('Given the add_grocery_item lambda handler', () => {
             const putSpy = mockPut();
             putSpy.mockRejectedValue(new Error('Put failed'));
 
-            const result = await runHandler({ body: JSON.stringify({ name: "Apple", quantity: 1 }) });
+            const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
 
             expect(result).toEqual({
                 body: "Internal Server Error",
@@ -80,6 +80,11 @@ describe('Given the add_grocery_item lambda handler', () => {
         });
     });
 });
+
+const EXAMPLE_GROCERY_ITEM = {
+    name: "Apple",
+    quantity: 1,
+}
 
 const mockPut = () => jest.spyOn(DynamoDB, 'putItem');
 
