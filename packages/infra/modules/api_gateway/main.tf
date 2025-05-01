@@ -6,7 +6,7 @@ resource "aws_api_gateway_rest_api" "rest_api" {
     delete_grocery_item     = var.lambda_functions["delete_grocery_item"].invoke_arn,
     delete_grocery_items    = var.lambda_functions["delete_grocery_items"].invoke_arn,
     get_grocery_items_icons = var.lambda_functions["get_grocery_items_icons"].invoke_arn,
-    get_grocery_items_units = var.lambda_functions["get_grocery_items_units"].invoke_arn
+    get_grocery_items_default_units = var.lambda_functions["get_grocery_items_default_units"].invoke_arn
   })
 
   endpoint_configuration {
