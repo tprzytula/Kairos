@@ -1,28 +1,16 @@
 import { Button, Container, Stack, CircularProgress, Alert } from "@mui/material";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { IAddItemFormProps, IFormField, IIcon } from "./types";
+import { useCallback, useMemo, useState } from "react";
+import { IAddItemFormProps, IFormField } from "./types";
 import { useForm } from "./hooks/useForm";
 import { TextField } from "./components/TextField";
 import { Select } from "./components/Select";
 import { FormFieldType } from "./enums";
 import { GroceryItemImage } from "./index.styled";
-import { retrieveGroceryListDefaults } from "../../api/groceryList";
-import { IGroceryItemDefault } from "../../api/groceryList/retrieve/types";
 
 const DEFAULT_ICON = '/assets/icons/generic-grocery-item.png';
 
-const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
+const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
     const [imagePath, setImagePath] = useState<string>(DEFAULT_ICON);
-    const [defaults, setDefaults] = useState<Array<IGroceryItemDefault>>([]);
-
-    const fetchDefaults = useCallback(async () => {
-        const defaults = await retrieveGroceryListDefaults();
-        setDefaults(defaults);
-    }, []);
-
-    useEffect(() => {
-        fetchDefaults();
-    }, [fetchDefaults]);
 
     const handleValueChange = useCallback((name: string, value: string | number) => {
         if (name === 'name') {

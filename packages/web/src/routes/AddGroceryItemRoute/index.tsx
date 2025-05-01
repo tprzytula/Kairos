@@ -1,7 +1,7 @@
 import AddItemForm from '../../components/AddItemForm'
 import { FormFieldType } from '../../components/AddItemForm/enums'
 import { IFormField } from '../../components/AddItemForm/types'
-import { addGroceryItem } from '../../api/groceryList'
+import { addGroceryItem, retrieveGroceryListDefaults } from '../../api/groceryList'
 import { validateFields } from './utils'
 import { useNavigate } from 'react-router'
 import { useAppState } from '../../providers/AppStateProvider'
@@ -11,6 +11,7 @@ import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import StandardLayout from '../../layout/standardLayout'
+import { useItemDefaults } from '../../hooks/useItemDefaults'
 
 const FIELDS: Array<IFormField> = [
   {
@@ -43,6 +44,9 @@ const FIELDS: Array<IFormField> = [
 export const AddGroceryItemRoute = () => {
   const { dispatch } = useAppState()
   const navigate = useNavigate()
+  const { defaults } = useItemDefaults({
+    fetchMethod: retrieveGroceryListDefaults
+  })
 
   const createAlert = useCallback((description: string, severity: AlertColor) => {
     showAlert({ description, severity }, dispatch)
@@ -73,6 +77,7 @@ export const AddGroceryItemRoute = () => {
       previousRoute={Route.GroceryList}
     >
       <AddItemForm
+        defaults={defaults}
         fields={FIELDS}
         onSubmit={onSubmit}
       />

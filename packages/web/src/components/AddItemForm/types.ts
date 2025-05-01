@@ -1,4 +1,5 @@
 import { FormFieldType } from "./enums";
+import { IItemDefault } from "../../hooks/useItemDefaults/types";
 
 export interface IFormField<T extends string | number | undefined = string | number | undefined> {
     name: string;
@@ -11,6 +12,7 @@ export interface IFormField<T extends string | number | undefined = string | num
 }
 
 export interface IAddItemFormProps {
+    defaults: Array<IItemDefault>;
     fields: Array<IFormField>
     onSubmit: (fields: Array<IFormField>, icon: string) => Promise<void>;
 }

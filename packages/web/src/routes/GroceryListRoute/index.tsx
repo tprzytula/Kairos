@@ -6,11 +6,11 @@ import StandardLayout from '../../layout/standardLayout'
 import { useAppState } from '../../providers/AppStateProvider'
 
 export const GroceryListRoute = () => {
-  const { state: { skipStartingScreen } } = useAppState() 
+  const { state: { skipStartingScreen } } = useAppState()
 
   return (
     <GroceryListProvider>
-      <StandardLayout 
+      <StandardLayout
         title="Grocery List" 
         previousRoute={skipStartingScreen ? undefined : Route.Home} 
         nextRoute={Route.AddGroceryItem}
