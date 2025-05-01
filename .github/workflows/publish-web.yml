@@ -22,7 +22,6 @@ jobs:
         with:
           node-version: 20
           cache: yarn
-          cache-dependency-path: packages/web/yarn.lock
       - name: Install Modules
         run: yarn
       - name: Build
