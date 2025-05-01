@@ -1,6 +1,4 @@
-import { GroceryItem } from "../parser/types";
-
-export const logResponse = (items: Array<GroceryItem>) => {
+export const logResponse = (items: Array<Record<string, unknown>>) => {
   console.info("Returning items", {
     count: items.length,
     items: JSON.stringify(items),

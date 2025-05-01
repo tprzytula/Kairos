@@ -1,13 +1,16 @@
 import { scan } from ".";
-import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBTables } from "../../enums";
 
-jest.mock("@aws-sdk/client-dynamodb");
+jest.mock("@aws-sdk/lib-dynamodb", () => ({
+  ...jest.requireActual("@aws-sdk/lib-dynamodb"),
+  ScanCommand: jest.fn(),
+}));
 
 describe("Given the scan function", () => {
   it("should pass the right table name to the scan command", async () => {
     jest
-      .spyOn(DynamoDBClient.prototype, "send")
+      .spyOn(DynamoDBDocumentClient.prototype, "send")
       .mockImplementation(async () => ({
         Items: [],
         $metadata: {},
@@ -22,13 +25,13 @@ describe("Given the scan function", () => {
 
   it("should return the items", async () => {
     jest
-      .spyOn(DynamoDBClient.prototype, "send")
+      .spyOn(DynamoDBDocumentClient.prototype, "send")
       .mockImplementation(async () => ({
         Items: [
           {
-            id: { S: "1" },
-            name: { S: "Item 1" },
-            quantity: { N: "1" },
+            id: "1",
+            name: "Item 1",
+            quantity: 1,
           },
         ],
         $metadata: {},
@@ -38,16 +41,16 @@ describe("Given the scan function", () => {
 
     expect(items).toEqual([
       {
-        id: { S: "1" },
-        name: { S: "Item 1" },
-        quantity: { N: "1" },
+        id: "1",
+        name: "Item 1",
+        quantity: 1,
       },
     ]);
   });
 
   it("should return an empty array if no items are found", async () => {
     jest
-      .spyOn(DynamoDBClient.prototype, "send")
+      .spyOn(DynamoDBDocumentClient.prototype, "send")
       .mockImplementation(async () => ({
         Items: undefined,
         $metadata: {},
