@@ -86,7 +86,7 @@ describe('Given the useForm hook', () => {
                 })
 
                 expect(result.current.errors).toEqual({
-                    quantity: 'Quantity must be a number'
+                    quantity: 'Quantity must be a number greater than 0'
                 })
             })
 
@@ -110,7 +110,7 @@ describe('Given the useForm hook', () => {
                     })
     
                     expect(result.current.errors).toEqual({
-                        quantity: 'Quantity must be a number'
+                        quantity: 'Quantity must be a number greater than 0'
                     })
 
                     await act(async () => {

@@ -22,12 +22,12 @@ const getProcessedValue = (value: string | number, type: FormFieldType) =>
     type === FormFieldType.NUMBER && typeof value === 'string' ? parseInt(value) : value;
 
 const validateField = (field: IFormField, value: string): string | undefined => {
-    if (!value && field.required) {
+    if ((!value) && field.required) {
         return `${field.label} is required`;
     }
 
-    if (field.type === FormFieldType.NUMBER && isNaN(Number(value))) {
-        return `${field.label} must be a number`;
+    if (field.type === FormFieldType.NUMBER && (isNaN(Number(value)) || Number(value) < 1)) {
+        return `${field.label} must be a number greater than 0`;
     }
 
     if (field.validate) {
