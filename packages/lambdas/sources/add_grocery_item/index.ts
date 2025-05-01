@@ -24,6 +24,8 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       },
     });
 
+    console.log("odd", DynamoDBTables.GROCERY_LIST);
+
     return createResponse({
       statusCode: 201,
       message: {
