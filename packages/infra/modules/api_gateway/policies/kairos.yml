@@ -219,7 +219,7 @@ paths:
           application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
-  /noise_tracking/{timestamp}:
+  /noise_tracking/items/{timestamp}:
     delete:
       x-amazon-apigateway-integration:
         httpMethod: POST
