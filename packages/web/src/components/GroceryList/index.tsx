@@ -1,6 +1,8 @@
-import { IGroceryListProps } from './types'
+import { useGroceryListContext } from '../../providers/GroceryListProvider'
 
-export const GroceryList = ({ groceryList }: IGroceryListProps) => {
+export const GroceryList = () => {
+  const { groceryList } = useGroceryListContext()
+
   return (
     <ul> 
       {groceryList.map((item) => (
