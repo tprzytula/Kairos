@@ -15,7 +15,7 @@ export const middleware =
       console.log("Handler Response:", response);
       return response;
     } catch (error) {
-      console.log("Handler Threw Exception:", error);
+      console.error("Handler Threw Exception:", error);
       return createResponse({ statusCode: 500 });
     }
   };
