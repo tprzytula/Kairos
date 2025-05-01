@@ -25,7 +25,7 @@ const FIELDS: Array<IFormField> = [
     label: 'Quantity',
     type: FormFieldType.NUMBER,
     required: true,
-    value: 0,
+    value: 1,
   },
   {
     name: 'unit',
