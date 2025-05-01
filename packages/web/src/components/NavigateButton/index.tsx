@@ -8,13 +8,16 @@ const NavigateButton = ({ route }: INavigateButtonProps) => {
   const navigate = useNavigate()
 
   const navigateToRoute = useCallback(() => {
-    navigate(route)
+    if (route) {
+      navigate(route)
+    }
   }, [navigate, route])
 
   return (
     <IconButton
       onClick={navigateToRoute}
       aria-label="Navigate to route"
+      sx={{ visibility: route ? 'visible' : 'hidden' }}
     >
       <AddIcon sx={{ fontSize: '3em' }} />
     </IconButton>

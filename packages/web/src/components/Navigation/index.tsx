@@ -12,8 +12,8 @@ const Navigation = ({ previousRoute, nextRoute }: INavigationProps) => {
         width: '100%',
       }}
     >
-      {previousRoute && <BackButton route={previousRoute} />}
-      {nextRoute && <NavigateButton route={nextRoute} />}
+      <BackButton route={previousRoute} />
+      <NavigateButton route={nextRoute} />
     </Box>
   )
 }
