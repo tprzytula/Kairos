@@ -75,11 +75,11 @@ const EXAMPLE_DB_GROCERY_ITEMS_DEFAULTS: Record<string, unknown>[] = [
     {
         name: "Apple",
         unit: "unit(s)",
-        icon: "/assets/images/apple.png",
+        icon: "/assets/icons/apple.png",
     },
     {
         name: "Beef",
         unit: "kilogram(s)",
-        icon: "/assets/images/beef.png",
+        icon: "/assets/icons/beef.png",
     },
 ];

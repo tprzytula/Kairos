@@ -9,7 +9,7 @@ import { GroceryItemImage } from "./index.styled";
 import { retrieveGroceryListDefaults } from "../../api/groceryList";
 import { IGroceryItemDefault } from "../../api/groceryList/retrieve/types";
 
-const DEFAULT_ICON = '/assets/images/generic-grocery-item.png';
+const DEFAULT_ICON = '/assets/icons/generic-grocery-item.png';
 
 const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
     const [imagePath, setImagePath] = useState<string>(DEFAULT_ICON);

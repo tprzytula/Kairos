@@ -75,14 +75,14 @@ const EXAMPLE_GROCERY_LIST_RESPONSE: Array<IGroceryItem> = [
     name: 'Milk',
     quantity: 5,
     unit: GroceryItemUnit.LITER,
-    imagePath: '/assets/images/milk.png',
+    imagePath: '/assets/icons/milk.png',
   },
   {
     id: '2',
     name: 'Paper Towel',
     quantity: 2,
     unit: GroceryItemUnit.UNIT,
-    imagePath: '/assets/images/paper-towel.png',
+    imagePath: '/assets/icons/paper-towel.png',
   },
 ]
 
@@ -90,11 +90,11 @@ const EXAMPLE_GROCERY_LIST_DEFAULTS_RESPONSE: Array<IGroceryItemDefault> = [
   {
     name: 'Milk',
     unit: GroceryItemUnit.LITER,
-    icon: '/assets/images/milk.png',
+    icon: '/assets/icons/milk.png',
   },
   {
     name: 'Paper Towel',
     unit: GroceryItemUnit.UNIT,
-    icon: '/assets/images/paper-towel.png',
+    icon: '/assets/icons/paper-towel.png',
   },
 ]
