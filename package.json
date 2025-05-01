@@ -3,5 +3,13 @@
   "version": "1.0.0",
   "description": "Kairos is a platform for helping you manage your time.",
   "author": "Tomasz Przytula",
-  "license": "ISC"
+  "license": "ISC",
+  "scripts": {
+    "build": "yarn build:web && yarn build:lambdas",
+    "build:web": "cd packages/web && yarn && yarn build",
+    "build:lambdas": "cd packages/lambdas && yarn && yarn build",
+    "test": "yarn test:web && yarn test:lambdas",
+    "test:web": "cd packages/web && yarn test",
+    "test:lambdas": "cd packages/lambdas && yarn test"
+  }
 }
