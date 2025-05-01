@@ -4,4 +4,5 @@ export enum Route {
     GroceryList = '/groceries',
     NoiseTracking = '/noise-tracking',
     ToDoList = '/todo',
+    AddToDoItem = '/todo/add',
 }

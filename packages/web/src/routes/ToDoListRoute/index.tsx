@@ -12,6 +12,7 @@ export const NoiseTrackingRoute = () => {
       <StandardLayout 
         title="To Do List" 
         previousRoute={skipStartingScreen ? undefined : Route.Home} 
+        nextRoute={Route.AddToDoItem}
       >
         <ToDoList />
       </StandardLayout>

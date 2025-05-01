@@ -12,7 +12,7 @@ export interface IFormField<T extends string | number | undefined = string | num
 }
 
 export interface IAddItemFormProps {
-    defaults: Array<IItemDefault>;
+    defaults?: Array<IItemDefault>;
     fields: Array<IFormField>
     onSubmit: (fields: Array<IFormField>, icon: string) => Promise<void>;
 }

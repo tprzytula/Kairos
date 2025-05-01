@@ -5,7 +5,7 @@ import { ITodoItem } from '../retrieve/types'
 const fetchMock = fetch as FetchMock
 const EXAMPLE_RESPONSE: ITodoItem = {
   id: '1',
-  name: 'Milk',
+  name: 'Groceries',
   description: 'Buy groceries for the week',
   isDone: false,
   dueDate: 1746042442000,
@@ -16,17 +16,15 @@ describe('Given the addTodoItem function', () => {
     fetchMock.mockResponse(JSON.stringify(EXAMPLE_RESPONSE))
 
     await addTodoItem({
-      name: 'Milk',
+      name: 'Groceries',
       description: 'Buy groceries for the week',
-      isDone: false,
-      dueDate: 1746042442000,
     })
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/todo_list/items',
       {
         method: 'PUT',
-        body: JSON.stringify({ name: 'Milk', description: 'Buy groceries for the week', isDone: false, dueDate: 1746042442000 }),
+        body: JSON.stringify({ name: 'Groceries', description: 'Buy groceries for the week', isDone: false }),
       }
     )
   })
@@ -37,8 +35,6 @@ describe('Given the addTodoItem function', () => {
     const result = await addTodoItem({
       name: 'Milk',
       description: 'Buy groceries for the week',
-      isDone: false,
-      dueDate: 1746042442000,
     })
 
     expect(result).toStrictEqual(EXAMPLE_RESPONSE)
@@ -53,8 +49,6 @@ describe('Given the addTodoItem function', () => {
       await expect(addTodoItem({
         name: 'Milk',
         description: 'Buy groceries for the week',
-        isDone: false,
-        dueDate: 1746042442000,
       })).rejects.toThrow('Failed to add a todo item')
     })
   })
@@ -71,8 +65,6 @@ describe('Given the addTodoItem function', () => {
       await expect(addTodoItem({
         name: 'Milk',
         description: 'Buy groceries for the week',
-        isDone: false,
-        dueDate: 1746042442000,
       })).rejects.toThrow('Unexpected response from API')
     })
   })

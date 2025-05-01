@@ -14,7 +14,7 @@ const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
 
     const handleValueChange = useCallback((name: string, value: string | number) => {
         if (name === 'name') {
-            const defaultItem = defaults.find((defaultItem) => value.toString().toLowerCase().includes(defaultItem.name.toLowerCase()));
+            const defaultItem = defaults?.find((defaultItem) => value.toString().toLowerCase().includes(defaultItem.name.toLowerCase()));
 
             if (defaultItem && defaultItem.icon) {
                 setImagePath(defaultItem.icon);
