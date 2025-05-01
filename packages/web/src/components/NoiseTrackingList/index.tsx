@@ -13,10 +13,11 @@ const PlaceholderComponent = () => (
 )
 
 const NoiseTrackingList = () => {
-  const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
+  const { noiseTrackingItems, isLoading, refetchNoiseTrackingItems } = useNoiseTrackingContext();
 
   const handleAddNoiseTrackingItem = () => {
     addNoiseTrackingItem()
+    refetchNoiseTrackingItems()
   }
 
   if (isLoading) {
