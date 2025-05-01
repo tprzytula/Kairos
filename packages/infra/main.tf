@@ -36,29 +36,3 @@ module "policies" {
   s3_kairos_web_arn         = module.s3.kairos_web_arn
   s3_kairos_lambdas_arn     = module.s3.kairos_lambdas_arn
 }
-
-module "acm" {
-  source = "./modules/acm"
-
-  domain_name = "kairos.dev"
-  subject_alternative_names = ["www.kairos.dev", "kairos.dev"]
-}
-
-module "cloudfront" {
-  source = "./modules/cloudfront"
-
-  kairos_web_bucket_name = module.s3.kairos_web_bucket_name
-  kairos_web_bucket_regional_domain_name = module.s3.kairos_web_bucket_regional_domain_name
-  region                 = "eu-west-2"
-  kairos_certificate_arn = module.acm.certificate_arn
-}
-
-module "route53" {
-  source = "./modules/route53"
-
-  zone_name = "kairos.dev."
-  certificate_arn = module.acm.certificate_arn
-  cloudfront_distribution_domain_name = module.cloudfront.cloudfront_distribution_domain_name
-  cloudfront_distribution_hosted_zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
-}
-
