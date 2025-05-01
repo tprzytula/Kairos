@@ -76,6 +76,28 @@ describe('Given the reducer', () => {
       expect(result.purchasedItems).toStrictEqual(new Set())
     })
   })
+
+  describe('When the CLEAR_PURCHASED_ITEMS action is invoked', () => {
+    it('should remove specified items from the purchasedItems set', () => {
+      const state = {
+        ...initialState,
+        purchasedItems: new Set([
+          'id-one',
+          'id-two',
+          'id-three',
+        ]),
+      }
+      const result = reducer(state, {
+        type: ActionName.CLEAR_PURCHASED_ITEMS,
+        payload: [
+          'id-one',
+          'id-three',
+        ],
+      })
+
+      expect(result.purchasedItems).toStrictEqual(new Set(['id-two']))
+    })
+  })
 })
 
 const EXAMPLE_ALERT: IAlert = {
