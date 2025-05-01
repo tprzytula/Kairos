@@ -1,26 +1,13 @@
-import { retrieveGroceryList } from '.'
+import { retrieveGroceryList, retrieveGroceryListDefaults } from '.'
 import { FetchMock } from 'jest-fetch-mock'
 import { GroceryItemUnit } from '../../../enums/groceryItem'
+import { IGroceryItem, IGroceryItemDefault } from './types'
 
 const fetchMock = fetch as FetchMock
-const exampleResponse = [
-  {
-    id: '1',
-    name: 'Milk',
-    quantity: 5,
-    unit: GroceryItemUnit.LITER,
-  },
-  {
-    id: '2',
-    name: 'Paper Towel',
-    quantity: 2,
-    unit: GroceryItemUnit.UNIT,
-  },
-]
 
 describe('Given the retrieveItems function', () => {
   it('should make the correct request to the API', async () => {
-    fetchMock.mockResponse(JSON.stringify(exampleResponse))
+    fetchMock.mockResponse(JSON.stringify(EXAMPLE_GROCERY_LIST_RESPONSE))
 
     await retrieveGroceryList()
 
@@ -30,11 +17,11 @@ describe('Given the retrieveItems function', () => {
   })
 
   it('should return the items on success', async () => {
-    fetchMock.mockResponse(JSON.stringify(exampleResponse))
+    fetchMock.mockResponse(JSON.stringify(EXAMPLE_GROCERY_LIST_RESPONSE))
 
     const result = await retrieveGroceryList()
 
-    expect(result).toStrictEqual(exampleResponse)
+    expect(result).toStrictEqual(EXAMPLE_GROCERY_LIST_RESPONSE)
   })
 
   describe('When the API call fails', () => {
@@ -49,3 +36,65 @@ describe('Given the retrieveItems function', () => {
     })
   })
 })
+
+describe('Given the retrieveItemsDefaults function', () => {
+  it('should make the correct request to the API', async () => {
+    fetchMock.mockResponse(JSON.stringify(EXAMPLE_GROCERY_LIST_DEFAULTS_RESPONSE))
+
+    await retrieveGroceryListDefaults()
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://crff1u9wbc.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items_defaults'
+    )
+  })
+
+  it('should return the items on success', async () => {
+    fetchMock.mockResponse(JSON.stringify(EXAMPLE_GROCERY_LIST_DEFAULTS_RESPONSE))
+
+    const result = await retrieveGroceryListDefaults()
+
+    expect(result).toStrictEqual(EXAMPLE_GROCERY_LIST_DEFAULTS_RESPONSE)
+  })
+
+  describe('When the API call fails', () => {
+    it('should return an empty array', async () => {
+      fetchMock.mockResponse(JSON.stringify({ error: 'API call failed' }), {
+        status: 500,
+      })
+
+      const result = await retrieveGroceryList()
+
+      expect(result).toStrictEqual([])
+    })
+  })
+})
+
+const EXAMPLE_GROCERY_LIST_RESPONSE: Array<IGroceryItem> = [
+  {
+    id: '1',
+    name: 'Milk',
+    quantity: 5,
+    unit: GroceryItemUnit.LITER,
+    imagePath: '/assets/images/milk.png',
+  },
+  {
+    id: '2',
+    name: 'Paper Towel',
+    quantity: 2,
+    unit: GroceryItemUnit.UNIT,
+    imagePath: '/assets/images/paper-towel.png',
+  },
+]
+
+const EXAMPLE_GROCERY_LIST_DEFAULTS_RESPONSE: Array<IGroceryItemDefault> = [
+  {
+    name: 'Milk',
+    unit: GroceryItemUnit.LITER,
+    icon: '/assets/images/milk.png',
+  },
+  {
+    name: 'Paper Towel',
+    unit: GroceryItemUnit.UNIT,
+    icon: '/assets/images/paper-towel.png',
+  },
+]
