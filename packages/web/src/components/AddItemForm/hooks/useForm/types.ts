@@ -2,6 +2,7 @@ import { IFormField } from "../../types";
 import { FormFieldType } from "../../enums";
 export interface IUseFormProps {
     initialFields: Array<IFormField>,
+    onValueChange: (name: string, value: string | number, type: FormFieldType) => void,
     onSubmit: (fields: Array<IFormField>) => Promise<void>
 }
 

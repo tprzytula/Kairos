@@ -1,23 +1,51 @@
-import { Button, Container, Stack, CircularProgress, Alert, MenuItem, FormControl, InputLabel, SelectChangeEvent } from "@mui/material";
-import { useCallback, useMemo } from "react";
+import { Button, Container, Stack, CircularProgress, Alert } from "@mui/material";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { IAddItemFormProps, IFormField } from "./types";
 import { useForm } from "./hooks/useForm";
 import { TextField } from "./components/TextField";
 import { Select } from "./components/Select";
 import { FormFieldType } from "./enums";
 import { GroceryItemImage } from "./index.styled";
+import { retrieveGroceryListIcons } from "../../api/groceryList";
+import { IGroceryItemIcon } from "../../api/groceryList/icons/types";
+
+const DEFAULT_ICON = '/assets/images/generic-grocery-item.png';
 
 const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
+    const [icon, setIcon] = useState<string>(DEFAULT_ICON);
+    const [icons, setIcons] = useState<Array<IGroceryItemIcon>>([]);
+
+    useEffect(() => {
+        const fetchIcons = async () => {
+            const icons = await retrieveGroceryListIcons();
+            setIcons(icons);
+        };
+        fetchIcons();
+    }, []);
+
+    const handleValueChange = useCallback((name: string, value: string | number, type: FormFieldType) => {
+        if (name === 'name') {
+            const icon = icons.find((icon) => value.toString().toLowerCase().includes(icon.name.toLowerCase()));
+
+            if (icon) {
+                setIcon(icon.path);
+            } else {
+                setIcon(DEFAULT_ICON);
+            }
+        }
+    }, [icons]);
+
     const {
         errors,
         formFields,
         getFieldProps,
         handleSubmit,
         isSubmitting,
-        submitError
+        submitError,
     } = useForm({
         initialFields: fields,
-        onSubmit
+        onSubmit,
+        onValueChange: handleValueChange
     });
 
     const renderFormField = useCallback((field: IFormField) => {
@@ -57,7 +85,7 @@ const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
             <form onSubmit={handleSubmit} noValidate>
                 <Stack spacing={3}>
                     <GroceryItemImage
-                        image={'/assets/images/generic-grocery-item.png'}
+                        image={icon}
                     />
                     {formFieldsComponents}
                     <Button 

@@ -7,6 +7,7 @@ import { FormFieldType } from '../../enums';
 
 export const useForm = ({
     initialFields,
+    onValueChange,
     onSubmit
 }: IUseFormProps): IUseFormReturn => {
     const [formFields, setFormFields] = useState<IFormField[]>(initialFields);
@@ -15,8 +16,9 @@ export const useForm = ({
     const [submitError, setSubmitError] = useState<string | null>(null);
 
     const handleFieldValueChange = useCallback((name: string, value: string | number, type: FormFieldType) => {
+        onValueChange(name, value, type);
         setFormFields(prevFields => updateFormFields({ prevFields, name, value, type }));
-    }, []);
+    }, [onValueChange]);
 
     const handleErrorClear = useCallback((name: string) => {
         setErrors(prevErrors => clearFieldError({ prevErrors, name }));

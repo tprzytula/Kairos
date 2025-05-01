@@ -1,6 +1,3 @@
-import { Container } from './index.styled'
-import Navigation from '../../components/Navigation'
-import Header from '../../components/Header'
 import AddItemForm from '../../components/AddItemForm'
 import { FormFieldType } from '../../components/AddItemForm/enums'
 import { IFormField } from '../../components/AddItemForm/types'

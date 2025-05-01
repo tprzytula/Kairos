@@ -4,6 +4,7 @@ import { IFormField } from './types'
 import { FormFieldType } from './enums'
 import { useForm } from './hooks/useForm'
 
+jest.mock('../../api/groceryList');
 jest.mock('./hooks/useForm');
 
 describe('Given the AddItemForm component', () => {
@@ -25,7 +26,8 @@ describe('Given the AddItemForm component', () => {
 
         expect(jest.mocked(useForm)).toHaveBeenCalledWith({
             initialFields: EXAMPLE_FIELDS,
-            onSubmit
+            onSubmit,
+            onValueChange: expect.any(Function)
         })
     })
 
