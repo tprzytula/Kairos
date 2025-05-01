@@ -1,6 +1,6 @@
 import * as DynamoDB from "@kairos-lambdas-libs/dynamodb";
 
-const { DynamoDBTables } = DynamoDB;
+const { DynamoDBTable } = DynamoDB;
 
 import { handler } from "./index";
 
@@ -17,7 +17,7 @@ describe('Given the delete_grocery_item lambda handler', () => {
 
         expect(deleteSpy).toHaveBeenCalledWith({
             ids: ["1", "2"],
-            tableName: DynamoDBTables.GROCERY_LIST,
+            tableName: DynamoDBTable.GROCERY_LIST,
         });
     });
 

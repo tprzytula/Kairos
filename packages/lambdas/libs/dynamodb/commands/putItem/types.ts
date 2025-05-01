@@ -1,7 +1,7 @@
-import { DynamoDBTables } from "../../enums";
+import { DynamoDBTable } from "../../enums";
 
 export interface IPutItemOptions {
-  tableName: DynamoDBTables;
+  tableName: DynamoDBTable;
   item: {
     [key: string]: string;
   };

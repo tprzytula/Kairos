@@ -1,5 +1,5 @@
 import { deleteItem } from ".";
-import { DynamoDBTables } from "../../enums";
+import { DynamoDBTable } from "../../enums";
 import * as Client from '../../client';
 import { DeleteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
@@ -10,10 +10,10 @@ describe("Given the deleteItem function", () => {
   it("should pass the right table name and id to the deleteItem command", async () => {
     mockDocumentClient();
 
-    await deleteItem({ id: "1", tableName: DynamoDBTables.GROCERY_LIST });
+    await deleteItem({ id: "1", tableName: DynamoDBTable.GROCERY_LIST });
 
     expect(DeleteCommand).toHaveBeenCalledWith({
-      TableName: DynamoDBTables.GROCERY_LIST,
+      TableName: DynamoDBTable.GROCERY_LIST,
       Key: {
         id: '1',
       },
@@ -25,7 +25,7 @@ describe("Given the deleteItem function", () => {
 
     const items = await deleteItem({
       id: "1",
-      tableName: DynamoDBTables.GROCERY_LIST,
+      tableName: DynamoDBTable.GROCERY_LIST,
     });
 
     expect(items).toBe('send response');

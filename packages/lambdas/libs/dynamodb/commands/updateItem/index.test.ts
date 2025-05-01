@@ -1,5 +1,5 @@
 import { updateItem } from ".";
-import { DynamoDBTables } from "../../enums";
+import { DynamoDBTable } from "../../enums";
 import * as Client from '../../client';
 import { DynamoDBDocumentClient, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
@@ -11,7 +11,7 @@ describe("Given the putItem function", () => {
     mockDocumentClient();
 
     await updateItem({
-      tableName: DynamoDBTables.GROCERY_LIST,
+      tableName: DynamoDBTable.GROCERY_LIST,
       key: {
         id: "1",
       },
@@ -22,7 +22,7 @@ describe("Given the putItem function", () => {
     });
 
     expect(UpdateCommand).toHaveBeenCalledWith({
-      TableName: DynamoDBTables.GROCERY_LIST,
+      TableName: DynamoDBTable.GROCERY_LIST,
       Key: {
         id: "1",
       },
@@ -38,7 +38,7 @@ describe("Given the putItem function", () => {
     mockDocumentClient();
 
     const items = await updateItem({
-      tableName: DynamoDBTables.GROCERY_LIST,
+      tableName: DynamoDBTable.GROCERY_LIST,
       key: {
         id: "1",
       },

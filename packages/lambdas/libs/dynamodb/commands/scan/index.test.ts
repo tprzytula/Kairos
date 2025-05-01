@@ -1,6 +1,6 @@
 import { scan } from ".";
 import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBTables } from "../../enums";
+import { DynamoDBTable } from "../../enums";
 
 jest.mock("@aws-sdk/lib-dynamodb", () => ({
   ...jest.requireActual("@aws-sdk/lib-dynamodb"),
@@ -16,10 +16,10 @@ describe("Given the scan function", () => {
         $metadata: {},
       }));
 
-    await scan({ tableName: DynamoDBTables.GROCERY_LIST });
+    await scan({ tableName: DynamoDBTable.GROCERY_LIST });
 
     expect(ScanCommand).toHaveBeenCalledWith({
-      TableName: DynamoDBTables.GROCERY_LIST,
+      TableName: DynamoDBTable.GROCERY_LIST,
     });
   });
 
@@ -37,7 +37,7 @@ describe("Given the scan function", () => {
         $metadata: {},
       }));
 
-    const items = await scan({ tableName: DynamoDBTables.GROCERY_LIST });
+    const items = await scan({ tableName: DynamoDBTable.GROCERY_LIST });
 
     expect(items).toEqual([
       {
@@ -56,7 +56,7 @@ describe("Given the scan function", () => {
         $metadata: {},
       }));
 
-    const items = await scan({ tableName: DynamoDBTables.GROCERY_LIST });
+    const items = await scan({ tableName: DynamoDBTable.GROCERY_LIST });
 
     expect(items).toEqual([]);
   });

@@ -1,5 +1,5 @@
 import { getItem } from ".";
-import { DynamoDBTables } from "../../enums";
+import { DynamoDBTable } from "../../enums";
 import * as Client from '../../client';
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
@@ -11,14 +11,14 @@ describe("Given the getItem function", () => {
     mockDocumentClient();
 
     await getItem({
-      tableName: DynamoDBTables.GROCERY_LIST,
+      tableName: DynamoDBTable.GROCERY_LIST,
       item: {
         id: "1",
       },
     });
 
     expect(GetCommand).toHaveBeenCalledWith({
-      TableName: DynamoDBTables.GROCERY_LIST,
+      TableName: DynamoDBTable.GROCERY_LIST,
       Key: {
           id: "1"
       },
@@ -29,7 +29,7 @@ describe("Given the getItem function", () => {
     mockDocumentClient();
 
     const items = await getItem({
-      tableName: DynamoDBTables.GROCERY_LIST,
+      tableName: DynamoDBTable.GROCERY_LIST,
       item: {
         id: "1",
       },

@@ -1,6 +1,6 @@
-import { DynamoDBTables } from "../../enums";
+import { DynamoDBTable } from "../../enums";
 
 export interface IDeleteItemOptions {
   id: string;
-  tableName: DynamoDBTables;
+  tableName: DynamoDBTable;
 }

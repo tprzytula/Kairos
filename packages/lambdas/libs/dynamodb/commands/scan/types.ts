@@ -1,5 +1,5 @@
-import { DynamoDBTables } from "../../enums";
+import { DynamoDBTable } from "../../enums";
 
 export interface IScanOptions {
-  tableName: DynamoDBTables;
+  tableName: DynamoDBTable;
 }

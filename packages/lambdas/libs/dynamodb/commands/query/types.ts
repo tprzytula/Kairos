@@ -1,8 +1,9 @@
 import { DynamoDBTable } from "../../enums";
 
-export interface IGetItemOptions {
+export interface IQueryOptions {
   tableName: DynamoDBTable;
-  item: {
+  indexName: string;
+  attributes: {
     [key: string]: string;
   };
 }
