@@ -50,5 +50,11 @@ locals {
         database = "read-only"
       }
     }
+    "delete_noise_tracking_item" = {
+      environment_variables = {}
+      permissions = {
+        database = "read-write"
+      }
+    }
   }
 }
