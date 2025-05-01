@@ -16,6 +16,7 @@ const FIELDS: Array<IFormField> = [
     name: 'quantity',
     label: 'Quantity',
     type: FormFieldType.NUMBER,
+    required: true,
   },
 ]
 export const AddGroceryItemRoute = () => {
