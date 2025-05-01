@@ -65,6 +65,14 @@ locals {
           grocery_items_defaults = "read-only"
         }
       }
+    },
+    "add_todo_item" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          todo_list = "read-write"
+        }
+      }
     }
   }
 }
