@@ -146,6 +146,22 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/icons"
+  /grocery_list/items_default_units:
+    get:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${get_grocery_items_default_units}
+        passthroughBehavior: when_no_match
+      responses:
+        200:
+          description: Grocery items default units retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/default_units"
 components:
   schemas:
     details:
@@ -171,6 +187,14 @@ components:
         name:
           type: string
         path:
+          type: string
+    default_units:
+      title: Grocery Items Default Units
+      type: object
+      properties:
+        name:
+          type: string
+        unit:
           type: string
 
 x-amazon-apigateway-request-validators:
