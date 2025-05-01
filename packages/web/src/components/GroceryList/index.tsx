@@ -1,15 +1,23 @@
-import { useGroceryListContext } from '../../providers/GroceryListProvider'
+import { useGroceryListContext } from '../../providers/GroceryListProvider';
+import GroceryItem from '../GroceryItem';
+import { Container } from './index.styled';
 
 export const GroceryList = () => {
-  const { groceryList } = useGroceryListContext()
+  const { groceryList } = useGroceryListContext();
 
   return (
-    <ul> 
-      {groceryList.map((item) => (
-        <li key={item.id}>{item.name}</li>
+    <Container>
+      {groceryList.map(({ id, name, quantity, imagePath, unit }) => (
+        <GroceryItem 
+          key={id} 
+          name={name} 
+          quantity={quantity} 
+          imagePath={imagePath} 
+          unit={unit}
+        />
       ))}
-    </ul>
-  )
-}
+    </Container>
+  );
+};
 
-export default GroceryList
+export default GroceryList;

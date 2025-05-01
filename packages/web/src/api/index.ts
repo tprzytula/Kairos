@@ -12,7 +12,7 @@ export const retrieveGroceryList = async (): Promise<Array<GroceryItem>> => {
   return []
 }
 
-export const createGroceryItem = async (item: Omit<GroceryItem, 'id'>): Promise<GroceryItem> => {
+export const createGroceryItem = async (item: Omit<GroceryItem, 'id' | 'imagePath'>): Promise<GroceryItem> => {
   const response = await fetch(`${API_BASE_URL}/grocery_list/items`, {
     method: 'PUT',
     body: JSON.stringify(item),

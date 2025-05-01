@@ -15,6 +15,8 @@ describe('Given the AddItemForm component', () => {
         expect(screen.getAllByLabelText('Name')[0]).toHaveValue('test')
         expect(screen.getAllByLabelText('Quantity')[0]).toBeVisible()
         expect(screen.getAllByLabelText('Quantity')[0]).toHaveValue(1)
+        expect(screen.getAllByLabelText('Unit')[0]).toBeVisible()
+        expect(screen.getByText('units')).toBeVisible()
     }) 
 
     it('should pass the initial fields to the useForm hook', () => {
@@ -111,6 +113,36 @@ const renderAddItemForm = () => {
 }
 
 const EXAMPLE_FIELDS: Array<IFormField> = [
-    { name: 'name', label: 'Name', type: FormFieldType.TEXT, value: 'test' },
-    { name: 'quantity', label: 'Quantity', type: FormFieldType.NUMBER, value: 1 },
+    {
+        name: 'name',
+        label: 'Name',
+        type: FormFieldType.TEXT,
+        value: 'test'
+    },
+    {
+        name: 'quantity',
+        label: 'Quantity',
+        type: FormFieldType.NUMBER,
+        value: 1
+    },
+    {
+        name: 'unit',
+        label: 'Unit',
+        type: FormFieldType.SELECT,
+        value: 'units',
+        options: [
+            {
+                label: 'units',
+                value: 'units'
+            },
+            {
+                label: 'kilograms',
+                value: 'kilograms'
+            },
+            {
+                label: 'liters',
+                value: 'liters'
+            }
+        ]
+    }
 ]

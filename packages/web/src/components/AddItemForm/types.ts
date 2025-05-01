@@ -7,6 +7,7 @@ export interface IFormField<T extends string | number | undefined = string | num
     value: T;
     required?: boolean;
     validate?: (value: T) => string | undefined;
+    options?: Array<{ label: string; value: string }>;
 }
 
 export interface IAddItemFormProps {

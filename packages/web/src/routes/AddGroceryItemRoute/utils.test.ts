@@ -18,6 +18,13 @@ describe('Given the validateFields function', () => {
           required: true, 
           value: 1,
           label: 'Quantity'
+        },
+        {
+          name: 'GroceryItemUnit',
+          type: FormFieldType.SELECT,
+          required: true,
+          value: 'kg',
+          label: 'GroceryItemUnit'
         }
       ])
             
@@ -35,6 +42,13 @@ describe('Given the validateFields function', () => {
           required: true, 
           value: 1, 
           label: 'Quantity' 
+        },
+        {
+          name: 'GroceryItemUnit',
+          type: FormFieldType.SELECT,
+          required: true,
+          value: 'kg',
+          label: 'GroceryItemUnit'
         }
       ])
     })
@@ -70,6 +84,13 @@ describe('Given the validateFields function', () => {
           required: true, 
           value: 1, 
           label: 'Quantity'
+        },
+        {
+          name: 'GroceryItemUnit',
+          type: FormFieldType.SELECT,
+          required: true,
+          value: 'kg',
+          label: 'GroceryItemUnit'
         }
       ])).toThrow('Fields cannot be empty')
     })
@@ -91,6 +112,13 @@ describe('Given the validateFields function', () => {
           required: true, 
           value: 0, 
           label: 'Quantity' 
+        },
+        {
+          name: 'GroceryItemUnit',
+          type: FormFieldType.SELECT,
+          required: true,
+          value: 'kg',
+          label: 'GroceryItemUnit'
         }
       ])).toThrow('Fields cannot be empty')
     })
@@ -112,6 +140,13 @@ describe('Given the validateFields function', () => {
           required: true, 
           value: 1, 
           label: 'Quantity' 
+        },
+        {
+          name: 'GroceryItemUnit',
+          type: FormFieldType.SELECT,
+          required: true,
+          value: 'kg',
+          label: 'GroceryItemUnit'
         }
       ])).toThrow('Invalid field types')
     })
@@ -133,6 +168,13 @@ describe('Given the validateFields function', () => {
           required: true, 
           value: 'Test', 
           label: 'Quantity' 
+        },
+        {
+          name: 'GroceryItemUnit',
+          type: FormFieldType.SELECT,
+          required: true,
+          value: 'kg',
+          label: 'GroceryItemUnit'
         }
       ])).toThrow('Invalid field types')
     })

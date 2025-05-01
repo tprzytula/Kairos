@@ -3,6 +3,7 @@ import { useGroceryListContext } from './index'
 import { GroceryListProvider } from './index'
 import * as API from '../../api'
 import { GroceryItem } from '../AppStateProvider/types'
+import { GroceryItemUnit } from '../../enums/groceryItem'
 
 jest.mock('../../api')
 
@@ -72,11 +73,15 @@ const EXAMPLE_GROCERY_LIST: Array<GroceryItem> = [
       id: '1',
       name: 'Milk',
       quantity: 5,
+      imagePath: 'https://hostname.com/image.png',
+      unit: GroceryItemUnit.LITER,
     },
     {
       id: '2',
       name: 'Bread',
       quantity: 2,
+      imagePath: 'https://hostname.com/image.png',
+      unit: GroceryItemUnit.UNIT,
     },
 ]
 
