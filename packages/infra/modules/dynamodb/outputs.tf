@@ -9,3 +9,7 @@ output "grocery_items_icons_arn" {
 output "grocery_items_default_units_arn" {
   value = aws_dynamodb_table.grocery_items_default_units.arn
 }
+
+output "noise_tracking_arn" {
+  value = aws_dynamodb_table.noise_tracking.arn
+}
