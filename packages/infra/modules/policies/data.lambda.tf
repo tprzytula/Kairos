@@ -28,6 +28,8 @@ data "aws_iam_policy_document" "lambda_policies" {
       resources = [
         var.dynamodb_grocery_list_arn,
         var.dynamodb_grocery_items_icons_arn,
+        "${var.dynamodb_grocery_list_arn}/index/*",
+        "${var.dynamodb_grocery_items_icons_arn}/index/*",
       ]
     }
   }
@@ -50,6 +52,8 @@ data "aws_iam_policy_document" "lambda_policies" {
       resources = [
         var.dynamodb_grocery_list_arn,
         var.dynamodb_grocery_items_icons_arn,
+        "${var.dynamodb_grocery_list_arn}/index/*",
+        "${var.dynamodb_grocery_items_icons_arn}/index/*",
       ]
     }
   }
