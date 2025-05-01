@@ -23,7 +23,8 @@ const createBody: CreateBodyFn = (statusCode, message) => {
   if (statusCode in TEMPLATES) {
     return TEMPLATES[statusCode];
   }
-  return undefined;
+
+  return 'No response';
 };
 
 export const createResponse: CreateResponseFn = ({

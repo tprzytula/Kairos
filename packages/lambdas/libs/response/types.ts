@@ -7,7 +7,7 @@ type Message = string | { [key: string]: any };
 export type CreateBodyFn = (
   statusCode: number,
   message?: Message,
-) => string | undefined;
+) => string;
 
 export interface ICreateResponseParams {
   statusCode?: number;
@@ -22,5 +22,5 @@ export type CreateResponseFn = ({
   headers: {
     [key: string]: string;
   };
-  body?: string;
+  body: string;
 };
