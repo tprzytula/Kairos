@@ -7,6 +7,9 @@ locals {
       permissions = {
         database = {
           grocery_list = "read-only"
+          grocery_items_defaults = "none"
+          noise_tracking = "none"
+          todo_list = "none"
         }
       }
     }
