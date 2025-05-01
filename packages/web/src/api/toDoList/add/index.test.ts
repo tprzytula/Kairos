@@ -8,7 +8,7 @@ const EXAMPLE_RESPONSE: ITodoItem = {
   name: 'Milk',
   description: 'Buy groceries for the week',
   isDone: false,
-  dueDate: '2021-01-01',
+  dueDate: 1746042442000,
 }
 
 describe('Given the addTodoItem function', () => {
@@ -19,14 +19,14 @@ describe('Given the addTodoItem function', () => {
       name: 'Milk',
       description: 'Buy groceries for the week',
       isDone: false,
-      dueDate: '2021-01-01',
+      dueDate: 1746042442000,
     })
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/todo_list/items',
       {
         method: 'PUT',
-        body: JSON.stringify({ name: 'Milk', description: 'Buy groceries for the week', isDone: false, dueDate: '2021-01-01' }),
+        body: JSON.stringify({ name: 'Milk', description: 'Buy groceries for the week', isDone: false, dueDate: 1746042442000 }),
       }
     )
   })
@@ -38,7 +38,7 @@ describe('Given the addTodoItem function', () => {
       name: 'Milk',
       description: 'Buy groceries for the week',
       isDone: false,
-      dueDate: '2021-01-01',
+      dueDate: 1746042442000,
     })
 
     expect(result).toStrictEqual(EXAMPLE_RESPONSE)
@@ -54,7 +54,7 @@ describe('Given the addTodoItem function', () => {
         name: 'Milk',
         description: 'Buy groceries for the week',
         isDone: false,
-        dueDate: '2021-01-01',
+        dueDate: 1746042442000,
       })).rejects.toThrow('Failed to add a todo item')
     })
   })
@@ -72,7 +72,7 @@ describe('Given the addTodoItem function', () => {
         name: 'Milk',
         description: 'Buy groceries for the week',
         isDone: false,
-        dueDate: '2021-01-01',
+        dueDate: 1746042442000,
       })).rejects.toThrow('Unexpected response from API')
     })
   })

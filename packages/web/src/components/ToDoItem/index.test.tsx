@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import ToDoItem from ".";
 import { useAppState } from "../../providers/AppStateProvider";
 import { ActionName } from "../../providers/AppStateProvider/enums";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 jest.mock("../../providers/AppStateProvider");
 
@@ -12,7 +13,7 @@ describe("Given the ToDoItem component", () => {
     
     expect(screen.getByText(EXAMPLE_TO_DO_ITEM_PROPS.name)).toBeVisible();
     expect(screen.getByText(EXAMPLE_TO_DO_ITEM_PROPS.description)).toBeVisible();
-    expect(screen.getByText(EXAMPLE_TO_DO_ITEM_PROPS.dueDate)).toBeVisible();
+    expect(screen.getByText('4/30/2025')).toBeVisible();
   });
 
   describe("When the user clicks the item", () => {
@@ -51,8 +52,17 @@ describe("Given the ToDoItem component", () => {
   });
 });
 
+const theme = createTheme()
+
+const renderWithTheme = (component: React.ReactElement) => {
+  return render(
+    <ThemeProvider theme={theme}>
+      {component}
+    </ThemeProvider>
+  )
+}
 const renderToDoItem = () => {
-  render(<ToDoItem {...EXAMPLE_TO_DO_ITEM_PROPS} />);
+  renderWithTheme(<ToDoItem {...EXAMPLE_TO_DO_ITEM_PROPS} />);
 };
 
 const mockAppState = (selectedTodoItems: Set<string> = new Set()) => {
@@ -70,6 +80,6 @@ const EXAMPLE_TO_DO_ITEM_PROPS = {
   id: "1",
   name: "Test Item",
   description: "Test Description",
-  dueDate: "2021-01-01",
+  dueDate: 1746042442000,
   isDone: false,
 };

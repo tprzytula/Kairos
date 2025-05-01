@@ -42,13 +42,13 @@ const EXAMPLE_TODO_LIST_RESPONSE: Array<ITodoItem> = [
     name: 'Buy groceries',
     description: 'Buy groceries for the week',
     isDone: false,
-    dueDate: '2021-01-01',
+    dueDate: 1746042442000,
   },
   {
     id: '2',
     name: 'Go to the gym',
     description: 'Train for 30 minutes',
     isDone: false,
-    dueDate: '2021-01-01',
+    dueDate: 1746042442000,
   },
 ]
