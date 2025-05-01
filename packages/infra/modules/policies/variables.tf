@@ -14,10 +14,10 @@ variable "lambda_functions" {
     iam_role_name = string
     permissions = object({
       database = object({
-        grocery_list           = string
-        grocery_items_defaults = string
-        noise_tracking         = string
-        todo_list              = string
+        grocery_list           = optional(string, "none")
+        grocery_items_defaults = optional(string, "none")
+        noise_tracking         = optional(string, "none")
+        todo_list              = optional(string, "none")
       })
     })
   }))
