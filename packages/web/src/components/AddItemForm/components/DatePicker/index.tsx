@@ -5,6 +5,7 @@ import React from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
+import 'dayjs/locale/en-gb';
 
 interface IDatePickerProps {
     field: IFormField
@@ -38,6 +39,7 @@ const DatePickerComponent = ({
                 onChange(syntheticEvent)
             }}
             disabled={isSubmitting}
+            format="DD/MM/YYYY"
             slotProps={{
                 textField: {
                     fullWidth: true,
@@ -55,7 +57,7 @@ const DatePickerComponent = ({
 
 export const DatePicker = (props: IDatePickerProps) => {
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
             <DatePickerComponent {...props} />
         </LocalizationProvider>
     )
