@@ -4,7 +4,7 @@ import Header from '../../components/Header'
 import AddItemForm from '../../components/AddItemForm'
 import { FormFieldType } from '../../components/AddItemForm/enums'
 import { IFormField } from '../../components/AddItemForm/types'
-import { createGroceryItem } from '../../api'
+import { addGroceryItem } from '../../api/groceryList'
 import { validateFields } from './utils'
 import { useNavigate } from 'react-router'
 import { useAppState } from '../../providers/AppStateProvider'
@@ -53,7 +53,7 @@ export const AddGroceryItemRoute = () => {
     try {
       const [name, quantity, unit] = validateFields(fields)
 
-      await createGroceryItem({
+      await addGroceryItem({
         name: name.value,
         quantity: quantity.value,
         unit: unit.value as GroceryItemUnit,

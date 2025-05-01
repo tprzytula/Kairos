@@ -6,11 +6,11 @@ import { BrowserRouter } from 'react-router'
 import AddGroceryItemRoute from '.'
 import * as ReactRouter from 'react-router'
 import AddItemForm from '../../components/AddItemForm'
-import { createGroceryItem } from '../../api'
+import { addGroceryItem } from '../../api/groceryList'
 import { FormFieldType } from '../../components/AddItemForm/enums'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 
-jest.mock('../../api');
+jest.mock('../../api/groceryList');
 jest.mock('../../components/AddItemForm');
 
 jest.mock('react-router', () => ({
@@ -79,7 +79,7 @@ describe('Given the AddGroceryItemRoute component', () => {
         ])
       })
 
-      expect(createGroceryItem).toHaveBeenCalledWith({
+      expect(addGroceryItem).toHaveBeenCalledWith({
         name: 'Test',
         quantity: 1,
         unit: GroceryItemUnit.KILOGRAM,
@@ -138,7 +138,7 @@ describe('Given the AddGroceryItemRoute component', () => {
           return <div>AddItemForm</div>
         })
 
-        jest.mocked(createGroceryItem).mockRejectedValue(new Error('Error creating grocery item'))
+        jest.mocked(addGroceryItem).mockRejectedValue(new Error('Error creating grocery item'))
         
         renderComponent()
         await act(async () => {

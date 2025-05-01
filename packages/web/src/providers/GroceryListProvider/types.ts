@@ -13,4 +13,5 @@ export interface IGroceryListProviderProps {
 
 export interface IState {
     groceryList: Array<GroceryItem>
+    refetchGroceryList: () => Promise<void>
 }

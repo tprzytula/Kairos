@@ -33,6 +33,12 @@ export const reducer = (state: State, action: Action): State => {
         purchasedItems: removeFromSet(state.purchasedItems, action.payload.id),
       }
     }
+    case ActionName.CLEAR_PURCHASED_ITEMS: {
+      return {
+        ...state,
+        purchasedItems: removeFromSet(state.purchasedItems, ...action.payload),
+      }
+    }
     default: {
       return state
     }
