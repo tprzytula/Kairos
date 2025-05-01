@@ -1,19 +1,18 @@
 import { Button, Container, Stack, CircularProgress, Alert } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { IAddItemFormProps, IFormField } from "./types";
+import { IAddItemFormProps, IFormField, IIcon } from "./types";
 import { useForm } from "./hooks/useForm";
 import { TextField } from "./components/TextField";
 import { Select } from "./components/Select";
 import { FormFieldType } from "./enums";
 import { GroceryItemImage } from "./index.styled";
 import { retrieveGroceryListIcons } from "../../api/groceryList";
-import { IGroceryItemIcon } from "../../api/groceryList/icons/types";
 
 const DEFAULT_ICON = '/assets/images/generic-grocery-item.png';
 
 const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
     const [imagePath, setImagePath] = useState<string>(DEFAULT_ICON);
-    const [icons, setIcons] = useState<Array<IGroceryItemIcon>>([]);
+    const [icons, setIcons] = useState<Array<IIcon>>([]);
 
     useEffect(() => {
         const fetchIcons = async () => {
