@@ -1,5 +1,6 @@
-import { getBody, IRequestBody } from "./body";
+import { getBody } from "./body";
 import { upsertItem } from "./database";
+import { IRequestBody } from "./body/types";
 
 import { handler } from "./index";
 
@@ -33,6 +34,7 @@ describe('Given the add_grocery_item lambda handler', () => {
 
         describe('And the upsert succeeds', () => {
             it('should return status 200', async () => {
+                jest.mocked(getBody).mockReturnValue(EXAMPLE_GROCERY_ITEM);
                 jest.mocked(upsertItem).mockResolvedValue({
                     id: EXAMPLE_ID,
                     statusCode: 200,
