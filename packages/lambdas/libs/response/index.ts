@@ -1,41 +1,17 @@
-import {
-  CreateBodyFn,
-  CreateResponseFn,
-  ICreateResponseParams,
-  ITemplates,
-} from "./types";
+import { ICreateResponseParams, ICreateResponseResult } from "./types";
+import { ResponseStatusCodes } from "./enums";
+import { createBody } from "./messageBody";
 
-const TEMPLATES: ITemplates = {
-  200: "OK",
-  400: "Bad Request",
-  500: "Internal Server Error",
-};
-
-const createBody: CreateBodyFn = (statusCode, message) => {
-  if (typeof message === "string") {
-    return message;
-  }
-
-  if (message) {
-    return JSON.stringify(message);
-  }
-
-  if (statusCode in TEMPLATES) {
-    return TEMPLATES[statusCode];
-  }
-
-  return "No response";
-};
-
-export const createResponse: CreateResponseFn = ({
-  statusCode = 200,
+export const createResponse = ({
+  statusCode = ResponseStatusCodes.OK,
   message,
-}: ICreateResponseParams) => {
-  return {
+}: ICreateResponseParams): ICreateResponseResult => ({
+  statusCode,
+  headers: {
+    "Access-Control-Allow-Origin": "*",
+  },
+  body: createBody({
     statusCode,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-    },
-    body: createBody(statusCode, message),
-  };
-};
+    message,
+  }),
+});
