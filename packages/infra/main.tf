@@ -30,9 +30,16 @@ module "s3" {
 module "policies" {
   source = "./modules/policies"
 
-  random_name                    = module.random.random_name
-  lambda_functions               = module.lambda.lambda_functions
-  dynamodb_grocery_list_arn       = module.dynamodb.grocery_list_arn
-  s3_kairos_web_arn              = module.s3.kairos_web_arn
-  s3_kairos_lambdas_arn          = module.s3.kairos_lambdas_arn
+  random_name               = module.random.random_name
+  lambda_functions          = module.lambda.lambda_functions
+  dynamodb_grocery_list_arn = module.dynamodb.grocery_list_arn
+  s3_kairos_web_arn         = module.s3.kairos_web_arn
+  s3_kairos_lambdas_arn     = module.s3.kairos_lambdas_arn
+}
+
+module "cloudfront" {
+  source = "./modules/cloudfront"
+
+  kairos_web_bucket_name = module.s3.kairos_web_bucket_name
+  region                 = "eu-west-2"
 }
