@@ -10,6 +10,8 @@ import theme from './theme'
 import { StateComponent } from './state'
 import { HashRouter } from 'react-router-dom'
 
+console.info("Hello world")
+
 const container = document.getElementById('app')
 
 if (container) {

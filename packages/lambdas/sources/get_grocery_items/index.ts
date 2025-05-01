@@ -25,7 +25,7 @@ export const handler = async (
   event: APIGatewayEvent,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {
-  console.info("Event received", event);
+  console.info("Event received2", event);
 
   try {
     const items = (await getItems()) ?? [];
