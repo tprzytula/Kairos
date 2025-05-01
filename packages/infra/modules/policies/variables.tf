@@ -29,3 +29,7 @@ variable "s3_kairos_lambdas_arn" {
 variable "dynamodb_grocery_items_icons_arn" {
   type = string
 }
+
+variable "dynamodb_grocery_items_default_units_arn" {
+  type = string
+}
