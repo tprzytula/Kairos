@@ -5,49 +5,65 @@ locals {
     "get_grocery_items" = {
       environment_variables = {}
       permissions = {
-        database = "read-only"
+        database = {
+          grocery_list = "read-only"
+        }
       }
     }
     "add_grocery_item" = {
       environment_variables = {}
       permissions = {
-        database = "read-write"
+        database = {
+          grocery_list = "read-write"
+        }
       }
     }
     "delete_grocery_item" = {
       environment_variables = {}
       permissions = {
-        database = "read-write"
+        database = {
+          grocery_list = "read-write"
+        }
       }
     }
     "delete_grocery_items" = {
       environment_variables = {}
       permissions = {
-        database = "read-write"
+        database = {
+          grocery_list = "read-write"
+        }
       }
     }
     "add_noise_tracking_item" = {
       environment_variables = {}
       permissions = {
-        database = "read-write"
+        database = {
+          noise_tracking = "read-write"
+        }
       }
     }
     "get_noise_tracking_items" = {
       environment_variables = {}
       permissions = {
-        database = "read-only"
+        database = {
+          noise_tracking = "read-only"
+        }
       }
     }
     "delete_noise_tracking_item" = {
       environment_variables = {}
       permissions = {
-        database = "read-write"
+        database = {
+          noise_tracking = "read-write"
+        }
       }
     },
     "get_grocery_items_defaults" = {
       environment_variables = {}
       permissions = {
-        database = "read-only"
+        database = {
+          grocery_items_defaults = "read-only"
+        }
       }
     }
   }
