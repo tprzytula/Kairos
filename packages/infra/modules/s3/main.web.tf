@@ -13,10 +13,6 @@ resource "aws_s3_bucket_website_configuration" "kairos_web_website_configuration
   index_document {
     suffix = "index.html"
   }
-
-  error_document {
-    key = "index.html"
-  }
 }
 
 resource "aws_s3_bucket_policy" "kairos_web_bucket_policy" {
