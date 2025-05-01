@@ -2,48 +2,99 @@ import { render, screen, fireEvent, act } from '@testing-library/react'
 import AddItemForm from './index'
 import { IFormField } from './types'
 import { FormFieldType } from './enums'
+import { useForm } from './hooks/useForm'
+
+jest.mock('./hooks/useForm');
 
 describe('Given the AddItemForm component', () => {
     it('should render the form fields', () => {
+        mockUseForm();
         renderAddItemForm();
 
         expect(screen.getAllByLabelText('Name')[0]).toBeVisible()
         expect(screen.getAllByLabelText('Name')[0]).toHaveValue('test')
         expect(screen.getAllByLabelText('Quantity')[0]).toBeVisible()
         expect(screen.getAllByLabelText('Quantity')[0]).toHaveValue(1)
+    }) 
+
+    it('should pass the initial fields to the useForm hook', () => {
+        mockUseForm();
+        const { onSubmit } = renderAddItemForm();
+
+        expect(jest.mocked(useForm)).toHaveBeenCalledWith({
+            initialFields: EXAMPLE_FIELDS,
+            onSubmit
+        })
     })
 
     describe('When the form is submitted', () => {
-        it('should call the onSubmit function', async () => {
-            const { onSubmit } = renderAddItemForm();
+        it('should call the handleSubmit function', async () => {
+            const { handleSubmitMock } = mockUseForm();
+            
+            renderAddItemForm();
 
             await submitForm()
 
-            expect(onSubmit).toHaveBeenCalledWith(EXAMPLE_FIELDS)
+            expect(handleSubmitMock).toHaveBeenCalled()
+        })
+    })
+
+    describe('When there is form submission error', () => {
+        it('should render the error message', async () => {
+            mockUseForm({ submitError: 'An error occurred while submitting the form' });
+            
+            renderAddItemForm();
+
+            await submitForm()
+
+            expect(screen.getByText('An error occurred while submitting the form')).toBeVisible()
+        })
+    })
+
+    describe('When the form is submitting', () => {
+        it('should render the submit button as disabled', () => {
+            mockUseForm({ isSubmitting: true });
+            renderAddItemForm();
+            
+            expect(screen.getByText('Submitting...')).toBeDisabled()
         })
 
-        describe('And there were changes in the form fields', () => {
-            it('should call the onSubmit function with the updated fields', async () => {
-                const { onSubmit } = renderAddItemForm();
-
-                await changeField(EXAMPLE_FIELDS[0], 'test2')
-                await changeField(EXAMPLE_FIELDS[1], 10)
-
-                await submitForm()
-
-                expect(onSubmit).toHaveBeenCalledWith([
-                    { name: 'name', label: 'Name', type: 'text', value: 'test2' },
-                    { name: 'quantity', label: 'Quantity', type: 'number', value: 10 },
-                ])
-            })
+        it('should show circular progress', () => {
+            mockUseForm({ isSubmitting: true });
+            renderAddItemForm();
+            
+            expect(screen.getByRole('progressbar')).toBeVisible()
         })
     })
 })
 
-const changeField = async (field: IFormField, value: string | number) => {
-    await act(async () => {
-        fireEvent.change(screen.getAllByLabelText(field.label)[0], { target: { value } })
+const mockUseForm = ({
+    isSubmitting = false,
+    submitError = null
+}: {
+    isSubmitting?: boolean,
+    submitError?: string | null
+} = {}) => {
+    const useFormMock = jest.mocked(useForm);
+    const getFieldPropsMock = jest.fn().mockImplementation((field: IFormField) => ({
+        onChange: jest.fn(),
+        value: field.value
+    }));
+    const handleSubmitMock = jest.fn().mockImplementation((e) => {
+        e.preventDefault();
+        return Promise.resolve();
+    });
+
+    useFormMock.mockReturnValue({
+        errors: {},
+        formFields: EXAMPLE_FIELDS,
+        getFieldProps: getFieldPropsMock,
+        handleSubmit: handleSubmitMock,
+        isSubmitting,
+        submitError,
     })
+
+    return { getFieldPropsMock, handleSubmitMock, useFormMock }
 }
 
 const submitForm = async () => {
