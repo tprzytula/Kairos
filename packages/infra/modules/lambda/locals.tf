@@ -1,5 +1,5 @@
 locals {
-  s3_bucket_name = format("kairos-web-lambdas-%s", var.random_name)
+  s3_bucket_name = format("kairos-lambdas-%s", var.random_name)
 
   lambda_functions = {
     "get_grocery_list" = {
