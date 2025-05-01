@@ -7,10 +7,11 @@ describe("Given the parseItems function", () => {
         id: { S: "1" },
         name: { S: "Item 1" },
         quantity: { N: "1" },
+        imagePath: { S: "Image 1" },
       },
     ]);
 
-    expect(parsedItems).toEqual([{ id: "1", name: "Item 1", quantity: 1 }]);
+    expect(parsedItems).toEqual([{ id: "1", name: "Item 1", quantity: 1, imagePath: "Image 1" }]);
   });
 
   it("should filter out invalid items", () => {
@@ -19,20 +20,30 @@ describe("Given the parseItems function", () => {
         id: { S: "quantity is not a number" },
         name: { S: "quantity is not a number" },
         quantity: { S: "quantity is not a number" },
+        imagePath: { S: "quantity is not a number" }, 
       },
       {
         id: { N: "id is a number" },
         name: { S: "id is a number" },
         quantity: { N: "id is a number" },
+        imagePath: { S: "id is a number" },
       },
       {
         id: { S: "1" },
         name: { S: "Item 1" },
         quantity: { N: "1" },
+        imagePath: { S: "Image 1" },
       },
       {
         id: { S: "name is missing" },
         quantity: { N: "name is missing" },
+        imagePath: { S: "name is missing" },
+      },
+      {
+        id: { S: "imagePath is not a string" },
+        name: { S: "imagePath is not a string" },
+        quantity: { N: "imagePath is not a string" },
+        imagePath: { N: "5" },
       },
     ]);
 
@@ -41,6 +52,7 @@ describe("Given the parseItems function", () => {
         id: "1",
         name: "Item 1",
         quantity: 1,
+        imagePath: "Image 1",
       },
     ]);
   });

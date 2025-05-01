@@ -29,6 +29,7 @@ describe('Given the add_grocery_item lambda handler', () => {
             tableName: DynamoDBTables.GROCERY_LIST,
             item: {
                 id: EXAMPLE_ID,
+                imagePath: '/assets/images/generic-grocery-item.png',
                 name: "Apple",
                 quantity: 1,
             },
