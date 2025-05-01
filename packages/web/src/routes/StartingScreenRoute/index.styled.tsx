@@ -8,12 +8,6 @@ export const Container = styled('div')({
   flexDirection: 'column',
 })
 
-export const Header = styled('div')({
-  padding: '1em',
-  fontSize: '2em',
-  fontWeight: 'bold',
-})
-
 export const GroceryListButton = styled('div')({
   margin: '1em',
   padding: '1em',

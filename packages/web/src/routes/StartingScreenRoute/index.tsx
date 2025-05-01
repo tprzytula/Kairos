@@ -1,6 +1,7 @@
-import { Container, Header, GroceryListButton, Content } from './index.styled'
+import { Container, GroceryListButton, Content } from './index.styled'
 import { useNavigate } from 'react-router'
 import { useCallback } from 'react'
+import Header from '../../components/Header'
 
 export const StartingScreenRoute = () => {
   const navigate = useNavigate()
@@ -11,9 +12,7 @@ export const StartingScreenRoute = () => {
 
   return (
     <Container>
-      <Header>
-        Kairos
-      </Header>
+      <Header title="Kairos" />
       <Content>
         <GroceryListButton onClick={navigateToGroceryList}>
           Grocery List
