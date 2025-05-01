@@ -1,42 +1,25 @@
-import { Context, APIGatewayProxyResult, APIGatewayEvent } from "aws-lambda";
-import { DynamoDBClient, DeleteItemCommand } from "@aws-sdk/client-dynamodb";
+import { APIGatewayProxyEvent, Handler } from "aws-lambda";
+import { middleware } from "@kairos-lambdas-libs/middleware";
+import { createResponse } from "@kairos-lambdas-libs/response";
+import { DynamoDBTables, deleteItem } from "@kairos-lambdas-libs/dynamodb";
 
-const client = new DynamoDBClient({ region: "eu-west-2" });
+export const handler: Handler<APIGatewayProxyEvent> = middleware(
+  async (event) => {
+    const { id } = event.pathParameters ?? {};
 
-const deleteItem = async (id: string) => {
-  const command = new DeleteItemCommand({
-    TableName: "items",
-    Key: {
-      id: {
-        S: id,
-      },
-    },
-  });
+    if (!id || typeof id !== "string") {
+      return createResponse({
+        statusCode: 400,
+      });
+    }
 
-  return await client.send(command);
-};
+    await deleteItem({
+      id,
+      tableName: DynamoDBTables.GROCERY_LIST,
+    });
 
-export const handler = async (
-  event: APIGatewayEvent,
-  _context: Context,
-): Promise<APIGatewayProxyResult> => {
-  console.info("Event received", event);
-
-  const { id } = event.pathParameters ?? {};
-
-  try {
-    await deleteItem(id as string);
-
-    return {
-      body: "OK",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
+    return createResponse({
       statusCode: 200,
-    };
-  } catch (error) {
-    console.log("Encountered error:", error);
-
-    return { body: "Internal Server Error", statusCode: 500 };
-  }
-};
+    });
+  },
+);
