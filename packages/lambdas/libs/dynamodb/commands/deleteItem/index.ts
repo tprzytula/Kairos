@@ -1,22 +1,18 @@
-import {
-  DeleteItemCommand,
-  DeleteItemCommandOutput,
-} from "@aws-sdk/client-dynamodb";
 import { IDeleteItemOptions } from "./types";
-import { client } from "../../client";
+import { getDocumentClient } from "../../client";
+import { DeleteCommand, DeleteCommandOutput } from "@aws-sdk/lib-dynamodb";
 
 export const deleteItem = async ({
   id,
   tableName,
-}: IDeleteItemOptions): Promise<DeleteItemCommandOutput> => {
-  const command = new DeleteItemCommand({
+}: IDeleteItemOptions): Promise<DeleteCommandOutput> => {
+  const documentClient = getDocumentClient();
+  const command = new DeleteCommand({
     TableName: tableName,
     Key: {
-      id: {
-        S: id,
-      },
+      id,
     },
   });
 
-  return await client.send(command);
+  return await documentClient.send(command);
 };
