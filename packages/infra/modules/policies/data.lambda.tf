@@ -18,7 +18,7 @@ data "aws_iam_policy_document" "lambda_policies" {
     for_each = each.value.permissions.database.grocery_list == local.permissions.read_only ? [each.key] : []
 
     content {
-      sid     = "DatabaseReadOnly"
+      sid     = "DatabaseReadOnlyGroceryList"
       actions = local.database_read_only_actions
       effect  = "Allow"
       resources = [
@@ -32,7 +32,7 @@ data "aws_iam_policy_document" "lambda_policies" {
     for_each = each.value.permissions.database.grocery_items_defaults == local.permissions.read_only ? [each.key] : []
 
     content {
-      sid     = "DatabaseReadOnly"
+      sid     = "DatabaseReadOnlyGroceryItemsDefaults"
       actions = local.database_read_only_actions
       effect  = "Allow"
       resources = [
@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "lambda_policies" {
     for_each = each.value.permissions.database.noise_tracking == local.permissions.read_only ? [each.key] : []
 
     content {
-      sid     = "DatabaseReadOnly"
+      sid     = "DatabaseReadOnlyNoiseTracking"
       actions = local.database_read_only_actions
       effect  = "Allow"
       resources = [
@@ -60,7 +60,7 @@ data "aws_iam_policy_document" "lambda_policies" {
     for_each = each.value.permissions.database.todo_list == local.permissions.read_only ? [each.key] : []
 
     content {
-      sid     = "DatabaseReadOnly"
+      sid     = "DatabaseReadOnlyTodoList"
       actions = local.database_read_only_actions
       effect  = "Allow"
       resources = [
@@ -74,7 +74,7 @@ data "aws_iam_policy_document" "lambda_policies" {
     for_each = each.value.permissions.database.grocery_list == local.permissions.read_write ? [each.key] : []
 
     content {
-      sid     = "DatabaseReadWrite"
+      sid     = "DatabaseReadWriteGroceryList"
       actions = local.database_read_write_actions
       effect  = "Allow"
       resources = [
@@ -88,7 +88,7 @@ data "aws_iam_policy_document" "lambda_policies" {
     for_each = each.value.permissions.database.grocery_items_defaults == local.permissions.read_write ? [each.key] : []
 
     content {
-      sid     = "DatabaseReadWrite"
+      sid     = "DatabaseReadWriteGroceryItemsDefaults"
       actions = local.database_read_write_actions
       effect  = "Allow"
       resources = [
@@ -102,7 +102,7 @@ data "aws_iam_policy_document" "lambda_policies" {
     for_each = each.value.permissions.database.noise_tracking == local.permissions.read_write ? [each.key] : []
 
     content {
-      sid     = "DatabaseReadWrite"
+      sid     = "DatabaseReadWriteNoiseTracking"
       actions = local.database_read_write_actions
       effect  = "Allow"
       resources = [
@@ -116,7 +116,7 @@ data "aws_iam_policy_document" "lambda_policies" {
     for_each = each.value.permissions.database.todo_list == local.permissions.read_write ? [each.key] : []
 
     content {
-      sid     = "DatabaseReadWrite"
+      sid     = "DatabaseReadWriteTodoList"
       actions = local.database_read_write_actions
       effect  = "Allow"
       resources = [
