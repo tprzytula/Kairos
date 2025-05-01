@@ -1,4 +1,7 @@
+import { AlertColor } from '@mui/material'
 import { ReactNode } from 'react'
+import { ActionName } from './enums'
+import { IAlert } from '../../components/Alert/types'
 
 export type Context = {
   state: State
@@ -6,7 +9,7 @@ export type Context = {
 }
 
 export type State = {
-  
+  alerts: Map<string, IAlert>
 }
 
 export type StateComponentProps = {
@@ -22,4 +25,20 @@ export type GroceryItem = {
 export type Action = {
   type: string
   payload: any
+}
+
+export type ShowAlertAction = {
+  type: ActionName.SHOW_ALERT
+  payload: {
+    id: string
+    description: string
+    severity: AlertColor
+  }
+}
+
+export type HideAlertAction = {
+  type: ActionName.HIDE_ALERT
+  payload: {
+    id: string
+  }
 }

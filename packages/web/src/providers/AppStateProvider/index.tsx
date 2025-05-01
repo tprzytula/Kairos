@@ -2,7 +2,9 @@ import { createContext, useReducer, useContext } from 'react'
 import { StateComponentProps, State, Context } from './types'
 import { reducer } from './reducer'
 
-export const initialState: State = {}
+export const initialState: State = {
+  alerts: new Map(),
+}
 
 export const AppState = createContext<Context>({
   state: initialState,
