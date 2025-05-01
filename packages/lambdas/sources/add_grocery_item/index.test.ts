@@ -87,6 +87,7 @@ const EXAMPLE_GROCERY_ITEM = {
     name: "Apple",
     quantity: 1,
     unit: "kg",
+    imagePath: "/assets/images/generic-grocery-item.png",
 }
 
 const mockPut = () => jest.spyOn(DynamoDB, 'putItem');

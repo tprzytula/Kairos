@@ -48,7 +48,7 @@ export const AddGroceryItemRoute = () => {
     showAlert({ description, severity }, dispatch)
   }, [dispatch])
 
-  const onSubmit = async (fields: Array<IFormField>) => {
+  const onSubmit = async (fields: Array<IFormField>, imagePath: string) => {
     try {
       const [name, quantity, unit] = validateFields(fields)
 
@@ -56,6 +56,7 @@ export const AddGroceryItemRoute = () => {
         name: name.value,
         quantity: quantity.value,
         unit: unit.value as GroceryItemUnit,
+        imagePath,
       })
 
       createAlert(`${name.value} has been added to your grocery list`, 'success')
