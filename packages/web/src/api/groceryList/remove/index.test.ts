@@ -8,7 +8,7 @@ describe('Given the removeGroceryItems function', () => {
     await removeGroceryItems(['1', '2'])
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://crff1u9wbc.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items',
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items',
       {
         method: 'DELETE',
         body: JSON.stringify({ ids: ['1', '2'] }),

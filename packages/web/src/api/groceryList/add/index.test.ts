@@ -32,7 +32,7 @@ describe('Given the addGroceryItem function', () => {
     })
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://crff1u9wbc.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items',
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items',
       {
         method: 'PUT',
         body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, imagePath: '/assets/icons/milk.png' }),
