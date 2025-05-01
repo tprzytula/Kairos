@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "name": "delete_todo_item",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@kairos-lambdas-libs/dynamodb": "1.0.0",
+    "@kairos-lambdas-libs/middleware": "1.0.0",
+    "@kairos-lambdas-libs/response": "1.0.0"
+  },
+  "devDependencies": {
+    "@kairos-lambdas-libs/types": "1.0.0"
+  }
+}
