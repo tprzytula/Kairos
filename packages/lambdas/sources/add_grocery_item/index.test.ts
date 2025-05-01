@@ -1,100 +1,70 @@
-import * as DynamoDB from "@kairos-lambdas-libs/dynamodb";
-import * as Crypto from "node:crypto";
-
-const { DynamoDBTables } = DynamoDB;
+import { getBody, IRequestBody } from "./body";
+import { upsertItem } from "./database";
 
 import { handler } from "./index";
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
-    ...jest.requireActual("@kairos-lambdas-libs/dynamodb"),
-    putItem: jest.fn(),
+jest.mock('./body', () => ({
+    getBody: jest.fn(),
 }));
 
-jest.mock("node:crypto", () => ({
-    ...jest.requireActual("node:crypto"),
-    randomUUID: jest.fn(),
+jest.mock('./database', () => ({
+    upsertItem: jest.fn(),
 }));
 
 describe('Given the add_grocery_item lambda handler', () => {
-    beforeEach(() => {
-        mockCrypto();
-    });
-
-    it('should make a put request to the grocery list table', async () => {
-        const putSpy = mockPut();
-
-        await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
-
-        expect(putSpy).toHaveBeenCalledWith({
-            tableName: DynamoDBTables.GROCERY_LIST,
-            item: {
-                id: EXAMPLE_ID,
-                imagePath: '/assets/images/generic-grocery-item.png',
-                name: "Apple",
-                quantity: 1,
-                unit: "kg",
-            },
-        });
-    });
-
-    it('should return status 201 with the generated id', async () => {
-        mockPut();
-
-        const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
-
-        expect(result.statusCode).toBe(201);
-        expect(result.body).toEqual(JSON.stringify({ id: EXAMPLE_ID }));
-    });
-
-    describe('When the body is not provided', () => {
+    describe('When the body is invalid', () => {
         it('should return status 400', async () => {
+            jest.mocked(getBody).mockReturnValue(null);
+
             const result = await runHandler({ body: null });
 
             expect(result.statusCode).toBe(400);
         });
     });
 
-    describe('When the put request fails', () => {
-        it('should log the error', async () => {
-            const logSpy = jest.spyOn(console, 'error');
-
-            const putSpy = mockPut();
-            putSpy.mockRejectedValue(new Error('Put failed'));
+    describe('When the body is valid', () => {
+        it('should upsert the item in the grocery list table', async () => {
+            jest.mocked(getBody).mockReturnValue(EXAMPLE_GROCERY_ITEM);
 
             await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
 
-            expect(logSpy).toHaveBeenCalledWith('Handler Threw Exception:', new Error('Put failed'));
+            expect(jest.mocked(upsertItem)).toHaveBeenCalledWith(EXAMPLE_GROCERY_ITEM);
         });
 
-        it('should return status 500', async () => {
-            const putSpy = mockPut();
-            putSpy.mockRejectedValue(new Error('Put failed'));
+        describe('And the upsert succeeds', () => {
+            it('should return status 200', async () => {
+                jest.mocked(upsertItem).mockResolvedValue({
+                    id: EXAMPLE_ID,
+                    statusCode: 200,
+                });
 
-            const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
+                const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
 
-            expect(result).toEqual({
-                body: "Internal Server Error",
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                },
-                statusCode: 500,
+                expect(result.statusCode).toBe(200);
+                expect(result.body).toEqual(JSON.stringify({ id: EXAMPLE_ID }));
+            });
+        });
+
+        describe('And the upsert fails', () => {
+            it('should return status 500', async () => {
+                jest.mocked(upsertItem).mockRejectedValue(new Error('Upsert failed'));
+
+                const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
+
+                expect(result.statusCode).toBe(500);
             });
         });
     });
 });
 
-const EXAMPLE_GROCERY_ITEM = {
+const EXAMPLE_GROCERY_ITEM: IRequestBody = {
     name: "Apple",
-    quantity: 1,
+    quantity: "1",
     unit: "kg",
     imagePath: "/assets/images/generic-grocery-item.png",
 }
 
-const mockPut = () => jest.spyOn(DynamoDB, 'putItem');
-
 const EXAMPLE_ID = "11111111-1111-1111-1111-111111111111";  
-
-const mockCrypto = () => jest.spyOn(Crypto, 'randomUUID').mockReturnValue(EXAMPLE_ID);
 
 interface IAPIGatewayProxyEvent {
     body: string | null;
