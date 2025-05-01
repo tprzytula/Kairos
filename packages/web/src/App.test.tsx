@@ -18,8 +18,8 @@ const renderApp = () => {
 }
 
 describe('Given the App component', () => {
-  it('should render the root route when rendered', () => {
+  it('should render the grocery list route when rendered', () => {
     renderApp()
-    expect(screen.getByText('Kairos')).toBeVisible()
+    expect(screen.getByText('Grocery List')).toBeVisible()
   })
 })
