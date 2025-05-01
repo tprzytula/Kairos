@@ -41,6 +41,7 @@ data "aws_iam_policy_document" "lambda_policies" {
         "dynamodb:PutItem",
         "dynamodb:Scan",
         "dynamodb:UpdateItem",
+        "dynamodb:BatchWriteItem",
       ]
       effect = "Allow"
       resources = [
