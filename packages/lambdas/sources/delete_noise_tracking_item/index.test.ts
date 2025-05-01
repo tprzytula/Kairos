@@ -13,7 +13,7 @@ describe('Given the delete_noise_tracking_item lambda handler', () => {
     it('should make a delete request to the noise tracking table', async () => {
         const deleteSpy = mockDelete();
 
-        await runHandler({ pathParameters: { timestamp: 1714003200000 } });
+        await runHandler({ pathParameters: { timestamp: "1714003200000" } });
 
         expect(deleteSpy).toHaveBeenCalledWith({
             key: {
@@ -26,7 +26,7 @@ describe('Given the delete_noise_tracking_item lambda handler', () => {
     it('should return status 200', async () => {
         mockDelete();
 
-        const result = await runHandler({ pathParameters: { timestamp: 1714003200000 } });
+        const result = await runHandler({ pathParameters: { timestamp: "1714003200000" } });
 
         expect(result.statusCode).toBe(200);
     });
@@ -46,7 +46,7 @@ describe('Given the delete_noise_tracking_item lambda handler', () => {
             const deleteSpy = mockDelete();
             deleteSpy.mockRejectedValue(new Error('Delete failed'));
 
-            await runHandler({ pathParameters: { timestamp: 1714003200000 } });
+            await runHandler({ pathParameters: { timestamp: "1714003200000" } });
 
             expect(logSpy).toHaveBeenCalledWith('Handler Threw Exception:', new Error('Delete failed'));
         });

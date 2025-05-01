@@ -15,7 +15,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
 
     await deleteItem({
       key: {
-        timestamp,
+        timestamp: parseInt(timestamp, 10),
       },
       tableName: DynamoDBTable.NOISE_TRACKING,
     });
