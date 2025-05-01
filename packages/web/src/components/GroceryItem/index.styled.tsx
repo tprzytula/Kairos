@@ -6,8 +6,8 @@ export const Container = styled(({ isPurchased, ...props }: { isPurchased: boole
 ))(({ isPurchased }: { isPurchased: boolean }) => ({
   display: 'flex',
   borderRadius: 0.2,
-  minHeight: '100px',
-  width: '100%',
+  minHeight: '50px',
+  margin: '0 0.5em',
   justifyContent: 'flex-start',
   boxSizing: 'border-box',
   opacity: isPurchased ? 0.5 : 1,
@@ -31,8 +31,8 @@ export const ActionArea = styled(CardActionArea)({
 })
 
 export const Media = styled(CardMedia)(({
-  width: '100px',
-  height: '100px',
+  width: '75px',
+  height: '75px',
   position: 'relative',
 }))
 
