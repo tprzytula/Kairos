@@ -20,7 +20,7 @@ const EmptyListComponent = () => (
 export const ToDoList = () => {
   const { toDoList, isLoading } = useToDoListContext();
 
-  if (isLoading) {
+  if (!isLoading) {
     return <PlaceholderComponent />
   }
 

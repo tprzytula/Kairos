@@ -5,13 +5,11 @@ import {
   DescriptionPlaceholder,
   DueDatePlaceholder,
   ActionArea,
-  MediaPlaceholder,
 } from './index.styled';
 
 const ToDoItemPlaceholder = () => (
-  <Container isPurchased={false} aria-label="To do item placeholder">
+  <Container isSelected={false} aria-label="To do item placeholder">
     <ActionArea>
-      <MediaPlaceholder />
       <Content>
         <NamePlaceholder />
         <DescriptionPlaceholder />

@@ -1,6 +1,5 @@
 import { styled } from "@mui/system";
-import { Card, CardActionArea, CardContent, CardMedia, CardProps } from '@mui/material'
-import { useTheme } from '@mui/material/styles';
+import { Card, CardActionArea, CardContent, CardProps } from '@mui/material'
 
 export const Container = styled(({ isSelected, ...props }: { isSelected: boolean } & CardProps) => (
   <Card {...props} />
