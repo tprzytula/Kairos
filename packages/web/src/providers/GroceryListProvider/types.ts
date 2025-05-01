@@ -12,6 +12,6 @@ export interface IGroceryListProviderProps {
 }
 
 export interface IState {
-    groceryList: Array<GroceryItem>
+    groceryList: Map<string, GroceryItem>
     refetchGroceryList: () => Promise<void>
 }
