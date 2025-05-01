@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "lambda_policies" {
       effect = "Allow"
       resources = [
         var.dynamodb_grocery_list_arn,
-        var.dynamodb_grocery_items_icons_arn,
+        # var.dynamodb_grocery_items_icons_arn,
       ]
     }
   }
@@ -47,7 +47,7 @@ data "aws_iam_policy_document" "lambda_policies" {
       effect = "Allow"
       resources = [
         var.dynamodb_grocery_list_arn,
-        var.dynamodb_grocery_items_icons_arn,
+        # var.dynamodb_grocery_items_icons_arn,
       ]
     }
   }
