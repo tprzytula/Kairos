@@ -5,6 +5,7 @@ import AddGroceryItemRoute from './routes/AddGroceryItemRoute'
 import StartingScreenRoute from './routes/StartingScreenRoute'
 import AlertContainer from './components/AlertContainer'
 import { Route as RouteEnum } from './enums/route'
+import NoiseTrackingRoute from './routes/NoiseTrackingRoute'
 
 export const App = () => {
   return (
@@ -14,6 +15,7 @@ export const App = () => {
           <Route path={RouteEnum.Home} element={<StartingScreenRoute />} />
           <Route path={RouteEnum.GroceryList} element={<GroceryListRoute />} />
           <Route path={RouteEnum.AddGroceryItem} element={<AddGroceryItemRoute />} />
+          <Route path={RouteEnum.NoiseTracking} element={<NoiseTrackingRoute />} />
         </Routes>
         <AlertContainer />
       </Content>

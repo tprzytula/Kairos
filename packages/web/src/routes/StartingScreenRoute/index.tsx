@@ -1,4 +1,4 @@
-import { GroceryListButton } from './index.styled'
+import { StyledButton } from './index.styled'
 import { useNavigate } from 'react-router'
 import { useCallback, useEffect } from 'react'
 import { Route } from '../../enums/route'
@@ -13,6 +13,10 @@ export const StartingScreenRoute = () => {
     navigate(Route.GroceryList)
   }, [navigate])
 
+  const navigateToNoiseTracking = useCallback(() => {
+    navigate(Route.NoiseTracking)
+  }, [navigate])
+
   useEffect(() => {
     if (skipStartingScreen) {
       navigate(Route.GroceryList)
@@ -23,9 +27,12 @@ export const StartingScreenRoute = () => {
     <StandardLayout
       title="Kairos"
     >
-      <GroceryListButton onClick={navigateToGroceryList}>
+      <StyledButton onClick={navigateToGroceryList}>
         Grocery List
-      </GroceryListButton>
+      </StyledButton>
+      <StyledButton onClick={navigateToNoiseTracking}>
+        Noise Tracking
+      </StyledButton>
     </StandardLayout>
   )
 }

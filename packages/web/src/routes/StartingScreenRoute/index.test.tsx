@@ -28,6 +28,11 @@ describe('Given the StartingScreenRoute component', () => {
     renderComponent()
     expect(screen.getByText('Grocery List')).toBeVisible()
   })
+
+  it('should have a noise tracking button', () => {
+    renderComponent()
+    expect(screen.getByText('Noise Tracking')).toBeVisible()
+  })
   
   describe('When the grocery list button is clicked', () => {
     it('should navigate to the grocery list page', async () => {
@@ -42,6 +47,22 @@ describe('Given the StartingScreenRoute component', () => {
       })
 
       expect(navigateSpy).toHaveBeenCalledWith(Route.GroceryList)
+    })
+  })
+
+  describe('When the noise tracking button is clicked', () => {
+    it('should navigate to the noise tracking page', async () => {
+      const navigateSpy = jest.fn()
+
+      jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
+
+      renderComponent()
+
+      await act(async () => {
+        screen.getByText('Noise Tracking').click()
+      })
+
+      expect(navigateSpy).toHaveBeenCalledWith(Route.NoiseTracking)
     })
   })
 

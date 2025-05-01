@@ -8,7 +8,7 @@ export const Container = styled('div')({
   flexDirection: 'column',
 })
 
-export const GroceryListButton = styled('div')({
+export const StyledButton = styled('div')({
   margin: '1em',
   padding: '1em',
   border: '1px solid black',
