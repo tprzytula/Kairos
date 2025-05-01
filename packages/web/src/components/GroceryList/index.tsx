@@ -1,9 +1,22 @@
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import GroceryItem from '../GroceryItem';
+import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
 import { Container } from './index.styled';
 
+const PlaceholderComponent = () => (
+  <Container>
+    {Array.from({ length: 20 }).map((_, index) => (
+      <GroceryItemPlaceholder key={index} />
+    ))}
+  </Container>
+)
+
 export const GroceryList = () => {
-  const { groceryList } = useGroceryListContext();
+  const { groceryList, isLoading } = useGroceryListContext();
+
+  if (isLoading) {
+    return <PlaceholderComponent />
+  }
 
   return (
     <Container>
