@@ -7,6 +7,7 @@ import StartingScreenRoute from '.'
 import * as ReactRouter from 'react-router'
 import { Route } from '../../enums/route'
 import { useAppState } from '../../providers/AppStateProvider'
+
 jest.mock('../../providers/AppStateProvider', () => ({
   ...jest.requireActual('../../providers/AppStateProvider'),
   useAppState: jest.fn(),
@@ -41,6 +42,24 @@ describe('Given the StartingScreenRoute component', () => {
       })
 
       expect(navigateSpy).toHaveBeenCalledWith(Route.GroceryList)
+    })
+  })
+
+  describe('When the skip starting screen is true', () => {
+    it('should navigate to the grocery list page immediately', async () => {
+      jest.mocked(useAppState).mockReturnValue({
+        state: {
+          ...initialState,
+          skipStartingScreen: true,
+        },
+        dispatch: jest.fn(),
+      })
+
+      renderComponent()
+
+      await act(async () => {
+        screen.getByText('Grocery List').click()
+      })
     })
   })
 })

@@ -110,13 +110,29 @@ describe('Given the GroceryListRoute component', () => {
       expect(errorSpy).toHaveBeenCalledWith('Failed to fetch grocery list:', new Error('Bad things happen all the time'))
     })
   })
+
+  describe('When the skip starting screen is true', () => {
+    it('should not display the back button', async () => {
+      jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
+
+      await act(async () => {
+        renderComponent({ skipStartingScreen: true })
+      })
+
+      expect(screen.queryByLabelText('Back Button')).not.toBeVisible()
+    })
+  })
 })
 
-const renderComponent = () => {
+interface IRenderComponentProps {
+  skipStartingScreen?: boolean
+}
+
+const renderComponent = ({ skipStartingScreen = false }: IRenderComponentProps = {}) => {
   jest.mocked(useAppState).mockReturnValue({
     state: {
       ...initialState,
-      skipStartingScreen: false,
+      skipStartingScreen,
     },
     dispatch: jest.fn(),
   })
