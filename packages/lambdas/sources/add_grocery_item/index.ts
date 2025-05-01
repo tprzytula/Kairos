@@ -26,7 +26,7 @@ const addItemDynamoDB = async ({ name, quantity }) => {
 
 export const handler = async (
   event: APIGatewayEvent,
-  _context: Context
+  _context: Context,
 ): Promise<APIGatewayProxyResult> => {
   console.info("Event received", event);
 
