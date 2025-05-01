@@ -7,6 +7,6 @@ resource "aws_dynamodb_table" "noise_tracking" {
 
   attribute {
     name = "timestamp"
-    type = "S"
+    type = "N"
   }
 }
