@@ -5,7 +5,7 @@ import { reducer } from './reducer'
 export const initialState: State = {
   alerts: new Map(),
   purchasedItems: new Set(),
-  skipStartingScreen: false,
+  skipStartingScreen: true,
 }
 
 export const AppState = createContext<Context>({
