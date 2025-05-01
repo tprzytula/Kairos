@@ -1,10 +1,4 @@
-locals {
-  process_yaml = { for file in ["grocery_list", "noise_tracking", "todo_list"] :
-    file => yamldecode(templatefile("${path.module}/policies/${file}.yml", { lambda_functions = var.lambda_functions }))
-  }
-}
-
-resource "aws_api_gateway_rest_api" "rest_api" {
+resource "aws_api_gateway_rest_api" "kairos_api" {
   name = "kairos-rest-api"
   body = yamlencode({
     openapi = "3.0.1"
@@ -13,18 +7,8 @@ resource "aws_api_gateway_rest_api" "rest_api" {
       description = "API for Kairos"
       version = "1.0"
     }
-    paths = merge(
-      local.process_yaml["grocery_list"].paths,
-      local.process_yaml["noise_tracking"].paths,
-      local.process_yaml["todo_list"].paths
-    )
-    components = {
-      schemas = merge(
-        local.process_yaml["grocery_list"].components.schemas,
-        local.process_yaml["noise_tracking"].components.schemas,
-        local.process_yaml["todo_list"].components.schemas
-      )
-    }
+    paths = local.merged_paths
+    components = local.merged_components
     x-amazon-apigateway-request-validators = {
       "Validate body" = {
         validateRequestParameters = false
@@ -38,7 +22,7 @@ resource "aws_api_gateway_rest_api" "rest_api" {
   }
 }
 
-resource "aws_lambda_permission" "rest_api_lambda_permissions" {
+resource "aws_lambda_permission" "kairos_api_lambda_permissions" {
   for_each = var.lambda_functions
 
   statement_id  = "AllowExecutionFromAPIGateway-test"
@@ -46,14 +30,14 @@ resource "aws_lambda_permission" "rest_api_lambda_permissions" {
   function_name = each.value.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = format("%s/*/*", aws_api_gateway_rest_api.rest_api.execution_arn)
+  source_arn = format("%s/*/*", aws_api_gateway_rest_api.kairos_api.execution_arn)
 }
 
-resource "aws_api_gateway_deployment" "rest_api_deployment" {
-  rest_api_id = aws_api_gateway_rest_api.rest_api.id
+resource "aws_api_gateway_deployment" "kairos_api_deployment" {
+  rest_api_id = aws_api_gateway_rest_api.kairos_api.id
 
   triggers = {
-    redeployment = sha1(jsonencode(aws_api_gateway_rest_api.rest_api.body))
+    redeployment = sha1(jsonencode(aws_api_gateway_rest_api.kairos_api.body))
   }
 
   lifecycle {
@@ -61,9 +45,9 @@ resource "aws_api_gateway_deployment" "rest_api_deployment" {
   }
 }
 
-resource "aws_api_gateway_stage" "rest_api_stage" {
-  rest_api_id   = aws_api_gateway_rest_api.rest_api.id
-  deployment_id = aws_api_gateway_deployment.rest_api_deployment.id
+resource "aws_api_gateway_stage" "kairos_api_stage" {
+  rest_api_id   = aws_api_gateway_rest_api.kairos_api.id
+  deployment_id = aws_api_gateway_deployment.kairos_api_deployment.id
 
   stage_name = "v1"
 }
