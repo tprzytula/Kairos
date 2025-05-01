@@ -26,5 +26,11 @@ locals {
         database = "read-write"
       }
     }
+    "get_grocery_items_icons" = {
+      environment_variables = {}
+      permissions = {
+        database = "read-only"
+      }
+    }
   }
 }

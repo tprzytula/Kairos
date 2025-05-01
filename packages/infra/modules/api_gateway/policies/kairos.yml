@@ -130,6 +130,22 @@ paths:
           application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
+  /grocery_list/items_icons:
+    get:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${get_grocery_items_icons}
+        passthroughBehavior: when_no_match
+      responses:
+        200:
+          description: Grocery items icons retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/icons"
 components:
   schemas:
     details:
@@ -148,6 +164,15 @@ components:
         quantity:
           type: number
           example: 5
+    icons:
+      title: Grocery Items Icons
+      type: object
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+
 x-amazon-apigateway-request-validators:
   Validate body:
     validateRequestParameters: false
