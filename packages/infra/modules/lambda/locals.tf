@@ -32,5 +32,11 @@ locals {
         database = "read-only"
       }
     }
+    "get_grocery_items_default_units" = {
+      environment_variables = {}
+      permissions = {
+        database = "read-only"
+      }
+    }
   }
 }
