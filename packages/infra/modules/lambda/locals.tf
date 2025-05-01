@@ -73,6 +73,22 @@ locals {
           todo_list = "read-write"
         }
       }
+    },
+    "get_todo_items" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          todo_list = "read-only"
+        }
+      }
+    },
+    "delete_todo_item" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          todo_list = "read-write"
+        }
+      }
     }
   }
 }
