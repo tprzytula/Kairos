@@ -32,7 +32,7 @@ module "policies" {
 
   random_name                    = module.random.random_name
   lambda_functions               = module.lambda.lambda_functions
-  dynamodb_items_arn             = module.dynamodb.items_arn
-  s3_storage_manager_arn         = module.s3.storage_manager_arn
-  s3_storage_manager_lambdas_arn = module.s3.storage_manager_lambdas_arn
+  dynamodb_grocery_list_arn       = module.dynamodb.grocery_list_arn
+  s3_kairos_web_arn              = module.s3.kairos_web_arn
+  s3_kairos_lambdas_arn          = module.s3.kairos_lambdas_arn
 }
