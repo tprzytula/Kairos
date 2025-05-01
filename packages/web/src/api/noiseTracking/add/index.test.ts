@@ -10,7 +10,7 @@ describe('Given the addNoiseTrackingItem function', () => {
     await addNoiseTrackingItem()
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/noise_tracking',
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/noise_tracking/items',
       {
         method: 'PUT',
       }
