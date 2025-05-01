@@ -5,14 +5,10 @@ resource "aws_dynamodb_table_item" "grocery_items_icons_entries" {
   } }
 
   table_name = var.dynamodb_table_name
-  hash_key   = each.value.name
+  hash_key   = "name"
 
   item = jsonencode({
-    name = {
-      S = each.value.name
-    }
-    iconPath = {
-      S = each.value.iconPath
-    }
+    name     = { S = each.value.name }
+    iconPath = { S = each.value.iconPath }
   })
 }
