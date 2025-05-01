@@ -5,7 +5,7 @@ export const Container = styled(({ isPurchased, ...props }: { isPurchased: boole
   <Card {...props} />
 ))(({ isPurchased }: { isPurchased: boolean }) => ({
   display: 'flex',
-  borderRadius: 0.2,
+  borderRadius: '0.5em',
   minHeight: '50px',
   margin: '0 0.5em',
   justifyContent: 'flex-start',
@@ -27,7 +27,7 @@ export const Container = styled(({ isPurchased, ...props }: { isPurchased: boole
 
 export const ActionArea = styled(CardActionArea)({
   display: 'flex',
-  padding: '0 2em',
+  padding: '0',
 })
 
 export const Media = styled(CardMedia)(({
