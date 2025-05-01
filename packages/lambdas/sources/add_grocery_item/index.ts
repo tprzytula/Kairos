@@ -3,6 +3,7 @@ import { middleware } from "@kairos-lambdas-libs/middleware";
 import { createResponse } from "@kairos-lambdas-libs/response";
 import { upsertItem } from "./database";
 import { getBody } from "./body";
+import { GroceryItemUnit } from "@kairos-lambdas-libs/dynamodb/enums";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event) => {
@@ -18,7 +19,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
     const { id, statusCode } = await upsertItem({
       name,
       quantity,
-      unit,
+      unit: unit as GroceryItemUnit,
       imagePath,
     });
 

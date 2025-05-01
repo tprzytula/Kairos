@@ -1,8 +1,8 @@
-import { IGroceryItemDefault } from "../types/groceryList/types";
+import { IGroceryItemDefault } from "../types/groceryList";
 
 import { DynamoDBTable } from "../enums";
-import { IGroceryItem } from "../types/groceryList/types";
-import { INoiseTracking } from "../types/noiseTracking/types";
+import { IGroceryItem } from "../types/groceryList";
+import { INoiseTracking } from "../types/noiseTracking";
 
 export type TableResponseMap = {
     [DynamoDBTable.GROCERY_LIST]: IGroceryItem;
