@@ -13,6 +13,7 @@ import { AlertColor } from '@mui/material'
 import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
+import StandardLayout from '../../layout/standardLayout'
 
 const FIELDS: Array<IFormField> = [
   {
@@ -41,6 +42,7 @@ const FIELDS: Array<IFormField> = [
     })),
   },
 ]
+
 export const AddGroceryItemRoute = () => {
   const { dispatch } = useAppState()
   const navigate = useNavigate()
@@ -68,12 +70,16 @@ export const AddGroceryItemRoute = () => {
   }
 
   return (
-    <Container>
-      <Header title="Add Grocery Item" />
-      <AddItemForm fields={FIELDS} onSubmit={onSubmit} />
-      <Navigation previousRoute={Route.GroceryList} />
-    </Container>
+    <StandardLayout
+      title="Add Grocery Item"
+      previousRoute={Route.GroceryList}
+    >
+      <AddItemForm
+        fields={FIELDS}
+        onSubmit={onSubmit}
+      />
+    </StandardLayout>
   )
 }
 
-export default AddGroceryItemRoute;
+export default AddGroceryItemRoute

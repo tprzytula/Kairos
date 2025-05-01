@@ -1,4 +1,5 @@
+import { Route } from "../../enums/route"
+
 export interface INavigateButtonProps {
-    ariaLabel: string
     route: string
 }

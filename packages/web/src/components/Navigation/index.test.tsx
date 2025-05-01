@@ -1,7 +1,6 @@
 import { screen, render, act } from '@testing-library/react'
 import Navigation from '.'
 import * as ReactRouter from 'react-router'
-import { ReactNode } from 'react'
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
@@ -32,7 +31,7 @@ describe('Given the BackButton component', () => {
   })
 })
 
-const renderNavigation = (previousRoute: string, actionButton?: ReactNode) => {
-    render(<Navigation previousRoute={previousRoute} actionButton={actionButton} />)
+const renderNavigation = (previousRoute: string, nextRoute?: string) => {
+    render(<Navigation previousRoute={previousRoute} nextRoute={nextRoute} />)
   }
   

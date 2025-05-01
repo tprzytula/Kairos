@@ -13,11 +13,11 @@ describe('Given the NavigateButton component', () => {
   it('should render the name', () => {
     render(
       <BrowserRouter>
-        <NavigateButton ariaLabel="Navigate" route="/my/route" />
+        <NavigateButton route="/my/route" />
       </BrowserRouter>
     )
 
-    expect(screen.getByLabelText('Navigate')).toBeVisible()
+    expect(screen.getByLabelText('Navigate to route')).toBeVisible()
   })
 
   describe('When the navigate icon is pressed', () => {
@@ -28,11 +28,11 @@ describe('Given the NavigateButton component', () => {
 
       render(
         <BrowserRouter>
-          <NavigateButton ariaLabel="Navigate" route="/my/route" />
+          <NavigateButton route="/my/route" />
         </BrowserRouter>
       )
 
-      screen.getByLabelText('Navigate').click()
+      screen.getByLabelText('Navigate to route').click()
 
       expect(navigateSpy).toHaveBeenCalledWith('/my/route')
     })
