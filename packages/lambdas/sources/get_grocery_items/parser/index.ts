@@ -7,15 +7,17 @@ const isValidDynamoItem = (
   typeof item.quantity?.N === "string" &&
   typeof item.id?.S === "string" &&
   typeof item.name?.S === "string" &&
-  typeof item.imagePath?.S === "string";
+  typeof item.imagePath?.S === "string" &&
+  typeof item.unit?.S === "string";
 
 export const parseItems = (
   items: Record<string, AttributeValue>[],
 ): Array<GroceryItem> => {
-  return items.filter(isValidDynamoItem).map(({ quantity, id, name, imagePath }) => ({
+  return items.filter(isValidDynamoItem).map(({ quantity, id, name, imagePath, unit }) => ({
     quantity: parseInt(quantity.N, 10),
     id: id.S,
     name: name.S,
     imagePath: imagePath.S,
+    unit: unit.S,
   }));
 };
