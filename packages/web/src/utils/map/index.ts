@@ -17,7 +17,3 @@ export const removeFromMap = <K, V>(map: Map<K, V>, key: K) => {
 const createMap = <K, V>(map: Map<K, V>) => {
     return new Map<K, V>(map)
 }
-
-export const convertListToMap = <K extends string, V>(list: Array<V>, key: keyof V) => {
-    return new Map<K, V>(list.map(item => [item[key] as K, item]))
-}
