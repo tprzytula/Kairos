@@ -15,7 +15,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
     }
 
     const id = randomUUID();
-    const { name, quantity } = JSON.parse(event.body);
+    const { name, quantity, unit } = JSON.parse(event.body);
 
     await putItem({
       tableName: DynamoDBTables.GROCERY_LIST,
@@ -23,10 +23,10 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
         id,
         name,
         quantity,
+        unit,
         imagePath: defaultImagePath,
       },
     });
-
 
     return createResponse({
       statusCode: 201,

@@ -32,6 +32,7 @@ describe('Given the add_grocery_item lambda handler', () => {
                 imagePath: '/assets/images/generic-grocery-item.png',
                 name: "Apple",
                 quantity: 1,
+                unit: "kg",
             },
         });
     });
@@ -85,6 +86,7 @@ describe('Given the add_grocery_item lambda handler', () => {
 const EXAMPLE_GROCERY_ITEM = {
     name: "Apple",
     quantity: 1,
+    unit: "kg",
 }
 
 const mockPut = () => jest.spyOn(DynamoDB, 'putItem');
