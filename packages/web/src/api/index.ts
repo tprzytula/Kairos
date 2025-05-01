@@ -11,3 +11,22 @@ export const retrieveGroceryList = async (): Promise<Array<GroceryItem>> => {
 
   return []
 }
+
+export const createGroceryItem = async (item: Omit<GroceryItem, 'id'>): Promise<GroceryItem> => {
+  const response = await fetch(`${API_BASE_URL}/grocery_list/items`, {
+    method: 'PUT',
+    body: JSON.stringify(item),
+  })
+
+  if (response.ok) {
+    const data = await response.json()
+
+    if (data.id) {
+      return data
+    }
+
+    throw new Error('Unexpected response from API')
+  }
+
+  throw new Error('Failed to create grocery item')
+}
