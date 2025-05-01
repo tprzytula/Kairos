@@ -1,0 +1,6 @@
+.terraform
+vars.auto.tfvars
+archives
+node_modules
+modules/lambda/sources/*.zip
+.DS_Store

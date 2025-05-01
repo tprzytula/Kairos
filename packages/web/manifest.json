@@ -1,0 +1,9 @@
+{
+  "name": "Grocery List Manager",
+  "short_name": "GroceryListManager",
+  "start_url": "TBD",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "Grocery List Manager allows you to manage your grocery list.",
+  "icons": []
+}
