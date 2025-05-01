@@ -1,7 +1,7 @@
 {
   "name": "Grocery List Manager",
   "short_name": "GroceryListManager",
-  "start_url": "TBD",
+  "start_url": "http://kairos-web-5rndghxqgv.s3-website.eu-west-2.amazonaws.com",
   "display": "standalone",
   "background_color": "#fff",
   "description": "Grocery List Manager allows you to manage your grocery list.",
