@@ -249,7 +249,43 @@ paths:
           application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
-          
+  /todo_list/items:
+    post:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${add_todo_item}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        201:
+          description: Todo item added successfully
+        500:
+          description: Error adding todo item
+    options:
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'POST'"
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
 components:
   schemas:
     details:
