@@ -38,5 +38,17 @@ locals {
         database = "read-only"
       }
     }
+    "add_noise_tracking_item" = {
+      environment_variables = {}
+      permissions = {
+        database = "read-write"
+      }
+    }
+    "get_noise_tracking_items" = {
+      environment_variables = {}
+      permissions = {
+        database = "read-only"
+      }
+    }
   }
 }

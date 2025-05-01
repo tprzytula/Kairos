@@ -161,7 +161,35 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/defaultunits"
+                  $ref: "#/components/schemas/defaultUnits"
+  /noise_tracking:
+    get:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${get_noise_tracking_items}
+        passthroughBehavior: when_no_match
+      responses:
+        200:
+          description: Noise tracking items retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/noiseTrackingItem"
+    put:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${add_noise_tracking_item}
+        passthroughBehavior: when_no_match
+      responses:
+        201:
+          description: Noise tracking item added successfully 
+        500:
+          description: Error adding noise tracking item
+
 components:
   schemas:
     details:
@@ -188,7 +216,7 @@ components:
           type: string
         path:
           type: string
-    defaultunits:
+    defaultUnits:
       title: Grocery Items Default Units
       type: object
       properties:
@@ -196,6 +224,12 @@ components:
           type: string
         unit:
           type: string
+    noiseTrackingItem:
+      title: Noise Tracking Item
+      type: object
+      properties:
+        timestamp:
+          type: number
 
 x-amazon-apigateway-request-validators:
   Validate body:
