@@ -1,0 +1,119 @@
+openapi: 3.0.1
+info:
+  title: Noise Tracking
+  description: |
+    API for Noise Tracking
+  version: "1.0"
+paths:
+  /noise_tracking:
+    get:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["get_noise_tracking_items"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Noise tracking items retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/noiseTrackingItem"
+    put:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["add_noise_tracking_item"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        201:
+          description: Noise tracking item added successfully 
+        500:
+          description: Error adding noise tracking item
+    options:
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /noise_tracking/items/{timestamp}:
+    delete:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["delete_noise_tracking_item"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Noise tracking item removed
+        404:
+          description: Noise tracking item does not exist
+    options:
+      parameters:
+        - in: path
+          name: timestamp
+          schema:
+            type: number
+          required: true  
+          description: Timestamp of the noise tracking item to be removed
+          example: 1714003200000
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE'"
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+components:
+  schemas:
+    noiseTrackingItem:
+      title: Noise Tracking Item
+      type: object
+      required:
+        - timestamp
+      properties:
+        timestamp:
+          type: number 
