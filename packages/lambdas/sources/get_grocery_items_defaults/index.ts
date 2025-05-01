@@ -6,7 +6,7 @@ import { logResponse } from "./utils";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(async () => {
   const items = await scan({
-    tableName: DynamoDBTable.GROCERY_ITEMS_DEFAULT_UNITS,
+    tableName: DynamoDBTable.GROCERY_ITEMS_DEFAULTS,
   });
 
   logResponse(items);
