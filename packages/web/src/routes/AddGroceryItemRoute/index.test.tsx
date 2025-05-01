@@ -8,6 +8,7 @@ import * as ReactRouter from 'react-router'
 import AddItemForm from '../../components/AddItemForm'
 import { createGroceryItem } from '../../api'
 import { FormFieldType } from '../../components/AddItemForm/enums'
+
 jest.mock('../../api');
 jest.mock('../../components/AddItemForm');
 
@@ -77,44 +78,39 @@ describe('Given the AddGroceryItemRoute component', () => {
       })
     })
 
-    it('should log the item', async () => {
-      const consoleSpy = jest.spyOn(console, 'log')
-      let onSubmitCallback: any;
+    describe('And the createGroceryItem call succeeds', () => {
+      it('should navigate to the grocery list page', async () => {
+        const navigateSpy = jest.fn()
 
-      jest.mocked(AddItemForm).mockImplementation(({ onSubmit }) => {
-        onSubmitCallback = onSubmit;
-        return <div>AddItemForm</div>
-      })
+        jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
 
-      jest.mocked(createGroceryItem).mockResolvedValue({
-        id: '1',
-        name: 'Test',
-        quantity: 1,
-      })
+        let onSubmitCallback: any;
 
-      renderComponent()
+        jest.mocked(AddItemForm).mockImplementation(({ onSubmit }) => {
+          onSubmitCallback = onSubmit;
+          return <div>AddItemForm</div>
+        })
 
-      await act(async () => {
-        onSubmitCallback([
-          {
-            name: 'Name',
-            type: FormFieldType.TEXT,
-            required: true,
-            value: 'Test',
-          },
-          {
-            name: 'Quantity',
-            type: FormFieldType.NUMBER,
-            required: true,
-            value: 1,
-          },
-        ])
-      })
+        renderComponent()
 
-      expect(consoleSpy).toHaveBeenCalledWith({
-        id: '1',
-        name: 'Test',
-        quantity: 1,
+        await act(async () => {
+          onSubmitCallback([
+            {
+              name: 'Name',
+              type: FormFieldType.TEXT,
+              required: true,
+              value: 'Test',
+            },
+            {
+              name: 'Quantity',
+              type: FormFieldType.NUMBER,
+              required: true,
+              value: 1,
+            },
+          ])
+        })
+
+        expect(navigateSpy).toHaveBeenCalledWith('/groceries')
       })
     })
 
