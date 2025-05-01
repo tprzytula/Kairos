@@ -5,7 +5,7 @@ export interface IGroceryItem {
   name: string
   quantity: number
   unit: GroceryItemUnit
-  imagePath: string
+  imagePath?: string
 }
 
 export interface IGroceryItemDefault {

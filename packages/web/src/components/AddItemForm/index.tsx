@@ -1,5 +1,5 @@
 import { Button, Container, Stack, CircularProgress, Alert } from "@mui/material";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { IAddItemFormProps, IFormField } from "./types";
 import { useForm } from "./hooks/useForm";
 import { TextField } from "./components/TextField";
@@ -7,22 +7,37 @@ import { Select } from "./components/Select";
 import { FormFieldType } from "./enums";
 import { GroceryItemImage } from "./index.styled";
 
-const DEFAULT_ICON = '/assets/icons/generic-grocery-item.png';
-
 const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
-    const [imagePath, setImagePath] = useState<string>(DEFAULT_ICON);
+    const [imagePath, setImagePath] = useState<string | undefined>();
+
+    const findItemIcon = useCallback((name: string) => {
+        const defaultItem = defaults?.find((defaultItem) => name.toLowerCase().includes(defaultItem.name.toLowerCase()));
+
+        if (defaultItem && defaultItem.icon) {
+            return defaultItem.icon;
+        }
+
+        return undefined;
+    }, [defaults]);
+
+    useEffect(() => {
+        const defaultIcon = findItemIcon('generic');
+
+        if (defaultIcon) {
+            setImagePath(defaultIcon);
+        }
+    }, [findItemIcon]);
 
     const handleValueChange = useCallback((name: string, value: string | number) => {
         if (name === 'name') {
-            const defaultItem = defaults?.find((defaultItem) => value.toString().toLowerCase().includes(defaultItem.name.toLowerCase()));
+            const icon = findItemIcon(value.toString());
 
-            if (defaultItem && defaultItem.icon) {
-                setImagePath(defaultItem.icon);
-            } else {
-                setImagePath(DEFAULT_ICON);
+            if (icon) {
+                setImagePath(icon);
+                return;
             }
         }
-    }, [defaults]);
+    }, [defaults, findItemIcon]);
 
     const handleOnSubmit = useCallback(async (fields: Array<IFormField>) => {
         onSubmit(fields, imagePath);

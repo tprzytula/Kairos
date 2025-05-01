@@ -52,7 +52,7 @@ export const AddGroceryItemRoute = () => {
     showAlert({ description, severity }, dispatch)
   }, [dispatch])
 
-  const onSubmit = useCallback(async (fields: Array<IFormField>, imagePath: string) => {
+  const onSubmit = useCallback(async (fields: Array<IFormField>, imagePath?: string) => {
     try {
       const [name, quantity, unit] = validateFields(fields)
 
