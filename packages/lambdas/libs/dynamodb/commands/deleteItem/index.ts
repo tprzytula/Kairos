@@ -1,4 +1,7 @@
-import { DeleteItemCommand, DeleteItemCommandOutput } from "@aws-sdk/client-dynamodb";
+import {
+  DeleteItemCommand,
+  DeleteItemCommandOutput,
+} from "@aws-sdk/client-dynamodb";
 import { IDeleteItemOptions } from "./types";
 import { client } from "../../client";
 

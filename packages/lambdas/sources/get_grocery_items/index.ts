@@ -5,19 +5,17 @@ import { DynamoDBTables, scan } from "@kairos-lambdas-libs/dynamodb";
 import { parseItems } from "./parser";
 import { logResponse } from "./utils";
 
-export const handler: Handler<APIGatewayProxyEvent> = middleware(
-  async () => {
-    const items = await scan({
-      tableName: DynamoDBTables.GROCERY_LIST,
-    });
+export const handler: Handler<APIGatewayProxyEvent> = middleware(async () => {
+  const items = await scan({
+    tableName: DynamoDBTables.GROCERY_LIST,
+  });
 
-    const parsedItems = parseItems(items);
+  const parsedItems = parseItems(items);
 
-    logResponse(parsedItems);
+  logResponse(parsedItems);
 
-    return createResponse({
-      statusCode: 200,
-      message: parsedItems,
-    });
-  },
-);
+  return createResponse({
+    statusCode: 200,
+    message: parsedItems,
+  });
+});
