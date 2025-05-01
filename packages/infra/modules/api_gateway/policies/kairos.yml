@@ -45,6 +45,18 @@ paths:
                 $ref: "#/components/schemas/details"
         400:
           description: Incorrect grocery item details
+    delete:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${delete_grocery_items}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Grocery items removed
+        400:
+          description: Incorrect grocery item details
     options:
       responses:
         200:
