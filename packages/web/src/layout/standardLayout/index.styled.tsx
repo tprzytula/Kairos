@@ -13,6 +13,6 @@ export const Content = styled('div')({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
     width: '100%',
+    overflow: 'scroll',
 })
