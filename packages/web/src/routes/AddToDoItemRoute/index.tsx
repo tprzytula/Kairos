@@ -10,7 +10,6 @@ import { AlertColor } from '@mui/material'
 import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
 import StandardLayout from '../../layout/standardLayout'
-import { useItemDefaults } from '../../hooks/useItemDefaults'
 
 const FIELDS: Array<IFormField> = [
   {
@@ -23,7 +22,7 @@ const FIELDS: Array<IFormField> = [
   {
     name: 'description',
     label: 'Description',
-    type: FormFieldType.TEXT,
+    type: FormFieldType.TEXTAREA,
     required: true,
     value: '',
   },

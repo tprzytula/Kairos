@@ -20,6 +20,8 @@ describe('Given the AddItemForm component', () => {
         expect(screen.getAllByLabelText('Quantity')[0]).toHaveValue(1)
         expect(screen.getAllByLabelText('Unit')[0]).toBeVisible()
         expect(screen.getByText('units')).toBeVisible()
+        expect(screen.getAllByLabelText('Description')[0]).toBeVisible()
+        expect(screen.getAllByLabelText('Description')[0]).toHaveValue('test')
     }) 
 
     it('should pass the initial fields to the useForm hook', () => {
@@ -156,5 +158,11 @@ const EXAMPLE_FIELDS: Array<IFormField> = [
                 value: 'liters'
             }
         ]
+    },
+    {
+        name: 'description',
+        label: 'Description',
+        type: FormFieldType.TEXTAREA,
+        value: 'test'
     }
 ]

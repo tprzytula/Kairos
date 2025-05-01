@@ -6,6 +6,18 @@ import { TextField } from "./components/TextField";
 import { Select } from "./components/Select";
 import { FormFieldType } from "./enums";
 import { GroceryItemImage } from "./index.styled";
+import { TextArea } from "./components/TextArea";
+
+const FIELD_TYPE_COMPONENTS = {
+    [FormFieldType.TEXT]: TextField,
+    [FormFieldType.NUMBER]: TextField,
+    [FormFieldType.SELECT]: Select,
+    [FormFieldType.TEXTAREA]: TextArea,
+}
+
+const isFieldComponent = (type: string): type is keyof typeof FIELD_TYPE_COMPONENTS => {
+    return type in FIELD_TYPE_COMPONENTS;
+}
 
 const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
     const [imagePath, setImagePath] = useState<string | undefined>();
@@ -65,10 +77,11 @@ const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
 
     const renderFormField = useCallback((field: IFormField) => {
         const fieldProps = getFieldProps(field);
-        
-        if (field.type === FormFieldType.SELECT) {
+        const FieldComponent = isFieldComponent(field.type) ? FIELD_TYPE_COMPONENTS[field.type] : null;
+
+        if (FieldComponent) {
             return (
-                <Select
+                <FieldComponent
                     key={field.name}
                     field={field}
                     fieldProps={fieldProps}
@@ -77,16 +90,6 @@ const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
                 />
             );
         }
-
-        return (
-            <TextField 
-                key={field.name}
-                field={field}
-                fieldProps={fieldProps}
-                errors={errors}
-                isSubmitting={isSubmitting}
-            />
-        );
     }, [errors, getFieldProps, isSubmitting]);
 
     const formFieldsComponents = useMemo(() => (
