@@ -1,4 +1,4 @@
-import { createContext, useReducer } from 'react'
+import { createContext, useReducer, useContext } from 'react'
 import { StateComponentProps, State, Context, Action, Actions } from './types'
 
 export { Actions } from './types'
@@ -12,6 +12,8 @@ export const AppState = createContext<Context>({
   dispatch: () => null,
 })
 
+export const useAppState = () => useContext(AppState);
+
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case Actions.SET_GROCERY_LIST:
@@ -21,7 +23,7 @@ export const reducer = (state: State, action: Action): State => {
   }
 }
 
-export const StateComponent = ({ children }: StateComponentProps) => {
+export const AppStateProvider = ({ children }: StateComponentProps) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   return (
@@ -30,5 +32,3 @@ export const StateComponent = ({ children }: StateComponentProps) => {
     </AppState.Provider>
   )
 }
-
-export default StateComponent
