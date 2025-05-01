@@ -1,12 +1,6 @@
 import { Container, ActionArea, Content, Media, Name, QuantityContainer, Quantity, Unit } from './index.styled'
-import { GroceryItemUnit } from '../../enums/groceryItem'
 import { useState } from 'react'
-export interface IGroceryItemProps {
-  name: string;
-  quantity: number;
-  imagePath: string;
-  unit: GroceryItemUnit;
-}
+import { IGroceryItemProps } from './types'
 
 const GroceryItem = ({ name, quantity, imagePath, unit }: IGroceryItemProps) => {
   const [isPurchased, setIsPurchased] = useState(false)

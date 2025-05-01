@@ -5,6 +5,8 @@ import { useForm } from "./hooks/useForm";
 import { TextField } from "./components/TextField";
 import { Select } from "./components/Select";
 import { FormFieldType } from "./enums";
+import { GroceryItemImage } from "./index.styled";
+
 const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
     const {
         errors,
@@ -54,11 +56,9 @@ const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
         <Container maxWidth="sm">
             <form onSubmit={handleSubmit} noValidate>
                 <Stack spacing={3}>
-                    {submitError && (
-                        <Alert severity="error" role="alert">
-                            {submitError}
-                        </Alert>
-                    )}
+                    <GroceryItemImage
+                        image={'/assets/images/generic-grocery-item.png'}
+                    />
                     {formFieldsComponents}
                     <Button 
                         type="submit" 
@@ -68,6 +68,11 @@ const AddItemForm = ({ fields, onSubmit }: IAddItemFormProps) => {
                     >
                         {isSubmitting ? 'Submitting...' : 'Submit'}
                     </Button>
+                    {submitError && (
+                        <Alert severity="error" role="alert">
+                            {submitError}
+                        </Alert>
+                    )}
                 </Stack>
             </form>
         </Container>
