@@ -5,9 +5,7 @@ import { getItems } from "./database/index";
 import { createResponse } from "@kairos-lambdas-libs/response";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
-  async (event) => {
-    console.info("Event received", JSON.stringify(event));
-
+  async () => {
     const items = await getItems();
     const parsedItems = parseItems(items);
 
