@@ -19,6 +19,13 @@ describe('Given the validateFields function', () => {
           value: 'Test',
           label: 'Description'
         },
+        {
+          name: 'Due Date',
+          type: FormFieldType.DATE,
+          required: false,
+          value: '2021-01-01',
+          label: 'Due Date'
+        },
       ])
             
       expect(fields).toEqual([
@@ -35,6 +42,13 @@ describe('Given the validateFields function', () => {
           required: true, 
           value: 'Test', 
           label: 'Description' 
+        },
+        {
+          name: 'Due Date',
+          type: FormFieldType.DATE,
+          required: false,
+          value: '2021-01-01',
+          label: 'Due Date'
         },
       ])
     })
@@ -71,8 +85,14 @@ describe('Given the validateFields function', () => {
           value: '', 
           label: 'Description'
         },
+        {
+          name: 'Due Date',
+          type: FormFieldType.DATE,
+          required: false,
+          value: '2021-01-01',
+          label: 'Due Date'
+        },
       ])).toThrow('Name cannot be empty')
-    })
   })
 
   describe('When the name is not a string', () => {
@@ -91,6 +111,13 @@ describe('Given the validateFields function', () => {
           required: true, 
           value: 'Test', 
           label: 'Description' 
+        },
+        {
+          name: 'Due Date',
+          type: FormFieldType.DATE,
+          required: false,
+          value: '2021-01-01',
+          label: 'Due Date'
         },
       ])).toThrow('Name must be a string')
     })
@@ -113,7 +140,15 @@ describe('Given the validateFields function', () => {
           value: 1, 
           label: 'Description' 
         },
+        {
+          name: 'Due Date',
+          type: FormFieldType.DATE,
+          required: false,
+          value: '2021-01-01',
+          label: 'Due Date'
+        },
       ])).toThrow('Description must be a string')
     })
+  })
   })
 })

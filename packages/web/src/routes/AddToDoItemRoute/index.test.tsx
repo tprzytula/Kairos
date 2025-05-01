@@ -68,12 +68,19 @@ describe('Given the AddToDoItemRoute component', () => {
             required: true,
             value: 'Test',
           },
+          {
+            name: 'Due Date',
+            type: FormFieldType.DATE,
+            required: false,
+            value: '2021-01-01',
+          },
         ])
       })
 
       expect(addTodoItem).toHaveBeenCalledWith({
         name: 'Test',
         description: 'Test',
+        dueDate: 1609459200000
       })  
     })
 
@@ -104,6 +111,12 @@ describe('Given the AddToDoItemRoute component', () => {
               type: FormFieldType.TEXT,
               required: true,
               value: 'Test',
+            },
+            {
+              name: 'Due Date',
+              type: FormFieldType.DATE,
+              required: false,
+              value: '2021-01-01',
             },
           ])
         })
@@ -138,6 +151,12 @@ describe('Given the AddToDoItemRoute component', () => {
               type: FormFieldType.TEXT,
               required: true,
               value: 'Test',
+            },
+            {
+              name: 'Due Date',
+              type: FormFieldType.DATE,
+              required: false,
+              value: '2021-01-01',
             },
           ])
         })

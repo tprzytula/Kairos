@@ -2,15 +2,16 @@ import { IFormField } from "../../components/AddItemForm/types"
 
 export type IValidatedFields = [
     IFormField<string>,
-    IFormField<string>
+    IFormField<string>,
+    IFormField<string | number | undefined>
 ]
 
 export const validateFields = (fields: Array<IFormField>): IValidatedFields => {
-  if (fields.length !== 2) {
+  if (fields.length !== 3) {
     throw new Error('Invalid number of fields')
   }
 
-  const [name, description] = fields
+  const [name, description, dueDate] = fields
 
   if (!name.value) {
     throw new Error('Name cannot be empty')
@@ -27,5 +28,6 @@ export const validateFields = (fields: Array<IFormField>): IValidatedFields => {
   return [
     { ...name, value: name.value },
     { ...description, value: description.value },
+    { ...dueDate, value: dueDate?.value },
   ];
 }

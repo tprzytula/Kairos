@@ -10,6 +10,7 @@ import { AlertColor } from '@mui/material'
 import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
 import StandardLayout from '../../layout/standardLayout'
+import dayjs from 'dayjs'
 
 const FIELDS: Array<IFormField> = [
   {
@@ -26,13 +27,13 @@ const FIELDS: Array<IFormField> = [
     required: true,
     value: '',
   },
-  // {
-  //   name: 'dueDate',
-  //   label: 'Due Date',
-  //   type: FormFieldType.DATE,
-  //   required: true,
-  //   value: '',
-  // },
+  {
+    name: 'dueDate',
+    label: 'Due Date',
+    type: FormFieldType.DATE,
+    required: true,
+    value: dayjs().toISOString(),
+  },
 ]
 
 export const AddToDoItemRoute = () => {
@@ -45,11 +46,14 @@ export const AddToDoItemRoute = () => {
 
   const onSubmit = useCallback(async (fields: Array<IFormField>) => {
     try {
-      const [name, description] = validateFields(fields)
+      const [name, description, dueDate] = validateFields(fields)
+
+      const utcTimestamp = dueDate ? dayjs(dueDate.value).valueOf() : undefined
 
       await addTodoItem({
         name: name.value,
         description: description.value,
+        dueDate: utcTimestamp,
       })
 
       createAlert(`${name.value} has been added to your to do list`, 'success')

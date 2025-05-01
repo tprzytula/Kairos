@@ -7,12 +7,14 @@ import { Select } from "./components/Select";
 import { FormFieldType } from "./enums";
 import { GroceryItemImage } from "./index.styled";
 import { TextArea } from "./components/TextArea";
+import { DatePicker } from "./components/DatePicker";
 
 const FIELD_TYPE_COMPONENTS = {
     [FormFieldType.TEXT]: TextField,
     [FormFieldType.NUMBER]: TextField,
     [FormFieldType.SELECT]: Select,
     [FormFieldType.TEXTAREA]: TextArea,
+    [FormFieldType.DATE]: DatePicker,
 }
 
 const isFieldComponent = (type: string): type is keyof typeof FIELD_TYPE_COMPONENTS => {
