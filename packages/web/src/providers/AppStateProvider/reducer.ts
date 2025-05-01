@@ -1,6 +1,7 @@
 import { Action, State } from "./types"
 import { ActionName } from "./enums"
 import { addToMap, removeFromMap } from "../../utils/map"
+import { addToSet, removeFromSet } from "../../utils/set"
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -18,6 +19,18 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         alerts: removeFromMap(state.alerts, action.payload.id),
+      }
+    }
+    case ActionName.PURCHASE_GROCERY_ITEM: {
+      return {
+        ...state,
+        purchasedItems: addToSet(state.purchasedItems, action.payload.id),
+      }
+    }
+    case ActionName.CLEAR_PURCHASED_ITEM: {
+      return {
+        ...state,
+        purchasedItems: removeFromSet(state.purchasedItems, action.payload.id),
       }
     }
     default: {
