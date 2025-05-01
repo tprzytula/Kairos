@@ -6,9 +6,9 @@ export function App() {
   return (
     <ApplicationContainer>
       <Content>
-          <Routes>
-            <Route path="/" element={<GroceryList />} />
-          </Routes>
+        <Routes>
+          <Route path="/" element={<GroceryList />} />
+        </Routes>
       </Content>
     </ApplicationContainer>
   )
