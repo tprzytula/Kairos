@@ -33,6 +33,11 @@ describe('Given the StartingScreenRoute component', () => {
     renderComponent()
     expect(screen.getByText('Noise Tracking')).toBeVisible()
   })
+
+  it('should have a to do list button', () => {
+    renderComponent()
+    expect(screen.getByText('To Do List')).toBeVisible()
+  })
   
   describe('When the grocery list button is clicked', () => {
     it('should navigate to the grocery list page', async () => {
@@ -63,6 +68,22 @@ describe('Given the StartingScreenRoute component', () => {
       })
 
       expect(navigateSpy).toHaveBeenCalledWith(Route.NoiseTracking)
+    })
+  })
+
+  describe('When the to do list button is clicked', () => {
+    it('should navigate to the to do list page', async () => {
+      const navigateSpy = jest.fn()
+
+      jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
+
+      renderComponent()
+
+      await act(async () => {
+        screen.getByText('To Do List').click()
+      })
+
+      expect(navigateSpy).toHaveBeenCalledWith(Route.ToDoList)
     })
   })
 
