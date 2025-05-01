@@ -1,18 +1,24 @@
 import { styled } from "@mui/system";
 import { Card, CardActionArea, CardContent, CardMedia, CardProps } from '@mui/material'
+import { useTheme } from '@mui/material/styles';
 
 export const Container = styled(({ isSelected, ...props }: { isSelected: boolean } & CardProps) => (
   <Card {...props} />
 ))(({ isSelected }: { isSelected: boolean }) => ({
   display: 'flex',
-  borderRadius: '0.5em',
+  borderRadius: '0.75em',
   minHeight: '50px',
-  margin: '0 0.5em',
+  margin: '0.5em',
   justifyContent: 'flex-start',
   boxSizing: 'border-box',
   opacity: isSelected ? 0.5 : 1,
   transition: 'all 0.3s ease',
   position: 'relative',
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+  '&:hover': {
+    transform: 'translateY(-2px)',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+  },
   '&::after': isSelected ? {
     content: '""',
     position: 'absolute',
@@ -28,27 +34,54 @@ export const Container = styled(({ isSelected, ...props }: { isSelected: boolean
 export const ActionArea = styled(CardActionArea)({
   display: 'flex',
   padding: '0',
+  borderRadius: '0.75em',
 })
 
-export const Content = styled(CardContent)({
+export const Content = styled(CardContent)(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  textAlign: 'center',
+  flexDirection: 'column',
+  justifyContent: 'flex-start',
+  textAlign: 'left',
   flexGrow: '1',
-})
+  padding: '16px 20px',
+  gap: '8px',
+  background: `linear-gradient(145deg, ${theme.palette.background.paper}, ${theme.palette.background.default})`,
+}))
 
-export const Name = styled('div')({
-  fontSize: '16px',
-  fontWeight: 600,
-})
+export const Name = styled('div')(({ theme }) => ({
+  fontSize: '20px',
+  fontWeight: 700,
+  color: theme.palette.text.primary,
+  letterSpacing: '0.5px',
+  transition: 'color 0.2s ease',
+  '&:hover': {
+    color: theme.palette.text.secondary,
+  },
+}))
 
-export const Description = styled('div')({
-  fontSize: '16px',
-  fontWeight: 600,
-})
+export const Description = styled('div')(({ theme }) => ({
+  fontSize: '15px',
+  fontWeight: 400,
+  color: theme.palette.text.secondary,
+  lineHeight: '1.4',
+  padding: '4px 0',
+}))
 
-export const DueDate = styled('div')({
-  fontSize: '16px',
-  fontWeight: 600,
-})
+export const DueDate = styled('div')(({ theme }) => ({
+  fontSize: '13px',
+  fontWeight: 500,
+  color: theme.palette.text.secondary,
+  opacity: 0.9,
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px',
+  '&::before': {
+    content: '""',
+    display: 'inline-block',
+    width: '6px',
+    height: '6px',
+    borderRadius: '50%',
+    backgroundColor: theme.palette.primary.main,
+    marginRight: '6px',
+  },
+}))
