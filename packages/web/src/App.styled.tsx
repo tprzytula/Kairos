@@ -1,5 +1,3 @@
-import './App.module.scss'
-
 import { styled } from '@mui/system'
 
 export const ApplicationContainer = styled('div')(({ theme }) => ({
