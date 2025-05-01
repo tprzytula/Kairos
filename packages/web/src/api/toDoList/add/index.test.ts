@@ -1,0 +1,79 @@
+import { addTodoItem } from '.'
+import { FetchMock } from 'jest-fetch-mock'
+import { ITodoItem } from '../retrieve/types'
+
+const fetchMock = fetch as FetchMock
+const EXAMPLE_RESPONSE: ITodoItem = {
+  id: '1',
+  name: 'Milk',
+  description: 'Buy groceries for the week',
+  isDone: false,
+  dueDate: '2021-01-01',
+}
+
+describe('Given the addTodoItem function', () => {
+  it('should make the correct request to the API', async () => {
+    fetchMock.mockResponse(JSON.stringify(EXAMPLE_RESPONSE))
+
+    await addTodoItem({
+      name: 'Milk',
+      description: 'Buy groceries for the week',
+      isDone: false,
+      dueDate: '2021-01-01',
+    })
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/todo_list/items',
+      {
+        method: 'PUT',
+        body: JSON.stringify({ name: 'Milk', description: 'Buy groceries for the week', isDone: false, dueDate: '2021-01-01' }),
+      }
+    )
+  })
+
+  it('should return the created item', async () => {
+    fetchMock.mockResponse(JSON.stringify(EXAMPLE_RESPONSE))
+
+    const result = await addTodoItem({
+      name: 'Milk',
+      description: 'Buy groceries for the week',
+      isDone: false,
+      dueDate: '2021-01-01',
+    })
+
+    expect(result).toStrictEqual(EXAMPLE_RESPONSE)
+  })
+
+  describe('When the API call fails', () => {
+    it('should throw an error', async () => {
+      fetchMock.mockResponse(JSON.stringify({ error: 'API call failed' }), {
+        status: 500,
+      })
+
+      await expect(addTodoItem({
+        name: 'Milk',
+        description: 'Buy groceries for the week',
+        isDone: false,
+        dueDate: '2021-01-01',
+      })).rejects.toThrow('Failed to add a todo item')
+    })
+  })
+
+  describe('When the returned data does not contain an id', () => {
+    it('should throw an error', async () => {
+      fetchMock.mockResponse(JSON.stringify({
+        ...EXAMPLE_RESPONSE,
+        id: undefined,
+      }), {
+        status: 200,
+      })
+
+      await expect(addTodoItem({
+        name: 'Milk',
+        description: 'Buy groceries for the week',
+        isDone: false,
+        dueDate: '2021-01-01',
+      })).rejects.toThrow('Unexpected response from API')
+    })
+  })
+})
