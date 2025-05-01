@@ -64,6 +64,7 @@ export const Description = styled('div')(({ theme }) => ({
   color: theme.palette.text.secondary,
   lineHeight: '1.4',
   padding: '4px 0',
+  whiteSpace: 'pre-wrap',
 }))
 
 export const DueDate = styled('div')(({ theme }) => ({
