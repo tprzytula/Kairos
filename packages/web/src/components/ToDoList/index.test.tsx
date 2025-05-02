@@ -5,7 +5,7 @@ import { IState } from "../../providers/ToDoListProvider/types"
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 
 describe('Given the ToDoList component', () => {
-  it('should render the to do list', () => {
+  it('should render only the not completed items', () => {
     jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
     renderWithTheme(<ToDoList />)
@@ -68,6 +68,13 @@ const EXAMPLE_TO_DO_LIST_CONTEXT: IState = {
       description: 'Buy bread for the week',
       dueDate: 1746042442000,
       isDone: false,
+    },
+    {
+      id: '3',
+      name: 'Buy Something Else',
+      description: 'Buy something else for the week',
+      dueDate: 1746042442000,
+      isDone: true,
     },
   ],
   isLoading: false,

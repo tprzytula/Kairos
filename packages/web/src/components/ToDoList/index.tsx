@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useToDoListContext } from '../../providers/ToDoListProvider';
 import ToDoItem from '../ToDoItem';
 import ToDoItemPlaceholder from '../ToDoItemPlaceholder';
@@ -19,6 +20,7 @@ const EmptyListComponent = () => (
 
 export const ToDoList = () => {
   const { toDoList, isLoading } = useToDoListContext();
+  const visibleToDoItems = useMemo(() => toDoList.filter(({ isDone }) => !isDone), [toDoList]);
 
   if (isLoading) {
     return <PlaceholderComponent />
@@ -30,7 +32,7 @@ export const ToDoList = () => {
 
   return (
     <Container>
-      {toDoList.map(({ id, name, description, isDone, dueDate }) => (
+      {visibleToDoItems.map(({ id, name, description, isDone, dueDate }) => (
         <ToDoItem 
           key={id} 
           id={id}
