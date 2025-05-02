@@ -6,6 +6,6 @@ export interface IUpdateItemOptions {
     [key: string]: string;
   };
   updatedFields: {
-    [key: string]: string;
+    [key: string]: string | boolean;
   };
 }
