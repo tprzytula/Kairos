@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "update_todo_items_status",
+  "name": "update_todo_items",
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {

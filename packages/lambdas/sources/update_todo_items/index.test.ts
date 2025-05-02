@@ -17,7 +17,7 @@ jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
     updateItems: jest.fn(),
 }));
 
-describe('Given the update_todo_item_status lambda handler', () => {
+describe('Given the update_todo_items lambda handler', () => {
     describe('When the body is invalid', () => {
         it('should return status 400', async () => {
             jest.mocked(getBody).mockReturnValue(null);
