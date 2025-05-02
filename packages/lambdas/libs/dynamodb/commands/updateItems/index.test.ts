@@ -1,7 +1,7 @@
 import { updateItems } from ".";
 import { DynamoDBTable } from "../../enums";
 import * as Client from '../../client';
-import { BatchWriteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { TransactWriteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
 jest.mock("../../client");
 jest.mock("@aws-sdk/lib-dynamodb");
@@ -18,33 +18,25 @@ describe("Given the updateItems function", () => {
       tableName: DynamoDBTable.GROCERY_LIST 
     });
 
-    expect(BatchWriteCommand).toHaveBeenCalledWith({
-      RequestItems: {
-        [DynamoDBTable.GROCERY_LIST]: [
-          {
-            UpdateRequest: {
-              Key: {
-                id: '1',
-              },
-              UpdateExpression: 'set isDone = :isDone',
-              ExpressionAttributeValues: {
-                ':isDone': true,
-              },
-            },
-          },
-          {
-            UpdateRequest: {
-              Key: {
-                id: '2',
-              },
-              UpdateExpression: 'set isDone = :isDone',
-              ExpressionAttributeValues: {
-                ':isDone': false,
-              },
-            },
-          },
-        ],
-      },
+    expect(TransactWriteCommand).toHaveBeenCalledWith({
+      TransactItems: [
+        {
+          Update: {
+            TableName: DynamoDBTable.GROCERY_LIST,
+            Key: { id: '1' },
+            UpdateExpression: 'set isDone = :isDone',
+            ExpressionAttributeValues: { ':isDone': true },
+          }
+        },
+        {
+          Update: {
+            TableName: DynamoDBTable.GROCERY_LIST,
+            Key: { id: '2' },
+            UpdateExpression: 'set isDone = :isDone',
+            ExpressionAttributeValues: { ':isDone': false },
+          }
+        }
+      ]
     });
   });
 
@@ -52,7 +44,10 @@ describe("Given the updateItems function", () => {
     mockDocumentClient();
 
     const items = await updateItems({
-      items: [{ id: "1", fieldsToUpdate: { isDone: true } }, { id: "2", fieldsToUpdate: { isDone: false } }],
+      items: [
+        { id: "1", fieldsToUpdate: { isDone: true } },
+        { id: "2", fieldsToUpdate: { isDone: false } }
+      ],
       tableName: DynamoDBTable.GROCERY_LIST,
     });
 
