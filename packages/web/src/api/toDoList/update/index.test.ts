@@ -11,7 +11,11 @@ describe('Given the updateToDoItems function', () => {
     await updateToDoItems(EXAMPLE_UPDATE_TODO_ITEMS_REQUEST)
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/todo_list/items'
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/todo_list/items',
+      {
+        method: 'POST',
+        body: JSON.stringify({ items: EXAMPLE_UPDATE_TODO_ITEMS_REQUEST }),
+      }
     )
   })
 
