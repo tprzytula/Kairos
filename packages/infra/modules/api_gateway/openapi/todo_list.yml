@@ -79,6 +79,49 @@ paths:
           application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
+  /todo_list/items/{id}:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/todoItemStatus"
+        required: true
+      responses:
+        200:
+          description: Todo item updated
+        400:
+          description: Invalid request
+        404:
+          description: Todo item does not exist
+        500:
+          description: Error updating todo item
+      x-amazon-apigateway-request-validator: Validate body
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["update_todo_item_status"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+    options:
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+                schema:
+                  type: "string"
+        x-amazon-apigateway-integration:
+          responses:
+            default:
+              statusCode: "200"
+              responseParameters:
+                method.response.header.Access-Control-Allow-Methods: "'POST'"
+                method.response.header.Access-Control-Allow-Headers: "'*'"
+                method.response.header.Access-Control-Allow-Origin: "'*'"
 components:
   schemas:
     todoItem:
@@ -93,6 +136,12 @@ components:
           type: string
         dueDate:
           type: number
+        isDone:
+          type: boolean
+    todoItemStatus:
+      title: Todo Item Status
+      type: object
+      properties:
         isDone:
           type: boolean
 x-amazon-apigateway-request-validators:
