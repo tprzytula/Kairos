@@ -2,7 +2,11 @@ import { IRequestBody } from "./types";
 
 const validateBody = (body: IRequestBody) => {
   console.debug('Validating body', body);
-  if (typeof body.isDone !== 'boolean') {
+  if (!Array.isArray(body.items)) {
+    return false;
+  }
+
+  if (body.items.some((item) => typeof item.isDone !== 'boolean' || !item.id)) {
     return false;
   }
 

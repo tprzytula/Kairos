@@ -12,8 +12,8 @@ describe("Given the updateItems function", () => {
 
     await updateItems({ 
       items: [
-        { id: "1", updatedFields: { isDone: true } }, 
-        { id: "2", updatedFields: { isDone: false } }
+        { id: "1", fieldsToUpdate: { isDone: true } }, 
+        { id: "2", fieldsToUpdate: { isDone: false } }
       ], 
       tableName: DynamoDBTable.GROCERY_LIST 
     });
@@ -52,7 +52,7 @@ describe("Given the updateItems function", () => {
     mockDocumentClient();
 
     const items = await updateItems({
-      items: [{ id: "1", updatedFields: { isDone: true } }, { id: "2", updatedFields: { isDone: false } }],
+      items: [{ id: "1", fieldsToUpdate: { isDone: true } }, { id: "2", fieldsToUpdate: { isDone: false } }],
       tableName: DynamoDBTable.GROCERY_LIST,
     });
 

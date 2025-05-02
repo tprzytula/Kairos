@@ -10,13 +10,13 @@ export const updateItems = async ({
   const documentClient = getDocumentClient();
   const command = new BatchWriteCommand({
     RequestItems: {
-      [tableName]: items.map(({ id, updatedFields }) => ({
+      [tableName]: items.map(({ id, fieldsToUpdate }) => ({
         UpdateRequest: {
           Key: {
             id,
           },
-          UpdateExpression: getUpdateExpression(updatedFields),
-          ExpressionAttributeValues: getExpressionAttributeValues(updatedFields),
+          UpdateExpression: getUpdateExpression(fieldsToUpdate),
+          ExpressionAttributeValues: getExpressionAttributeValues(fieldsToUpdate),
         },
       })),
     },

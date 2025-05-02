@@ -4,9 +4,9 @@ import { IRequestBody } from "./types";
 describe('Given the getBody function', () => {
     describe('When the body is valid', () => {
         it('should return the body', () => {
-            const body = getBody(JSON.stringify(EXAMPLE_TODO_ITEM));
+            const body = getBody(JSON.stringify(EXAMPLE_TODO_ITEMS));
 
-            expect(body).toEqual(EXAMPLE_TODO_ITEM);
+            expect(body).toEqual(EXAMPLE_TODO_ITEMS);
         });
     });
 
@@ -18,11 +18,22 @@ describe('Given the getBody function', () => {
         });
     });
 
-    describe.each(['isDone'])(
+    describe.each(['items'])(
         'When the body is missing the %s field',
         (field) => {
             it('should return null', () => {
-                const body = getBody(JSON.stringify({ ...EXAMPLE_TODO_ITEM, [field]: undefined }));
+                const body = getBody(JSON.stringify({ ...EXAMPLE_TODO_ITEMS, [field]: undefined }));
+
+                expect(body).toBeNull();
+            });
+        },
+    );
+
+    describe.each(['id', 'isDone'])(
+        'When the items are missing the %s field',
+        (field) => {
+            it('should return null', () => {
+                const body = getBody(JSON.stringify({ items: EXAMPLE_TODO_ITEMS.items.map((item) => ({ ...item, [field]: undefined })) }));
 
                 expect(body).toBeNull();
             });
@@ -46,6 +57,18 @@ describe('Given the getBody function', () => {
     });
 });
 
-const EXAMPLE_TODO_ITEM: IRequestBody = {
-    isDone: false,
+const EXAMPLE_ID = "11111111-1111-1111-1111-111111111111";
+const EXAMPLE_ID_2 = "22222222-2222-2222-2222-222222222222";
+
+const EXAMPLE_TODO_ITEMS: IRequestBody = {
+    items: [
+        {
+            id: EXAMPLE_ID,
+            isDone: false,
+        },
+        {
+            id: EXAMPLE_ID_2,
+            isDone: true,
+        },
+    ],
 };

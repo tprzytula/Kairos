@@ -1,7 +1,7 @@
 import { getBody } from "./body";
 import { handler } from "./index";
 import { IRequestBody } from "./body/types";
-import { DynamoDBTable, updateItem } from "@kairos-lambdas-libs/dynamodb";
+import { DynamoDBTable, updateItems } from "@kairos-lambdas-libs/dynamodb";
 import { randomUUID } from "node:crypto";
 
 jest.mock('node:crypto', () => ({
@@ -14,7 +14,7 @@ jest.mock('./body', () => ({
 
 jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
     ...jest.requireActual('@kairos-lambdas-libs/dynamodb'),
-    updateItem: jest.fn(),
+    updateItems: jest.fn(),
 }));
 
 describe('Given the update_todo_item_status lambda handler', () => {
@@ -22,7 +22,7 @@ describe('Given the update_todo_item_status lambda handler', () => {
         it('should return status 400', async () => {
             jest.mocked(getBody).mockReturnValue(null);
 
-            const result = await runHandler({ body: null, pathParameters: { id: EXAMPLE_ID } });
+            const result = await runHandler({ body: null });
 
             expect(result.statusCode).toBe(400);
         });
@@ -35,22 +35,29 @@ describe('Given the update_todo_item_status lambda handler', () => {
 
             await runHandler(EXAMPLE_REQUEST);
 
-            expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
+            expect(jest.mocked(updateItems)).toHaveBeenCalledWith({
                 tableName: DynamoDBTable.TODO_LIST,
-                key: {
-                    id: EXAMPLE_ID,
-                },
-                updatedFields: {
-                    isDone: false,
-                },
+                items: [
+                    {
+                        id: EXAMPLE_ID,
+                        fieldsToUpdate: {
+                            isDone: false,
+                        },
+                    },
+                    {
+                        id: EXAMPLE_ID_2,
+                        fieldsToUpdate: {
+                            isDone: true,
+                        },
+                    },
+                ],
             });
         });
 
         describe('And the upsert succeeds', () => {
             it('should return status 200', async () => {
-                jest.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
                 jest.mocked(getBody).mockReturnValue(EXAMPLE_UPDATE_TODO_ITEM_STATUS_BODY);
-                jest.mocked(updateItem).mockResolvedValue({
+                jest.mocked(updateItems).mockResolvedValue({
                     $metadata: {
                         httpStatusCode: 200,
                     },
@@ -59,13 +66,13 @@ describe('Given the update_todo_item_status lambda handler', () => {
                 const result = await runHandler(EXAMPLE_REQUEST);
 
                 expect(result.statusCode).toBe(200);
-                expect(result.body).toEqual(JSON.stringify({ id: EXAMPLE_ID }));
+                expect(result.body).toEqual(JSON.stringify({ items: EXAMPLE_UPDATE_TODO_ITEM_STATUS_BODY.items }));
             });
         });
 
         describe('And the upsert fails', () => {
             it('should return status 500', async () => {
-                jest.mocked(updateItem).mockRejectedValue(new Error('Update failed'));
+                jest.mocked(updateItems).mockRejectedValue(new Error('Update failed'));
 
                 const result = await runHandler(EXAMPLE_REQUEST)
 
@@ -76,25 +83,29 @@ describe('Given the update_todo_item_status lambda handler', () => {
 });
 
 const EXAMPLE_ID = "11111111-1111-1111-1111-111111111111";  
+const EXAMPLE_ID_2 = "22222222-2222-2222-2222-222222222222";  
 
 const EXAMPLE_UPDATE_TODO_ITEM_STATUS_BODY: IRequestBody = {
-    isDone: false,
+    items: [
+        {
+            id: EXAMPLE_ID,
+            isDone: false,
+        },
+        {
+            id: EXAMPLE_ID_2,
+            isDone: true,
+        },
+    ],
 }
 
 const EXAMPLE_REQUEST = {
     body: JSON.stringify(EXAMPLE_UPDATE_TODO_ITEM_STATUS_BODY),
-    pathParameters: {
-        id: EXAMPLE_ID,
-    },
 }
 
 interface IAPIGatewayProxyEvent {
     body: string | null;
-    pathParameters: {
-        id: string;
-    }
 }
 
-const runHandler = async ({ body, pathParameters }: IAPIGatewayProxyEvent) => {
-    return await handler({ body, pathParameters } as any, {} as any, {} as any);
+const runHandler = async ({ body }: IAPIGatewayProxyEvent) => {
+    return await handler({ body } as any, {} as any, {} as any);
 }

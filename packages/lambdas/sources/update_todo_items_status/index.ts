@@ -2,33 +2,32 @@ import { APIGatewayProxyEvent, Handler } from "aws-lambda";
 import { middleware } from "@kairos-lambdas-libs/middleware";
 import { createResponse } from "@kairos-lambdas-libs/response";
 import { getBody } from "./body";
-import { DynamoDBTable, updateItem } from "@kairos-lambdas-libs/dynamodb";
+import { DynamoDBTable, updateItems } from "@kairos-lambdas-libs/dynamodb";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event) => {
-    const { id } = event.pathParameters ?? {};
-    const { isDone } = getBody(event.body) ?? {};
+    const { items } = getBody(event.body) ?? {};
 
-    if (!id || typeof isDone !== 'boolean') {
+    if (!items) {
       return createResponse({
         statusCode: 400,
       });
     }
 
-    await updateItem({
+    await updateItems({
       tableName: DynamoDBTable.TODO_LIST,
-      key: {
+      items: items.map(({ id, isDone }) => ({
         id,
-      },
-      updatedFields: {
-        isDone,
-      },
+        fieldsToUpdate: {
+          isDone,
+        },
+      })),
     });
   
     return createResponse({
       statusCode: 200,
       message: {
-        id,
+        items,
       },
     });
   },
