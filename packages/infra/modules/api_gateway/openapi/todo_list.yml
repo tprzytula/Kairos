@@ -41,6 +41,35 @@ paths:
           description: Todo item added successfully
         500:
           description: Error adding todo item
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/todoItem"
+        required: true
+      x-amazon-apigateway-request-validator: Validate body
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["update_todo_items"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Todo items updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/todoItem"
+        500:
+          description: Error updating todo items
+        400:
+          description: Invalid request body
     delete:
       x-amazon-apigateway-integration:
         httpMethod: POST
