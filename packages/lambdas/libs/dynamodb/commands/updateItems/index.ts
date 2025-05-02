@@ -9,7 +9,7 @@ export const updateItems = async ({
 }: IUpdateItemsOptions): Promise<BatchWriteCommandOutput> => {
   const documentClient = getDocumentClient();
 
-  console.debug('update payload', {
+  console.debug('update payload', JSON.stringify({
     RequestItems: {
       [tableName]: items.map(({ id, fieldsToUpdate }) => ({
         UpdateRequest: {
@@ -21,7 +21,7 @@ export const updateItems = async ({
         },
       })),
     },
-  })
+  }, null, 2))
 
   const command = new BatchWriteCommand({
     RequestItems: {
