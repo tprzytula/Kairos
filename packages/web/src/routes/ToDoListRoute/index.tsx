@@ -4,7 +4,7 @@ import { useAppState } from '../../providers/AppStateProvider'
 import { ToDoListProvider } from '../../providers/ToDoListProvider'
 import ToDoList from '../../components/ToDoList'
 import MarkToDoItemsAsDoneButton from '../../components/MarkToDoItemsAsDoneButton'
-
+import { Container, ScrollableContainer } from './index.styled'
 export const NoiseTrackingRoute = () => {
   const { state: { skipStartingScreen } } = useAppState() 
 
@@ -15,8 +15,12 @@ export const NoiseTrackingRoute = () => {
         previousRoute={skipStartingScreen ? undefined : Route.Home} 
         nextRoute={Route.AddToDoItem}
       >
-        <ToDoList />
-        <MarkToDoItemsAsDoneButton />
+        <Container>
+          <MarkToDoItemsAsDoneButton />
+          <ScrollableContainer>
+            <ToDoList />
+          </ScrollableContainer>
+        </Container>
       </StandardLayout>
     </ToDoListProvider>
   )

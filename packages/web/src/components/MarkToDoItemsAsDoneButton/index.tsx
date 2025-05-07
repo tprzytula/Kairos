@@ -1,11 +1,10 @@
 import { useAppState } from "../../providers/AppStateProvider";
-import { ActionButton } from "../ActionButton";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { useCallback } from "react";
 import { showAlert } from "../../utils/alert";
 import { ActionName } from "../../providers/AppStateProvider/enums";
 import { useToDoListContext } from "../../providers/ToDoListProvider";
 import { updateToDoItems } from "../../api/toDoList";
+import { DoneButton, DoneButtonContainer } from "./index.styled";
 
 export const MarkToDoItemsAsDoneButton = () => {
   const { state: { selectedTodoItems }, dispatch } = useAppState();
@@ -33,16 +32,18 @@ export const MarkToDoItemsAsDoneButton = () => {
   }, [selectedTodoItems, dispatch, refetchToDoList]);
 
   return (
-    <ActionButton
-      ariaLabel="Mark To Do Items As Done"
-      icon={<DeleteIcon />}
-      onClick={markToDoItemsAsDone}
-      text="Mark To Do Items As Done"
-      sx={{
-        visibility: selectedTodoItems.size > 0 ? "visible" : "hidden",
-        borderRadius: "10px",
-      }}
-    />
+    <DoneButtonContainer>
+      <DoneButton
+        variant="contained"
+        color="primary"
+        onClick={markToDoItemsAsDone}
+        aria-label="Mark To Do Items As Done"
+        disabled={selectedTodoItems.size === 0}
+        sx={{ visibility: selectedTodoItems.size > 0 ? 'visible' : 'hidden' }}
+      >
+        Mark To Do Items As Done
+      </DoneButton>
+    </DoneButtonContainer>
   );
 };
 

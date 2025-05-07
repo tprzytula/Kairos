@@ -16,7 +16,6 @@ describe('Given the MarkToDoItemsAsDoneButton component', () => {
             render(<MarkToDoItemsAsDoneButton />)
 
             expect(screen.getByText('Mark To Do Items As Done')).not.toBeVisible()
-            expect(screen.getByTestId('DeleteIcon')).not.toBeVisible()
         })
     })
 
@@ -27,7 +26,6 @@ describe('Given the MarkToDoItemsAsDoneButton component', () => {
             render(<MarkToDoItemsAsDoneButton />)
 
             expect(screen.getByText('Mark To Do Items As Done')).toBeVisible()
-            expect(screen.getByTestId('DeleteIcon')).toBeVisible()
         })
 
         describe('And the button is clicked', () => {
