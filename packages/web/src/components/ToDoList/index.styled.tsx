@@ -4,14 +4,12 @@ import { Typography } from '@mui/material'
 export const Container = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.35em',
   width: '100%',
 })
 
 export const EmptyListContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.35em',
   width: '100%',
 })
 
