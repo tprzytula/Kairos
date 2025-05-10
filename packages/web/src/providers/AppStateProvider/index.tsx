@@ -6,7 +6,6 @@ export const initialState: State = {
   alerts: new Map(),
   purchasedItems: new Set(),
   selectedTodoItems: new Set(),
-  skipStartingScreen: false,
 }
 
 export const AppState = createContext<Context>({

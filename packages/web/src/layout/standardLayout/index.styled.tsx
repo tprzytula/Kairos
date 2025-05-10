@@ -7,6 +7,7 @@ export const Container = styled('div')({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'column',
+    overflow: 'hidden',
 })
 
 export const Content = styled('div')({

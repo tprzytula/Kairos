@@ -61,7 +61,7 @@ const theme = createTheme({
       main: '#FFBD48',
     },
     custom: {
-      background: '#F5E1C2',
+      background: '#f5f6fa',
       light: '#7784F6',
     },
   },

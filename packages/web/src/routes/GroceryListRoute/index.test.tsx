@@ -5,7 +5,6 @@ import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
 import GroceryListRoute from '.'
 import * as API from '../../api/groceryList'
-import * as ReactRouter from 'react-router'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 import { useAppState } from '../../providers/AppStateProvider'
 
@@ -59,44 +58,6 @@ describe('Given the GroceryListRoute component', () => {
     })
   })
 
-  describe('When the add item button is clicked', () => {
-    it('should navigate to the add item page', async () => {
-      const navigateSpy = jest.fn()
-
-      jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
-      jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
-
-      await act(async () => {
-        renderComponent()
-      })
-
-      await act(async () => { 
-        screen.getByLabelText('Navigate to route').click()
-      })
-
-      expect(navigateSpy).toHaveBeenCalledWith('/groceries/add')
-    })
-  })
-
-  describe('When the back button is clicked', () => {
-    it('should navigate back to the grocery list page', async () => {
-      const navigateSpy = jest.fn()
-
-      jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
-      jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
-
-      await act(async () => {
-        renderComponent()
-      })
-
-      await act(async () => {
-        screen.getByLabelText('Back Button').click()
-      })
-
-      expect(navigateSpy).toHaveBeenCalledWith('/')
-    })
-  })
-
   describe('When the fetch fails', () => {
     it('should display an error message', async () => {
       const errorSpy = jest.spyOn(console, 'error')
@@ -110,29 +71,12 @@ describe('Given the GroceryListRoute component', () => {
       expect(errorSpy).toHaveBeenCalledWith('Failed to fetch grocery list:', new Error('Bad things happen all the time'))
     })
   })
-
-  describe('When the skip starting screen is true', () => {
-    it('should not display the back button', async () => {
-      jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
-
-      await act(async () => {
-        renderComponent({ skipStartingScreen: true })
-      })
-
-      expect(screen.queryByLabelText('Back Button')).not.toBeVisible()
-    })
-  })
 })
 
-interface IRenderComponentProps {
-  skipStartingScreen?: boolean
-}
-
-const renderComponent = ({ skipStartingScreen = false }: IRenderComponentProps = {}) => {
+const renderComponent = () => {
   jest.mocked(useAppState).mockReturnValue({
     state: {
       ...initialState,
-      skipStartingScreen,
     },
     dispatch: jest.fn(),
   })

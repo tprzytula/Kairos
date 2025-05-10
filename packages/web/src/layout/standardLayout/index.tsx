@@ -1,13 +1,11 @@
 import { Container, Content } from './index.styled'
 import { IStandardLayoutProps } from './types'
 import Header from '../../components/Header'
-import Navigation from '../../components/Navigation'
+import NavigationBar from '../../components/NavigationBar'
 
 const StandardLayout = ({
   title,
   children,
-  previousRoute,
-  nextRoute,
 }: IStandardLayoutProps) => {
   return (
     <Container>
@@ -15,10 +13,7 @@ const StandardLayout = ({
       <Content>
         {children}
       </Content>
-      <Navigation
-        previousRoute={previousRoute}
-        nextRoute={nextRoute}
-      />
+      <NavigationBar />
     </Container>
   )
 }

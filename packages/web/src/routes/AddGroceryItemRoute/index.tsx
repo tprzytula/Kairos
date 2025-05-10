@@ -74,7 +74,6 @@ export const AddGroceryItemRoute = () => {
   return (
     <StandardLayout
       title="Add Grocery Item"
-      previousRoute={Route.GroceryList}
     >
       <AddItemForm
         defaults={defaults}

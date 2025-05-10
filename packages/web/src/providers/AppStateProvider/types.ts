@@ -13,7 +13,6 @@ export type State = {
   alerts: Map<string, IAlert>
   purchasedItems: Set<string>
   selectedTodoItems: Set<string>
-  skipStartingScreen: boolean
 }
 
 export type StateComponentProps = {

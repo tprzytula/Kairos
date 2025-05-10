@@ -3,6 +3,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
+import { Route } from '../../enums/route'
 import AddGroceryItemRoute from '.'
 import * as ReactRouter from 'react-router'
 import AddItemForm from '../../components/AddItemForm'
@@ -26,22 +27,6 @@ describe('Given the AddGroceryItemRoute component', () => {
   it('should render the AddItemForm component', async () => {
     await renderComponent()
     expect(AddItemForm).toHaveBeenCalled()
-  })
-
-  describe('When the back button is clicked', () => {
-    it('should navigate back to the grocery list page', async () => {
-      const navigateSpy = jest.fn()
-
-      jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
-
-      renderComponent()
-
-      await act(async () => {
-        screen.getByLabelText('Back Button').click()
-      })
-
-      expect(navigateSpy).toHaveBeenCalledWith('/groceries')
-    })
   })
 
   describe('When the form is submitted', () => {
@@ -122,7 +107,7 @@ describe('Given the AddGroceryItemRoute component', () => {
           ])
         })
 
-        expect(navigateSpy).toHaveBeenCalledWith('/groceries')
+        expect(navigateSpy).toHaveBeenCalledWith(Route.GroceryList)
       })
     })
 

@@ -5,7 +5,6 @@ import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
 import NoiseTrackingRoute from '.'
 import * as API from '../../api/noiseTracking'
-import * as ReactRouter from 'react-router'
 import { useAppState } from '../../providers/AppStateProvider'
 
 jest.mock('../../providers/AppStateProvider', () => ({
@@ -14,10 +13,6 @@ jest.mock('../../providers/AppStateProvider', () => ({
 }))
 
 jest.mock('../../api/noiseTracking')
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
-}))
 
 describe('Given the NoiseTrackingRoute component', () => {
   it('should have the correct title', async () => {
@@ -58,25 +53,6 @@ describe('Given the NoiseTrackingRoute component', () => {
     })
   })
 
-  describe('When the back button is clicked', () => {
-    it('should navigate back to the grocery list page', async () => {
-      const navigateSpy = jest.fn()
-
-      jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
-      jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue([])
-
-      await act(async () => {
-        renderComponent()
-      })
-
-      await act(async () => {
-        screen.getByLabelText('Back Button').click()
-      })
-
-      expect(navigateSpy).toHaveBeenCalledWith('/')
-    })
-  })
-
   describe('When the fetch fails', () => {
     it('should display an error message', async () => {
       const errorSpy = jest.spyOn(console, 'error')
@@ -90,30 +66,11 @@ describe('Given the NoiseTrackingRoute component', () => {
       expect(errorSpy).toHaveBeenCalledWith('Failed to fetch noise tracking items:', new Error('Bad things happen all the time'))
     })
   })
-
-  describe('When the skip starting screen is true', () => {
-    it('should not display the back button', async () => {
-      jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue([])
-
-      await act(async () => {
-        renderComponent({ skipStartingScreen: true })
-      })
-
-      expect(screen.queryByLabelText('Back Button')).not.toBeVisible()
-    })
-  })
 })
 
-interface IRenderComponentProps {
-  skipStartingScreen?: boolean
-}
-
-const renderComponent = ({ skipStartingScreen = false }: IRenderComponentProps = {}) => {
+const renderComponent = () => {
   jest.mocked(useAppState).mockReturnValue({
-    state: {
-      ...initialState,
-      skipStartingScreen,
-    },
+    state: initialState,
     dispatch: jest.fn(),
   })
 

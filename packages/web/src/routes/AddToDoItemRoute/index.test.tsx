@@ -4,17 +4,18 @@ import { AppStateProvider } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
 import AddToDoItemRoute from '.'
-import * as ReactRouter from 'react-router'
 import AddItemForm from '../../components/AddItemForm'
 import { addTodoItem } from '../../api/toDoList'
 import { FormFieldType } from '../../components/AddItemForm/enums'
+import * as ReactRouter from 'react-router'
 
-jest.mock('../../api/toDoList');
-jest.mock('../../components/AddItemForm');
-jest.mock('react-router', () => ({
+jest.mock('react-router', () => ({  
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(),
 }))
+
+jest.mock('../../api/toDoList');
+jest.mock('../../components/AddItemForm');
 
 describe('Given the AddToDoItemRoute component', () => {
   it('should have the correct title', async () => {
@@ -25,22 +26,6 @@ describe('Given the AddToDoItemRoute component', () => {
   it('should render the AddItemForm component', async () => {
     await renderComponent()
     expect(AddItemForm).toHaveBeenCalled()
-  })
-
-  describe('When the back button is clicked', () => {
-    it('should navigate back to the to do list page', async () => {
-      const navigateSpy = jest.fn()
-
-      jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
-
-      renderComponent()
-
-      await act(async () => {
-        screen.getByLabelText('Back Button').click()
-      })
-
-      expect(navigateSpy).toHaveBeenCalledWith('/todo')
-    })
   })
 
   describe('When the form is submitted', () => {
