@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useToDoListContext } from '../../providers/ToDoListProvider';
 import ToDoItem from '../ToDoItem';
 import ToDoItemPlaceholder from '../ToDoItemPlaceholder';
-import { Container, EmptyListContainer, EmptyListMessage } from './index.styled';
+import { Container, EmptyListMessage } from './index.styled';
 
 const PlaceholderComponent = () => (
   <Container>
@@ -13,9 +13,9 @@ const PlaceholderComponent = () => (
 )
 
 const EmptyListComponent = () => (
-  <EmptyListContainer>
+  <Container>
     <EmptyListMessage>No items in your to do list</EmptyListMessage>
-  </EmptyListContainer>
+  </Container>
 )
 
 export const ToDoList = () => {
