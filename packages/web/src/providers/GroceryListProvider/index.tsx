@@ -1,13 +1,14 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react'
 import { StateComponentProps } from '../AppStateProvider/types'
 import { GroceryItem } from '../AppStateProvider/types'
-import { retrieveGroceryList } from '../../api/groceryList'
+import { removeGroceryItems, retrieveGroceryList } from '../../api/groceryList'
 import { IState } from './types'
 
 export const initialState: IState = {
   groceryList: [],
   isLoading: false,
   refetchGroceryList: async () => {},
+  removeGroceryItem: async (id: string) => {},
 }
 
 export const GroceryListContext = createContext<IState>(initialState)
@@ -35,6 +36,15 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     await fetchGroceryList()
   }, [fetchGroceryList])
 
+  const removeGroceryItem = useCallback(async (id: string) => {
+    try {
+      await removeGroceryItems([id])
+      setGroceryList((prev) => prev.filter((item) => item.id !== id))
+    } catch (error) {
+      console.error('Failed to remove grocery item:', error)
+    }
+  }, [groceryList])
+
   useEffect(() => {
     fetchGroceryList()
   }, [fetchGroceryList])
@@ -44,8 +54,9 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
       groceryList,
       isLoading,
       refetchGroceryList,
+      removeGroceryItem,
     }),
-    [groceryList, isLoading, refetchGroceryList]
+    [groceryList, isLoading, refetchGroceryList, removeGroceryItem]
   )
 
   return (

@@ -20,6 +20,7 @@ describe('Given the GroceryList component', () => {
         groceryList: [],
         isLoading: false,
         refetchGroceryList: jest.fn(),
+        removeGroceryItem: jest.fn(),
       })
 
       render(<GroceryList />)
@@ -34,6 +35,7 @@ describe('Given the GroceryList component', () => {
         groceryList: [],
         isLoading: true,
         refetchGroceryList: jest.fn(),
+        removeGroceryItem: jest.fn(),
       })
 
       render(<GroceryList />)
@@ -62,4 +64,5 @@ const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
   ],
   isLoading: false,
   refetchGroceryList: jest.fn(),
+  removeGroceryItem: jest.fn(),
 }

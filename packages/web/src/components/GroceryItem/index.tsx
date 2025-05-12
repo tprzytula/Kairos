@@ -1,4 +1,4 @@
-import { Container, ActionArea, Content, Media, Name, QuantityContainer, Quantity, Unit } from './index.styled'
+import { Container, ActionArea, Content, Media, Name, QuantityContainer, Quantity, Unit, SwipeableDeleteAction } from './index.styled'
 import { IGroceryItemProps } from './types'
 import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
@@ -51,6 +51,7 @@ const GroceryItem = ({ id, name, quantity, imagePath, unit }: IGroceryItemProps)
         </Content>
       </ActionArea>
     </Container>
+
   )
 };
 

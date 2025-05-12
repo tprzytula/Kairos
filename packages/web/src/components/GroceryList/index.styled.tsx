@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Typography } from '@mui/material'
+import { SwipeableList, SwipeableListItem, SwipeAction } from 'react-swipeable-list'
 export const Container = styled('div')({
   display: 'flex',
   flexDirection: 'column',
@@ -18,4 +19,22 @@ export const EmptyListMessage = styled(Typography)({
   fontSize: '1.2em',
   fontWeight: 'bold',
   textAlign: 'center',
+})
+
+export const SwipeableListItemContainer = styled(SwipeableListItem)({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  width: '100%',
+})
+
+export const DeleteAction = styled(SwipeAction)({
+  backgroundColor: '#FF5E69',
+  color: 'white',
+  textAlign: 'center',
+  width: '100%',
+  height: '100%',
+  alignItems: 'center',
+  justifyContent: 'center',
 })

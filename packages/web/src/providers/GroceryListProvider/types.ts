@@ -9,4 +9,5 @@ export interface IState {
     groceryList: Array<IGroceryItem>
     isLoading: boolean
     refetchGroceryList: () => Promise<void>
+    removeGroceryItem: (id: string) => Promise<void>
 }
