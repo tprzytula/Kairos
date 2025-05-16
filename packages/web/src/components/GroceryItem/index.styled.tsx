@@ -9,7 +9,7 @@ export const Container = styled(({ isPurchased, ...props }: { isPurchased: boole
   width: '100%',
   borderRadius: '0.5em',
   minHeight: '50px',
-  margin: '0.5em',
+  margin: '0.5em 0',
   justifyContent: 'flex-start',
   boxSizing: 'border-box',
   opacity: isPurchased ? 0.5 : 1,

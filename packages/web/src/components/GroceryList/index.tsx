@@ -3,10 +3,9 @@ import { useAppState } from '../../providers/AppStateProvider';
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import GroceryItem from '../GroceryItem';
 import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
-import { Container, DeleteAction, EmptyListContainer, EmptyListMessage, SwipeableListItemContainer } from './index.styled';
+import { Container, DeleteAction, EmptyListContainer, EmptyListMessage, SwipeableListItemContainer, StyledSwipeableList } from './index.styled';
 import { SwipeableList, TrailingActions } from 'react-swipeable-list';
 import 'react-swipeable-list/dist/styles.css';
-import { removeGroceryItems } from '../../api/groceryList/remove';
 
 const PlaceholderComponent = () => (
   <Container>
@@ -48,7 +47,7 @@ export const GroceryList = () => {
 
   return (
     <Container>
-      <SwipeableList
+      <StyledSwipeableList
         threshold={0.5}
         fullSwipe={true}
       >
@@ -68,7 +67,7 @@ export const GroceryList = () => {
             />
           </SwipeableListItemContainer>
         ))}
-      </SwipeableList>
+      </StyledSwipeableList>
     </Container>
   );
 };
