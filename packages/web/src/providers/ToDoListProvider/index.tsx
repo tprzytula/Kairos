@@ -32,8 +32,12 @@ export const ToDoListProvider = ({ children }: StateComponentProps) => {
     }
   }, [setToDoList])
 
-  const removeFromToDoList = useCallback((id: string) => {
-    setToDoList(toDoList.filter(({ id: toDoItemId }) => toDoItemId !== id))
+  const removeFromToDoList = useCallback(async (id: string) => {
+    try {
+      setToDoList((prev) => prev.filter((item) => item.id !== id))
+    } catch (error) {
+      console.error('Failed to remove to do item:', error)
+    }
   }, [toDoList])
 
   const refetchToDoList = useCallback(async () => {
