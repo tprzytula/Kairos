@@ -6,6 +6,7 @@ import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
 import { Container, DeleteAction, EmptyListContainer, EmptyListMessage, SwipeableListItemContainer, StyledSwipeableList } from './index.styled';
 import { TrailingActions } from 'react-swipeable-list';
 import 'react-swipeable-list/dist/styles.css';
+import { ActionName } from '../../providers/AppStateProvider/enums';
 
 const PlaceholderComponent = () => (
   <Container>
@@ -27,7 +28,13 @@ export const GroceryList = () => {
 
   const handleDelete = useCallback((id: string) => {
     removeGroceryItem(id)
-  }, [removeGroceryItem])
+    dispatch({
+      type: ActionName.CLEAR_PURCHASED_ITEM,
+      payload: {
+        id,
+      },
+    })
+  }, [removeGroceryItem, dispatch])
 
   const trailingActions = useCallback((id: string) => (
     <TrailingActions>
