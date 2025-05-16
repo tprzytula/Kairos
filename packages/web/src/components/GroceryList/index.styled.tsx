@@ -23,18 +23,6 @@ export const EmptyListMessage = styled(Typography)({
   textAlign: 'center',
 })
 
-export const SwipeableListItemContainer = styled(SwipeableListItem)({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  width: '100%',
-  borderRadius: '0.5em',
-  boxSizing: 'border-box',
-  overflow: 'hidden',
-  transition: 'transform 0.3s ease, opacity 0.3s ease',
-})
-
 export const DeleteAction = styled(SwipeAction)({
   backgroundColor: '#FF5E69',
   color: 'white',
@@ -46,11 +34,3 @@ export const DeleteAction = styled(SwipeAction)({
   justifyContent: 'center',
   transition: 'transform 0.3s ease',
 })
-
-export const StyledSwipeableList = styled(SwipeableList)({
-  display: 'flex',
-  flexDirection: 'column',
-  padding: '0.5em',
-  boxSizing: 'border-box',
-})
-

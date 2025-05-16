@@ -20,6 +20,7 @@ describe('Given the ToDoList component', () => {
         toDoList: [],
         isLoading: false,
         refetchToDoList: jest.fn(),
+        removeFromToDoList: jest.fn(),
       })
 
       renderWithTheme(<ToDoList />)
@@ -34,6 +35,7 @@ describe('Given the ToDoList component', () => {
         toDoList: [],
         isLoading: true,
         refetchToDoList: jest.fn(),
+        removeFromToDoList: jest.fn(),
       })
 
       renderWithTheme(<ToDoList />)
@@ -79,4 +81,5 @@ const EXAMPLE_TO_DO_LIST_CONTEXT: IState = {
   ],
   isLoading: false,
   refetchToDoList: jest.fn(),
+  removeFromToDoList: jest.fn(),
 }

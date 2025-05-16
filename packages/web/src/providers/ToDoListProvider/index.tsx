@@ -8,6 +8,7 @@ export const initialState: IState = {
   toDoList: [],
   isLoading: false,
   refetchToDoList: async () => {},
+  removeFromToDoList: () => {},
 }
 
 export const ToDoListContext = createContext<IState>(initialState)
@@ -31,6 +32,10 @@ export const ToDoListProvider = ({ children }: StateComponentProps) => {
     }
   }, [setToDoList])
 
+  const removeFromToDoList = useCallback((id: string) => {
+    setToDoList(toDoList.filter(({ id: toDoItemId }) => toDoItemId !== id))
+  }, [toDoList])
+
   const refetchToDoList = useCallback(async () => {
     await fetchToDoList()
   }, [fetchToDoList])
@@ -44,8 +49,9 @@ export const ToDoListProvider = ({ children }: StateComponentProps) => {
       toDoList,
       isLoading,
       refetchToDoList,
+      removeFromToDoList,
     }),
-    [toDoList, isLoading, refetchToDoList]
+    [toDoList, isLoading, refetchToDoList, removeFromToDoList]
   )
 
   return (

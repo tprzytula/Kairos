@@ -8,6 +8,7 @@ export const Container = styled(({ isSelected, ...props }: { isSelected: boolean
   borderRadius: '0.75em',
   minHeight: '50px',
   margin: '0.5em',
+  width: '100%',
   justifyContent: 'flex-start',
   boxSizing: 'border-box',
   opacity: isSelected ? 0.5 : 1,

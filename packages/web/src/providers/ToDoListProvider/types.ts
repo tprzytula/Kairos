@@ -9,4 +9,5 @@ export interface IState {
     toDoList: Array<ITodoItem>
     isLoading: boolean
     refetchToDoList: () => Promise<void>
+    removeFromToDoList: (id: string) => void
 }

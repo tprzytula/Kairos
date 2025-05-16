@@ -3,10 +3,11 @@ import { useAppState } from '../../providers/AppStateProvider';
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import GroceryItem from '../GroceryItem';
 import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
-import { Container, DeleteAction, EmptyListContainer, EmptyListMessage, SwipeableListItemContainer, StyledSwipeableList } from './index.styled';
+import { Container, DeleteAction, EmptyListContainer, EmptyListMessage } from './index.styled';
 import { TrailingActions } from 'react-swipeable-list';
 import 'react-swipeable-list/dist/styles.css';
 import { ActionName } from '../../providers/AppStateProvider/enums';
+import SwipeableList from '../SwipeableList';
 
 const PlaceholderComponent = () => (
   <Container>
@@ -54,27 +55,12 @@ export const GroceryList = () => {
 
   return (
     <Container>
-      <StyledSwipeableList
-        threshold={0.3}
-        fullSwipe={false}
-      >
-        {groceryList.map(({ id, name, quantity, imagePath, unit }) => (
-          <SwipeableListItemContainer
-            key={id}
-            trailingActions={trailingActions(id)}
-            fullSwipe={true}
-          >
-            <GroceryItem 
-              key={id} 
-              id={id}
-              name={name} 
-              quantity={quantity} 
-              imagePath={imagePath} 
-              unit={unit}
-            />
-          </SwipeableListItemContainer>
-        ))}
-      </StyledSwipeableList>
+      <SwipeableList
+        component={GroceryItem}
+        list={groceryList}
+        trailingActions={trailingActions}
+        fullSwipe={true}
+      />
     </Container>
   );
 };
