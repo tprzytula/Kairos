@@ -48,8 +48,8 @@ export const GroceryList = () => {
   return (
     <Container>
       <StyledSwipeableList
-        threshold={0.5}
-        fullSwipe={true}
+        threshold={0.3}
+        fullSwipe={false}
       >
         {groceryList.map(({ id, name, quantity, imagePath, unit }) => (
           <SwipeableListItemContainer
