@@ -4,7 +4,7 @@ import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import GroceryItem from '../GroceryItem';
 import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
 import { Container, DeleteAction, EmptyListContainer, EmptyListMessage, SwipeableListItemContainer, StyledSwipeableList } from './index.styled';
-import { SwipeableList, TrailingActions } from 'react-swipeable-list';
+import { TrailingActions } from 'react-swipeable-list';
 import 'react-swipeable-list/dist/styles.css';
 
 const PlaceholderComponent = () => (

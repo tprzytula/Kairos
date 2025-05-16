@@ -32,6 +32,7 @@ export const SwipeableListItemContainer = styled(SwipeableListItem)({
   borderRadius: '0.5em',
   boxSizing: 'border-box',
   overflow: 'hidden',
+  transition: 'transform 0.3s ease, opacity 0.3s ease',
 })
 
 export const DeleteAction = styled(SwipeAction)({
@@ -43,6 +44,7 @@ export const DeleteAction = styled(SwipeAction)({
   borderRadius: '0 0.5em 0.5em 0',
   alignItems: 'center',
   justifyContent: 'center',
+  transition: 'transform 0.3s ease',
 })
 
 export const StyledSwipeableList = styled(SwipeableList)({
