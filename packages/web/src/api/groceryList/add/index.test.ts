@@ -28,7 +28,7 @@ describe('Given the addGroceryItem function', () => {
       name: 'Milk',
       quantity: 5,
       unit: GroceryItemUnit.LITER,
-      imagePath: '/assets/icons/milk.png',
+      imagePath: '/assets/icons/milk.png'
     })
 
     expect(fetchMock).toHaveBeenCalledWith(
@@ -47,7 +47,7 @@ describe('Given the addGroceryItem function', () => {
       name: 'Milk',
       quantity: 5,
       unit: GroceryItemUnit.LITER,
-      imagePath: '/assets/icons/milk.png',
+      imagePath: '/assets/icons/milk.png'
     })
 
     expect(result).toStrictEqual(exampleResponse[0])
@@ -63,7 +63,7 @@ describe('Given the addGroceryItem function', () => {
         name: 'Milk',
         quantity: 5,
         unit: GroceryItemUnit.LITER,
-        imagePath: '/assets/icons/milk.png',
+        imagePath: '/assets/icons/milk.png'
       })).rejects.toThrow('Failed to add a grocery item')
     })
   })
@@ -78,7 +78,7 @@ describe('Given the addGroceryItem function', () => {
         name: 'Milk',
         quantity: 5,
         unit: GroceryItemUnit.LITER,
-        imagePath: '/assets/icons/milk.png',
+        imagePath: '/assets/icons/milk.png'
       })).rejects.toThrow('Unexpected response from API')
     })
   })

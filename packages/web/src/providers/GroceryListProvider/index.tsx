@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react'
 import { StateComponentProps } from '../AppStateProvider/types'
-import { GroceryItem } from '../AppStateProvider/types'
+import { IGroceryItem } from '../AppStateProvider/types'
 import { removeGroceryItems, retrieveGroceryList } from '../../api/groceryList'
 import { IState } from './types'
+import { addPropertyToEachItemInList } from '../../utils/list'
 
 export const initialState: IState = {
   groceryList: [],
@@ -16,14 +17,19 @@ export const GroceryListContext = createContext<IState>(initialState)
 export const useGroceryListContext = () => useContext(GroceryListContext)
 
 export const GroceryListProvider = ({ children }: StateComponentProps) => {
-  const [groceryList, setGroceryList] = useState<Array<GroceryItem>>([])
+  const [groceryList, setGroceryList] = useState<Array<IGroceryItem>>([])
   const [isLoading, setIsLoading] = useState(false)
 
   const fetchGroceryList = useCallback(async () => {
     try {
       setIsLoading(true)
-      const list = await retrieveGroceryList()
-      setGroceryList(list)
+
+      const groceryList = addPropertyToEachItemInList({
+        list: await retrieveGroceryList(),
+        properties: { toBeRemoved: false },
+      })
+
+      setGroceryList(groceryList)
     } catch (error) {
       console.error('Failed to fetch grocery list:', error)
       setGroceryList([])

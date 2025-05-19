@@ -2,7 +2,7 @@ import { render, screen, renderHook, waitFor, act } from '@testing-library/react
 import { useGroceryListContext } from './index'
 import { GroceryListProvider } from './index'
 import * as API from '../../api/groceryList'
-import { GroceryItem } from '../AppStateProvider/types'
+import { IGroceryItem } from '../AppStateProvider/types'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 
 jest.mock('../../api/groceryList')
@@ -86,6 +86,7 @@ describe('Given the useGroceryListContext hook', () => {
           quantity: 5,
           imagePath: 'https://hostname.com/image.png',
           unit: GroceryItemUnit.LITER,
+          toBeRemoved: false,
         },
       ])
     })
@@ -106,13 +107,14 @@ describe('Given the useGroceryListContext hook', () => {
   })
 })
 
-const EXAMPLE_GROCERY_LIST: Array<GroceryItem> = [
+const EXAMPLE_GROCERY_LIST: Array<IGroceryItem> = [
   {
       id: '1',
       name: 'Milk',
       quantity: 5,
       imagePath: 'https://hostname.com/image.png',
       unit: GroceryItemUnit.LITER,
+      toBeRemoved: false,
     },
     {
       id: '2',
@@ -120,7 +122,8 @@ const EXAMPLE_GROCERY_LIST: Array<GroceryItem> = [
       quantity: 2,
       imagePath: 'https://hostname.com/image.png',
       unit: GroceryItemUnit.UNIT,
-    },
+      toBeRemoved: false,
+  },
 ]
 
 const renderGroceryListProvider = () => {

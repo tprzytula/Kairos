@@ -1,6 +1,6 @@
 import { GroceryItemUnit } from "../../../enums/groceryItem"
 
-export interface IGroceryItem {
+export interface IDBGroceryItem {
   id: string
   name: string
   quantity: number
@@ -8,7 +8,7 @@ export interface IGroceryItem {
   imagePath?: string
 }
 
-export interface IGroceryItemDefault {
+export interface IDBGroceryItemDefault {
   name: string
   unit?: GroceryItemUnit
   icon?: string

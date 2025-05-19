@@ -1,7 +1,7 @@
 import { retrieveGroceryList, retrieveGroceryListDefaults } from '.'
 import { FetchMock } from 'jest-fetch-mock'
 import { GroceryItemUnit } from '../../../enums/groceryItem'
-import { IGroceryItem, IGroceryItemDefault } from './types'
+import { IDBGroceryItem, IDBGroceryItemDefault } from './types'
 
 const fetchMock = fetch as FetchMock
 
@@ -69,7 +69,7 @@ describe('Given the retrieveItemsDefaults function', () => {
   })
 })
 
-const EXAMPLE_GROCERY_LIST_RESPONSE: Array<IGroceryItem> = [
+const EXAMPLE_GROCERY_LIST_RESPONSE: Array<IDBGroceryItem> = [
   {
     id: '1',
     name: 'Milk',
@@ -86,7 +86,7 @@ const EXAMPLE_GROCERY_LIST_RESPONSE: Array<IGroceryItem> = [
   },
 ]
 
-const EXAMPLE_GROCERY_LIST_DEFAULTS_RESPONSE: Array<IGroceryItemDefault> = [
+const EXAMPLE_GROCERY_LIST_DEFAULTS_RESPONSE: Array<IDBGroceryItemDefault> = [
   {
     name: 'Milk',
     unit: GroceryItemUnit.LITER,

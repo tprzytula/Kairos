@@ -1,7 +1,7 @@
-import { GroceryItem } from '../../../providers/AppStateProvider/types'
+import { IGroceryItem } from '../../../providers/AppStateProvider/types'
 import { GROCERY_LIST_API_URL } from '..'
 
-export const addGroceryItem = async (item: Omit<GroceryItem, 'id'>): Promise<GroceryItem> => {
+export const addGroceryItem = async (item: Omit<IGroceryItem, 'id' | 'toBeRemoved'>): Promise<IGroceryItem> => {
   const response = await fetch(`${GROCERY_LIST_API_URL}/grocery_list/items`, {
     method: 'PUT',
     body: JSON.stringify(item),

@@ -19,12 +19,13 @@ export type StateComponentProps = {
   children: ReactNode
 }
 
-export type GroceryItem = {
+export type IGroceryItem = {
   id: string
   name: string
   quantity: number
   imagePath?: string
   unit: GroceryItemUnit
+  toBeRemoved: boolean
 }
 
 export type Action = {

@@ -1,7 +1,7 @@
 import { GROCERY_LIST_API_URL } from '..'
-import { IGroceryItem, IGroceryItemDefault } from './types'
+import { IDBGroceryItem, IDBGroceryItemDefault } from './types'
 
-export const retrieveGroceryList = async (): Promise<Array<IGroceryItem>> => {
+export const retrieveGroceryList = async (): Promise<Array<IDBGroceryItem>> => {
   const response = await fetch(`${GROCERY_LIST_API_URL}/grocery_list/items`)
 
   if (response.ok) {
@@ -11,7 +11,7 @@ export const retrieveGroceryList = async (): Promise<Array<IGroceryItem>> => {
   return []
 }
 
-export const retrieveGroceryListDefaults = async (): Promise<Array<IGroceryItemDefault>> => {
+export const retrieveGroceryListDefaults = async (): Promise<Array<IDBGroceryItemDefault>> => {
   const response = await fetch(`${GROCERY_LIST_API_URL}/grocery_list/items_defaults`)
 
   if (response.ok) {
