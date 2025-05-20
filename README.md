@@ -1,4 +1,7 @@
-# Kairos - Time Management Platform
+<div align="center">
+  <img src="packages/assets/webManifest/96x96.png" alt="Kairos Logo" width="96" height="96">
+  <h1>Kairos - Time Management Platform</h1>
+</div>
 
 Kairos is a modern, cloud-based time management platform designed to help you efficiently manage your time and boost productivity. Built with a serverless architecture, Kairos provides a responsive web interface and scalable backend services.
 
