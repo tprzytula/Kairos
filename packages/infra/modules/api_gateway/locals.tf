@@ -18,7 +18,7 @@ locals {
     for spec in local.openapi_files :
     local.openapi_specs[spec].paths
   ]...)
-  
+
   merged_schemas = merge([
     for spec in local.openapi_files :
     local.openapi_specs[spec].components.schemas
