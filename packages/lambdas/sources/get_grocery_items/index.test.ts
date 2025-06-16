@@ -3,6 +3,8 @@ import * as DynamoDB from "@kairos-lambdas-libs/dynamodb";
 const { DynamoDBTable } = DynamoDB;
 
 import { handler } from "./index";
+import { IGroceryItem } from "@kairos-lambdas-libs/dynamodb/types/groceryList";
+import { GroceryItemUnit } from "@kairos-lambdas-libs/dynamodb/enums";
 
 jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
     ...jest.requireActual("@kairos-lambdas-libs/dynamodb"),
@@ -26,7 +28,7 @@ describe('Given the get_grocery_items lambda handler', () => {
         await handler({} as any, {} as any, {} as any);
 
         expect(logSpy).toHaveBeenCalledWith('Returning items', {
-            count: 2,
+            count: 3,
             items: JSON.stringify(EXAMPLE_DB_GROCERY_ITEMS),
         });
     });
@@ -37,7 +39,7 @@ describe('Given the get_grocery_items lambda handler', () => {
         const result = await handler({} as any, {} as any, {} as any);
 
         expect(result.statusCode).toBe(200);
-        expect(result.body).toBe(JSON.stringify(EXAMPLE_DB_GROCERY_ITEMS));
+        expect(result.body).toStrictEqual(JSON.stringify(EXAMPLE_DB_GROCERY_ITEMS));
     });
 
     describe('When the scan request fails', () => {
@@ -71,19 +73,26 @@ describe('Given the get_grocery_items lambda handler', () => {
 
 const mockScan = () => jest.spyOn(DynamoDB, 'scan').mockResolvedValue(EXAMPLE_DB_GROCERY_ITEMS);
 
-const EXAMPLE_DB_GROCERY_ITEMS: Record<string, unknown>[] = [
+const EXAMPLE_DB_GROCERY_ITEMS: Array<IGroceryItem> = [
     {
         id: "1",
-        name: "Apple",
-        quantity: 1,
+        name: "Avocado",
+        quantity: "2",
         imagePath: "Image 1",
-        unit: "kg",
+        unit: GroceryItemUnit.KILOGRAM,
     },
     {
         id: "2",
         name: "Banana",
-        quantity: 2,
+        quantity: "1",
         imagePath: "Image 2",
-        unit: "kg",
+        unit: GroceryItemUnit.KILOGRAM,
+    },
+    {
+        id: "3",
+        name: "Apple",
+        quantity: "2",
+        imagePath: "Image 3",
+        unit: GroceryItemUnit.KILOGRAM,
     },
 ];
