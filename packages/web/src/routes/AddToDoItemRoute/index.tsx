@@ -71,6 +71,7 @@ export const AddToDoItemRoute = () => {
       <AddItemForm
         fields={FIELDS}
         onSubmit={onSubmit}
+        hideImage={true}
       />
     </StandardLayout>
   )

@@ -5,7 +5,7 @@ import { useForm } from "./hooks/useForm";
 import ItemImage from "./components/ItemImage";
 import FormField from "./components/FormField";
 
-const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
+const AddItemForm = ({ defaults, fields, hideImage, onSubmit }: IAddItemFormProps) => {
     const [itemName, setItemName] = useState<string | undefined>();
     const [imagePath, setImagePath] = useState<string | undefined>();
 
@@ -48,11 +48,13 @@ const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
         <Container maxWidth="sm">
             <form onSubmit={handleSubmit} noValidate>
                 <Stack spacing={3}>
-                    <ItemImage
-                        itemName={itemName}
-                        defaults={defaults}
-                        onChange={setImagePath}
-                    />
+                    {!hideImage && (
+                        <ItemImage
+                            itemName={itemName}
+                            defaults={defaults}
+                            onChange={setImagePath}
+                        />
+                    )}
                     <Stack spacing={2}>
                         {formFieldsComponents}
                     </Stack>
