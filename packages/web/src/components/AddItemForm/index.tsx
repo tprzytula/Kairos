@@ -2,24 +2,8 @@ import { Button, Container, Stack, CircularProgress, Alert } from "@mui/material
 import { useCallback, useMemo, useState } from "react";
 import { IAddItemFormProps, IFormField } from "./types";
 import { useForm } from "./hooks/useForm";
-import { TextField } from "./components/TextField";
-import { Select } from "./components/Select";
-import { FormFieldType } from "./enums";
-import { TextArea } from "./components/TextArea";
-import { DatePicker } from "./components/DatePicker";
 import ItemImage from "./components/ItemImage";
-
-const FIELD_TYPE_COMPONENTS = {
-    [FormFieldType.TEXT]: TextField,
-    [FormFieldType.NUMBER]: TextField,
-    [FormFieldType.SELECT]: Select,
-    [FormFieldType.TEXTAREA]: TextArea,
-    [FormFieldType.DATE]: DatePicker,
-}
-
-const isFieldComponent = (type: string): type is keyof typeof FIELD_TYPE_COMPONENTS => {
-    return type in FIELD_TYPE_COMPONENTS;
-}
+import FormField from "./components/FormField";
 
 const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
     const [itemName, setItemName] = useState<string | undefined>();
@@ -48,28 +32,17 @@ const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
         onValueChange: handleValueChange
     });
 
-    const renderFormField = useCallback((field: IFormField) => {
-        const fieldProps = getFieldProps(field);
-        const FieldComponent = isFieldComponent(field.type) ? FIELD_TYPE_COMPONENTS[field.type] : null;
-
-        if (FieldComponent) {
-            return (
-                <FieldComponent
-                    key={field.name}
-                    field={field}
-                    fieldProps={fieldProps}
-                    errors={errors}
-                    isSubmitting={isSubmitting}
-                />
-            );
-        }
-    }, [errors, getFieldProps, isSubmitting]);
-
-    const formFieldsComponents = useMemo(() => (
-        <Stack spacing={2}>
-            {formFields.map(renderFormField)}
-        </Stack>
-    ), [formFields, renderFormField]);
+    const formFieldsComponents = useMemo(() => 
+        formFields.map((field) => (
+            <FormField 
+                key={field.name} 
+                field={field} 
+                getFieldProps={getFieldProps} 
+                errors={errors} 
+                isSubmitting={isSubmitting} 
+            />
+        ))
+    , [formFields, getFieldProps, errors, isSubmitting]);
 
     return (
         <Container maxWidth="sm">
@@ -80,7 +53,9 @@ const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
                         defaults={defaults}
                         onChange={setImagePath}
                     />
-                    {formFieldsComponents}
+                    <Stack spacing={2}>
+                        {formFieldsComponents}
+                    </Stack>
                     <Button 
                         type="submit" 
                         variant="contained" 
