@@ -47,7 +47,7 @@ const ToDoItem = ({ id, name, description, dueDate }: ITodoItemProps) => {
       >  
         <Content>
           <Name>{name}</Name>
-          <Description>{description}</Description>
+          { description?.trim() && <Description>{description}</Description> }
           <DueDate>{formattedDueDate}</DueDate>
         </Content>
       </ActionArea>

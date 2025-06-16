@@ -50,7 +50,7 @@ describe('Given the AddToDoItemRoute component', () => {
           {
             name: 'Description',
             type: FormFieldType.TEXT,
-            required: true,
+            required: false,
             value: 'Test',
           },
           {
@@ -94,7 +94,7 @@ describe('Given the AddToDoItemRoute component', () => {
             {
               name: 'Description',
               type: FormFieldType.TEXT,
-              required: true,
+              required: false,
               value: 'Test',
             },
             {
@@ -134,7 +134,7 @@ describe('Given the AddToDoItemRoute component', () => {
             {
               name: 'Description',
               type: FormFieldType.TEXT,
-              required: true,
+              required: false,
               value: 'Test',
             },
             {

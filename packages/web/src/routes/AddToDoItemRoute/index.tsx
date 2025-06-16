@@ -24,7 +24,7 @@ const FIELDS: Array<IFormField> = [
     name: 'description',
     label: 'Description',
     type: FormFieldType.TEXTAREA,
-    required: true,
+    required: false,
     value: '',
   },
   {
