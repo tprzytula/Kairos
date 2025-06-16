@@ -9,11 +9,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(async () => {
     tableName: DynamoDBTable.GROCERY_LIST,
   });
 
-  console.error(items);
-
   const sortedItems = sortItems(items);
-
-  console.error(sortedItems);
 
   logResponse(sortedItems);
 
