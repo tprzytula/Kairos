@@ -1,7 +1,13 @@
+import { CardMedia } from "@mui/material";
 import { styled } from "@mui/system";
-import { Media } from "../GroceryItem/index.styled";
 
-export const GroceryItemImage = styled(Media)({
+export const Media = styled(CardMedia)(({
+    width: '75px',
+    height: '75px',
+    position: 'relative',
+}))
+
+export const StyledItemImage = styled(Media)({
     alignSelf: 'center',
     border: '1px solid #000',
     borderRadius: '10px',

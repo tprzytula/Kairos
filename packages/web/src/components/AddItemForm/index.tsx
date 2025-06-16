@@ -1,13 +1,13 @@
 import { Button, Container, Stack, CircularProgress, Alert } from "@mui/material";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { IAddItemFormProps, IFormField } from "./types";
 import { useForm } from "./hooks/useForm";
 import { TextField } from "./components/TextField";
 import { Select } from "./components/Select";
 import { FormFieldType } from "./enums";
-import { GroceryItemImage } from "./index.styled";
 import { TextArea } from "./components/TextArea";
 import { DatePicker } from "./components/DatePicker";
+import ItemImage from "./components/ItemImage";
 
 const FIELD_TYPE_COMPONENTS = {
     [FormFieldType.TEXT]: TextField,
@@ -22,43 +22,14 @@ const isFieldComponent = (type: string): type is keyof typeof FIELD_TYPE_COMPONE
 }
 
 const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
+    const [itemName, setItemName] = useState<string | undefined>();
     const [imagePath, setImagePath] = useState<string | undefined>();
-
-    const findItemIcon = useCallback((name: string) => {
-        const defaultItem = defaults?.find((defaultItem) => name.toLowerCase().includes(defaultItem.name.toLowerCase()));
-
-        if (defaultItem && defaultItem.icon) {
-            return defaultItem.icon;
-        }
-
-        return undefined;
-    }, [defaults]);
-
-    useEffect(() => {
-        const defaultIcon = findItemIcon('generic');
-
-        if (defaultIcon) {
-            setImagePath(defaultIcon);
-            return;
-        }
-    }, [findItemIcon]);
 
     const handleValueChange = useCallback((name: string, value: string | number) => {
         if (name === 'name') {
-            const icon = findItemIcon(value.toString());
-
-            if (icon) {
-                setImagePath(icon);
-                return;
-            }
-
-            const genericIcon = findItemIcon('generic');
-
-            if (genericIcon) {
-                setImagePath(genericIcon);
-            }
+            setItemName(value.toString());
         }
-    }, [defaults, findItemIcon]);
+    }, [setItemName]);
 
     const handleOnSubmit = useCallback(async (fields: Array<IFormField>) => {
         onSubmit(fields, imagePath);
@@ -104,9 +75,11 @@ const AddItemForm = ({ defaults, fields, onSubmit }: IAddItemFormProps) => {
         <Container maxWidth="sm">
             <form onSubmit={handleSubmit} noValidate>
                 <Stack spacing={3}>
-                    { imagePath ? <GroceryItemImage
-                        image={imagePath}
-                    /> : null}
+                    <ItemImage
+                        itemName={itemName}
+                        defaults={defaults}
+                        onChange={setImagePath}
+                    />
                     {formFieldsComponents}
                     <Button 
                         type="submit" 
