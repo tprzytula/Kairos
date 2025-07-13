@@ -30,12 +30,15 @@ export const Container = styled(({ isPurchased, ...props }: { isPurchased: boole
 export const ActionArea = styled(CardActionArea)({
   display: 'flex',
   padding: '0',
+  flex: 1,
+  minWidth: 0,
 })
 
 export const Media = styled(CardMedia)(({
   width: '75px',
   height: '75px',
   position: 'relative',
+  flexShrink: 0,
 }))
 
 export const Content = styled(CardContent)({
@@ -44,12 +47,18 @@ export const Content = styled(CardContent)({
   justifyContent: 'space-between',
   textAlign: 'center',
   flexGrow: '1',
+  overflow: 'hidden',
+  minWidth: 0,
 })
 
 export const Name = styled('div')({
   fontSize: '16px',
   fontWeight: 600,
   textAlign: 'left',
+  overflow: 'hidden',
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
 })
 
 export const SwipeableDeleteAction = styled(SwipeAction)({
