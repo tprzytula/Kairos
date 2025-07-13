@@ -54,6 +54,28 @@ describe("Given the GroceryItem component", () => {
         });
       });
     });
+
+    describe("And the user tries to interact with quantity buttons", () => {
+      it("should disable the increment button", () => {
+        mockAppState(new Set([EXAMPLE_GROCERY_ITEM_PROPS.id]));
+        mockGroceryListContext();
+        renderGroceryItem();
+
+        const incrementButton = screen.getByLabelText("Increase quantity");
+        expect(incrementButton).toBeInTheDocument();
+        expect(incrementButton).toBeDisabled();
+      });
+
+      it("should disable the decrement button", () => {
+        mockAppState(new Set([EXAMPLE_GROCERY_ITEM_PROPS.id]));
+        mockGroceryListContext();
+        renderGroceryItem();
+
+        const decrementButton = screen.getByLabelText("Decrease quantity");
+        expect(decrementButton).toBeInTheDocument();
+        expect(decrementButton).toBeDisabled();
+      });
+    });
   });
 
   describe("When the user clicks the increment button", () => {

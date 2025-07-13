@@ -67,7 +67,7 @@ const GroceryItem = ({ id, name, quantity, imagePath, unit }: IGroceryItemProps)
             ariaLabel="Decrease quantity"
             icon={<RemoveIcon />}
             onClick={handleDecrement}
-            disabled={Number(quantity) === 1}
+            disabled={isPurchased || Number(quantity) === 1}
           />
           <QuantityDisplay>
             <QuantityText>{quantity}</QuantityText>
@@ -77,6 +77,7 @@ const GroceryItem = ({ id, name, quantity, imagePath, unit }: IGroceryItemProps)
             ariaLabel="Increase quantity"
             icon={<AddIcon />}
             onClick={handleIncrement}
+            disabled={isPurchased}
           />
         </ActionContainer>
     </Container>
