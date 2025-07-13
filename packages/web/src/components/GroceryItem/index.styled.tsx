@@ -52,23 +52,6 @@ export const Name = styled('div')({
   textAlign: 'left',
 })
 
-export const QuantityContainer = styled('div')({
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-})
-
-export const Quantity = styled('div')({
-  fontSize: '1em',
-  fontWeight: 600,
-  marginRight: '0.25em',
-})
-
-export const Unit = styled('div')({
-  fontSize: '1em',
-  fontWeight: 600,
-})
-
 export const SwipeableDeleteAction = styled(SwipeAction)({
   backgroundColor: '#FF5E69',
   color: 'white',
@@ -85,6 +68,28 @@ export const ActionContainer = styled(CardContent)({
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'center',
+  gap: '8px',
+})
+
+export const QuantityDisplay = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minWidth: '40px',
+})
+
+export const QuantityText = styled('div')({
+  fontSize: '1em',
+  fontWeight: 600,
+  lineHeight: '1.2',
+})
+
+export const UnitText = styled('div')({
+  fontSize: '0.75em',
+  fontWeight: 400,
+  lineHeight: '1',
+  color: '#666',
 })
 
 export const DeleteButtonIcon = styled('button')({

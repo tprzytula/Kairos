@@ -1,4 +1,4 @@
-import { Container, ActionArea, Content, Media, Name, QuantityContainer, Quantity, Unit, SwipeableDeleteAction, ActionContainer, DeleteButtonIcon } from './index.styled'
+import { Container, ActionArea, Content, Media, Name, SwipeableDeleteAction, ActionContainer, DeleteButtonIcon, QuantityDisplay, QuantityText, UnitText } from './index.styled'
 import { IGroceryItemProps } from './types'
 import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
@@ -60,10 +60,6 @@ const GroceryItem = ({ id, name, quantity, imagePath, unit }: IGroceryItemProps)
         />
         <Content>
           <Name>{name}</Name>
-          <QuantityContainer>
-            <Quantity>{quantity}</Quantity>
-            <Unit>{unit}</Unit>
-          </QuantityContainer>
         </Content>
       </ActionArea>
       <ActionContainer> 
@@ -73,6 +69,10 @@ const GroceryItem = ({ id, name, quantity, imagePath, unit }: IGroceryItemProps)
             onClick={handleDecrement}
             disabled={Number(quantity) === 1}
           />
+          <QuantityDisplay>
+            <QuantityText>{quantity}</QuantityText>
+            <UnitText>{unit}</UnitText>
+          </QuantityDisplay>
           <ActionButton
             ariaLabel="Increase quantity"
             icon={<AddIcon />}

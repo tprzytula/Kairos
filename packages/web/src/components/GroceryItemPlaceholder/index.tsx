@@ -2,11 +2,13 @@ import {
   Container,
   Content,
   NamePlaceholder,
-  QuantityContainer,
+  QuantityDisplayPlaceholder,
   QuantityPlaceholder,
   UnitPlaceholder,
   ActionArea,
+  ActionContainer,
   MediaPlaceholder,
+  ButtonPlaceholder,
 } from './index.styled';
 
 const GroceryItemPlaceholder = () => (
@@ -15,12 +17,16 @@ const GroceryItemPlaceholder = () => (
       <MediaPlaceholder />
       <Content>
         <NamePlaceholder />
-        <QuantityContainer>
-          <QuantityPlaceholder />
-          <UnitPlaceholder />
-        </QuantityContainer>
       </Content>
     </ActionArea>
+    <ActionContainer>
+      <ButtonPlaceholder />
+      <QuantityDisplayPlaceholder>
+        <QuantityPlaceholder />
+        <UnitPlaceholder />
+      </QuantityDisplayPlaceholder>
+      <ButtonPlaceholder />
+    </ActionContainer>
   </Container>
 );
 

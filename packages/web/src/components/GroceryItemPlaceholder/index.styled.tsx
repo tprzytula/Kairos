@@ -1,7 +1,7 @@
 import { styled } from "@mui/system";
-import { Media, Name, Quantity, Unit } from "../GroceryItem/index.styled";
+import { Media, Name, QuantityText, UnitText, QuantityDisplay } from "../GroceryItem/index.styled";
 
-export { ActionArea, Container, Content, QuantityContainer } from '../GroceryItem/index.styled'
+export { ActionArea, Container, Content, ActionContainer } from '../GroceryItem/index.styled'
 
 const shimmerStyles = {
   background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
@@ -25,14 +25,23 @@ export const NamePlaceholder = styled(Name)(({
   ...shimmerStyles,
 }))
 
-export const QuantityPlaceholder = styled(Quantity)(({
+export const QuantityDisplayPlaceholder = styled(QuantityDisplay)(shimmerStyles)
+
+export const QuantityPlaceholder = styled(QuantityText)(({
   width: '40px',
   height: '20px',
   ...shimmerStyles,
 }))
 
-export const UnitPlaceholder = styled(Unit)(({
+export const UnitPlaceholder = styled(UnitText)(({
   width: '30px',
   height: '20px',
+  ...shimmerStyles,
+}))
+
+export const ButtonPlaceholder = styled('div')(({
+  width: '40px',
+  height: '40px',
+  borderRadius: '50%',
   ...shimmerStyles,
 }))
