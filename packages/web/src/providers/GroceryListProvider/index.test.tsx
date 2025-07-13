@@ -105,6 +105,46 @@ describe('Given the useGroceryListContext hook', () => {
       })
     })
   })
+
+  it('should allow you to update a grocery item quantity', async () => {
+    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    jest.spyOn(API, 'updateGroceryItem').mockResolvedValue()
+
+    const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
+      wrapper: GroceryListProvider,
+    }))
+
+    await waitFor(() => {
+      expect(result.current.groceryList).toStrictEqual(EXAMPLE_GROCERY_LIST)
+    })
+
+    await act(async () => {
+      await result.current.updateGroceryItem('1', 10)
+    })
+
+    expect(API.updateGroceryItem).toHaveBeenCalledWith('1', 10)
+
+    await waitFor(() => {
+      expect(result.current.groceryList).toStrictEqual([
+        {
+          id: '1',
+          name: 'Milk',
+          quantity: 10,
+          imagePath: 'https://hostname.com/image.png',
+          unit: GroceryItemUnit.LITER,
+          toBeRemoved: false,
+        },
+        {
+          id: '2',
+          name: 'Bread',
+          quantity: 2,
+          imagePath: 'https://hostname.com/image.png',
+          unit: GroceryItemUnit.UNIT,
+          toBeRemoved: false,
+        },
+      ])
+    })
+  })
 })
 
 const EXAMPLE_GROCERY_LIST: Array<IGroceryItem> = [

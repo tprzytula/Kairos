@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { IGroceryItem } from '../../api/groceryList/retrieve/types'
+import { IGroceryItem } from '../AppStateProvider/types'
 
 export interface IGroceryListProviderProps {
     children: ReactNode
@@ -10,4 +10,5 @@ export interface IState {
     isLoading: boolean
     refetchGroceryList: () => Promise<void>
     removeGroceryItem: (id: string) => Promise<void>
+    updateGroceryItem: (id: string, quantity: number) => Promise<void>
 }

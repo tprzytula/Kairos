@@ -98,5 +98,13 @@ locals {
         }
       }
     }
+    "update_grocery_item" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          grocery_list = "read-write"
+        }
+      }
+    }
   }
 }

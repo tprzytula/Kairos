@@ -21,6 +21,7 @@ describe('Given the GroceryList component', () => {
         isLoading: false,
         refetchGroceryList: jest.fn(),
         removeGroceryItem: jest.fn(),
+        updateGroceryItem: jest.fn(),
       })
 
       render(<GroceryList />)
@@ -36,6 +37,7 @@ describe('Given the GroceryList component', () => {
         isLoading: true,
         refetchGroceryList: jest.fn(),
         removeGroceryItem: jest.fn(),
+        updateGroceryItem: jest.fn(),
       })
 
       render(<GroceryList />)
@@ -53,6 +55,7 @@ const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
       quantity: 5,
       unit: GroceryItemUnit.LITER,
       imagePath: 'https://hostname.com/image.png',
+      toBeRemoved: false,
     },
     {
       id: '2',
@@ -60,9 +63,11 @@ const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
       quantity: 2,
       unit: GroceryItemUnit.UNIT,
       imagePath: 'https://hostname.com/image.png',
+      toBeRemoved: false,
     },
   ],
   isLoading: false,
   refetchGroceryList: jest.fn(),
   removeGroceryItem: jest.fn(),
+  updateGroceryItem: jest.fn(),
 }

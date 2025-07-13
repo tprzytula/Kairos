@@ -1,0 +1,21 @@
+{
+  "name": "update_grocery_item",
+  "version": "1.0.0",
+  "description": "Lambda function to update grocery item quantities",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@kairos-lambdas-libs/middleware": "*",
+    "@kairos-lambdas-libs/response": "*",
+    "@kairos-lambdas-libs/dynamodb": "*"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.114",
+    "@types/jest": "^29.5.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.2"
+  }
+} 

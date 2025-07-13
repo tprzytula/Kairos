@@ -1,13 +1,14 @@
 import { styled } from '@mui/material/styles'
 import { Typography } from '@mui/material'
-import { SwipeableList, SwipeableListItem, SwipeAction } from 'react-swipeable-list'
+import { SwipeAction } from 'react-swipeable-list'
 
 export const Container = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   gap: '0.35em',
-  width: '100%',
+  width: 'calc(100% - 2em)',
   margin: '0.5em',
+  padding: '0.5em'
 })
 
 export const EmptyListContainer = styled('div')({

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react'
 import { StateComponentProps } from '../AppStateProvider/types'
 import { IGroceryItem } from '../AppStateProvider/types'
-import { removeGroceryItems, retrieveGroceryList } from '../../api/groceryList'
+import { removeGroceryItems, retrieveGroceryList, updateGroceryItem } from '../../api/groceryList'
 import { IState } from './types'
 import { addPropertyToEachItemInList } from '../../utils/list'
 
@@ -10,6 +10,7 @@ export const initialState: IState = {
   isLoading: false,
   refetchGroceryList: async () => {},
   removeGroceryItem: async (id: string) => {},
+  updateGroceryItem: async (id: string, quantity: number) => {},
 }
 
 export const GroceryListContext = createContext<IState>(initialState)
@@ -51,6 +52,19 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     }
   }, [groceryList])
 
+  const updateGroceryItemQuantity = useCallback(async (id: string, quantity: number) => {
+    try {
+      await updateGroceryItem(id, quantity)
+      setGroceryList((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, quantity } : item
+        )
+      )
+    } catch (error) {
+      console.error('Failed to update grocery item:', error)
+    }
+  }, [])
+
   useEffect(() => {
     fetchGroceryList()
   }, [fetchGroceryList])
@@ -61,8 +75,9 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
       isLoading,
       refetchGroceryList,
       removeGroceryItem,
+      updateGroceryItem: updateGroceryItemQuantity,
     }),
-    [groceryList, isLoading, refetchGroceryList, removeGroceryItem]
+    [groceryList, isLoading, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity]
   )
 
   return (

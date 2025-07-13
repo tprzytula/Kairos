@@ -84,6 +84,54 @@ paths:
         passthroughBehavior: "when_no_match"
         type: "mock"
   /grocery_list/items/{id}:
+    patch:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Identifier of the item to be updated
+          example: "c8aef3a0-ead3-4e64-b9ce-4ece324720fb"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "c8aef3a0-ead3-4e64-b9ce-4ece324720fb"
+                quantity:
+                  type: string
+                  example: "5"
+              required:
+                - id
+                - quantity
+        required: true
+      x-amazon-apigateway-request-validator: Validate body
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["update_grocery_item"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Item updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "c8aef3a0-ead3-4e64-b9ce-4ece324720fb"
+                  quantity:
+                    type: string
+                    example: "5"
+        400:
+          description: Incorrect item details
     delete:
       x-amazon-apigateway-integration:
         httpMethod: POST
@@ -123,7 +171,7 @@ paths:
           default:
             statusCode: "200"
             responseParameters:
-              method.response.header.Access-Control-Allow-Methods: "'DELETE, POST'"
+              method.response.header.Access-Control-Allow-Methods: "'DELETE, POST, PATCH'"
               method.response.header.Access-Control-Allow-Headers: "'*'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:

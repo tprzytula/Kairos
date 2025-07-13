@@ -40,7 +40,7 @@ export const Media = styled(CardMedia)(({
 
 export const Content = styled(CardContent)({
   display: 'flex',
-  flexDirection: 'row',
+  flexDirection: 'column',
   justifyContent: 'space-between',
   textAlign: 'center',
   flexGrow: '1',
@@ -49,6 +49,7 @@ export const Content = styled(CardContent)({
 export const Name = styled('div')({
   fontSize: '16px',
   fontWeight: 600,
+  textAlign: 'left',
 })
 
 export const QuantityContainer = styled('div')({
@@ -58,13 +59,13 @@ export const QuantityContainer = styled('div')({
 })
 
 export const Quantity = styled('div')({
-  fontSize: '16px',
+  fontSize: '1em',
   fontWeight: 600,
   marginRight: '0.25em',
 })
 
 export const Unit = styled('div')({
-  fontSize: '16px',
+  fontSize: '1em',
   fontWeight: 600,
 })
 
@@ -77,4 +78,17 @@ export const SwipeableDeleteAction = styled(SwipeAction)({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+})
+
+export const ActionContainer = styled(CardContent)({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+})
+
+export const DeleteButtonIcon = styled('button')({
+  backgroundColor: 'transparent',
+  border: 'none',
+  cursor: 'pointer',
 })
