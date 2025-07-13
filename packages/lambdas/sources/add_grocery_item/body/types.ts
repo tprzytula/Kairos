@@ -1,6 +1,6 @@
 export interface IRequestBody {
     name: string;
-    quantity: string;
+    quantity: number;
     unit: string;
     imagePath: string;
 }

@@ -1,11 +1,11 @@
 import { IRequestBody } from "./types";
 
 const validateBody = (body: IRequestBody) => {
-  if (!body.id || !body.quantity) {
+  if (!body.id || body.quantity === undefined || body.quantity === null) {
     return false;
   }
 
-  const quantity = parseInt(body.quantity, 10);
+  const quantity = Number(body.quantity);
   if (isNaN(quantity) || quantity < 1) {
     return false;
   }

@@ -1,7 +1,16 @@
 import { IRequestBody } from "./types";
 
 const validateBody = (body: IRequestBody) => {
-  if (!body.name || !body.quantity || !body.unit || !body.imagePath) {
+  if (!body.name || !body.unit || !body.imagePath) {
+    return false;
+  }
+
+  if (body.quantity === undefined || body.quantity === null) {
+    return false;
+  }
+
+  const quantity = Number(body.quantity);
+  if (isNaN(quantity) || quantity < 1) {
     return false;
   }
 

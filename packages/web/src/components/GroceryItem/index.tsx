@@ -40,12 +40,13 @@ const GroceryItem = ({ id, name, quantity, imagePath, unit }: IGroceryItemProps)
   }, [isPurchased, clearPurchasedItem, markAsPurchased])
 
   const handleIncrement = useCallback(() => {
-    updateGroceryItem(id, quantity + 1)
+    updateGroceryItem(id, Number(quantity) + 1)
   }, [updateGroceryItem, id, quantity])
 
   const handleDecrement = useCallback(() => {
-    if (quantity > 1) {
-      updateGroceryItem(id, quantity - 1)
+    const numQuantity = Number(quantity)
+    if (numQuantity > 1) {
+      updateGroceryItem(id, numQuantity - 1)
     }
   }, [updateGroceryItem, id, quantity])
 
@@ -70,7 +71,7 @@ const GroceryItem = ({ id, name, quantity, imagePath, unit }: IGroceryItemProps)
             ariaLabel="Decrease quantity"
             icon={<RemoveIcon />}
             onClick={handleDecrement}
-            disabled={quantity === 1}
+            disabled={Number(quantity) === 1}
           />
           <ActionButton
             ariaLabel="Increase quantity"

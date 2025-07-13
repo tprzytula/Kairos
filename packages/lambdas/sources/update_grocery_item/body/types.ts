@@ -1,4 +1,4 @@
 export interface IRequestBody {
     id: string;
-    quantity: string;
+    quantity: number;
 } 
