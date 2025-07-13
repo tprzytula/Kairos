@@ -84,12 +84,14 @@ describe("Given the GroceryItem component", () => {
     });
 
     describe("When the quantity is 1", () => {
-      it("should not render the decrement button", () => {
+      it("should render the decrement button as disabled", () => {
         mockAppState();
         mockGroceryListContext();
         render(<GroceryItem {...EXAMPLE_GROCERY_ITEM_PROPS} quantity={1} />);
 
-        expect(screen.queryByLabelText("Decrease quantity")).not.toBeInTheDocument();
+        const decrementButton = screen.getByLabelText("Decrease quantity");
+        expect(decrementButton).toBeInTheDocument();
+        expect(decrementButton).toBeDisabled();
       });
     });
   });

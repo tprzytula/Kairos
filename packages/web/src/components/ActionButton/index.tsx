@@ -6,10 +6,11 @@ export const ActionButton = ({
     icon,
     onClick,
     text,
-    sx
+    sx,
+    disabled = false
 }: IActionButtonProps) => {
   return (
-    <IconButton onClick={onClick} aria-label={ariaLabel} sx={sx}>
+    <IconButton onClick={onClick} aria-label={ariaLabel} sx={sx} disabled={disabled}>
       {icon}
       {text && <Typography>{text}</Typography>}
     </IconButton>

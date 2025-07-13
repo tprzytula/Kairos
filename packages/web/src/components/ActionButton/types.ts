@@ -6,4 +6,5 @@ export interface IActionButtonProps {
   onClick: () => void
   text?: string
   sx?: SxProps
+  disabled?: boolean
 }

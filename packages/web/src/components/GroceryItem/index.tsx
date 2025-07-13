@@ -66,13 +66,12 @@ const GroceryItem = ({ id, name, quantity, imagePath, unit }: IGroceryItemProps)
         </Content>
       </ActionArea>
       <ActionContainer> 
-          {quantity > 1 && (
-            <ActionButton
-              ariaLabel="Decrease quantity"
-              icon={<RemoveIcon />}
-              onClick={handleDecrement}
-            />
-          )}
+          <ActionButton
+            ariaLabel="Decrease quantity"
+            icon={<RemoveIcon />}
+            onClick={handleDecrement}
+            disabled={quantity === 1}
+          />
           <ActionButton
             ariaLabel="Increase quantity"
             icon={<AddIcon />}
