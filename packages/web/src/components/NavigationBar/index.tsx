@@ -19,8 +19,7 @@ const NavigationBar = () => {
         <NavigationButton
           SelectedIcon={HomeIcon}
           UnselectedIcon={HomeOutlinedIcon}
-          route={Route.NonExisting}
-          isDisabled={true}
+          route={Route.Home}
         />
         <NavigationButton
           SelectedIcon={ShoppingCartIcon}
