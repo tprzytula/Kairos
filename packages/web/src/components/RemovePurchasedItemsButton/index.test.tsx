@@ -16,7 +16,6 @@ describe('Given the RemovePurchasedItemsButton component', () => {
             render(<RemovePurchasedItemsButton />)
 
             expect(screen.getByText('Remove Purchased Items')).not.toBeVisible()
-            expect(screen.getByTestId('DeleteIcon')).not.toBeVisible()
         })
     })
 
@@ -27,7 +26,6 @@ describe('Given the RemovePurchasedItemsButton component', () => {
             render(<RemovePurchasedItemsButton />)
 
             expect(screen.getByText('Remove Purchased Items')).toBeVisible()
-            expect(screen.getByTestId('DeleteIcon')).toBeVisible()
         })
 
         describe('And the button is clicked', () => {

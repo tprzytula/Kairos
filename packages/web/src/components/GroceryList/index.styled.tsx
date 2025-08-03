@@ -7,8 +7,8 @@ export const Container = styled('div')({
   flexDirection: 'column',
   gap: '0.35em',
   width: 'calc(100% - 2em)',
-  margin: '0.5em',
-  padding: '0.5em'
+  margin: '0 0.5em',
+  padding: '0 0.5em'
 })
 
 export const EmptyListContainer = styled('div')({

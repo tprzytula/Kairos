@@ -1,11 +1,10 @@
 import { useAppState } from "../../providers/AppStateProvider";
-import { ActionButton } from "../ActionButton";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { useCallback } from "react";
 import { removeGroceryItems } from "../../api/groceryList";
 import { showAlert } from "../../utils/alert";
 import { useGroceryListContext } from "../../providers/GroceryListProvider";
 import { ActionName } from "../../providers/AppStateProvider/enums";
+import { RemoveButton, RemoveButtonContainer } from "./index.styled";
 
 export const RemovePurchasedItemsButton = () => {
   const { state: { purchasedItems }, dispatch } = useAppState();
@@ -33,16 +32,17 @@ export const RemovePurchasedItemsButton = () => {
   }, [purchasedItems, dispatch, refetchGroceryList]);
 
   return (
-    <ActionButton
-      ariaLabel="Remove Purchased Items"
-      icon={<DeleteIcon />}
-      onClick={removePurchasedItems}
-      text="Remove Purchased Items"
-      sx={{
-        visibility: purchasedItems.size > 0 ? "visible" : "hidden",
-        borderRadius: "10px",
-      }}
-    />
+    <RemoveButtonContainer>
+      <RemoveButton
+        variant="contained"
+        color="primary"
+        onClick={removePurchasedItems}
+        aria-label="Remove Purchased Items"
+        sx={{ visibility: purchasedItems.size > 0 ? 'visible' : 'hidden' }}
+      >
+        Remove Purchased Items
+      </RemoveButton>
+    </RemoveButtonContainer>
   );
 };
 
