@@ -3,8 +3,27 @@
   <head>
     <link rel="manifest" href="../manifest.json" />
     <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1, width=device-width" />
-    <title>Grocery List Manager</title>
+    
+    <!-- Enhanced viewport for native feel -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="application-name" content="Kairos" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#E63E5D" />
+    <meta name="msapplication-TileColor" content="#E63E5D" />
+    <meta name="msapplication-navbutton-color" content="#E63E5D" />
+    
+    <!-- iOS Specific Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Kairos" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    
+    <!-- Prevent phone number detection -->
+    <meta name="format-detection" content="telephone=no" />
+    
+    <title>Kairos - Grocery List Manager</title>
     <style>
       * {
         padding: 0;
@@ -20,6 +39,17 @@
         overscroll-behavior: none;
         touch-action: pan-x pan-y;
         overflow: hidden;
+        /* Safe area support for notched devices */
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        /* Smooth scrolling for native feel */
+        -webkit-overflow-scrolling: touch;
+        /* Hardware acceleration */
+        transform: translateZ(0);
+        /* Prevent text selection for native feel */
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
       }
 
       body {
@@ -28,6 +58,49 @@
         left: 0;
         right: 0;
         bottom: 0;
+        /* Prevent pull-to-refresh */
+        overscroll-behavior-y: none;
+        /* Prevent iOS bounce */
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Prevent zoom on input focus */
+      input[type="text"],
+      input[type="email"],
+      input[type="number"],
+      input[type="search"],
+      input[type="tel"],
+      input[type="url"],
+      input[type="password"],
+      textarea,
+      select {
+        font-size: 16px !important;
+        transform: translateZ(0);
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      /* Native-like focus styles */
+      input:focus,
+      textarea:focus,
+      button:focus {
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* Touch feedback */
+      button,
+      .clickable {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+      }
+
+      /* Smooth animations */
+      * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        backface-visibility: hidden;
+        perspective: 1000px;
       }
     </style>
   </head>

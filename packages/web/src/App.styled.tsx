@@ -7,6 +7,10 @@ export const ApplicationContainer = styled('div')(({ theme }) => ({
   background: theme.palette.custom.background,
   justifyContent: 'center',
   alignItems: 'center',
+  minHeight: '100vh',
+  minHeight: '100dvh',
+  position: 'relative',
+  overflow: 'hidden',
 }))
 
 export const Content = styled('div')({
@@ -21,4 +25,13 @@ export const Content = styled('div')({
   margin: 0,
   overflow: 'auto',
   overscrollBehavior: 'none',
+  WebkitOverflowScrolling: 'touch',
+  paddingTop: 'env(safe-area-inset-top)',
+  paddingBottom: 'env(safe-area-inset-bottom)',
+  paddingLeft: 'env(safe-area-inset-left)',
+  paddingRight: 'env(safe-area-inset-right)',
+  boxSizing: 'border-box',
+  position: 'relative',
+  willChange: 'transform',
+  transform: 'translateZ(0)',
 })

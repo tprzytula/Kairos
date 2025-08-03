@@ -1,21 +1,77 @@
 {
-  "name": "Kairos",
+  "name": "Kairos - Grocery & Task Manager",
   "short_name": "Kairos",
   "start_url": "https://d1568c842iynon.cloudfront.net",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#f5f6fa",
-  "theme_color": "#f5f6fa",
-  "description": "Kairos is a tool that helps you manage your grocery list.",
+  "theme_color": "#E63E5D",
+  "description": "Kairos helps you manage your grocery lists, todo items, and noise tracking with a native app experience.",
+  "categories": ["productivity", "lifestyle", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "shortcuts": [
+    {
+      "name": "Add Grocery Item",
+      "short_name": "Add Grocery",
+      "description": "Quickly add an item to your grocery list",
+      "url": "/grocery-list/add",
+      "icons": [
+        {
+          "src": "../assets/webManifest/96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Add Todo Item",
+      "short_name": "Add Todo",
+      "description": "Quickly add a todo item",
+      "url": "/todo-list/add",
+      "icons": [
+        {
+          "src": "../assets/webManifest/96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
   "icons": [
     {
       "src": "../assets/webManifest/72x72.png",
       "sizes": "72x72",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "../assets/webManifest/96x96.png",
       "sizes": "96x96",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../assets/webManifest/96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "../assets/webManifest/72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "handle_links": "preferred"
 }
