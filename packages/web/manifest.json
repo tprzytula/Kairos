@@ -1,6 +1,7 @@
 {
   "name": "Kairos - Grocery & Task Manager",
   "short_name": "Kairos",
+  "version": "1.0.0",
   "start_url": "https://d1568c842iynon.cloudfront.net",
   "scope": "/",
   "display": "standalone",

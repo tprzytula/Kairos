@@ -34,3 +34,12 @@ jobs:
           aws-region: eu-west-2
       - name: Copy files to the production website with the AWS CLI
         run: aws s3 sync dist s3://${{ secrets.AWS_S3_WEB_BUCKET }} --delete --include "*" --exclude "assets/*" --acl public-read
+      - name: Invalidate CloudFront cache for immediate PWA updates
+        run: |
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Comment=='kairos_web_distribution'].Id" --output text)
+          if [ ! -z "$DISTRIBUTION_ID" ]; then
+            echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
+            aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
+          else
+            echo "CloudFront distribution not found, skipping cache invalidation"
+          fi

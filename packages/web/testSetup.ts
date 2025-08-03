@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom'
 import jestFetchMock from 'jest-fetch-mock'
+import './__mocks__/serviceWorkerMock'
 
 import { TextEncoder } from 'node:util'
 
@@ -12,5 +13,7 @@ Object.defineProperty(window, 'crypto', {
     randomUUID: () => 'random-uuid',
   },
 })
+
+
 
 jestFetchMock.enableMocks()

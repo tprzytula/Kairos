@@ -7,7 +7,6 @@ export const ApplicationContainer = styled('div')(({ theme }) => ({
   background: theme.palette.custom.background,
   justifyContent: 'center',
   alignItems: 'center',
-  minHeight: '100vh',
   minHeight: '100dvh',
   position: 'relative',
   overflow: 'hidden',

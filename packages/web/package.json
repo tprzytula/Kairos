@@ -6,7 +6,12 @@
   "license": "ISC",
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "parcel build src/index.html",
+    "build": "yarn build:app && yarn build:sw",
+    "build:app": "parcel build src/index.html",
+    "build:sw": "parcel build src/sw.ts --dist-dir dist --public-url /",
+    "dev": "yarn dev:app",
+    "dev:app": "parcel src/index.html",
+
     "prettier": "prettier src --check",
     "prettier:fix": "yarn prettier -- --write",
     "test": "TZ=Europe/London jest",

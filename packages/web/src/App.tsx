@@ -3,6 +3,7 @@ import { ApplicationContainer, Content } from './App.styled'
 import GroceryListRoute from './routes/GroceryListRoute'
 import AddGroceryItemRoute from './routes/AddGroceryItemRoute'
 import AlertContainer from './components/AlertContainer'
+import PWAUpdateNotification from './components/PWAUpdateNotification'
 import { Route as RouteEnum } from './enums/route'
 import NoiseTrackingRoute from './routes/NoiseTrackingRoute'
 import ToDoListRoute from './routes/ToDoListRoute'
@@ -22,6 +23,7 @@ export const App = () => {
           <Route path={RouteEnum.AddToDoItem} element={<AddToDoItemRoute />} />
         </Routes>
         <AlertContainer />
+        <PWAUpdateNotification />
       </Content>
     </ApplicationContainer>
   )
