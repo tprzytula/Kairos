@@ -31,3 +31,16 @@ data "aws_iam_policy_document" "s3_kairos_lambdas_put_acl" {
     ]
   }
 }
+
+data "aws_iam_policy_document" "cloudfront_kairos_web" {
+  statement {
+    sid = "CloudFrontKairosWebAccess"
+    actions = [
+      "cloudfront:ListDistributions",
+      "cloudfront:GetDistribution",
+      "cloudfront:CreateInvalidation"
+    ]
+    effect = "Allow"
+    resources = ["*"]
+  }
+}

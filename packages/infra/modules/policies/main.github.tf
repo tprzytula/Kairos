@@ -41,3 +41,13 @@ resource "aws_iam_role_policy_attachment" "s3_kairos_lambdas_put_acl_policy_role
   role       = aws_iam_role.web_identity_github_role.name
   policy_arn = aws_iam_policy.s3_kairos_lambdas_put_acl_policy.arn
 }
+
+resource "aws_iam_policy" "cloudfront_kairos_web_policy" {
+  name   = format("cloudfront_kairos_web_policy_%s", var.random_name)
+  policy = data.aws_iam_policy_document.cloudfront_kairos_web.json
+}
+
+resource "aws_iam_role_policy_attachment" "cloudfront_kairos_web_policy_role_attachment" {
+  role       = aws_iam_role.web_identity_github_role.name
+  policy_arn = aws_iam_policy.cloudfront_kairos_web_policy.arn
+}
