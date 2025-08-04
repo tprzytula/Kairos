@@ -22,15 +22,15 @@ export const SectionCard = styled(Card)({
   },
 })
 
-export const SectionHeader = styled(Typography)({
+export const SectionHeader = styled(Typography)(({ theme }) => ({
   fontSize: '1.25rem',
   fontWeight: '600',
-  color: '#32525F',
+  color: theme.palette.text.primary,
   marginBottom: '0.75rem',
   display: 'flex',
   alignItems: 'center',
   gap: '0.5rem',
-})
+}))
 
 export const SectionContent = styled(CardContent)({
   padding: '1.25rem',
@@ -48,32 +48,32 @@ export const ItemList = styled('ul')({
   gap: '0.75rem',
 })
 
-export const ItemText = styled('li')({
+export const ItemText = styled('li')(({ theme }) => ({
   fontSize: '0.95rem',
-  color: '#32525F',
+  color: theme.palette.text.primary,
   padding: '0.75rem 1rem',
-  backgroundColor: '#f8f9fa',
+  backgroundColor: theme.palette.custom?.surfaces?.primary,
   borderRadius: '12px',
   border: '1px solid rgba(0, 0, 0, 0.04)',
   transition: 'background-color 0.2s ease',
   '&:hover': {
-    backgroundColor: '#e9ecef',
+    backgroundColor: theme.palette.custom?.surfaces?.secondary,
   },
-})
+}))
 
-export const EmptyState = styled(Typography)({
+export const EmptyState = styled(Typography)(({ theme }) => ({
   fontSize: '0.9rem',
-  color: '#6c757d',
+  color: theme.palette.text.secondary,
   fontStyle: 'italic',
   textAlign: 'center',
   padding: '1rem',
-})
+}))
 
-export const NoiseItem = styled('li')({
+export const NoiseItem = styled('li')(({ theme }) => ({
   fontSize: '0.95rem',
-  color: '#32525F',
+  color: theme.palette.text.primary,
   padding: '0.75rem 1rem',
-  backgroundColor: '#f8f9fa',
+  backgroundColor: theme.palette.custom?.surfaces?.primary,
   borderRadius: '12px',
   border: '1px solid rgba(0, 0, 0, 0.04)',
   transition: 'background-color 0.2s ease',
@@ -81,12 +81,12 @@ export const NoiseItem = styled('li')({
   justifyContent: 'space-between',
   alignItems: 'center',
   '&:hover': {
-    backgroundColor: '#e9ecef',
+    backgroundColor: theme.palette.custom?.surfaces?.secondary,
   },
-})
+}))
 
-export const TimeElapsed = styled('span')({
+export const TimeElapsed = styled('span')(({ theme }) => ({
   fontSize: '0.8rem',
-  color: '#6c757d',
+  color: theme.palette.text.secondary,
   fontWeight: '500',
-}) 
+})) 

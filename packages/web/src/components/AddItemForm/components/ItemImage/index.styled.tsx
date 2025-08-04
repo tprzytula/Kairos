@@ -9,7 +9,7 @@ export const Media = styled(CardMedia)(({
 
 export const StyledItemImage = styled(Media)({
     alignSelf: 'center',
-    border: '1px solid #000',
+    border: '1px solid #374151',
     borderRadius: '10px',
     objectFit: 'cover',
     padding: '1em',

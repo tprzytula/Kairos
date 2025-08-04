@@ -5,6 +5,7 @@ import StandardLayout from '../../layout/standardLayout'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
+import { useTheme } from '@mui/material/styles'
 import { formatTimeElapsed, formatTimestamp } from './utils'
 import {
   Container,
@@ -19,6 +20,7 @@ import {
 } from './index.styled'
 
 const HomeContent = () => {
+  const theme = useTheme()
   const { groceryList } = useGroceryListContext()
   const { toDoList } = useToDoListContext()
   const { noiseTrackingItems } = useNoiseTrackingContext()
@@ -62,7 +64,7 @@ const HomeContent = () => {
                   <ItemText key={item.id}>
                     {item.name}
                     {item.description && (
-                      <div style={{ fontSize: '0.85rem', color: '#6c757d', marginTop: '0.25rem' }}>
+                      <div style={{ fontSize: '0.85rem', color: theme.palette.text.secondary, marginTop: '0.25rem' }}>
                         {item.description}
                       </div>
                     )}

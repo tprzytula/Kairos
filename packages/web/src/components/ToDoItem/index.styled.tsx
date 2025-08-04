@@ -12,7 +12,7 @@ export const Container = styled(({ isSelected, ...props }: { isSelected: boolean
   justifyContent: 'flex-start',
   boxSizing: 'border-box',
   opacity: isSelected ? 0.5 : 1,
-  transition: 'all 0.3s ease',
+  transition: 'all 200ms ease-in-out',
   position: 'relative',
   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   '&:hover': {
@@ -27,7 +27,7 @@ export const Container = styled(({ isSelected, ...props }: { isSelected: boolean
     transform: 'translate(-50%, -50%)',
     width: '90%',
     height: '2px',
-    backgroundColor: 'black',
+    backgroundColor: '#6b7280',
   } : {},
 }))
 
@@ -53,7 +53,7 @@ export const Name = styled('div')(({ theme }) => ({
   fontWeight: 700,
   color: theme.palette.text.primary,
   letterSpacing: '0.5px',
-  transition: 'color 0.2s ease',
+  transition: 'color 200ms ease-in-out',
   '&:hover': {
     color: theme.palette.text.secondary,
   },

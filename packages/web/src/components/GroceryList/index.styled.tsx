@@ -24,8 +24,8 @@ export const EmptyListMessage = styled(Typography)({
   textAlign: 'center',
 })
 
-export const DeleteAction = styled(SwipeAction)({
-  backgroundColor: '#FF5E69',
+export const DeleteAction = styled(SwipeAction)(({ theme }) => ({
+  backgroundColor: theme.palette.error.main,
   color: 'white',
   textAlign: 'center',
   width: '100%',
@@ -34,4 +34,4 @@ export const DeleteAction = styled(SwipeAction)({
   alignItems: 'center',
   justifyContent: 'center',
   transition: 'transform 0.3s ease',
-})
+}))

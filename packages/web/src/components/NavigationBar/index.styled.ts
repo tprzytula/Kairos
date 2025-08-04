@@ -6,14 +6,18 @@ export const Container = styled(Paper)(({ theme }) => ({
   display: 'flex',
   borderRadius: '0',
   background: theme.palette.custom?.background,
+  backgroundImage: 'none !important',
+  backgroundColor: 'transparent',
   margin: '0 auto',
   flexDirection: 'column',
+  boxShadow: 'none',
 }))
 
 export const Divider = styled('div')(({ theme }) => ({
   width: '85%',
-  border: '1px solid #E0E0E0',
-  background: theme.palette.custom?.background,
+  height: '1px',
+  backgroundColor: 'rgba(0, 0, 0, 0.06)',
+  border: 'none',
   margin: '0 auto',
   marginTop: '0.5em',
 }))

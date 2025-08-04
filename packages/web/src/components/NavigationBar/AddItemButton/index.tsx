@@ -9,11 +9,11 @@ import { addNoiseTrackingItem } from '../../../api/noiseTracking';
 import { useNoiseTrackingContext } from '../../../providers/NoiseTrackingProvider';
 import { useThrottle } from '../../../hooks/useThrottle';
 
-const PrimaryActionButton = styled(IconButton)({
+const PrimaryActionButton = styled(IconButton)(({ theme }) => ({
     width: '56px',
     height: '56px',
-    background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-    color: '#10b981',
+    background: `linear-gradient(135deg, #ffffff 0%, ${theme.palette.custom?.surfaces?.primary} 100%)`,
+    color: theme.palette.primary.main,
     margin: '0 8px',
     borderRadius: '50%',
     boxShadow: `
@@ -38,8 +38,8 @@ const PrimaryActionButton = styled(IconButton)({
         transition: 'opacity 0.3s ease',
     },
     '&:hover': {
-        background: 'linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)',
-        color: '#059669',
+              background: `linear-gradient(135deg, #ffffff 0%, ${theme.palette.custom?.surfaces?.secondary} 100%)`,
+      color: theme.palette.custom?.hover?.primary,
         transform: 'translateY(-2px) scale(1.05)',
         boxShadow: `
             0 2px 6px rgba(0, 0, 0, 0.1),
@@ -64,8 +64,8 @@ const PrimaryActionButton = styled(IconButton)({
         position: 'relative',
         zIndex: 1,
         filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1))',
-    }
-});
+    },
+}));
 
 export type IRouteToAddItemMapping = {
     [key in Route]?: Route;

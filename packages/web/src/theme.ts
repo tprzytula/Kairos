@@ -5,6 +5,16 @@ declare module '@mui/material/styles' {
     custom?: {
       background?: string
       light?: string
+      surfaces?: {
+        primary?: string
+        secondary?: string
+        disabled?: string
+        hover?: string
+      }
+      hover?: {
+        primary?: string
+        secondary?: string
+      }
     }
   }
 
@@ -12,6 +22,16 @@ declare module '@mui/material/styles' {
     custom?: {
       background?: string
       light?: string
+      surfaces?: {
+        primary?: string
+        secondary?: string
+        disabled?: string
+        hover?: string
+      }
+      hover?: {
+        primary?: string
+        secondary?: string
+      }
     }
   }
 }
@@ -25,7 +45,7 @@ const theme = createTheme({
       styleOverrides: {
         contained: {
           textTransform: 'none',
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 200ms ease-in-out',
           willChange: 'transform',
           '&:active': {
             transform: 'scale(0.95)',
@@ -37,14 +57,14 @@ const theme = createTheme({
         },
         outlined: {
           textTransform: 'none',
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 200ms ease-in-out',
           '&:active': {
             transform: 'scale(0.95)',
           },
         },
         text: {
           textTransform: 'none',
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 200ms ease-in-out',
           '&:active': {
             transform: 'scale(0.95)',
           },
@@ -54,7 +74,7 @@ const theme = createTheme({
     MuiIconButton: {
       styleOverrides: {
         root: {
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 200ms ease-in-out',
           '&:active': {
             transform: 'scale(0.9)',
           },
@@ -73,7 +93,7 @@ const theme = createTheme({
             borderRadius: 0,
           },
           '& .MuiOutlinedInput-root': {
-            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: 'all 200ms ease-in-out',
             '&:focus-within': {
               transform: 'translateY(-1px)',
               boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
@@ -97,19 +117,16 @@ const theme = createTheme({
       fontSize: '2.5em',
       lineHeight: '1.25em',
       paddingBottom: '0.25em',
-      color: '#32525F',
       fontWeight: '600',
     },
     subtitle2: {
       fontSize: '1.5em',
       lineHeight: '1.25em',
       paddingBottom: '0.25em',
-      color: '#32525F',
       fontWeight: '500',
     },
     body1: {
       fontSize: '1em',
-      color: '#32525F',
       fontWeight: '400',
     },
     button: {
@@ -118,14 +135,34 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: '#E63E5D',
+      main: '#10b981',
     },
     secondary: {
-      main: '#FFBD48',
+      main: '#3b82f6',
+    },
+    warning: {
+      main: '#f59e0b',
+    },
+    error: {
+      main: '#ef4444',
+    },
+    text: {
+      primary: '#374151',
+      secondary: '#6b7280',
     },
     custom: {
-      background: '#f5f6fa',
-      light: '#7784F6',
+      background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)',
+      light: '#3b82f6',
+      surfaces: {
+        primary: '#f8fafc',
+        secondary: '#f1f5f9', 
+        disabled: '#f1f5f9',
+        hover: '#f8fafc',
+      },
+      hover: {
+        primary: '#059669',
+        secondary: '#2563eb',
+      },
     },
   },
 })

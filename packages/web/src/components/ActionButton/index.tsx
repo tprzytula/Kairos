@@ -1,4 +1,5 @@
 import { IconButton, Typography } from '@mui/material'  
+import { useTheme } from '@mui/material/styles'
 import { IActionButtonProps } from './types'
 
 export const ActionButton = ({
@@ -9,6 +10,8 @@ export const ActionButton = ({
     sx,
     disabled = false
 }: IActionButtonProps) => {
+  const theme = useTheme()
+  
   return (
     <IconButton 
       onClick={onClick} 
@@ -17,13 +20,13 @@ export const ActionButton = ({
       sx={{
         width: '32px',
         height: '32px',
-        backgroundColor: disabled ? '#f5f5f5' : '#ffffff',
+        backgroundColor: disabled ? theme.palette.custom?.surfaces?.disabled : '#ffffff',
         border: '1px solid rgba(0, 0, 0, 0.12)',
         borderRadius: '6px',
-        color: disabled ? '#9ca3af' : '#374151',
-        transition: 'all 0.2s ease-in-out',
+        color: disabled ? theme.palette.text.secondary : theme.palette.text.primary,
+        transition: 'all 200ms ease-in-out',
         '&:hover': {
-          backgroundColor: disabled ? '#f5f5f5' : '#f8f9fa',
+          backgroundColor: disabled ? theme.palette.custom?.surfaces?.disabled : theme.palette.custom?.surfaces?.hover,
           borderColor: disabled ? 'rgba(0, 0, 0, 0.12)' : 'rgba(0, 0, 0, 0.2)',
           transform: disabled ? 'none' : 'scale(1.05)',
         },

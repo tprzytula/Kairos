@@ -1,4 +1,6 @@
 import { render, screen } from "@testing-library/react"
+import { ThemeProvider } from '@mui/material/styles'
+import theme from '../../theme'
 import StandardLayout from "."
 
 jest.mock('react-router', () => ({
@@ -25,9 +27,11 @@ describe('Given the StandardLayout component', () => {
 
 const renderStandardLayout = () => {
   render(
-    <StandardLayout 
-      title="Title" 
-      children={<div>Test</div>} 
-    />
+    <ThemeProvider theme={theme}>
+      <StandardLayout 
+        title="Title" 
+        children={<div>Test</div>} 
+      />
+    </ThemeProvider>
   )
 }
