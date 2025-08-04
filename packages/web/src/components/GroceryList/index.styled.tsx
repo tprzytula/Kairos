@@ -5,7 +5,7 @@ import { SwipeAction } from 'react-swipeable-list'
 export const Container = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.35em',
+  gap: '0.2em',
   width: 'calc(100% - 2em)',
   margin: '0 0.5em',
   padding: '0 0.5em'
@@ -14,7 +14,7 @@ export const Container = styled('div')({
 export const EmptyListContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.35em',
+  gap: '0.2em',
   width: '100%',
 })
 

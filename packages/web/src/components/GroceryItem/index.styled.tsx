@@ -8,8 +8,8 @@ export const Container = styled(({ isPurchased, ...props }: { isPurchased: boole
   display: 'flex',
   width: '100%',
   borderRadius: '16px',
-  minHeight: '72px',
-  margin: '8px 0',
+  minHeight: '80px',
+  margin: '4px 0',
   justifyContent: 'flex-start',
   boxSizing: 'border-box',
   opacity: isPurchased ? 0.65 : 1,
@@ -41,7 +41,7 @@ export const Container = styled(({ isPurchased, ...props }: { isPurchased: boole
 
 export const ActionArea = styled(CardActionArea)({
   display: 'flex',
-  padding: '16px',
+  padding: '12px',
   flex: 1,
   minWidth: 0,
   alignItems: 'center',
@@ -51,12 +51,12 @@ export const ActionArea = styled(CardActionArea)({
 })
 
 export const Media = styled(CardMedia)(({ theme }) => ({
-  width: '56px',
-  height: '56px',
+  width: '68px',
+  height: '68px',
   position: 'relative',
   flexShrink: 0,
   borderRadius: '12px',
-  marginRight: '16px',
+  marginRight: '12px',
   backgroundColor: theme.palette.custom?.surfaces?.secondary,
   border: '1px solid rgba(0, 0, 0, 0.08)',
 }))
@@ -107,7 +107,7 @@ export const ActionContainer = styled(CardContent)({
   minWidth: '90px',
   flexShrink: 0,
   borderLeft: '1px solid rgba(0, 0, 0, 0.06)',
-  minHeight: '56px', // Fixed height to ensure consistent alignment
+  minHeight: '68px', // Fixed height to ensure consistent alignment
 })
 
 export const QuantityDisplay = styled('div')({
