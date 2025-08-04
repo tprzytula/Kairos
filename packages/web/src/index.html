@@ -4,10 +4,15 @@
     <link rel="manifest" href="../manifest.json" />
     <meta charset="utf-8" />
     
-    <!-- Google Fonts - Inter -->
+    <!-- Google Fonts - Roboto -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Fallback font loading -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+    </style>
     
     <!-- Enhanced viewport for native feel -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
@@ -63,6 +68,7 @@
         left: 0;
         right: 0;
         bottom: 0;
+        font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
         /* Prevent pull-to-refresh */
         overscroll-behavior-y: none;
         /* Prevent iOS bounce */
@@ -106,6 +112,11 @@
         -moz-osx-font-smoothing: grayscale;
         backface-visibility: hidden;
         perspective: 1000px;
+      }
+      
+      /* Ensure Roboto loads globally */
+      #app, #app * {
+        font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
       }
     </style>
   </head>
