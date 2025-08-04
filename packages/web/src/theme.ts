@@ -113,24 +113,30 @@ const theme = createTheme({
     },
   },
   typography: {
+    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     subtitle1: {
       fontSize: '2.5em',
       lineHeight: '1.25em',
       paddingBottom: '0.25em',
       fontWeight: '600',
+      letterSpacing: '-0.02em',
     },
     subtitle2: {
       fontSize: '1.5em',
       lineHeight: '1.25em',
       paddingBottom: '0.25em',
       fontWeight: '500',
+      letterSpacing: '-0.01em',
     },
     body1: {
       fontSize: '1em',
       fontWeight: '400',
+      letterSpacing: '-0.005em',
     },
     button: {
       color: '#FDEEF1',
+      fontWeight: '500',
+      letterSpacing: '-0.005em',
     },
   },
   palette: {
