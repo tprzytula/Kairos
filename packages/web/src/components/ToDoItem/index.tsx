@@ -2,9 +2,9 @@ import { Container, ActionArea, Content, Name, Description, DueDate } from './in
 import { ITodoItemProps } from './types'
 import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, memo } from 'react';
 
-const ToDoItem = ({ id, name, description, dueDate }: ITodoItemProps) => {
+const ToDoItem = memo(({ id, name, description, dueDate }: ITodoItemProps) => {
   const { state: { selectedTodoItems }, dispatch } = useAppState()
   const isSelected = useMemo(() => selectedTodoItems.has(id), [selectedTodoItems, id])
 
@@ -53,6 +53,8 @@ const ToDoItem = ({ id, name, description, dueDate }: ITodoItemProps) => {
       </ActionArea>
     </Container>
   )
-};
+});
+
+ToDoItem.displayName = 'ToDoItem';
 
 export default ToDoItem;

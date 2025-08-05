@@ -2,13 +2,13 @@ import { Container, ActionArea, Content, Media, Name, SwipeableDeleteAction, Act
 import { IGroceryItemProps } from './types'
 import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, memo } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import { ActionButton } from '../ActionButton';
 
-const GroceryItem = ({ id, name, quantity, imagePath, unit }: IGroceryItemProps) => {
+const GroceryItem = memo(({ id, name, quantity, imagePath, unit }: IGroceryItemProps) => {
   const { state: { purchasedItems }, dispatch } = useAppState()
   const isPurchased = useMemo(() => purchasedItems.has(id), [purchasedItems, id])
   const { updateGroceryItem } = useGroceryListContext()
@@ -83,6 +83,8 @@ const GroceryItem = ({ id, name, quantity, imagePath, unit }: IGroceryItemProps)
     </Container>
 
   )
-};
+});
+
+GroceryItem.displayName = 'GroceryItem';
 
 export default GroceryItem;

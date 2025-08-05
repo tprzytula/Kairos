@@ -43,7 +43,7 @@ export const GroceryList = () => {
         Delete
       </DeleteAction>
     </TrailingActions>
-  ), [dispatch])
+  ), [handleDelete])
 
   if (isLoading) {
     return <PlaceholderComponent />

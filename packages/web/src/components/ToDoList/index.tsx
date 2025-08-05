@@ -57,7 +57,7 @@ export const ToDoList = () => {
         Delete
       </DeleteAction>
     </TrailingActions>
-  ), [dispatch])
+  ), [markToDoItemAsDone])
 
   if (isLoading) {
     return <PlaceholderComponent />

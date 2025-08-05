@@ -1,4 +1,5 @@
 import { SwipeableList as ReactSwipeableList, SwipeableListItem } from "react-swipeable-list";
+import { memo, useMemo } from "react";
 
 export interface ISwipeableListProps<T extends { id: string }> {
   component: React.ElementType<any>;
@@ -7,23 +8,35 @@ export interface ISwipeableListProps<T extends { id: string }> {
   fullSwipe?: boolean;
 }
 
-const SwipeableList = <T extends { id: string }>({
+const SwipeableList = memo(<T extends { id: string }>({
   component: Component,
   list,
   trailingActions,
   fullSwipe = true,
-}: ISwipeableListProps<T>) => (
-  <ReactSwipeableList>
-    {list.map((item) => (
+}: ISwipeableListProps<T>) => {
+  const memoizedList = useMemo(() => 
+    list.map((item) => (
       <SwipeableListItem
         key={item.id}
         trailingActions={trailingActions(item.id)}
         fullSwipe={fullSwipe}
+        blockSwipe={false}
+        threshold={0.25}
       >
         <Component {...item} />
       </SwipeableListItem>
-    ))}
-  </ReactSwipeableList>
-);
+    )), [list, trailingActions, fullSwipe, Component]
+  );
+
+  return (
+    <ReactSwipeableList 
+      threshold={0.25}
+    >
+      {memoizedList}
+    </ReactSwipeableList>
+  );
+});
+
+SwipeableList.displayName = 'SwipeableList';
 
 export default SwipeableList;
