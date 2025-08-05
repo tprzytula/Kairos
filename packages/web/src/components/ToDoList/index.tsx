@@ -4,8 +4,6 @@ import ToDoItem from '../ToDoItem';
 import ToDoItemPlaceholder from '../ToDoItemPlaceholder';
 import { Container, EmptyListMessage } from './index.styled';
 import SwipeableList from '../SwipeableList';
-import { TrailingActions } from 'react-swipeable-list';
-import { DeleteAction } from '../GroceryList/index.styled';
 import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
 import { updateToDoItems } from '../../api/toDoList';
@@ -51,14 +49,6 @@ export const ToDoList = () => {
     }
   }, [dispatch]);
 
-  const trailingActions = useCallback((id: string) => (
-    <TrailingActions>
-      <DeleteAction onClick={() => markToDoItemAsDone(id)}>
-        Delete
-      </DeleteAction>
-    </TrailingActions>
-  ), [markToDoItemAsDone])
-
   if (isLoading) {
     return <PlaceholderComponent />
   }
@@ -72,8 +62,8 @@ export const ToDoList = () => {
       <SwipeableList
         component={ToDoItem}
         list={visibleToDoItems}
-        trailingActions={trailingActions}
-        fullSwipe={true}
+        onSwipeAction={markToDoItemAsDone}
+        threshold={0.3}
       />
     </Container>
   );

@@ -1,39 +1,49 @@
-import { SwipeableList as ReactSwipeableList, SwipeableListItem } from "react-swipeable-list";
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
+import styled from 'styled-components';
+import { SwipeableListItem } from './SwipeableListItem';
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
 
 export interface ISwipeableListProps<T extends { id: string }> {
   component: React.ElementType<any>;
   list: T[];
-  trailingActions: (id: string) => React.ReactNode;
-  fullSwipe?: boolean;
+  onSwipeAction?: (id: string) => void;
+  threshold?: number;
 }
 
 const SwipeableList = memo(<T extends { id: string }>({
   component: Component,
   list,
-  trailingActions,
-  fullSwipe = true,
+  onSwipeAction,
+  threshold = 0.3,
 }: ISwipeableListProps<T>) => {
+  
+  const handleSwipeAction = useCallback((id: string) => {
+    if (onSwipeAction) {
+      onSwipeAction(id);
+    }
+  }, [onSwipeAction]);
+
   const memoizedList = useMemo(() => 
     list.map((item) => (
       <SwipeableListItem
         key={item.id}
-        trailingActions={trailingActions(item.id)}
-        fullSwipe={fullSwipe}
-        blockSwipe={false}
-        threshold={0.25}
+        onSwipeAction={() => handleSwipeAction(item.id)}
+        threshold={threshold}
       >
         <Component {...item} />
       </SwipeableListItem>
-    )), [list, trailingActions, fullSwipe, Component]
+    )), [list, Component, threshold, handleSwipeAction]
   );
 
   return (
-    <ReactSwipeableList 
-      threshold={0.25}
-    >
+    <Container>
       {memoizedList}
-    </ReactSwipeableList>
+    </Container>
   );
 });
 

@@ -1,0 +1,76 @@
+/* Mobile-specific optimizations for swipeable lists */
+
+/* Disable text selection during swipe gestures */
+.swipeable-item * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Optimize touch action for better scroll performance */
+.swipeable-container {
+  touch-action: pan-y;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hardware acceleration for transforms */
+.swipeable-content {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Disable bounce effect on iOS for better control */
+.swipeable-container {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: none;
+}
+
+/* Reduce input delay on mobile */
+.swipeable-action-button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Optimize for high DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .swipeable-content {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .swipeable-action-button {
+    background: #cc3333;
+  }
+  
+  .swipeable-action-button:hover {
+    background: #bb2222;
+  }
+  
+  .swipeable-action-button:active {
+    background: #dd4444;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .swipeable-content {
+    transition: none !important;
+  }
+  
+  .swipeable-actions {
+    transition: opacity 0.1s ease !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .swipeable-action-button {
+    border: 2px solid white;
+  }
+}

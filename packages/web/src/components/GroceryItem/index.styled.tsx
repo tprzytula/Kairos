@@ -1,6 +1,5 @@
 import { styled } from '@mui/material/styles'
 import { Card, CardActionArea, CardContent, CardMedia, CardProps } from '@mui/material'
-import { SwipeAction } from 'react-swipeable-list'
 
 export const Container = styled(({ isPurchased, ...props }: { isPurchased: boolean } & CardProps) => (
   <Card {...props} />
@@ -83,18 +82,6 @@ export const Name = styled('div')(({ theme }) => ({
   lineHeight: '1.4',
   color: theme.palette.text.primary,
   letterSpacing: '-0.005em',
-}))
-
-export const SwipeableDeleteAction = styled(SwipeAction)(({ theme }) => ({
-  backgroundColor: theme.palette.error.main,
-  color: 'white',
-  textAlign: 'center',
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: '16px',
 }))
 
 export const ActionContainer = styled(CardContent)({

@@ -3,9 +3,7 @@ import { useAppState } from '../../providers/AppStateProvider';
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import GroceryItem from '../GroceryItem';
 import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
-import { Container, DeleteAction, EmptyListContainer, EmptyListMessage } from './index.styled';
-import { TrailingActions } from 'react-swipeable-list';
-import 'react-swipeable-list/dist/styles.css';
+import { Container, EmptyListContainer, EmptyListMessage } from './index.styled';
 import { ActionName } from '../../providers/AppStateProvider/enums';
 import SwipeableList from '../SwipeableList';
 
@@ -37,14 +35,6 @@ export const GroceryList = () => {
     })
   }, [removeGroceryItem, dispatch])
 
-  const trailingActions = useCallback((id: string) => (
-    <TrailingActions>
-      <DeleteAction onClick={() => handleDelete(id)}>
-        Delete
-      </DeleteAction>
-    </TrailingActions>
-  ), [handleDelete])
-
   if (isLoading) {
     return <PlaceholderComponent />
   }
@@ -58,8 +48,8 @@ export const GroceryList = () => {
       <SwipeableList
         component={GroceryItem}
         list={groceryList}
-        trailingActions={trailingActions}
-        fullSwipe={true}
+        onSwipeAction={handleDelete}
+        threshold={0.3}
       />
     </Container>
   );

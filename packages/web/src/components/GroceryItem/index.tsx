@@ -1,4 +1,4 @@
-import { Container, ActionArea, Content, Media, Name, SwipeableDeleteAction, ActionContainer, DeleteButtonIcon, QuantityDisplay, QuantityText, UnitText } from './index.styled'
+import { Container, ActionArea, Content, Media, Name, ActionContainer, DeleteButtonIcon, QuantityDisplay, QuantityText, UnitText } from './index.styled'
 import { IGroceryItemProps } from './types'
 import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
