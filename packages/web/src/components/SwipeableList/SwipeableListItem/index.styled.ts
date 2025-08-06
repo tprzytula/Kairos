@@ -8,10 +8,19 @@ export const Container = styled('div')({
   WebkitTouchCallout: 'none',
   WebkitTapHighlightColor: 'transparent',
   overscrollBehaviorX: 'none',
+  WebkitOverflowScrolling: 'touch',
   background: 'transparent',
   borderRadius: '16px',
   margin: '4px 0',
   isolation: 'isolate',
+  
+  // Disable text selection during swipe gestures
+  '& *': {
+    WebkitUserSelect: 'none',
+    MozUserSelect: 'none',
+    msUserSelect: 'none',
+    userSelect: 'none',
+  },
 });
 
 export const ItemContent = styled('div')<{ $translateX: number; $isDragging: boolean }>(
@@ -28,8 +37,16 @@ export const ItemContent = styled('div')<{ $translateX: number; $isDragging: boo
     boxShadow: $isDragging ? '0 4px 12px rgba(0,0,0,0.15)' : '0 2px 6px rgba(0,0,0,0.1)',
     margin: 0,
     
+    // Hardware acceleration for transforms
+    WebkitTransform: 'translateZ(0)',
+    
     '@media (prefers-reduced-motion: reduce)': {
       transition: 'none !important',
+    },
+    
+    // Optimize for high DPI displays
+    '@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)': {
+      transform: `translate3d(${$translateX}px, 0, 0)`,
     },
   })
 );
@@ -52,6 +69,10 @@ export const ActionsContainer = styled('div')<{ $isVisible: boolean; $translateX
     borderRadius: '0 16px 16px 0',
     overflow: 'hidden',
     boxShadow: $isVisible ? 'inset 2px 0 4px rgba(0,0,0,0.15)' : 'none',
+    
+    '@media (prefers-reduced-motion: reduce)': {
+      transition: 'opacity 0.1s ease !important',
+    },
   })
 );
 
@@ -90,6 +111,18 @@ export const ActionButton = styled('button')({
   
   '@media (prefers-color-scheme: dark)': {
     color: '#ffffff',
+    
+    '&': {
+      background: '#cc3333',
+    },
+    
+    '&:hover': {
+      background: '#bb2222',
+    },
+    
+    '&:active': {
+      background: '#dd4444',
+    },
   },
   
   '@media (prefers-contrast: high)': {

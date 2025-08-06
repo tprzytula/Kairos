@@ -1,6 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
-import '../MobileOptimizations.css';
 import { Container, ItemContent, ActionsContainer, ActionButton } from './index.styled';
 
 interface SwipeableListItemProps {
