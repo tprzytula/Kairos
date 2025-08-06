@@ -2,11 +2,11 @@ import { memo, useMemo, useCallback } from "react";
 import styled from 'styled-components';
 import { SwipeableListItem } from './SwipeableListItem';
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
+const Container = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+});
 
 export interface ISwipeableListProps<T extends { id: string }> {
   component: React.ElementType<any>;
