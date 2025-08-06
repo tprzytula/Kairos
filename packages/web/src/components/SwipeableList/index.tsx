@@ -1,19 +1,7 @@
 import { memo, useMemo, useCallback } from "react";
-import styled from 'styled-components';
 import { SwipeableListItem } from './SwipeableListItem';
-
-const Container = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-});
-
-export interface ISwipeableListProps<T extends { id: string }> {
-  component: React.ElementType<any>;
-  list: T[];
-  onSwipeAction?: (id: string) => void;
-  threshold?: number;
-}
+import { ISwipeableListProps } from './types';
+import { Container } from './index.styled';
 
 const SwipeableList = memo(<T extends { id: string }>({
   component: Component,
@@ -49,4 +37,5 @@ const SwipeableList = memo(<T extends { id: string }>({
 
 SwipeableList.displayName = 'SwipeableList';
 
+export { ISwipeableListProps } from './types';
 export default SwipeableList;

@@ -1,13 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Container, ItemContent, ActionsContainer, ActionButton } from './index.styled';
-
-interface SwipeableListItemProps {
-  children: React.ReactNode;
-  onSwipeAction?: () => void;
-  threshold?: number;
-  disabled?: boolean;
-}
+import { SwipeableListItemProps } from './types';
 
 export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
   children,
@@ -189,4 +183,5 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
   );
 };
 
+export { SwipeableListItemProps } from './types';
 export default SwipeableListItem;
