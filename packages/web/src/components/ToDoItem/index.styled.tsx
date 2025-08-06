@@ -5,9 +5,9 @@ export const Container = styled(({ isSelected, ...props }: { isSelected: boolean
   <Card {...props} />
 ))(({ isSelected }: { isSelected: boolean }) => ({
   display: 'flex',
-  borderRadius: '0.75em',
+  borderRadius: '16px',
   minHeight: '50px',
-  margin: '0.5em',
+  margin: '4px 0',
   width: '100%',
   justifyContent: 'flex-start',
   boxSizing: 'border-box',
@@ -15,6 +15,8 @@ export const Container = styled(({ isSelected, ...props }: { isSelected: boolean
   transition: 'all 200ms ease-in-out',
   position: 'relative',
   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+  border: '1px solid rgba(0, 0, 0, 0.06)',
+  backgroundColor: '#ffffff',
   '&:hover': {
     transform: 'translateY(-2px)',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
@@ -34,7 +36,7 @@ export const Container = styled(({ isSelected, ...props }: { isSelected: boolean
 export const ActionArea = styled(CardActionArea)({
   display: 'flex',
   padding: '0',
-  borderRadius: '0.75em',
+  borderRadius: '16px',
 })
 
 export const Content = styled(CardContent)(({ theme }) => ({
@@ -45,6 +47,7 @@ export const Content = styled(CardContent)(({ theme }) => ({
   flexGrow: '1',
   padding: '16px 20px',
   gap: '8px',
+  borderRadius: '16px',
   background: `linear-gradient(145deg, ${theme.palette.background.paper}, ${theme.palette.background.default})`,
 }))
 
@@ -54,6 +57,9 @@ export const Name = styled('div')(({ theme }) => ({
   color: theme.palette.text.primary,
   letterSpacing: '0.5px',
   transition: 'color 200ms ease-in-out',
+  wordBreak: 'break-word',
+  overflowWrap: 'break-word',
+  maxWidth: '100%',
   '&:hover': {
     color: theme.palette.text.secondary,
   },
@@ -66,6 +72,9 @@ export const Description = styled('div')(({ theme }) => ({
   lineHeight: '1.4',
   padding: '4px 0',
   whiteSpace: 'pre-wrap',
+  wordBreak: 'break-word',
+  overflowWrap: 'break-word',
+  maxWidth: '100%',
 }))
 
 export const DueDate = styled('div')(({ theme }) => ({
