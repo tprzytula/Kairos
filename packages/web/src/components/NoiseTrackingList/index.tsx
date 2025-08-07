@@ -11,7 +11,7 @@ import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
 const groupByDate = (items: { timestamp: number }[]) => {
-  // Filter items to only include those between 7am and midnight (7-23)
+  // Filter items to only include those between 7am and midnight (7-23) 
   const filteredItems = items.filter(item => {
     const hour = new Date(item.timestamp).getHours();
     return hour >= 7 && hour <= 23;
