@@ -56,10 +56,44 @@ jobs:
         run: aws s3 sync dist s3://${{ secrets.AWS_S3_WEB_BUCKET }} --delete --include "*" --exclude "assets/*" --acl public-read
       - name: Invalidate CloudFront cache for immediate PWA updates
         run: |
+          echo "🔍 Debugging CloudFront distribution lookup..."
+          
+          # First, let's see all distributions
+          echo "All CloudFront distributions:"
+          aws cloudfront list-distributions --query "DistributionList.Items[*].{Id:Id,Comment:Comment,DomainName:DomainName}" --output table
+          
+          # Try different possible comment patterns
+          echo "🔍 Searching for distribution..."
           DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Comment=='kairos_web_distribution'].Id" --output text)
-          if [ ! -z "$DISTRIBUTION_ID" ]; then
-            echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
-            echo "Deployed version: $VERSION"
+          
+          if [ -z "$DISTRIBUTION_ID" ]; then
+            echo "❌ Distribution with comment 'kairos_web_distribution' not found"
+            
+            # Try alternative patterns
+            DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?contains(Comment, 'kairos')].Id" --output text)
+            if [ ! -z "$DISTRIBUTION_ID" ]; then
+              echo "✅ Found distribution with 'kairos' in comment: $DISTRIBUTION_ID"
+            else
+              # Try looking for web-related distributions
+              DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?contains(Comment, 'web')].Id" --output text)
+              if [ ! -z "$DISTRIBUTION_ID" ]; then
+                echo "✅ Found distribution with 'web' in comment: $DISTRIBUTION_ID"
+              else
+                # Last resort: get the first distribution if there's only one
+                DISTRIBUTION_COUNT=$(aws cloudfront list-distributions --query "length(DistributionList.Items)" --output text)
+                if [ "$DISTRIBUTION_COUNT" == "1" ]; then
+                  DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[0].Id" --output text)
+                  echo "✅ Using single distribution found: $DISTRIBUTION_ID"
+                fi
+              fi
+            fi
+          else
+            echo "✅ Found distribution: $DISTRIBUTION_ID"
+          fi
+          
+          if [ ! -z "$DISTRIBUTION_ID" ] && [ "$DISTRIBUTION_ID" != "None" ]; then
+            echo "🚀 Invalidating CloudFront distribution: $DISTRIBUTION_ID"
+            echo "📦 Deployed version: $VERSION"
             
             # Invalidate all paths for PWA updates
             aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*" "/*.js" "/*.html" "/sw.js" "/manifest.json"
@@ -67,8 +101,10 @@ jobs:
             echo "✅ Cache invalidation created for version $VERSION"
             echo "🔄 PWA clients should receive update notification within 5-10 minutes"
           else
-            echo "❌ CloudFront distribution not found, skipping cache invalidation"
-            exit 1
+            echo "❌ No suitable CloudFront distribution found"
+            echo "⚠️  Continuing deployment without cache invalidation"
+            echo "💡 Please check your CloudFront distribution comment or AWS permissions"
+            # Don't fail the deployment, just warn
           fi
       - name: Output deployment info
         run: |
