@@ -95,12 +95,12 @@ describe('Given the NoiseTrackingList component', () => {
     expect(counts[1]).toBeVisible()
   })
 
-  it('should show mini timeline for collapsed groups', async () => {
+  it('should show mini timeline for all groups', async () => {
     jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue(MULTIPLE_GROUPS_CONTEXT)
 
     render(<NoiseTrackingList />)
 
-    // Wait for groups to be set up (first two auto-expand, third should be collapsed)
+    // Wait for groups to be set up and verify timeline bars are shown for all groups
     await waitFor(() => {
       const timelineBars = screen.getAllByTestId('timeline-bar')
       expect(timelineBars.length).toBeGreaterThan(0)
@@ -358,6 +358,35 @@ describe('Given the NoiseTrackingList component', () => {
     // Should not show expand/collapse all button when there are no items
     expect(screen.queryByTestId('unfold-more-icon')).not.toBeInTheDocument()
     expect(screen.queryByTestId('unfold-less-icon')).not.toBeInTheDocument()
+  })
+
+  it('should filter out items before 7am and after midnight', () => {
+    const today = new Date()
+    jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
+      noiseTrackingItems: [
+        { timestamp: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0, 0, 0).getTime() }, // 6am (should be filtered)
+        { timestamp: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 7, 0, 0, 0).getTime() }, // 7am (should be shown)
+        { timestamp: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0, 0, 0).getTime() }, // 12pm (should be shown)
+        { timestamp: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 0, 0, 0).getTime() }, // 11pm (should be shown)
+        { timestamp: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 2, 0, 0, 0).getTime() }, // 2am (should be filtered)
+      ],
+      isLoading: false,
+      refetchNoiseTrackingItems: jest.fn(),
+    })
+
+    render(<NoiseTrackingList />)
+
+    // In grouped view, should only show items from 7am-11pm
+    const itemCount = screen.getByText('(3)')
+    expect(itemCount).toBeInTheDocument()
+
+    // Switch to simple view
+    const simpleViewButton = screen.getByTestId('view-list-icon').closest('button')!
+    fireEvent.click(simpleViewButton)
+
+    // Should only show 3 items (6am and 2am filtered out)
+    const timestamps = screen.getAllByText(/Today,/)
+    expect(timestamps).toHaveLength(3)
   })
 })
 

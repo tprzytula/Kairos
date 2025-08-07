@@ -37,8 +37,8 @@ describe('Given the NoiseTrackingRoute component', () => {
 
   it('should display the noise tracking items', async () => {
     const mockNoiseTrackingItems = [
-      { timestamp: 1714003200000 },
-      { timestamp: 1724003200001 },
+      { timestamp: 1714028400000 }, // 25 Apr 2024, 07:00 (7am)
+      { timestamp: 1724003200001 }, // 18 Aug 2024, 18:46 (6:46 PM)
     ]
 
     jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseTrackingItems)
@@ -48,7 +48,12 @@ describe('Given the NoiseTrackingRoute component', () => {
     })
 
     await waitFor(() => {
-      const firstTimestamp = screen.getAllByText('25 Apr 2024, 01:00')
+      // Check that the date groups are shown
+      expect(screen.getByText('25 April 2024 • Thursday')).toBeVisible()
+      expect(screen.getByText('18 August 2024 • Sunday')).toBeVisible()
+      
+      // Check individual timestamps - they should be visible since items auto-expand
+      const firstTimestamp = screen.getAllByText('25 Apr 2024, 08:00')
       const secondTimestamp = screen.getAllByText('18 Aug 2024, 18:46')
       expect(firstTimestamp.length).toBeGreaterThan(0)
       expect(secondTimestamp.length).toBeGreaterThan(0)

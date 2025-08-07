@@ -11,9 +11,15 @@ import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
 const groupByDate = (items: { timestamp: number }[]) => {
+  // Filter items to only include those between 7am and midnight (7-23)
+  const filteredItems = items.filter(item => {
+    const hour = new Date(item.timestamp).getHours();
+    return hour >= 7 && hour <= 23;
+  });
+  
   const groups = new Map<string, { timestamp: number }[]>();
   
-  items.forEach(item => {
+  filteredItems.forEach(item => {
     const date = new Date(item.timestamp);
     const dateKey = date.toDateString();
     
@@ -53,15 +59,23 @@ const getDateLabel = (dateString: string) => {
 const getDayStats = (items: { timestamp: number }[]) => {
   if (items.length === 0) return { peakHour: 0, hourlyDistribution: [], maxCount: 0 };
   
-  // Group by hour
+  // Filter items to only include those between 7am and midnight (7-23)
+  const filteredItems = items.filter(item => {
+    const hour = new Date(item.timestamp).getHours();
+    return hour >= 7 && hour <= 23;
+  });
+  
+  if (filteredItems.length === 0) return { peakHour: 0, hourlyDistribution: [], maxCount: 0 };
+  
+  // Group by hour (only 7am to 11pm)
   const hourCounts = new Map<number, number>();
-  items.forEach(item => {
+  filteredItems.forEach(item => {
     const hour = new Date(item.timestamp).getHours();
     hourCounts.set(hour, (hourCounts.get(hour) || 0) + 1);
   });
   
   // Find peak hour
-  let peakHour = 0;
+  let peakHour = 7;
   let maxCount = 0;
   hourCounts.forEach((count, hour) => {
     if (count > maxCount) {
@@ -70,11 +84,17 @@ const getDayStats = (items: { timestamp: number }[]) => {
     }
   });
   
-  // Create 12-period distribution for mini timeline (2-hour blocks)
-  const hourlyDistribution = Array.from({ length: 12 }, (_, period) => {
-    const startHour = period * 2;
-    const endHour = startHour + 1;
-    return (hourCounts.get(startHour) || 0) + (hourCounts.get(endHour) || 0);
+  // Create 9-period distribution for mini timeline covering 7am-11pm (17 hours in ~2-hour blocks)
+  // 7-8, 9-10, 11-12, 13-14, 15-16, 17-18, 19-20, 21-22, 23
+  const hourlyDistribution = Array.from({ length: 9 }, (_, period) => {
+    if (period === 8) {
+      // Last period only covers hour 23
+      return hourCounts.get(23) || 0;
+    } else {
+      const startHour = 7 + (period * 2);
+      const endHour = startHour + 1;
+      return (hourCounts.get(startHour) || 0) + (hourCounts.get(endHour) || 0);
+    }
   });
   
   return { peakHour, hourlyDistribution, maxCount };
@@ -96,7 +116,13 @@ const getMiniTimelineData = (hourlyDistribution: number[], maxCount: number) => 
 };
 
 const getSmartInsights = (items: { timestamp: number }[]) => {
-  if (items.length < 3) return [];
+  // Filter items to only include those between 7am and midnight (7-23)
+  const filteredItems = items.filter(item => {
+    const hour = new Date(item.timestamp).getHours();
+    return hour >= 7 && hour <= 23;
+  });
+  
+  if (filteredItems.length < 3) return [];
   
   const insights: string[] = [];
   
@@ -104,7 +130,7 @@ const getSmartInsights = (items: { timestamp: number }[]) => {
   const hourCounts = new Map<number, number>();
   const dayOfWeekCounts = new Map<number, number>();
   
-  items.forEach(item => {
+  filteredItems.forEach(item => {
     const date = new Date(item.timestamp);
     const hour = date.getHours();
     const dayOfWeek = date.getDay();
@@ -129,19 +155,19 @@ const getSmartInsights = (items: { timestamp: number }[]) => {
     insights.push(`${busiestDay} is your noisiest day`);
   }
   
-  // Find quiet periods
+  // Find quiet periods (only check hours 7-23)
   const now = new Date();
-  const last7Days = items.filter(item => 
+  const last7Days = filteredItems.filter(item => 
     (now.getTime() - item.timestamp) < (7 * 24 * 60 * 60 * 1000)
   );
   
   if (last7Days.length > 0) {
-    const quietHours = Array.from({ length: 24 }, (_, hour) => hour)
+    const quietHours = Array.from({ length: 17 }, (_, i) => i + 7)
       .filter(hour => !hourCounts.has(hour) || hourCounts.get(hour)! < 2);
     
     if (quietHours.length > 0) {
       const quietestHour = quietHours[Math.floor(quietHours.length / 2)];
-      const timeOfDay = quietestHour < 6 ? 'night' : quietestHour < 12 ? 'morning' : quietestHour < 18 ? 'afternoon' : 'evening';
+      const timeOfDay = quietestHour < 12 ? 'morning' : quietestHour < 18 ? 'afternoon' : 'evening';
       insights.push(`Your quietest time is typically ${timeOfDay}`);
     }
   }
@@ -245,7 +271,13 @@ const NoiseTrackingList = () => {
 
   const insights = getSmartInsights(noiseTrackingItems);
 
-  const sortedItems = noiseTrackingItems.sort((a, b) => b.timestamp - a.timestamp);
+  // Filter items for simple view to only show 7am to midnight
+  const filteredSortedItems = noiseTrackingItems
+    .filter(item => {
+      const hour = new Date(item.timestamp).getHours();
+      return hour >= 7 && hour <= 23;
+    })
+    .sort((a, b) => b.timestamp - a.timestamp);
 
   return (
     <Container>
@@ -282,7 +314,7 @@ const NoiseTrackingList = () => {
 
       {viewMode === 'simple' ? (
         <SimpleListContainer>
-          {sortedItems.map(({ timestamp }) => (
+          {filteredSortedItems.map(({ timestamp }) => (
             <SimpleListItem key={timestamp}>
               {formatTimestampForSimpleView(timestamp)}
             </SimpleListItem>
@@ -311,7 +343,7 @@ const NoiseTrackingList = () => {
                     <ItemCount>({items.length})</ItemCount>
                   </DateHeaderContent>
                   <StatsContainer>
-                    {!isExpanded && items.length >= 1 && (
+                    {items.length >= 1 && (
                       <MiniTimeline>
                         {timelineData.map((bar, index) => (
                           <TimelineBar 
