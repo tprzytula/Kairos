@@ -26,7 +26,7 @@ export const Content = styled('div')({
   overscrollBehavior: 'none',
   WebkitOverflowScrolling: 'touch',
   paddingTop: 'env(safe-area-inset-top)',
-  paddingBottom: 'env(safe-area-inset-bottom)',
+  paddingBottom: 'min(env(safe-area-inset-bottom), 8px)',
   paddingLeft: 'env(safe-area-inset-left)',
   paddingRight: 'env(safe-area-inset-right)',
   boxSizing: 'border-box',
