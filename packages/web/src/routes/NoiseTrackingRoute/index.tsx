@@ -1,8 +1,7 @@
-import { Route } from '../../enums/route'
 import StandardLayout from '../../layout/standardLayout'
-import { useAppState } from '../../providers/AppStateProvider'
 import { NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
 import NoiseTrackingList from '../../components/NoiseTrackingList'
+import { Container, ScrollableContainer } from './index.styled'
 
 export const NoiseTrackingRoute = () => {
   return (
@@ -10,7 +9,11 @@ export const NoiseTrackingRoute = () => {
       <StandardLayout 
         title="Noise Tracking" 
       >
-        <NoiseTrackingList />
+        <Container>
+          <ScrollableContainer>
+            <NoiseTrackingList />
+          </ScrollableContainer>
+        </Container>
       </StandardLayout>
     </NoiseTrackingProvider>
   )

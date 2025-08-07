@@ -48,8 +48,12 @@ describe('Given the NoiseTrackingRoute component', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText('25 April 2024 at 01:00')).toBeVisible()
-      expect(screen.getByText('18 August 2024 at 18:46')).toBeVisible()
+      const firstTimestamp = screen.getAllByText('25 Apr 2024, 01:00')
+      const secondTimestamp = screen.getAllByText('18 Aug 2024, 18:46')
+      expect(firstTimestamp.length).toBeGreaterThan(0)
+      expect(secondTimestamp.length).toBeGreaterThan(0)
+      expect(firstTimestamp[0]).toBeVisible()
+      expect(secondTimestamp[0]).toBeVisible()
     })
   })
 

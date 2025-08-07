@@ -1,29 +1,311 @@
+import { useState, useEffect } from 'react';
 import { useNoiseTrackingContext } from '../../providers/NoiseTrackingProvider';
-import { Container } from './index.styled';
+import { Container, ScrollableList, EmptyState, EmptyStateText, InsightsContainer, InsightText, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, ViewToggleContainer, ViewToggleButton, SimpleListContainer, SimpleListItem } from './index.styled';
 import NoiseTrackingItem from '../NoiseTrackingItem';
-import { Typography } from '@mui/material';
+import NoiseTrackingItemPlaceholder from '../NoiseTrackingItemPlaceholder';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ViewListIcon from '@mui/icons-material/ViewList';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
+
+const groupByDate = (items: { timestamp: number }[]) => {
+  const groups = new Map<string, { timestamp: number }[]>();
+  
+  items.forEach(item => {
+    const date = new Date(item.timestamp);
+    const dateKey = date.toDateString();
+    
+    if (!groups.has(dateKey)) {
+      groups.set(dateKey, []);
+    }
+    groups.get(dateKey)!.push(item);
+  });
+  
+  return Array.from(groups.entries()).map(([dateKey, items]) => ({
+    date: dateKey,
+    items: items.sort((a, b) => b.timestamp - a.timestamp)
+  }));
+};
+
+const getDateLabel = (dateString: string) => {
+  const date = new Date(dateString);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  if (date.toDateString() === today.toDateString()) {
+    return 'Today';
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return 'Yesterday';
+  } else {
+    const dayName = date.toLocaleDateString('en-GB', { weekday: 'long' });
+    const dateOnly = date.toLocaleDateString('en-GB', { 
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    return `${dateOnly} • ${dayName}`;
+  }
+};
+
+const getDayStats = (items: { timestamp: number }[]) => {
+  if (items.length === 0) return { peakHour: 0, hourlyDistribution: [], maxCount: 0 };
+  
+  // Group by hour
+  const hourCounts = new Map<number, number>();
+  items.forEach(item => {
+    const hour = new Date(item.timestamp).getHours();
+    hourCounts.set(hour, (hourCounts.get(hour) || 0) + 1);
+  });
+  
+  // Find peak hour
+  let peakHour = 0;
+  let maxCount = 0;
+  hourCounts.forEach((count, hour) => {
+    if (count > maxCount) {
+      maxCount = count;
+      peakHour = hour;
+    }
+  });
+  
+  // Create 12-period distribution for mini timeline (2-hour blocks)
+  const hourlyDistribution = Array.from({ length: 12 }, (_, period) => {
+    const startHour = period * 2;
+    const endHour = startHour + 1;
+    return (hourCounts.get(startHour) || 0) + (hourCounts.get(endHour) || 0);
+  });
+  
+  return { peakHour, hourlyDistribution, maxCount };
+};
+
+const formatPeakTime = (hour: number) => {
+  if (hour === 0) return '12am';
+  if (hour < 12) return `${hour}am`;
+  if (hour === 12) return '12pm';
+  return `${hour - 12}pm`;
+};
+
+const getMiniTimelineData = (hourlyDistribution: number[], maxCount: number) => {
+  const maxHeight = 12;
+  return hourlyDistribution.map(count => ({
+    height: maxCount > 0 ? Math.max(2, (count / maxCount) * maxHeight) : 2,
+    hasData: count > 0
+  }));
+};
+
+const getSmartInsights = (items: { timestamp: number }[]) => {
+  if (items.length < 3) return [];
+  
+  const insights: string[] = [];
+  
+  // Time pattern analysis
+  const hourCounts = new Map<number, number>();
+  const dayOfWeekCounts = new Map<number, number>();
+  
+  items.forEach(item => {
+    const date = new Date(item.timestamp);
+    const hour = date.getHours();
+    const dayOfWeek = date.getDay();
+    
+    hourCounts.set(hour, (hourCounts.get(hour) || 0) + 1);
+    dayOfWeekCounts.set(dayOfWeek, (dayOfWeekCounts.get(dayOfWeek) || 0) + 1);
+  });
+  
+  // Find busiest time periods
+  const sortedHours = Array.from(hourCounts.entries()).sort((a, b) => b[1] - a[1]);
+  if (sortedHours.length > 0 && sortedHours[0][1] >= 3) {
+    const peakHour = sortedHours[0][0];
+    const timeRange = peakHour < 12 ? 'morning' : peakHour < 18 ? 'afternoon' : 'evening';
+    insights.push(`Most noise occurs in the ${timeRange}`);
+  }
+  
+  // Find busiest day of week
+  const sortedDays = Array.from(dayOfWeekCounts.entries()).sort((a, b) => b[1] - a[1]);
+  if (sortedDays.length > 0 && sortedDays[0][1] >= 2) {
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const busiestDay = dayNames[sortedDays[0][0]];
+    insights.push(`${busiestDay} is your noisiest day`);
+  }
+  
+  // Find quiet periods
+  const now = new Date();
+  const last7Days = items.filter(item => 
+    (now.getTime() - item.timestamp) < (7 * 24 * 60 * 60 * 1000)
+  );
+  
+  if (last7Days.length > 0) {
+    const quietHours = Array.from({ length: 24 }, (_, hour) => hour)
+      .filter(hour => !hourCounts.has(hour) || hourCounts.get(hour)! < 2);
+    
+    if (quietHours.length > 0) {
+      const quietestHour = quietHours[Math.floor(quietHours.length / 2)];
+      const timeOfDay = quietestHour < 6 ? 'night' : quietestHour < 12 ? 'morning' : quietestHour < 18 ? 'afternoon' : 'evening';
+      insights.push(`Your quietest time is typically ${timeOfDay}`);
+    }
+  }
+  
+  return insights.slice(0, 2); // Limit to 2 insights
+};
 
 const PlaceholderComponent = () => (
   <Container>
-    {Array.from({ length: 20 }).map((_, index) => (
-      <div key={index} />
-    ))}
+    <ScrollableList data-testid="noise-tracking-placeholders">
+      {Array.from({ length: 8 }).map((_, index) => (
+        <NoiseTrackingItemPlaceholder key={index} />
+      ))}
+    </ScrollableList>
   </Container>
 )
 
+const formatTimestampForSimpleView = (timestamp: number) => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  
+  if (dateOnly.getTime() === today.getTime()) {
+    return `Today, ${date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`;
+  } else if (dateOnly.getTime() === yesterday.getTime()) {
+    return `Yesterday, ${date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`;
+  } else {
+    return date.toLocaleString('en-GB', { 
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+};
+
 const NoiseTrackingList = () => {
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
+  
+  // View mode state: 'grouped' or 'simple'
+  const [viewMode, setViewMode] = useState<'grouped' | 'simple'>('grouped');
+  
+  // Get the first two date groups to expand by default
+  const groupedItems = groupByDate(noiseTrackingItems);
+  
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  
+  // Update expanded groups when data loads
+  useEffect(() => {
+    if (!isLoading && noiseTrackingItems.length > 0) {
+      const defaultExpanded = groupedItems.slice(0, 2).map(({ date }) => getDateLabel(date));
+      setExpandedGroups(new Set(defaultExpanded));
+    }
+  }, [isLoading, noiseTrackingItems.length]);
+
+  const toggleGroup = (date: string) => {
+    const newExpanded = new Set(expandedGroups);
+    if (newExpanded.has(date)) {
+      newExpanded.delete(date);
+    } else {
+      newExpanded.add(date);
+    }
+    setExpandedGroups(newExpanded);
+  };
 
   if (isLoading) {
     return <PlaceholderComponent />
   }
 
+  if (noiseTrackingItems.length === 0) {
+    return (
+      <Container>
+        <EmptyState>
+          <VolumeUpIcon sx={{ fontSize: 48, opacity: 0.3 }} />
+          <EmptyStateText>No noise events recorded yet</EmptyStateText>
+          <EmptyStateText>Tap the + button to add your first entry</EmptyStateText>
+        </EmptyState>
+      </Container>
+    );
+  }
+
+  const insights = getSmartInsights(noiseTrackingItems);
+
+  const sortedItems = noiseTrackingItems.sort((a, b) => b.timestamp - a.timestamp);
+
   return (
     <Container>
-      <Typography variant="h6">Noise Tracking Log</Typography>
-      {noiseTrackingItems.map(({ timestamp }) => (
-        <NoiseTrackingItem key={timestamp} timestamp={timestamp} />
-      ))}
+      <ViewToggleContainer>
+        <ViewToggleButton
+          isActive={viewMode === 'grouped'}
+          onClick={() => setViewMode('grouped')}
+        >
+          <ViewModuleIcon fontSize="small" />
+        </ViewToggleButton>
+        <ViewToggleButton
+          isActive={viewMode === 'simple'}
+          onClick={() => setViewMode('simple')}
+        >
+          <ViewListIcon fontSize="small" />
+        </ViewToggleButton>
+      </ViewToggleContainer>
+
+      {viewMode === 'simple' ? (
+        <SimpleListContainer>
+          {sortedItems.map(({ timestamp }) => (
+            <SimpleListItem key={timestamp}>
+              {formatTimestampForSimpleView(timestamp)}
+            </SimpleListItem>
+          ))}
+        </SimpleListContainer>
+      ) : (
+        <ScrollableList>
+          {insights.length > 0 && (
+            <InsightsContainer>
+              {insights.map((insight, index) => (
+                <InsightText key={index}>{insight}</InsightText>
+              ))}
+            </InsightsContainer>
+          )}
+          {groupedItems.map(({ date, items }) => {
+            const dateLabel = getDateLabel(date);
+            const isExpanded = expandedGroups.has(dateLabel);
+            const { peakHour, hourlyDistribution, maxCount } = getDayStats(items);
+            const timelineData = getMiniTimelineData(hourlyDistribution, maxCount);
+            
+            return (
+              <DateGroup key={date}>
+                <DateHeader onClick={() => toggleGroup(dateLabel)}>
+                  <DateHeaderContent>
+                    {dateLabel}
+                    <ItemCount>({items.length})</ItemCount>
+                  </DateHeaderContent>
+                  <StatsContainer>
+                    {!isExpanded && items.length >= 1 && (
+                      <MiniTimeline>
+                        {timelineData.map((bar, index) => (
+                          <TimelineBar 
+                            key={index} 
+                            height={bar.height}
+                            color={bar.hasData ? undefined : 'rgba(0, 0, 0, 0.1)'}
+                            data-testid="timeline-bar"
+                          />
+                        ))}
+                      </MiniTimeline>
+                    )}
+                    <ExpandIcon isExpanded={isExpanded}>
+                      <ExpandMoreIcon fontSize="small" />
+                    </ExpandIcon>
+                  </StatsContainer>
+                </DateHeader>
+                <CollapsibleContent isExpanded={isExpanded}>
+                  {items.map(({ timestamp }) => (
+                    <NoiseTrackingItem key={timestamp} timestamp={timestamp} />
+                  ))}
+                </CollapsibleContent>
+              </DateGroup>
+            );
+          })}
+        </ScrollableList>
+      )}
     </Container>
   );
 };
