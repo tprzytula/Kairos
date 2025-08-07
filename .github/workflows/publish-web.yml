@@ -25,6 +25,26 @@ jobs:
           cache-dependency-path: packages/web/yarn.lock
       - name: Install Modules
         run: yarn
+      - name: Generate date-based version for PWA updates
+        run: |
+          # Generate date-based version: YYYY.MM.DD.HHMM
+          NEW_VERSION=$(date -u +"%Y.%m.%d.%H%M")
+          
+          echo "Generated date-based version: $NEW_VERSION"
+          echo "Build time: $(date -u)"
+          
+          # Update package.json with new date-based version
+          npm version $NEW_VERSION --no-git-tag-version
+          
+          echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
+      - name: Commit version bump
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add package.json
+          git commit -m "🔖 Auto-deploy version $VERSION [skip ci]" || echo "No changes to commit"
+          git push || echo "Push failed, continuing with deployment"
+        continue-on-error: true
       - name: Build
         run: yarn build
       - name: Configure AWS Credentials
@@ -39,7 +59,26 @@ jobs:
           DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Comment=='kairos_web_distribution'].Id" --output text)
           if [ ! -z "$DISTRIBUTION_ID" ]; then
             echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
-            aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
+            echo "Deployed version: $VERSION"
+            
+            # Invalidate all paths for PWA updates
+            aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*" "/*.js" "/*.html" "/sw.js" "/manifest.json"
+            
+            echo "✅ Cache invalidation created for version $VERSION"
+            echo "🔄 PWA clients should receive update notification within 5-10 minutes"
           else
-            echo "CloudFront distribution not found, skipping cache invalidation"
+            echo "❌ CloudFront distribution not found, skipping cache invalidation"
+            exit 1
+          fi
+      - name: Output deployment info
+        run: |
+          echo "🚀 Deployment completed!"
+          echo "📦 Version: $VERSION"
+          echo "🌐 Service Worker: Updated with new cache keys"
+          echo "📱 PWA Update: iOS and Android clients will be notified"
+          
+          # Display version info if available
+          if [ -f "dist/version.json" ]; then
+            echo "📋 Version Details:"
+            cat dist/version.json
           fi

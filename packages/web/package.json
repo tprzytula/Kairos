@@ -1,14 +1,15 @@
 {
   "name": "grocery-list-web",
-  "version": "1.0.0",
+  "version": "2025.08.07.1703",
   "description": "Grocery List Web",
   "author": "Tomasz Przytula",
   "license": "ISC",
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "yarn build:app && yarn build:sw",
+    "build": "yarn build:app && yarn build:sw && yarn inject:version",
     "build:app": "parcel build src/index.html",
     "build:sw": "parcel build src/sw.ts --dist-dir dist --public-url /",
+    "inject:version": "node scripts/inject-version.js",
     "dev": "yarn dev:app",
     "dev:app": "parcel src/index.html",
 

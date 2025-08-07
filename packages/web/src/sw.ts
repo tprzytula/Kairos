@@ -9,8 +9,11 @@ interface ExtendableMessageEvent extends ExtendableEvent {
   ports: readonly MessagePort[]
 }
 
-const CACHE_NAME = 'kairos-v1'
-const RUNTIME_CACHE = 'kairos-runtime'
+// Version is automatically replaced during build from package.json
+// This placeholder will be replaced by the CI/CD pipeline
+const APP_VERSION = '__APP_VERSION__'
+const CACHE_NAME = `kairos-v${APP_VERSION}`
+const RUNTIME_CACHE = `kairos-runtime-v${APP_VERSION}`
 
 // Files to cache immediately
 const PRECACHE_URLS = [
@@ -22,38 +25,51 @@ const PRECACHE_URLS = [
 
 // Install event - cache essential files
 self.addEventListener('install', (event) => {
+  console.log('[SW] Installing version:', APP_VERSION)
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(PRECACHE_URLS))
-      .then(() => self.skipWaiting()) // Force activation of new service worker
+      .then(() => {
+        console.log('[SW] Files cached successfully')
+        // Don't call skipWaiting immediately - let user control this
+        return true
+      })
   )
 })
 
 // Activate event - clean up old caches and take control
 self.addEventListener('activate', (event) => {
+  console.log('[SW] Activating version:', APP_VERSION)
+  
   event.waitUntil(
     Promise.all([
       // Clean up old caches
       caches.keys().then(cacheNames => {
+        console.log('[SW] Found caches:', cacheNames)
         return Promise.all(
           cacheNames.map(cacheName => {
             if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
+              console.log('[SW] Deleting old cache:', cacheName)
               return caches.delete(cacheName)
             }
-          })
+          }).filter(Boolean)
         )
       }),
-      // Take control of all pages
-      self.clients.claim()
+      // Take control of all pages immediately for iOS compatibility
+      self.clients.claim().then(() => {
+        console.log('[SW] Claimed all clients')
+      })
     ])
   )
 
   // Notify all clients that a new version is available
-  self.clients.matchAll().then((clients: readonly Client[]) => {
+  self.clients.matchAll({ includeUncontrolled: true }).then((clients: readonly Client[]) => {
+    console.log('[SW] Notifying clients:', clients.length)
     clients.forEach((client: Client) => {
       client.postMessage({
         type: 'SW_ACTIVATED',
-        payload: 'Service worker activated - new version available'
+        payload: 'Service worker activated - new version available',
+        version: APP_VERSION
       })
     })
   })
@@ -134,7 +150,18 @@ self.addEventListener('message', (event) => {
   }
 
   if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('[SW] Skip waiting requested')
     self.skipWaiting()
+  }
+
+  // iOS-specific: Handle version check requests
+  if (event.data && event.data.type === 'GET_VERSION') {
+    if (event.ports && event.ports[0]) {
+      event.ports[0].postMessage({
+        type: 'SW_VERSION',
+        version: APP_VERSION
+      })
+    }
   }
 })
 
