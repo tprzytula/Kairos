@@ -194,7 +194,8 @@ export const AddNoiseTrackingItemButton = styled(Button)(({ theme }) => ({
 
 export const ViewToggleContainer = styled('div')({
   display: 'flex',
-  justifyContent: 'flex-end',
+  justifyContent: 'space-between',
+  alignItems: 'center',
   marginBottom: '12px',
   paddingRight: '4px',
 })

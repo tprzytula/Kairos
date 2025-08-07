@@ -7,6 +7,8 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
 const groupByDate = (items: { timestamp: number }[]) => {
   const groups = new Map<string, { timestamp: number }[]>();
@@ -193,9 +195,9 @@ const NoiseTrackingList = () => {
   
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   
-  // Update expanded groups when data loads
+  // Update expanded groups when data loads (only once)
   useEffect(() => {
-    if (!isLoading && noiseTrackingItems.length > 0) {
+    if (!isLoading && noiseTrackingItems.length > 0 && expandedGroups.size === 0) {
       const defaultExpanded = groupedItems.slice(0, 2).map(({ date }) => getDateLabel(date));
       setExpandedGroups(new Set(defaultExpanded));
     }
@@ -209,6 +211,20 @@ const NoiseTrackingList = () => {
       newExpanded.add(date);
     }
     setExpandedGroups(newExpanded);
+  };
+
+  const expandAllGroups = () => {
+    const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date));
+    setExpandedGroups(new Set(allGroupLabels));
+  };
+
+  const collapseAllGroups = () => {
+    setExpandedGroups(new Set());
+  };
+
+  const areAllGroupsExpanded = () => {
+    const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date));
+    return allGroupLabels.length > 0 && allGroupLabels.every(label => expandedGroups.has(label));
   };
 
   if (isLoading) {
@@ -234,18 +250,34 @@ const NoiseTrackingList = () => {
   return (
     <Container>
       <ViewToggleContainer>
-        <ViewToggleButton
-          isActive={viewMode === 'grouped'}
-          onClick={() => setViewMode('grouped')}
-        >
-          <ViewModuleIcon fontSize="small" />
-        </ViewToggleButton>
-        <ViewToggleButton
-          isActive={viewMode === 'simple'}
-          onClick={() => setViewMode('simple')}
-        >
-          <ViewListIcon fontSize="small" />
-        </ViewToggleButton>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {viewMode === 'grouped' && groupedItems.length > 0 && (
+            <ViewToggleButton
+              isActive={false}
+              onClick={areAllGroupsExpanded() ? collapseAllGroups : expandAllGroups}
+            >
+              {areAllGroupsExpanded() ? (
+                <UnfoldLessIcon fontSize="small" />
+              ) : (
+                <UnfoldMoreIcon fontSize="small" />
+              )}
+            </ViewToggleButton>
+          )}
+        </div>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <ViewToggleButton
+            isActive={viewMode === 'grouped'}
+            onClick={() => setViewMode('grouped')}
+          >
+            <ViewModuleIcon fontSize="small" />
+          </ViewToggleButton>
+          <ViewToggleButton
+            isActive={viewMode === 'simple'}
+            onClick={() => setViewMode('simple')}
+          >
+            <ViewListIcon fontSize="small" />
+          </ViewToggleButton>
+        </div>
       </ViewToggleContainer>
 
       {viewMode === 'simple' ? (

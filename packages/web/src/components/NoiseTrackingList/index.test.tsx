@@ -28,6 +28,18 @@ jest.mock('@mui/icons-material/ViewModule', () => {
   }
 })
 
+jest.mock('@mui/icons-material/UnfoldMore', () => {
+  return function MockUnfoldMoreIcon() {
+    return <div data-testid="unfold-more-icon">UnfoldMore</div>
+  }
+})
+
+jest.mock('@mui/icons-material/UnfoldLess', () => {
+  return function MockUnfoldLessIcon() {
+    return <div data-testid="unfold-less-icon">UnfoldLess</div>
+  }
+})
+
 describe('Given the NoiseTrackingList component', () => {
   const mockRefetch = jest.fn()
 
@@ -256,6 +268,96 @@ describe('Given the NoiseTrackingList component', () => {
       expect(screen.getByText(/Yesterday,/)).toBeVisible()
       expect(screen.getByText(/Thu.*2023.*14:30/)).toBeVisible()
     })
+  })
+
+  it('should show expand all button when in grouped view with multiple groups', () => {
+    jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue(MULTIPLE_GROUPS_CONTEXT)
+
+    render(<NoiseTrackingList />)
+
+    // Should show expand all button (unfold more icon) when not all groups are expanded
+    expect(screen.getByTestId('unfold-more-icon')).toBeVisible()
+  })
+
+  it('should expand all groups when expand all button is clicked', async () => {
+    jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue(MULTIPLE_GROUPS_CONTEXT)
+
+    render(<NoiseTrackingList />)
+
+    // Find and click the expand all button
+    const expandAllButton = screen.getByTestId('unfold-more-icon').closest('button')
+    fireEvent.click(expandAllButton!)
+
+    // Should show collapse all button (unfold less icon) when all groups are expanded
+    await waitFor(() => {
+      expect(screen.getByTestId('unfold-less-icon')).toBeVisible()
+    })
+
+    // All groups should be expanded and show their content
+    expect(screen.getByText('Just now')).toBeVisible()
+    expect(screen.getAllByText('Yesterday')).toHaveLength(2) // Group header + relative time
+  })
+
+  it('should collapse all groups when collapse all button is clicked', async () => {
+    jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue(MULTIPLE_GROUPS_CONTEXT)
+
+    render(<NoiseTrackingList />)
+
+    // Wait for initial auto-expansion of first two groups to complete
+    await waitFor(() => {
+      expect(screen.getByText('Just now')).toBeVisible()
+    })
+
+    // First expand all groups (including the third one)
+    const expandAllButton = screen.getByTestId('unfold-more-icon').closest('button')
+    fireEvent.click(expandAllButton!)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('unfold-less-icon')).toBeVisible()
+    })
+
+    // Then collapse all groups
+    const collapseAllButton = screen.getByTestId('unfold-less-icon').closest('button')
+    fireEvent.click(collapseAllButton!)
+
+    // Wait for the state change to complete - the icon should change back to expand all
+    await waitFor(() => {
+      expect(screen.getByTestId('unfold-more-icon')).toBeVisible()
+    })
+    
+    // All groups should have their expand icons pointing down (not rotated = collapsed)
+    // When all groups are collapsed, there should be 3 expand icons visible (one per group)
+    expect(screen.getAllByTestId('expand-more-icon')).toHaveLength(3)
+  })
+
+  it('should not show expand/collapse all button in simple view', async () => {
+    jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue(MULTIPLE_GROUPS_CONTEXT)
+
+    render(<NoiseTrackingList />)
+
+    // Switch to simple view
+    const simpleViewButton = screen.getByTestId('view-list-icon').closest('button')
+    fireEvent.click(simpleViewButton!)
+
+    // Should not show expand/collapse all button in simple view
+    await waitFor(() => {
+      expect(screen.queryByTestId('unfold-more-icon')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('unfold-less-icon')).not.toBeInTheDocument()
+    })
+  })
+
+  it('should not show expand/collapse all button when there are no groups', () => {
+    jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
+      noiseTrackingItems: [],
+      isLoading: false,
+      refetchNoiseTrackingItems: jest.fn(),
+    })
+
+    render(<NoiseTrackingList />)
+
+    // Should not show expand/collapse all button when there are no items
+    expect(screen.queryByTestId('unfold-more-icon')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('unfold-less-icon')).not.toBeInTheDocument()
   })
 })
 
