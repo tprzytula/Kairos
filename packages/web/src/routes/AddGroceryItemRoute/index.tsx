@@ -74,6 +74,7 @@ export const AddGroceryItemRoute = () => {
   return (
     <StandardLayout
       title="Add Grocery Item"
+      centerVertically
     >
       <AddItemForm
         defaults={defaults}

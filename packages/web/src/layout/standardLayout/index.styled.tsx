@@ -10,12 +10,16 @@ export const Container = styled('div')({
     overflow: 'hidden',
 })
 
-export const Content = styled('div')({
+interface IContentProps {
+    centerVertically?: boolean
+}
+
+export const Content = styled('div')<IContentProps>(({ centerVertically }) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: centerVertically ? 'center' : 'flex-start',
     width: '100%',
     flex: 1,
     overflow: 'scroll',
-})
+}))

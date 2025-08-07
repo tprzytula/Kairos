@@ -6,11 +6,12 @@ import NavigationBar from '../../components/NavigationBar'
 const StandardLayout = ({
   title,
   children,
+  centerVertically = false,
 }: IStandardLayoutProps) => {
   return (
     <Container>
       <Header title={title} />
-      <Content>
+      <Content centerVertically={centerVertically}>
         {children}
       </Content>
       <NavigationBar />

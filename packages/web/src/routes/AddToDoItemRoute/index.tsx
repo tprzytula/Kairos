@@ -67,6 +67,7 @@ export const AddToDoItemRoute = () => {
   return (
     <StandardLayout
       title="Add To Do Item"
+      centerVertically
     >
       <AddItemForm
         fields={FIELDS}
