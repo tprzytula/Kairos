@@ -3,7 +3,7 @@ resource "aws_s3_object" "icons" {
 
   bucket       = var.bucket_id
   key          = "${local.iconsTargetPath}/${each.value}"
-  source       = "${path.module}/../../assets/icons/${each.value}"
+  source       = "${path.module}/../../../assets/icons/${each.value}"
   acl          = "public-read"
   content_type = "image/png"
 }
