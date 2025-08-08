@@ -2,14 +2,18 @@ import StandardLayout from '../../layout/standardLayout'
 import { ToDoListProvider } from '../../providers/ToDoListProvider'
 import ToDoList from '../../components/ToDoList'
 import MarkToDoItemsAsDoneButton from '../../components/MarkToDoItemsAsDoneButton'
+import ModernPageHeader from '../../components/ModernPageHeader'
+import ChecklistIcon from '@mui/icons-material/Checklist'
 import { Container, ScrollableContainer } from './index.styled'
 
-export const NoiseTrackingRoute = () => {
+export const ToDoListRoute = () => {
   return (
     <ToDoListProvider>
-      <StandardLayout 
-        title="To Do List" 
-      >
+      <StandardLayout>
+        <ModernPageHeader
+          title="To-Do List"
+          icon={<ChecklistIcon />}
+        />
         <Container>
           <MarkToDoItemsAsDoneButton />
           <ScrollableContainer>
@@ -21,4 +25,4 @@ export const NoiseTrackingRoute = () => {
   )
 }
 
-export default NoiseTrackingRoute
+export default ToDoListRoute

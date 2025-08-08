@@ -6,12 +6,14 @@ export const Container = styled('div')({
   height: '100%',
   minHeight: 0,
   width: '100%',
+  padding: '0 1rem',
 })
 
 export const ScrollableContainer = styled('div')({
   flex: 1,
   minHeight: 0,
   overflowY: 'auto',
+  paddingBottom: '1rem',
 })
 
 export const ActionArea = styled('div')({

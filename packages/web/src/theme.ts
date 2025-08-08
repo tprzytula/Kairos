@@ -141,16 +141,16 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: '#10b981',
+      main: '#667eea',
     },
     secondary: {
-      main: '#3b82f6',
+      main: '#764ba2',
     },
     warning: {
       main: '#f59e0b',
     },
     error: {
-      main: '#ef4444',
+      main: '#e11d48',
     },
     text: {
       primary: '#374151',
@@ -158,7 +158,7 @@ const theme = createTheme({
     },
     custom: {
       background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)',
-      light: '#3b82f6',
+      light: '#f093fb',
       surfaces: {
         primary: '#f8fafc',
         secondary: '#f1f5f9', 
@@ -166,8 +166,8 @@ const theme = createTheme({
         hover: '#f8fafc',
       },
       hover: {
-        primary: '#059669',
-        secondary: '#2563eb',
+        primary: '#5a67d8',
+        secondary: '#6b46c1',
       },
     },
   },

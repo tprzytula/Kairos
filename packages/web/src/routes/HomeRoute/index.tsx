@@ -138,7 +138,7 @@ const HomeContent = () => {
   const totalNoiseItems = noiseTrackingItems.length
   
   return (
-    <StandardLayout title="Home">
+    <StandardLayout>
       <DashboardHeader />
       <Container>
         <SectionCard>
