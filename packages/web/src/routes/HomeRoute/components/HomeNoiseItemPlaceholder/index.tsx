@@ -1,11 +1,11 @@
-import { PlaceholderItem, TimePlaceholder, ElapsedPlaceholder } from './index.styled'
+import { PlaceholderBlock, CountPlaceholder, LabelPlaceholder } from './index.styled'
 
 const HomeNoiseItemPlaceholder = () => {
   return (
-    <PlaceholderItem>
-      <TimePlaceholder />
-      <ElapsedPlaceholder />
-    </PlaceholderItem>
+    <PlaceholderBlock>
+      <CountPlaceholder />
+      <LabelPlaceholder />
+    </PlaceholderBlock>
   )
 }
 

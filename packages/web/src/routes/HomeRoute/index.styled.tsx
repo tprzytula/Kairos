@@ -102,6 +102,15 @@ export const ItemList = styled('ul')({
   gap: '0.75rem',
 })
 
+export const CompactItemList = styled('ul')({
+  listStyle: 'none',
+  padding: 0,
+  margin: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.3rem',
+})
+
 export const ItemText = styled('li')(({ theme }) => ({
   fontSize: '0.85rem',
   fontWeight: '500',
@@ -132,6 +141,83 @@ export const ItemText = styled('li')(({ theme }) => ({
     '&:before': {
       opacity: 1,
     },
+  },
+}))
+
+export const CompactItemText = styled('li')(({ theme }) => ({
+  fontSize: '0.8rem',
+  fontWeight: '500',
+  color: theme.palette.text.primary,
+  padding: '0.4rem 0.6rem',
+  background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,250,252,0.9) 100%)',
+  borderRadius: '8px',
+  border: '1px solid rgba(102, 126, 234, 0.1)',
+  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+  position: 'relative',
+  cursor: 'pointer',
+  lineHeight: 1.3,
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  '&:before': {
+    content: '""',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: '2px',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    borderRadius: '0 8px 8px 0',
+    opacity: 0,
+    transition: 'opacity 0.2s ease',
+  },
+  '&:hover': {
+    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
+    transform: 'translateX(1px)',
+    borderColor: 'rgba(102, 126, 234, 0.2)',
+    '&:before': {
+      opacity: 1,
+    },
+  },
+}))
+
+export const CompactItemContent = styled('div')({
+  flex: 1,
+  minWidth: 0,
+})
+
+export const CompactItemMeta = styled('div')({
+  marginLeft: '0.5rem',
+  flexShrink: 0,
+})
+
+export const CompactDescription = styled('div')(({ theme }) => ({
+  fontSize: '0.65rem',
+  color: theme.palette.text.secondary,
+  marginTop: '0.15rem',
+  lineHeight: 1.2,
+}))
+
+export const DueDateText = styled('span')(({ theme }) => ({
+  fontSize: '0.65rem',
+  fontWeight: '500',
+  color: theme.palette.text.secondary,
+  background: 'rgba(102, 126, 234, 0.08)',
+  padding: '0.15rem 0.4rem',
+  borderRadius: '6px',
+  whiteSpace: 'nowrap',
+  lineHeight: 1,
+  '&.overdue': {
+    color: theme.palette.error.main,
+    background: 'rgba(244, 67, 54, 0.1)',
+  },
+  '&.today': {
+    color: theme.palette.warning.main,
+    background: 'rgba(255, 152, 0, 0.1)',
+  },
+  '&.soon': {
+    color: theme.palette.primary.main,
+    background: 'rgba(102, 126, 234, 0.12)',
   },
 }))
 
@@ -341,11 +427,48 @@ export const MoreItemsIndicator = styled('div')(({ theme }) => ({
 }))
 
 export const NoiseStats = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
   gap: '0.5rem',
   padding: '0.5rem 0',
 })
+
+export const NoiseStatBlock = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '0.75rem 0.5rem',
+  background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%)',
+  borderRadius: '12px',
+  border: '1px solid rgba(102, 126, 234, 0.12)',
+  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+  cursor: 'pointer',
+  minHeight: '65px',
+  position: 'relative',
+  '&:hover': {
+    backgroundColor: 'rgba(102, 126, 234, 0.06)',
+    borderColor: 'rgba(102, 126, 234, 0.25)',
+    transform: 'translateY(-2px)',
+    boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)',
+  },
+}))
+
+export const NoiseStatCount = styled('div')(({ theme }) => ({
+  fontSize: '1.1rem',
+  fontWeight: '700',
+  color: theme.palette.text.primary,
+  marginBottom: '0.25rem',
+  lineHeight: 1,
+}))
+
+export const NoiseStatLabel = styled('div')(({ theme }) => ({
+  fontSize: '0.7rem',
+  fontWeight: '500',
+  color: theme.palette.text.secondary,
+  textAlign: 'center',
+  lineHeight: 1.2,
+}))
 
 export const NoiseStatItem = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -361,22 +484,4 @@ export const NoiseStatItem = styled('div')(({ theme }) => ({
     borderColor: 'rgba(102, 126, 234, 0.2)',
     transform: 'translateX(2px)',
   },
-}))
-
-export const NoiseStatLabel = styled('span')(({ theme }) => ({
-  fontSize: '0.8rem',
-  fontWeight: '500',
-  color: theme.palette.text.primary,
-}))
-
-export const NoiseStatCount = styled('span')(({ theme }) => ({
-  fontSize: '0.85rem',
-  fontWeight: '600',
-  color: theme.palette.text.primary,
-  background: 'rgba(102, 126, 234, 0.08)',
-  padding: '0.25rem 0.6rem',
-  borderRadius: '10px',
-  minWidth: '1.8rem',
-  textAlign: 'center',
-  border: '1px solid rgba(102, 126, 234, 0.15)',
 })) 

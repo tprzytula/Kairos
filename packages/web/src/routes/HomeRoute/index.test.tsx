@@ -59,8 +59,8 @@ describe('Given the HomeRoute component', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Grocery List')).toBeVisible()
-      expect(screen.getByText('Recent To-Do Items')).toBeVisible()
-      expect(screen.getByText('Recent Noise Recordings')).toBeVisible()
+      expect(screen.getByText('To-Do Items')).toBeVisible()
+      expect(screen.getByText('Noise Recordings')).toBeVisible()
     })
   })
 
@@ -100,13 +100,14 @@ describe('Given the HomeRoute component', () => {
     })
   })
 
-  it('should display last two pending to-do items', async () => {
+  it('should display top three pending to-do items sorted by due date', async () => {
+    const now = Date.now()
     const mockToDoList = [
-      { id: '1', name: 'Completed Task', description: 'Done', isDone: true },
-      { id: '2', name: 'Task 1', description: 'Description 1', isDone: false },
-      { id: '3', name: 'Task 2', description: 'Description 2', isDone: false },
-      { id: '4', name: 'Task 3', description: 'Description 3', isDone: false },
-      { id: '5', name: 'Task 4', description: 'Description 4', isDone: false },
+      { id: '1', name: 'Completed Task', description: 'Done', isDone: true, dueDate: now + 86400000 },
+      { id: '2', name: 'Task 1', description: 'Description 1', isDone: false, dueDate: now + 4 * 86400000 }, // 4 days from now
+      { id: '3', name: 'Task 2', description: 'Description 2', isDone: false, dueDate: now + 2 * 86400000 }, // 2 days from now  
+      { id: '4', name: 'Task 3', description: 'Description 3', isDone: false, dueDate: now + 86400000 }, // 1 day from now
+      { id: '5', name: 'Task 4', description: 'Description 4', isDone: false, dueDate: now + 3 * 86400000 }, // 3 days from now
     ]
 
     jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockToDoList)
@@ -116,10 +117,12 @@ describe('Given the HomeRoute component', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText('Task 4')).toBeVisible()
-      expect(screen.getByText('Task 3')).toBeVisible()
-      expect(screen.getByText('Task 2')).toBeVisible()
-      expect(screen.getByText('Task 1')).toBeVisible()
+      // Should show tasks sorted by earliest due date first (Task 3, Task 2, Task 4)
+      expect(screen.getByText('Task 3')).toBeVisible() // Due tomorrow  
+      expect(screen.getByText('Task 2')).toBeVisible() // Due in 2 days
+      expect(screen.getByText('Task 4')).toBeVisible() // Due in 3 days
+      expect(screen.getByText('+1 more items')).toBeVisible() // Task 1 is not shown
+      expect(screen.queryByText('Task 1')).not.toBeInTheDocument() // Task 1 due later not shown
       expect(screen.queryByText('Completed Task')).not.toBeInTheDocument()
     })
   })
@@ -141,14 +144,17 @@ describe('Given the HomeRoute component', () => {
     })
   })
 
-  it('should display last three noise recordings with time elapsed', async () => {
-    const baseTime = 1700000000000
+  it('should display noise recordings as aggregated stats', async () => {
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
+    const weekAgo = new Date(today.getTime() - 8 * 24 * 60 * 60 * 1000)
+
     const mockNoiseList = [
-      { timestamp: baseTime },
-      { timestamp: baseTime + 300000 },
-      { timestamp: baseTime + 900000 },
-      { timestamp: baseTime + 1800000 },
-      { timestamp: baseTime + 3600000 },
+      { timestamp: today.getTime() + 2 * 60 * 60 * 1000 }, // Today
+      { timestamp: today.getTime() + 4 * 60 * 60 * 1000 }, // Today  
+      { timestamp: yesterday.getTime() }, // Yesterday (last 7 days)
+      { timestamp: weekAgo.getTime() }, // Week ago (last 30 days)
     ]
 
     jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
@@ -158,9 +164,18 @@ describe('Given the HomeRoute component', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText('30 minutes later')).toBeVisible()
-      expect(screen.getByText('15 minutes later')).toBeVisible()
-      expect(screen.getByText('10 minutes later')).toBeVisible()
+      expect(screen.getByText('Today')).toBeVisible()
+      expect(screen.getByText('Last 7 days')).toBeVisible() 
+      expect(screen.getByText('Last 30 days')).toBeVisible()
+      
+      // Check the specific blocks have the correct counts
+      const todayBlock = screen.getByText('Today').closest('.css-mew3oe')
+      const sevenDaysBlock = screen.getByText('Last 7 days').closest('.css-mew3oe')
+      const thirtyDaysBlock = screen.getByText('Last 30 days').closest('.css-mew3oe')
+      
+      expect(todayBlock).toHaveTextContent('2')
+      expect(sevenDaysBlock).toHaveTextContent('3')
+      expect(thirtyDaysBlock).toHaveTextContent('4')
     })
   })
 

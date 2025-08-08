@@ -14,6 +14,47 @@ import ChecklistIcon from '@mui/icons-material/Checklist'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 
 import { formatTimeElapsed, formatTimestamp } from './utils'
+
+const formatDueDateRelative = (dueDate?: number): string => {
+  if (!dueDate) return ''
+  
+  const now = new Date()
+  const due = new Date(dueDate)
+  const diffMs = due.getTime() - now.getTime()
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
+  
+  if (diffDays < 0) {
+    const absDays = Math.abs(diffDays)
+    if (absDays === 1) return 'overdue by 1 day'
+    return `overdue by ${absDays} days`
+  } else if (diffDays === 0) {
+    return 'due today'
+  } else if (diffDays === 1) {
+    return 'due tomorrow'
+  } else if (diffDays <= 7) {
+    return `in ${diffDays} days`
+  } else if (diffDays <= 30) {
+    const weeks = Math.ceil(diffDays / 7)
+    return weeks === 1 ? 'in 1 week' : `in ${weeks} weeks`
+  } else {
+    const months = Math.ceil(diffDays / 30)
+    return months === 1 ? 'in 1 month' : `in ${months} months`
+  }
+}
+
+const getDueDateClass = (dueDate?: number): string => {
+  if (!dueDate) return ''
+  
+  const now = new Date()
+  const due = new Date(dueDate)
+  const diffMs = due.getTime() - now.getTime()
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
+  
+  if (diffDays < 0) return 'overdue'
+  if (diffDays === 0) return 'today'
+  if (diffDays <= 3) return 'soon'
+  return ''
+}
 import {
   Container,
   FullWidthSection,
@@ -29,9 +70,15 @@ import {
   GroceryImageOverflow,
   MoreItemsIndicator,
   NoiseStats,
-  NoiseStatItem,
+  NoiseStatBlock,
   NoiseStatLabel,
-  NoiseStatCount
+  NoiseStatCount,
+  CompactItemList,
+  CompactItemText,
+  CompactItemContent,
+  CompactItemMeta,
+  CompactDescription,
+  DueDateText
 } from './index.styled'
 
 const HomeContent = () => {
@@ -40,15 +87,24 @@ const HomeContent = () => {
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
   const { state: { purchasedItems } } = useAppState()
   
+  const unpurchasedItems = groceryList.filter(item => !purchasedItems.has(item.id))
   const groceryStats = {
     totalItems: groceryList.length,
-    unpurchasedItems: groceryList.filter(item => !purchasedItems.has(item.id)),
-    displayItems: groceryList.filter(item => !purchasedItems.has(item.id)).slice(0, 9),
-    hasOverflow: groceryList.filter(item => !purchasedItems.has(item.id)).length >= 11
+    unpurchasedItems,
+    displayItems: unpurchasedItems.length > 10 ? unpurchasedItems.slice(0, 9) : unpurchasedItems,
+    hasOverflow: unpurchasedItems.length > 10
   }
   
   const pendingToDoItems = toDoList.filter(item => !item.isDone)
-  const lastThreeToDoItems = pendingToDoItems.slice(-3).reverse()
+  
+  const sortedToDoItems = pendingToDoItems.sort((a, b) => {
+    if (!a.dueDate && !b.dueDate) return 0
+    if (!a.dueDate) return 1
+    if (!b.dueDate) return -1
+    return a.dueDate - b.dueDate
+  })
+  
+  const topThreeToDoItems = sortedToDoItems.slice(0, 3)
   const hasMoreToDoItems = pendingToDoItems.length > 3
   
   const calculateNoiseCounts = () => {
@@ -142,18 +198,18 @@ const HomeContent = () => {
               <NoiseStats>
                 {totalNoiseItems > 0 ? (
                   <>
-                    <NoiseStatItem>
-                      <NoiseStatLabel>Today</NoiseStatLabel>
+                    <NoiseStatBlock>
                       <NoiseStatCount>{todayCount}</NoiseStatCount>
-                    </NoiseStatItem>
-                    <NoiseStatItem>
-                      <NoiseStatLabel>Last 7 days</NoiseStatLabel>
+                      <NoiseStatLabel>Today</NoiseStatLabel>
+                    </NoiseStatBlock>
+                    <NoiseStatBlock>
                       <NoiseStatCount>{last7DaysCount}</NoiseStatCount>
-                    </NoiseStatItem>
-                    <NoiseStatItem>
-                      <NoiseStatLabel>Last 30 days</NoiseStatLabel>
+                      <NoiseStatLabel>Last 7 days</NoiseStatLabel>
+                    </NoiseStatBlock>
+                    <NoiseStatBlock>
                       <NoiseStatCount>{last30DaysCount}</NoiseStatCount>
-                    </NoiseStatItem>
+                      <NoiseStatLabel>Last 30 days</NoiseStatLabel>
+                    </NoiseStatBlock>
                   </>
                 ) : (
                   <EmptyState>No noise recordings found</EmptyState>
@@ -174,17 +230,38 @@ const HomeContent = () => {
                 <span className="item-count">{pendingToDoItems.length}</span>
               </SectionHeader>
               {isToDoLoading ? (
-              <ItemList>
+              <CompactItemList>
                 {Array.from({ length: 3 }).map((_, index) => (
                   <HomeToDoItemPlaceholder key={index} />
                 ))}
-              </ItemList>
+              </CompactItemList>
             ) : (
-              <ItemList>
-                {lastThreeToDoItems.length > 0 ? (
-                  lastThreeToDoItems.map((item) => (
-                    <HomeToDoItem key={item.id} item={item} />
-                  ))
+              <CompactItemList>
+                {topThreeToDoItems.length > 0 ? (
+                  topThreeToDoItems.map((item) => {
+                    const dueDateText = formatDueDateRelative(item.dueDate)
+                    const dueDateClass = getDueDateClass(item.dueDate)
+                    
+                    return (
+                      <CompactItemText key={item.id}>
+                        <CompactItemContent>
+                          {item.name}
+                          {item.description && (
+                            <CompactDescription>
+                              {item.description}
+                            </CompactDescription>
+                          )}
+                        </CompactItemContent>
+                        {dueDateText && (
+                          <CompactItemMeta>
+                            <DueDateText className={dueDateClass}>
+                              {dueDateText}
+                            </DueDateText>
+                          </CompactItemMeta>
+                        )}
+                      </CompactItemText>
+                    )
+                  })
                 ) : (
                   <EmptyState>No pending to-do items found</EmptyState>
                 )}
@@ -193,7 +270,7 @@ const HomeContent = () => {
                     +{pendingToDoItems.length - 3} more items
                   </MoreItemsIndicator>
                 )}
-              </ItemList>
+              </CompactItemList>
               )}
             </SectionContent>
           </SectionCard>
