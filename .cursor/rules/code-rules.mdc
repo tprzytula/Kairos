@@ -1,0 +1,34 @@
+---
+description: writing code
+
+## Project Structure Rules
+
+### Components and Hooks
+- **Directory Structure**: Each component/hook should use its name as the directory name
+  - Example: `useSwipeGesture/` or `SwipeableListItem/`
+- **Main File**: The actual implementation should be in `index.ts` (for hooks) or `index.tsx` (for components)
+- **Test File**: Each component/hook must have a corresponding `index.test.ts` or `index.test.tsx` file alongside it
+- **Styled Components**: Use styled components with the `styled('component-name')()` syntax
+  - Put all styled components in a separate `index.styled.ts` file
+  - Example: `styled('div')({...})` instead of `styled.div`
+- **Types**: All TypeScript interfaces and types should be extracted to a separate `types.ts` file
+  - Never define types inline within component/hook files
+  - Import types from `types.ts` in the component/hook implementation files
+
+### Example Structure
+```
+SwipeableListItem/
+├── index.tsx              # Component implementation
+├── index.test.tsx         # Component tests
+├── index.styled.ts        # Styled components
+├── types.ts               # TypeScript interfaces
+└── hooks/
+    ├── useSwipeGesture/
+    │   ├── index.ts       # Hook implementation
+    │   └── index.test.ts  # Hook tests
+    └── useHapticFeedback/
+        ├── index.ts       # Hook implementation
+        └── index.test.ts  # Hook tests
+```
+alwaysApply: false
+---
