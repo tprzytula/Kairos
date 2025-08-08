@@ -58,7 +58,7 @@ describe('Given the HomeRoute component', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText('Recent Grocery Items')).toBeVisible()
+      expect(screen.getByText('Grocery List')).toBeVisible()
       expect(screen.getByText('Recent To-Do Items')).toBeVisible()
       expect(screen.getByText('Recent Noise Recordings')).toBeVisible()
     })
@@ -76,7 +76,7 @@ describe('Given the HomeRoute component', () => {
     })
   })
 
-  it('should display last three grocery items', async () => {
+  it('should display grocery items as image grid', async () => {
     const mockGroceryList = [
       { id: '1', name: 'Milk', quantity: 1, unit: GroceryItemUnit.LITER, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
       { id: '2', name: 'Bread', quantity: 2, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
@@ -92,11 +92,11 @@ describe('Given the HomeRoute component', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText('Cheese')).toBeVisible()
-      expect(screen.getByText('Butter')).toBeVisible()
-      expect(screen.getByText('Eggs')).toBeVisible()
-      expect(screen.queryByText('Bread')).not.toBeInTheDocument()
-      expect(screen.queryByText('Milk')).not.toBeInTheDocument()
+      expect(screen.getByTitle('Cheese (1 unit(s))')).toBeVisible()
+      expect(screen.getByTitle('Butter (1 unit(s))')).toBeVisible()
+      expect(screen.getByTitle('Eggs (12 unit(s))')).toBeVisible()
+      expect(screen.getByTitle('Bread (2 unit(s))')).toBeVisible()
+      expect(screen.getByTitle('Milk (1 l)')).toBeVisible()
     })
   })
 
@@ -118,8 +118,8 @@ describe('Given the HomeRoute component', () => {
     await waitFor(() => {
       expect(screen.getByText('Task 4')).toBeVisible()
       expect(screen.getByText('Task 3')).toBeVisible()
-      expect(screen.queryByText('Task 2')).not.toBeInTheDocument()
-      expect(screen.queryByText('Task 1')).not.toBeInTheDocument()
+      expect(screen.getByText('Task 2')).toBeVisible()
+      expect(screen.getByText('Task 1')).toBeVisible()
       expect(screen.queryByText('Completed Task')).not.toBeInTheDocument()
     })
   })

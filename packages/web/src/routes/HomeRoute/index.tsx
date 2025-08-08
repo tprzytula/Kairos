@@ -1,6 +1,7 @@
 import { useGroceryListContext, GroceryListProvider } from '../../providers/GroceryListProvider'
 import { useToDoListContext, ToDoListProvider } from '../../providers/ToDoListProvider'
 import { useNoiseTrackingContext, NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
+import { useAppState } from '../../providers/AppStateProvider'
 import StandardLayout from '../../layout/standardLayout'
 import HomeGroceryItemPlaceholder from './components/HomeGroceryItemPlaceholder'
 import HomeToDoItemPlaceholder from './components/HomeToDoItemPlaceholder'
@@ -15,23 +16,36 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import { formatTimeElapsed, formatTimestamp } from './utils'
 import {
   Container,
+  FullWidthSection,
   SectionCard,
   SectionHeader,
   SectionContent,
   ItemList,
-  EmptyState
+  EmptyState,
+  GroceryStats,
+  StatItem,
+  GroceryImagesGrid,
+  GroceryImageItem,
+  GroceryImageOverflow
 } from './index.styled'
 
 const HomeContent = () => {
   const { groceryList, isLoading: isGroceryLoading } = useGroceryListContext()
   const { toDoList, isLoading: isToDoLoading } = useToDoListContext()
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
+  const { state: { purchasedItems } } = useAppState()
   
-  const lastThreeGroceryItems = groceryList.slice(-3).reverse()
-  const lastTwoToDoItems = toDoList.filter(item => !item.isDone).slice(-2).reverse()
+  const groceryStats = {
+    totalItems: groceryList.length,
+    unpurchasedItems: groceryList.filter(item => !purchasedItems.has(item.id)),
+    displayItems: groceryList.filter(item => !purchasedItems.has(item.id)).slice(0, 9),
+    hasOverflow: groceryList.filter(item => !purchasedItems.has(item.id)).length >= 11
+  }
+  
+  const lastFourToDoItems = toDoList.filter(item => !item.isDone).slice(-4).reverse()
   
   const sortedNoiseItems = noiseTrackingItems.sort((a, b) => a.timestamp - b.timestamp)
-  const lastThreeNoiseItems = sortedNoiseItems.slice(-3).reverse()
+  const lastFiveNoiseItems = sortedNoiseItems.slice(-5).reverse()
   
   return (
     <StandardLayout title="Home">
@@ -39,29 +53,39 @@ const HomeContent = () => {
         <SectionCard>
           <SectionContent>
             <SectionHeader>
-              <ShoppingCartIcon />
-              Recent Grocery Items
+              <div className="header-content">
+                <ShoppingCartIcon />
+                Grocery List
+              </div>
+              <span className="item-count">{groceryStats.totalItems}</span>
             </SectionHeader>
             {isGroceryLoading ? (
-              <ItemList>
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <HomeGroceryItemPlaceholder key={index} />
-                ))}
-              </ItemList>
+              <HomeGroceryItemPlaceholder />
             ) : (
-              <ItemList>
-                {Array.from({ length: 3 }).map((_, index) => {
-                  const item = lastThreeGroceryItems[index]
-                  return item ? (
-                    <HomeGroceryItem key={item.id} item={item} />
-                  ) : (
-                    <div key={`empty-${index}`} style={{ height: '3.2rem' }} />
-                  )
-                })}
-                {lastThreeGroceryItems.length === 0 && (
+              <GroceryStats>
+                {groceryStats.totalItems > 0 ? (
+                  <GroceryImagesGrid>
+                    {groceryStats.displayItems.map((item) => (
+                      <GroceryImageItem
+                        key={item.id}
+                        style={{
+                          backgroundImage: item.imagePath ? `url(${item.imagePath})` : 'none'
+                        }}
+                        title={`${item.name} (${item.quantity} ${item.unit})`}
+                      >
+                        {!item.imagePath && item.name.charAt(0).toUpperCase()}
+                      </GroceryImageItem>
+                    ))}
+                    {groceryStats.hasOverflow && (
+                      <GroceryImageOverflow title={`+${groceryStats.unpurchasedItems.length - 9} more items`}>
+                        +{groceryStats.unpurchasedItems.length - 9}
+                      </GroceryImageOverflow>
+                    )}
+                  </GroceryImagesGrid>
+                ) : (
                   <EmptyState>No grocery items found</EmptyState>
                 )}
-              </ItemList>
+              </GroceryStats>
             )}
           </SectionContent>
         </SectionCard>
@@ -69,20 +93,22 @@ const HomeContent = () => {
         <SectionCard>
           <SectionContent>
             <SectionHeader>
-              <VolumeUpIcon />
-              Recent Noise Recordings
+              <div className="header-content">
+                <VolumeUpIcon />
+                Recent Noise Recordings
+              </div>
+              <span className="item-count">{lastFiveNoiseItems.length}</span>
             </SectionHeader>
             {isNoiseLoading ? (
               <ItemList>
-                {Array.from({ length: 3 }).map((_, index) => (
+                {Array.from({ length: 5 }).map((_, index) => (
                   <HomeNoiseItemPlaceholder key={index} />
                 ))}
               </ItemList>
             ) : (
               <ItemList>
-                {Array.from({ length: 3 }).map((_, index) => {
-                  const item = lastThreeNoiseItems[index]
-                  if (item) {
+                {lastFiveNoiseItems.length > 0 ? (
+                  lastFiveNoiseItems.map((item) => {
                     const currentIndex = sortedNoiseItems.findIndex(sortedItem => sortedItem.timestamp === item.timestamp)
                     const previousItem = currentIndex > 0 ? sortedNoiseItems[currentIndex - 1] : undefined
                     const timeElapsed = formatTimeElapsed(item.timestamp, previousItem?.timestamp)
@@ -96,11 +122,8 @@ const HomeContent = () => {
                         timeElapsed={timeElapsed} 
                       />
                     )
-                  } else {
-                    return <div key={`empty-${index}`} style={{ height: '3.2rem' }} />
-                  }
-                })}
-                {lastThreeNoiseItems.length === 0 && (
+                  })
+                ) : (
                   <EmptyState>No noise recordings found</EmptyState>
                 )}
               </ItemList>
@@ -108,35 +131,36 @@ const HomeContent = () => {
           </SectionContent>
         </SectionCard>
 
-        <SectionCard>
-          <SectionContent>
-            <SectionHeader>
-              <ChecklistIcon />
-              Recent To-Do Items
-            </SectionHeader>
-            {isToDoLoading ? (
+        <FullWidthSection>
+          <SectionCard>
+            <SectionContent>
+              <SectionHeader>
+                <div className="header-content">
+                  <ChecklistIcon />
+                  Recent To-Do Items
+                </div>
+                <span className="item-count">{lastFourToDoItems.length}</span>
+              </SectionHeader>
+              {isToDoLoading ? (
               <ItemList>
-                {Array.from({ length: 2 }).map((_, index) => (
+                {Array.from({ length: 4 }).map((_, index) => (
                   <HomeToDoItemPlaceholder key={index} />
                 ))}
               </ItemList>
             ) : (
               <ItemList>
-                {Array.from({ length: 2 }).map((_, index) => {
-                  const item = lastTwoToDoItems[index]
-                  return item ? (
+                {lastFourToDoItems.length > 0 ? (
+                  lastFourToDoItems.map((item) => (
                     <HomeToDoItem key={item.id} item={item} />
-                  ) : (
-                    <div key={`empty-${index}`} style={{ height: '3.2rem' }} />
-                  )
-                })}
-                {lastTwoToDoItems.length === 0 && (
+                  ))
+                ) : (
                   <EmptyState>No pending to-do items found</EmptyState>
                 )}
               </ItemList>
-            )}
-          </SectionContent>
-        </SectionCard>
+              )}
+            </SectionContent>
+          </SectionCard>
+        </FullWidthSection>
       </Container>
     </StandardLayout>
   )
