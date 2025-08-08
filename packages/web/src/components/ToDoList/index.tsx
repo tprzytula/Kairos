@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import { useToDoListContext } from '../../providers/ToDoListProvider';
 import ToDoItem from '../ToDoItem';
 import ToDoItemPlaceholder from '../ToDoItemPlaceholder';
@@ -8,6 +9,7 @@ import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
 import { updateToDoItems } from '../../api/toDoList';
 import { showAlert } from '../../utils/alert';
+import { Route } from '../../enums/route';
 
 const PlaceholderComponent = () => (
   <Container>
@@ -26,6 +28,7 @@ const EmptyListComponent = () => (
 export const ToDoList = () => {
   const { dispatch } = useAppState();
   const { toDoList, isLoading, removeFromToDoList } = useToDoListContext();
+  const navigate = useNavigate();
   const visibleToDoItems = useMemo(() => toDoList.filter(({ isDone }) => !isDone), [toDoList]);
 
   const clearSelectedTodoItems = useCallback((id: string) => {
@@ -49,6 +52,10 @@ export const ToDoList = () => {
     }
   }, [dispatch]);
 
+  const handleEdit = useCallback((id: string) => {
+    navigate(Route.EditToDoItem.replace(':id', id))
+  }, [navigate]);
+
   if (isLoading) {
     return <PlaceholderComponent />
   }
@@ -63,6 +70,7 @@ export const ToDoList = () => {
         component={ToDoItem}
         list={visibleToDoItems}
         onSwipeAction={markToDoItemAsDone}
+        onEditAction={handleEdit}
         threshold={0.3}
       />
     </Container>

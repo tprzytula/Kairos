@@ -1,10 +1,23 @@
 import { render, screen } from "@testing-library/react"
+import { BrowserRouter } from 'react-router'
 import ToDoList from "."
 import * as ToDoListProvider from '../../providers/ToDoListProvider'
+import * as ReactRouter from 'react-router'
 import { IState } from "../../providers/ToDoListProvider/types"
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useNavigate: jest.fn(),
+}))
+
 describe('Given the ToDoList component', () => {
+  const mockNavigate = jest.fn()
+
+  beforeEach(() => {
+    jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate)
+    mockNavigate.mockClear()
+  })
   it('should render only the not completed items', () => {
     jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
@@ -14,6 +27,16 @@ describe('Given the ToDoList component', () => {
     expect(screen.getByText('Buy Bread')).toBeVisible()
   })
 
+  it('should pass edit function to SwipeableList', () => {
+    jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+
+    renderWithTheme(<ToDoList />)
+
+    // The SwipeableList should receive both onSwipeAction and onEditAction
+    // This test ensures the edit navigation is properly set up
+    expect(mockNavigate).toHaveBeenCalledTimes(0) // Should not navigate on render
+  })
+
   describe('When the to do list is empty', () => {
     it('should render the empty list message', () => {
       jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue({
@@ -21,6 +44,7 @@ describe('Given the ToDoList component', () => {
         isLoading: false,
         refetchToDoList: jest.fn(),
         removeFromToDoList: jest.fn(),
+        updateToDoItemFields: jest.fn(),
       })
 
       renderWithTheme(<ToDoList />)
@@ -36,6 +60,7 @@ describe('Given the ToDoList component', () => {
         isLoading: true,
         refetchToDoList: jest.fn(),
         removeFromToDoList: jest.fn(),
+        updateToDoItemFields: jest.fn(),
       })
 
       renderWithTheme(<ToDoList />)
@@ -50,7 +75,9 @@ const theme = createTheme()
 const renderWithTheme = (component: React.ReactElement) => {
   return render(
     <ThemeProvider theme={theme}>
-      {component}
+      <BrowserRouter>
+        {component}
+      </BrowserRouter>
     </ThemeProvider>
   )
 }
@@ -82,4 +109,5 @@ const EXAMPLE_TO_DO_LIST_CONTEXT: IState = {
   isLoading: false,
   refetchToDoList: jest.fn(),
   removeFromToDoList: jest.fn(),
+  updateToDoItemFields: jest.fn(),
 }

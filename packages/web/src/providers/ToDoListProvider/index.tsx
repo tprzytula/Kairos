@@ -2,13 +2,14 @@ import { createContext, useContext, useState, useCallback, useEffect, useMemo } 
 import { StateComponentProps } from '../AppStateProvider/types'
 import { IState } from './types'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
-import { retrieveToDoList } from '../../api/toDoList'
+import { retrieveToDoList, updateToDoItemFields } from '../../api/toDoList'
 
 export const initialState: IState = {
   toDoList: [],
   isLoading: false,
   refetchToDoList: async () => {},
   removeFromToDoList: () => {},
+  updateToDoItemFields: async () => {},
 }
 
 export const ToDoListContext = createContext<IState>(initialState)
@@ -44,6 +45,24 @@ export const ToDoListProvider = ({ children }: StateComponentProps) => {
     await fetchToDoList()
   }, [fetchToDoList])
 
+  const updateToDoItemFieldsHandler = useCallback(async (id: string, fields: any) => {
+    try {
+      await updateToDoItemFields(id, fields)
+      
+      // Update the local state to reflect the changes
+      setToDoList((prev) => 
+        prev.map((item) => 
+          item.id === id 
+            ? { ...item, ...fields }
+            : item
+        )
+      )
+    } catch (error) {
+      console.error('Failed to update todo item:', error)
+      throw error
+    }
+  }, [])
+
   useEffect(() => {
     fetchToDoList()
   }, [fetchToDoList])
@@ -54,8 +73,9 @@ export const ToDoListProvider = ({ children }: StateComponentProps) => {
       isLoading,
       refetchToDoList,
       removeFromToDoList,
+      updateToDoItemFields: updateToDoItemFieldsHandler,
     }),
-    [toDoList, isLoading, refetchToDoList, removeFromToDoList]
+    [toDoList, isLoading, refetchToDoList, removeFromToDoList, updateToDoItemFieldsHandler]
   )
 
   return (

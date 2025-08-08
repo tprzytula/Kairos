@@ -15,3 +15,5 @@ export const updateToDoItems = async (items: Array<ITodoItemUpdate>): Promise<Ar
 
   return []
 }
+
+export * from './updateSingle'

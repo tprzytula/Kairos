@@ -7,4 +7,5 @@ export enum Route {
     NoiseTracking = '/noise-tracking',
     ToDoList = '/todo',
     AddToDoItem = '/todo/add',
+    EditToDoItem = '/todo/edit/:id',
 }

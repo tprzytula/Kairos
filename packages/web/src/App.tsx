@@ -9,6 +9,7 @@ import { Route as RouteEnum } from './enums/route'
 import NoiseTrackingRoute from './routes/NoiseTrackingRoute'
 import ToDoListRoute from './routes/ToDoListRoute'
 import AddToDoItemRoute from './routes/AddToDoItemRoute'
+import EditToDoItemRoute from './routes/EditToDoItemRoute'
 import HomeRoute from './routes/HomeRoute'
 
 export const App = () => {
@@ -23,6 +24,7 @@ export const App = () => {
           <Route path={RouteEnum.NoiseTracking} element={<NoiseTrackingRoute />} />
           <Route path={RouteEnum.ToDoList} element={<ToDoListRoute />} />
           <Route path={RouteEnum.AddToDoItem} element={<AddToDoItemRoute />} />
+          <Route path={RouteEnum.EditToDoItem} element={<EditToDoItemRoute />} />
         </Routes>
         <AlertContainer />
         <PWAUpdateNotification />

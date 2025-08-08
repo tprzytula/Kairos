@@ -1,0 +1,25 @@
+import { API_BASE_URL } from '../../index'
+import { ITodoItem } from '../retrieve/types'
+
+export type ToDoItemUpdateFields = {
+  name?: string
+  description?: string
+  dueDate?: number
+  isDone?: boolean
+}
+
+export const updateToDoItemFields = async (id: string, fields: ToDoItemUpdateFields): Promise<void> => {
+  const body = {
+    id,
+    ...fields,
+  }
+
+  const response = await fetch(`${API_BASE_URL}/todo_list/items/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to update todo item')
+  }
+}
