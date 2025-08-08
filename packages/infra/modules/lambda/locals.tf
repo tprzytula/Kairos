@@ -97,7 +97,15 @@ locals {
           todo_list = "read-write"
         }
       }
-    }
+    },
+    "update_todo_item" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          todo_list = "read-write"
+        }
+      }
+    },
     "update_grocery_item" = {
       environment_variables = {}
       permissions = {

@@ -108,6 +108,106 @@ paths:
           application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
+  /todo_list/items/{id}:
+    patch:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identifier of the todo item to be updated
+          example: "c8aef3a0-ead3-4e64-b9ce-4ece324720fb"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "c8aef3a0-ead3-4e64-b9ce-4ece324720fb"
+                name:
+                  type: string
+                  example: "Complete project documentation"
+                description:
+                  type: string
+                  example: "Finish writing the user guide and API documentation"
+                dueDate:
+                  type: number
+                  example: 1672531200
+                isDone:
+                  type: boolean
+                  example: false
+              required:
+                - id
+        required: true
+      x-amazon-apigateway-request-validator: Validate body
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["update_todo_item"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Todo item updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "c8aef3a0-ead3-4e64-b9ce-4ece324720fb"
+                  name:
+                    type: string
+                    example: "Complete project documentation"
+                  description:
+                    type: string
+                    example: "Finish writing the user guide and API documentation"
+                  dueDate:
+                    type: number
+                    example: 1672531200
+                  isDone:
+                    type: boolean
+                    example: false
+        400:
+          description: Incorrect todo item details
+    options:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identifier of the todo item
+          example: "c8aef3a0-ead3-4e64-b9ce-4ece324720fb"
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'PATCH'"
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: "when_no_match"
+        type: "mock"
 components:
   schemas:
     todoItem:
