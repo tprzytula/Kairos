@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Container, ItemContent, RightActionsContainer, LeftActionsContainer, RightActionButton, LeftActionButton } from './index.styled';
-import { SwipeableListItemProps } from './types';
+import { SwipeableListItemProps, SwipeableListItemRef } from './types';
 import { useSwipeGesture } from './hooks/useSwipeGesture';
 import { useHapticFeedback } from './hooks/useHapticFeedback';
 import { useActionVisibility } from './hooks/useActionVisibility';
 
 const HAPTIC_FEEDBACK_THRESHOLD = 0;
 
-export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
+export const SwipeableListItem = forwardRef<SwipeableListItemRef, SwipeableListItemProps>(({
   children,
   onSwipeAction,
   onEditAction,
   threshold = 0.3,
   disabled = false,
-}) => {
+  onSwipeStart,
+  onClose,
+}, ref) => {
   const { triggerFeedback } = useHapticFeedback({ enabled: !disabled });
 
   const actionVisibility = useActionVisibility({
@@ -39,12 +41,31 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
       if (Math.abs(newTranslateX) === HAPTIC_FEEDBACK_THRESHOLD && newIsDragging) {
         triggerFeedback(1);
       }
+      
+      // Notify parent when swipe starts
+      if (Math.abs(newTranslateX) > 0 && newIsDragging && onSwipeStart) {
+        onSwipeStart();
+      }
     },
     onSwipeEnd: (endTranslateX) => {
       const newTranslateX = actionVisibility.handleSwipeEnd(endTranslateX, containerRef);
       setTranslateX(newTranslateX);
     },
   });
+
+  // Expose close method via ref
+  useImperativeHandle(ref, () => ({
+    close: () => {
+      setTranslateX(0);
+    },
+  }), [setTranslateX]);
+
+  // Handle external close requests
+  useEffect(() => {
+    if (onClose) {
+      setTranslateX(0);
+    }
+  }, [onClose, setTranslateX]);
 
   // Setup outside click handler that also resets translateX
   React.useEffect(() => {
@@ -84,6 +105,8 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
       </ItemContent>
     </Container>
   );
-};
+});
 
-export { SwipeableListItemProps } from './types';
+SwipeableListItem.displayName = 'SwipeableListItem';
+
+export { SwipeableListItemProps, SwipeableListItemRef } from './types';

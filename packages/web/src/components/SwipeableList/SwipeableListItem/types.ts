@@ -4,6 +4,12 @@ export interface SwipeableListItemProps {
   onEditAction?: () => void;
   threshold?: number;
   disabled?: boolean;
+  onSwipeStart?: () => void;
+  onClose?: () => void;
+}
+
+export interface SwipeableListItemRef {
+  close: () => void;
 }
 
 export interface UseHapticFeedbackProps {
