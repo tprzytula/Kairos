@@ -5,6 +5,7 @@ import { useSwipeGesture } from './index';
 const createMockTouchEvent = (clientX: number, clientY: number = 0): React.TouchEvent => ({
   touches: [{ clientX, clientY }],
   preventDefault: jest.fn(),
+  cancelable: true,
 } as any);
 
 const createMockMouseEvent = (clientX: number): React.MouseEvent => ({
@@ -264,18 +265,19 @@ describe('useSwipeGesture', () => {
     expect(result.current.translateX).toBe(50);
   });
 
-  it('should prevent default on touch events when appropriate', () => {
+  it('should prevent default on touch move when swiping horizontally', () => {
     const { result } = renderHook(() => useSwipeGesture());
     
-    // Set initial translateX > MIN_SWIPE_DETECTION
+    // Start touch
     act(() => {
-      result.current.setTranslateX(10);
+      result.current.handlers.onTouchStart(createMockTouchEvent(100));
     });
     
-    const touchEvent = createMockTouchEvent(100);
+    // Create large movement that should prevent scrolling
+    const touchEvent = createMockTouchEvent(85); // deltaX = 15 > SCROLL_PREVENTION_THRESHOLD (10)
     
     act(() => {
-      result.current.handlers.onTouchStart(touchEvent);
+      result.current.handlers.onTouchMove(touchEvent);
     });
     
     expect(touchEvent.preventDefault).toHaveBeenCalled();

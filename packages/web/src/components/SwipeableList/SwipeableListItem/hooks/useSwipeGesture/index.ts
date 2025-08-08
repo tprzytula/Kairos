@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { UseSwipeGestureProps } from '../../types';
 
 const MIN_SWIPE_DETECTION = 5;
@@ -35,11 +35,9 @@ export const useSwipeGesture = ({
     setIsDragging(true);
     setIsVerticalGesture(false);
     
-    // Prevent default to avoid scrolling issues
-    if (Math.abs(translateX) > MIN_SWIPE_DETECTION) {
-      e.preventDefault();
-    }
-  }, [disabled, translateX]);
+    // Only prevent default if we detect meaningful swipe movement
+    // This reduces console warnings for passive event listeners
+  }, [disabled]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!isDragging || disabled) return;
@@ -67,13 +65,14 @@ export const useSwipeGesture = ({
     const newTranslateX = Math.max(MIN_SWIPE_DISTANCE, Math.min(deltaX, MAX_SWIPE_DISTANCE));
     updateTranslateX(newTranslateX);
     
-    // Prevent scrolling when actively swiping horizontally
-    if (Math.abs(newTranslateX) > SCROLL_PREVENTION_THRESHOLD) {
+    // Only try to prevent default for significant horizontal swipes
+    // Check if preventDefault is available to avoid passive event listener errors
+    if (Math.abs(newTranslateX) > SCROLL_PREVENTION_THRESHOLD && e.cancelable) {
       e.preventDefault();
     }
   }, [isDragging, startX, startY, isVerticalGesture, disabled, updateTranslateX]);
 
-  const handleTouchEnd = useCallback(() => {
+  const handleTouchEnd = useCallback((e?: React.TouchEvent) => {
     if (!isDragging || disabled) return;
     
     setIsDragging(false);
