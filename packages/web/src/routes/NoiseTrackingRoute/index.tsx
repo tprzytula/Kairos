@@ -13,6 +13,8 @@ const NoiseTrackingContent = () => {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     const sevenDaysAgo = new Date(today)
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+    const thirtyDaysAgo = new Date(today)
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
     
     const todayCount = noiseTrackingItems.filter(item => {
       const itemDate = new Date(item.timestamp)
@@ -24,16 +26,22 @@ const NoiseTrackingContent = () => {
       return itemDate >= sevenDaysAgo
     }).length
     
-    return { todayCount, last7DaysCount }
+    const last30DaysCount = noiseTrackingItems.filter(item => {
+      const itemDate = new Date(item.timestamp)
+      return itemDate >= thirtyDaysAgo
+    }).length
+    
+    return { todayCount, last7DaysCount, last30DaysCount }
   }
   
-  const { todayCount, last7DaysCount } = calculateNoiseCounts()
+  const { todayCount, last7DaysCount, last30DaysCount } = calculateNoiseCounts()
   const totalItems = noiseTrackingItems.length
   
   const stats = [
     { value: totalItems, label: 'Total' },
     { value: todayCount, label: 'Today' },
-    { value: last7DaysCount, label: 'Last 7 days' }
+    { value: last7DaysCount, label: 'Last 7 days' },
+    { value: last30DaysCount, label: 'Last 30 days' }
   ]
   
   return (
@@ -41,6 +49,7 @@ const NoiseTrackingContent = () => {
       <ModernPageHeader
         title="Noise Tracking"
         icon={<VolumeUpIcon />}
+        stats={stats}
       />
       <Container>
         <ScrollableContainer>

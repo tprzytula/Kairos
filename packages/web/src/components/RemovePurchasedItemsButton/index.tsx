@@ -19,7 +19,7 @@ export const RemovePurchasedItemsButton = () => {
     }
     
     if (purchasedCount === 0) {
-      return `${totalItems} item${totalItems === 1 ? '' : 's'} in your list`;
+      return "Tap items to mark as purchased";
     }
     
     return `${purchasedCount} of ${totalItems} item${totalItems === 1 ? '' : 's'} purchased`;

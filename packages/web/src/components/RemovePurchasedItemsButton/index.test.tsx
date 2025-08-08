@@ -24,36 +24,36 @@ describe('Given the RemovePurchasedItemsButton component', () => {
     })
 
     describe('When there are items but none purchased', () => {
-        it('should show item count status', () => {
+        it('should show action guidance', () => {
             mockUseAppState({ purchasedItems: new Set() })
             mockUseGroceryListContext({ groceryList: [{ id: '1' }, { id: '2' }, { id: '3' }] })
 
             render(<RemovePurchasedItemsButton />)
 
-            expect(screen.getByText('3 items in your list')).toBeVisible()
+            expect(screen.getByText('Tap items to mark as purchased')).toBeVisible()
             expect(screen.queryByText('Remove Purchased Items')).not.toBeInTheDocument()
         })
     })
 
     describe('When there is one item and none purchased', () => {
-        it('should show singular item count', () => {
+        it('should show action guidance', () => {
             mockUseAppState({ purchasedItems: new Set() })
             mockUseGroceryListContext({ groceryList: [{ id: '1' }] })
 
             render(<RemovePurchasedItemsButton />)
 
-            expect(screen.getByText('1 item in your list')).toBeVisible()
+            expect(screen.getByText('Tap items to mark as purchased')).toBeVisible()
         })
     })
 
     describe('When there are multiple items but none purchased', () => {
-        it('should show item count status', () => {
+        it('should show action guidance', () => {
             mockUseAppState({ purchasedItems: new Set() })
             mockUseGroceryListContext({ groceryList: [{ id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }] })
 
             render(<RemovePurchasedItemsButton />)
 
-            expect(screen.getByText('4 items in your list')).toBeVisible()
+            expect(screen.getByText('Tap items to mark as purchased')).toBeVisible()
             expect(screen.queryByText('Remove Purchased Items')).not.toBeInTheDocument()
         })
     })

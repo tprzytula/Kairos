@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNoiseTrackingContext } from '../../providers/NoiseTrackingProvider';
-import { Container, ScrollableList, EmptyState, EmptyStateText, InsightsContainer, InsightText, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, ViewToggleContainer, ViewToggleButton, SimpleListContainer, SimpleListItem } from './index.styled';
+import { Container, ScrollableList, EmptyState, EmptyStateText, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, ViewToggleContainer, ViewToggleButton, SimpleListContainer, SimpleListItem } from './index.styled';
 import NoiseTrackingItem from '../NoiseTrackingItem';
 import NoiseTrackingItemPlaceholder from '../NoiseTrackingItemPlaceholder';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -115,65 +115,7 @@ const getMiniTimelineData = (hourlyDistribution: number[], maxCount: number) => 
   }));
 };
 
-const getSmartInsights = (items: { timestamp: number }[]) => {
-  // Filter items to only include those between 7am and midnight (7-23)
-  const filteredItems = items.filter(item => {
-    const hour = new Date(item.timestamp).getHours();
-    return hour >= 7 && hour <= 23;
-  });
-  
-  if (filteredItems.length < 3) return [];
-  
-  const insights: string[] = [];
-  
-  // Time pattern analysis
-  const hourCounts = new Map<number, number>();
-  const dayOfWeekCounts = new Map<number, number>();
-  
-  filteredItems.forEach(item => {
-    const date = new Date(item.timestamp);
-    const hour = date.getHours();
-    const dayOfWeek = date.getDay();
-    
-    hourCounts.set(hour, (hourCounts.get(hour) || 0) + 1);
-    dayOfWeekCounts.set(dayOfWeek, (dayOfWeekCounts.get(dayOfWeek) || 0) + 1);
-  });
-  
-  // Find busiest time periods
-  const sortedHours = Array.from(hourCounts.entries()).sort((a, b) => b[1] - a[1]);
-  if (sortedHours.length > 0 && sortedHours[0][1] >= 3) {
-    const peakHour = sortedHours[0][0];
-    const timeRange = peakHour < 12 ? 'morning' : peakHour < 18 ? 'afternoon' : 'evening';
-    insights.push(`Most noise occurs in the ${timeRange}`);
-  }
-  
-  // Find busiest day of week
-  const sortedDays = Array.from(dayOfWeekCounts.entries()).sort((a, b) => b[1] - a[1]);
-  if (sortedDays.length > 0 && sortedDays[0][1] >= 2) {
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const busiestDay = dayNames[sortedDays[0][0]];
-    insights.push(`${busiestDay} is your noisiest day`);
-  }
-  
-  // Find quiet periods (only check hours 7-23)
-  const now = new Date();
-  const last7Days = filteredItems.filter(item => 
-    (now.getTime() - item.timestamp) < (7 * 24 * 60 * 60 * 1000)
-  );
-  
-  if (last7Days.length > 0) {
-    const quietHours = Array.from({ length: 17 }, (_, i) => i + 7)
-      .filter(hour => !hourCounts.has(hour) || hourCounts.get(hour)! < 2);
-    
-    if (quietHours.length > 0) {
-      const quietestHour = quietHours[Math.floor(quietHours.length / 2)];
-      const timeOfDay = quietestHour < 12 ? 'morning' : quietestHour < 18 ? 'afternoon' : 'evening';
-      insights.push(`Your quietest time is typically ${timeOfDay}`);
-    }
-  }
-  
-  return insights.slice(0, 2); // Limit to 2 insights
-};
+
 
 const PlaceholderComponent = () => (
   <Container>
@@ -269,7 +211,7 @@ const NoiseTrackingList = () => {
     );
   }
 
-  const insights = getSmartInsights(noiseTrackingItems);
+
 
   // Filter items for simple view to only show 7am to midnight
   const filteredSortedItems = noiseTrackingItems
@@ -322,13 +264,7 @@ const NoiseTrackingList = () => {
         </SimpleListContainer>
       ) : (
         <ScrollableList>
-          {insights.length > 0 && (
-            <InsightsContainer>
-              {insights.map((insight, index) => (
-                <InsightText key={index}>{insight}</InsightText>
-              ))}
-            </InsightsContainer>
-          )}
+
           {groupedItems.map(({ date, items }) => {
             const dateLabel = getDateLabel(date);
             const isExpanded = expandedGroups.has(dateLabel);

@@ -131,23 +131,7 @@ describe('Given the NoiseTrackingList component', () => {
     })
   })
 
-  it('should show smart insights with sufficient data', () => {
-    jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue(INSIGHTS_CONTEXT)
 
-    render(<NoiseTrackingList />)
-
-    // Should show insights for patterns
-    expect(screen.getByText(/Most noise occurs in the/)).toBeVisible()
-  })
-
-  it('should not show insights with insufficient data', () => {
-    jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue(EXAMPLE_NOISE_TRACKING_CONTEXT)
-
-    render(<NoiseTrackingList />)
-
-    // Should not show insights with only 2 items
-    expect(screen.queryByText(/Most noise occurs in the/)).not.toBeInTheDocument()
-  })
 
   it('should auto-expand first two groups', async () => {
     jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue(MULTIPLE_GROUPS_CONTEXT)
@@ -413,17 +397,7 @@ const MULTIPLE_ITEMS_CONTEXT: IState = {
   refetchNoiseTrackingItems: jest.fn(),
 }
 
-const INSIGHTS_CONTEXT: IState = {
-  noiseTrackingItems: [
-    { timestamp: new Date().setHours(9, 0, 0, 0) }, // Morning
-    { timestamp: new Date().setHours(9, 15, 0, 0) }, // Morning (same hour)
-    { timestamp: new Date().setHours(9, 30, 0, 0) }, // Morning (same hour)
-    { timestamp: new Date().setHours(10, 0, 0, 0) }, // Morning
-    { timestamp: new Date().setHours(15, 0, 0, 0) }, // Afternoon
-  ],
-  isLoading: false,
-  refetchNoiseTrackingItems: jest.fn(),
-}
+
 
 const MULTIPLE_GROUPS_CONTEXT: IState = {
   noiseTrackingItems: [

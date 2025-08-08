@@ -25,6 +25,7 @@ const GroceryListContent = () => {
       <ModernPageHeader
         title="Grocery List"
         icon={<ShoppingCartIcon />}
+        stats={stats}
       />
       <Container>
         <RemovePurchasedItemsButton />

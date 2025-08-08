@@ -1,39 +1,81 @@
 import { render, screen, act } from "@testing-library/react"
 import MarkToDoItemsAsDoneButton from "."
 import * as AppState from '../../providers/AppStateProvider'
+import * as ToDoListProvider from '../../providers/ToDoListProvider'
 import * as ToDoListAPI from '../../api/toDoList'
 import { showAlert } from "../../utils/alert"
 
 jest.mock('../../providers/AppStateProvider')
+jest.mock('../../providers/ToDoListProvider')
 jest.mock('../../api/toDoList')
 jest.mock('../../utils/alert')
 
 describe('Given the MarkToDoItemsAsDoneButton component', () => {
-    describe('When there is no purchased item', () => {
-        it('should not show the action button', () => {
+    describe('When the to-do list is empty', () => {
+        it('should show empty list status', () => {
             mockUseAppState({ selectedTodoItems: new Set() })
+            mockUseToDoListContext({ toDoList: [] })
 
             render(<MarkToDoItemsAsDoneButton />)
 
-            expect(screen.getByText('Mark To Do Items As Done')).not.toBeVisible()
+            expect(screen.getByText('Your to-do list is empty')).toBeVisible()
+            expect(screen.queryByText('Mark To Do Items As Done')).not.toBeInTheDocument()
         })
     })
 
-    describe('When there is at least one purchased item', () => {
+    describe('When there are items but none selected', () => {
+        it('should show action guidance', () => {
+            mockUseAppState({ selectedTodoItems: new Set() })
+            mockUseToDoListContext({ toDoList: [{ id: '1' }, { id: '2' }, { id: '3' }] })
+
+            render(<MarkToDoItemsAsDoneButton />)
+
+            expect(screen.getByText('Tap items to mark as done')).toBeVisible()
+            expect(screen.queryByText('Mark To Do Items As Done')).not.toBeInTheDocument()
+        })
+    })
+
+    describe('When there is one item and none selected', () => {
+        it('should show action guidance', () => {
+            mockUseAppState({ selectedTodoItems: new Set() })
+            mockUseToDoListContext({ toDoList: [{ id: '1' }] })
+
+            render(<MarkToDoItemsAsDoneButton />)
+
+            expect(screen.getByText('Tap items to mark as done')).toBeVisible()
+        })
+    })
+
+    describe('When there are multiple items but none selected', () => {
+        it('should show action guidance', () => {
+            mockUseAppState({ selectedTodoItems: new Set() })
+            mockUseToDoListContext({ toDoList: [{ id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }] })
+
+            render(<MarkToDoItemsAsDoneButton />)
+
+            expect(screen.getByText('Tap items to mark as done')).toBeVisible()
+            expect(screen.queryByText('Mark To Do Items As Done')).not.toBeInTheDocument()
+        })
+    })
+
+    describe('When items are selected for completion', () => {
         it('should render the action button', () => {
             mockUseAppState({ selectedTodoItems: new Set(['1']) })
+            mockUseToDoListContext({ toDoList: [{ id: '1' }, { id: '2' }] })
 
             render(<MarkToDoItemsAsDoneButton />)
 
             expect(screen.getByText('Mark To Do Items As Done')).toBeVisible()
+            expect(screen.queryByText(/Tap items to mark as done/)).not.toBeInTheDocument()
         })
 
         describe('And the button is clicked', () => {
-            it('should remove the purchased items', async () => {
+            it('should mark the selected items as done', async () => {
                 const ids = ['1', '2']
 
                 jest.spyOn(ToDoListAPI, 'updateToDoItems').mockResolvedValue(ids.map(id => ({ id, isDone: true })))
                 mockUseAppState({ selectedTodoItems: new Set(ids) })
+                mockUseToDoListContext({ toDoList: [{ id: '1' }, { id: '2' }, { id: '3' }] })
 
                 render(<MarkToDoItemsAsDoneButton />)
 
@@ -48,6 +90,7 @@ describe('Given the MarkToDoItemsAsDoneButton component', () => {
                 it('should show an error alert', async () => {
                     jest.spyOn(ToDoListAPI, 'updateToDoItems').mockRejectedValue(new Error('Failed to mark to do items as done'))
                     const dispatch = mockUseAppState({ selectedTodoItems: new Set(['1']) })
+                    mockUseToDoListContext({ toDoList: [{ id: '1' }] })
 
                     render(<MarkToDoItemsAsDoneButton />)
 
@@ -78,4 +121,20 @@ const mockUseAppState = ({ selectedTodoItems }: { selectedTodoItems: Set<string>
     })
 
     return dispatch
+}
+
+const mockUseToDoListContext = ({ toDoList }: { toDoList: Array<{ id: string; name?: string; isDone?: boolean }> }) => {
+    const fullToDoList = toDoList.map(item => ({
+        id: item.id,
+        name: item.name || `Item ${item.id}`,
+        isDone: item.isDone || false,
+    }))
+
+    jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue({
+        toDoList: fullToDoList,
+        isLoading: false,
+        refetchToDoList: jest.fn(),
+        removeFromToDoList: jest.fn(),
+        updateToDoItemFields: jest.fn(),
+    })
 }

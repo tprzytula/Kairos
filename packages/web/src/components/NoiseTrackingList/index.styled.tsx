@@ -59,25 +59,7 @@ export const EmptyStateText = styled(Typography)(({ theme }) => ({
   textAlign: 'center',
 }))
 
-export const InsightsContainer = styled('div')(({ theme }) => ({
-  margin: '0 4px 16px 4px',
-  padding: '12px 16px',
-  backgroundColor: 'rgba(0, 0, 0, 0.02)',
-  borderRadius: '12px',
-  border: '1px solid rgba(0, 0, 0, 0.06)',
-}))
 
-export const InsightText = styled(Typography)(({ theme }) => ({
-  fontSize: '12px',
-  fontWeight: 500,
-  color: theme.palette.text.secondary,
-  lineHeight: '1.4',
-  marginBottom: '3px',
-  opacity: 0.8,
-  '&:last-child': {
-    marginBottom: 0,
-  },
-}))
 
 export const DateGroup = styled('div')({
   marginBottom: '2px',

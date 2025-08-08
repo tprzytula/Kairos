@@ -1,14 +1,29 @@
 import { useAppState } from "../../providers/AppStateProvider";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { showAlert } from "../../utils/alert";
 import { ActionName } from "../../providers/AppStateProvider/enums";
 import { useToDoListContext } from "../../providers/ToDoListProvider";
 import { updateToDoItems } from "../../api/toDoList";
-import { DoneButton, DoneButtonContainer } from "./index.styled";
+import { DoneButton, DoneButtonContainer, StatusText } from "./index.styled";
 
 export const MarkToDoItemsAsDoneButton = () => {
   const { state: { selectedTodoItems }, dispatch } = useAppState();
-  const { refetchToDoList } = useToDoListContext()
+  const { toDoList, refetchToDoList } = useToDoListContext()
+
+  const statusText = useMemo(() => {
+    const totalItems = toDoList.length;
+    const selectedCount = selectedTodoItems.size;
+    
+    if (totalItems === 0) {
+      return "Your to-do list is empty";
+    }
+    
+    if (selectedCount === 0) {
+      return "Tap items to mark as done";
+    }
+    
+    return `${selectedCount} of ${totalItems} item${totalItems === 1 ? '' : 's'} selected`;
+  }, [toDoList.length, selectedTodoItems.size]);
 
   const clearSelectedTodoItems = useCallback((selectedTodoItems: Set<string>) => {
     dispatch({ 
@@ -33,16 +48,20 @@ export const MarkToDoItemsAsDoneButton = () => {
 
   return (
     <DoneButtonContainer>
-      <DoneButton
-        variant="contained"
-        color="primary"
-        onClick={markToDoItemsAsDone}
-        aria-label="Mark To Do Items As Done"
-        disabled={selectedTodoItems.size === 0}
-        sx={{ visibility: selectedTodoItems.size > 0 ? 'visible' : 'hidden' }}
-      >
-        Mark To Do Items As Done
-      </DoneButton>
+      {selectedTodoItems.size > 0 ? (
+        <DoneButton
+          variant="contained"
+          color="primary"
+          onClick={markToDoItemsAsDone}
+          aria-label="Mark To Do Items As Done"
+        >
+          Mark To Do Items As Done
+        </DoneButton>
+      ) : (
+        <StatusText>
+          {statusText}
+        </StatusText>
+      )}
     </DoneButtonContainer>
   );
 };
