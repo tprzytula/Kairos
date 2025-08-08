@@ -1,7 +1,7 @@
 import { handler } from ".";
 import { getBody } from "./body";
 import { updateItem } from "@kairos-lambdas-libs/dynamodb";
-import { DynamoDBTable } from "@kairos-lambdas-libs/dynamodb";
+import { DynamoDBTable, GroceryItemUnit } from "@kairos-lambdas-libs/dynamodb";
 
 jest.mock("./body");
 jest.mock("@kairos-lambdas-libs/dynamodb");
@@ -26,7 +26,7 @@ describe("Given the update_grocery_item lambda handler", () => {
   });
 
   describe("When the body is valid", () => {
-    it("should update the item in the grocery list table", async () => {
+    it("should update the item in the grocery list table with quantity only", async () => {
       jest.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
 
       await runHandler({ body: JSON.stringify(EXAMPLE_BODY) });
@@ -36,6 +36,50 @@ describe("Given the update_grocery_item lambda handler", () => {
         key: { id: "test-id" },
         updatedFields: {
           quantity: "5",
+        },
+      });
+    });
+
+    it("should update the item with multiple fields", async () => {
+      const multiFieldBody = {
+        id: "test-id",
+        quantity: "3",
+        name: "Updated Item",
+        unit: GroceryItemUnit.KILOGRAM,
+        imagePath: "/updated.png",
+      };
+      
+      jest.mocked(getBody).mockReturnValue(multiFieldBody);
+
+      await runHandler({ body: JSON.stringify(multiFieldBody) });
+
+      expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
+        tableName: DynamoDBTable.GROCERY_LIST,
+        key: { id: "test-id" },
+        updatedFields: {
+          quantity: "3",
+          name: "Updated Item",
+          unit: GroceryItemUnit.KILOGRAM,
+          imagePath: "/updated.png",
+        },
+      });
+    });
+
+    it("should update the item with only name", async () => {
+      const nameOnlyBody = {
+        id: "test-id",
+        name: "New Name",
+      };
+      
+      jest.mocked(getBody).mockReturnValue(nameOnlyBody);
+
+      await runHandler({ body: JSON.stringify(nameOnlyBody) });
+
+      expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
+        tableName: DynamoDBTable.GROCERY_LIST,
+        key: { id: "test-id" },
+        updatedFields: {
+          name: "New Name",
         },
       });
     });

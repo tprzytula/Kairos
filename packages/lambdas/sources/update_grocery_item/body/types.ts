@@ -1,4 +1,9 @@
+import { GroceryItemUnit } from '@kairos-lambdas-libs/dynamodb';
+
 export interface IRequestBody {
     id: string;
-    quantity: number;
+    quantity?: string;
+    name?: string;
+    unit?: GroceryItemUnit;
+    imagePath?: string;
 } 

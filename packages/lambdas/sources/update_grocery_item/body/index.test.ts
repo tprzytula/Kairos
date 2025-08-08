@@ -1,7 +1,8 @@
 import { getBody } from ".";
+import { GroceryItemUnit } from '@kairos-lambdas-libs/dynamodb';
 
 describe("Given the getBody function", () => {
-  it("should return the parsed body when valid", () => {
+  it("should return the parsed body when valid quantity is provided", () => {
     const validBody = JSON.stringify({
       id: "test-id",
       quantity: "5",
@@ -12,6 +13,40 @@ describe("Given the getBody function", () => {
     expect(result).toEqual({
       id: "test-id",
       quantity: "5",
+    });
+  });
+
+  it("should return the parsed body when multiple fields are provided", () => {
+    const validBody = JSON.stringify({
+      id: "test-id",
+      quantity: "3",
+      name: "Test Item",
+      unit: GroceryItemUnit.KILOGRAM,
+      imagePath: "/test.png",
+    });
+
+    const result = getBody(validBody);
+
+    expect(result).toEqual({
+      id: "test-id",
+      quantity: "3",
+      name: "Test Item",
+      unit: GroceryItemUnit.KILOGRAM,
+      imagePath: "/test.png",
+    });
+  });
+
+  it("should return the parsed body when only name is provided", () => {
+    const validBody = JSON.stringify({
+      id: "test-id",
+      name: "Updated Item",
+    });
+
+    const result = getBody(validBody);
+
+    expect(result).toEqual({
+      id: "test-id",
+      name: "Updated Item",
     });
   });
 
@@ -37,9 +72,31 @@ describe("Given the getBody function", () => {
     expect(result).toBeNull();
   });
 
-  it("should return null when quantity is missing", () => {
+  it("should return null when no updateable fields are provided", () => {
     const invalidBody = JSON.stringify({
       id: "test-id",
+    });
+
+    const result = getBody(invalidBody);
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when name is empty string", () => {
+    const invalidBody = JSON.stringify({
+      id: "test-id",
+      name: "",
+    });
+
+    const result = getBody(invalidBody);
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when name is only whitespace", () => {
+    const invalidBody = JSON.stringify({
+      id: "test-id",
+      name: "   ",
     });
 
     const result = getBody(invalidBody);

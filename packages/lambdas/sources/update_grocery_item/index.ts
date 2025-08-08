@@ -14,21 +14,19 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    const { id, quantity } = body;
+    const { id, ...updatedFields } = body;
 
     await updateItem({
       tableName: DynamoDBTable.GROCERY_LIST,
       key: { id },
-      updatedFields: {
-        quantity,
-      },
+      updatedFields,
     });
   
     return createResponse({
       statusCode: 200,
       message: {
         id,
-        quantity,
+        ...updatedFields,
       },
     });
   },
