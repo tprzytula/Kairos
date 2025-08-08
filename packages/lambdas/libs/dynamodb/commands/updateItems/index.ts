@@ -1,7 +1,7 @@
 import { IUpdateItemsOptions } from "./types";
 import { getDocumentClient } from "../../client";
 import { TransactWriteCommand, TransactWriteCommandOutput } from "@aws-sdk/lib-dynamodb";
-import { getUpdateExpression, getExpressionAttributeValues } from "../updateItem/utils";
+import { getUpdateExpression, getExpressionAttributeNames, getExpressionAttributeValues } from "../updateItem/utils";
 
 export const updateItems = async ({
   items,
@@ -13,6 +13,7 @@ export const updateItems = async ({
       TableName: tableName,
       Key: { id },
       UpdateExpression: getUpdateExpression(fieldsToUpdate),
+      ExpressionAttributeNames: getExpressionAttributeNames(fieldsToUpdate),
       ExpressionAttributeValues: getExpressionAttributeValues(fieldsToUpdate),
     }
   }));

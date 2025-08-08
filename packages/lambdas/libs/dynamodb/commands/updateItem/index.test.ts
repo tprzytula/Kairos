@@ -26,7 +26,11 @@ describe("Given the putItem function", () => {
       Key: {
         id: "1",
       },
-      UpdateExpression: "set name = :name, quantity = :quantity",
+      UpdateExpression: "set #name = :name, #quantity = :quantity",
+      ExpressionAttributeNames: {
+        "#name": "name",
+        "#quantity": "quantity",
+      },
       ExpressionAttributeValues: {
         ":name": "John Doe",
         ":quantity": "1",

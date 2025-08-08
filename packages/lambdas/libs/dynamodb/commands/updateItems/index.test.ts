@@ -24,7 +24,8 @@ describe("Given the updateItems function", () => {
           Update: {
             TableName: DynamoDBTable.GROCERY_LIST,
             Key: { id: '1' },
-            UpdateExpression: 'set isDone = :isDone',
+            UpdateExpression: 'set #isDone = :isDone',
+            ExpressionAttributeNames: { '#isDone': 'isDone' },
             ExpressionAttributeValues: { ':isDone': true },
           }
         },
@@ -32,7 +33,8 @@ describe("Given the updateItems function", () => {
           Update: {
             TableName: DynamoDBTable.GROCERY_LIST,
             Key: { id: '2' },
-            UpdateExpression: 'set isDone = :isDone',
+            UpdateExpression: 'set #isDone = :isDone',
+            ExpressionAttributeNames: { '#isDone': 'isDone' },
             ExpressionAttributeValues: { ':isDone': false },
           }
         }
