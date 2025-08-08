@@ -338,7 +338,7 @@ describe('useSwipeGesture', () => {
       
       // Make small horizontal movement with large vertical movement
       act(() => {
-        result.current.handlers.onTouchMove(createMockTouchEvent(95, 70)); // deltaX = 5, deltaY = 20 > VERTICAL_THRESHOLD (15)
+        result.current.handlers.onTouchMove(createMockTouchEvent(95, 85)); // deltaX = 5, deltaY = 35 > VERTICAL_THRESHOLD (30)
       });
       
       // Horizontal swipe should be reset to 0
@@ -357,7 +357,7 @@ describe('useSwipeGesture', () => {
       
       // Make horizontal movement with small vertical movement
       act(() => {
-        result.current.handlers.onTouchMove(createMockTouchEvent(80, 60)); // deltaX = 20, deltaY = 10 < VERTICAL_THRESHOLD (15)
+        result.current.handlers.onTouchMove(createMockTouchEvent(80, 70)); // deltaX = 20, deltaY = 20 < VERTICAL_THRESHOLD (30)
       });
       
       // Horizontal swipe should be allowed
@@ -376,7 +376,7 @@ describe('useSwipeGesture', () => {
       
       // First movement: large vertical movement (should trigger vertical gesture)
       act(() => {
-        result.current.handlers.onTouchMove(createMockTouchEvent(95, 70)); // deltaY = 20 > threshold
+        result.current.handlers.onTouchMove(createMockTouchEvent(95, 85)); // deltaY = 35 > threshold
       });
       
       // Second movement: large horizontal movement (should be ignored)
@@ -399,7 +399,7 @@ describe('useSwipeGesture', () => {
       
       // Make vertical movement
       act(() => {
-        result.current.handlers.onTouchMove(createMockTouchEvent(95, 70)); // vertical gesture
+        result.current.handlers.onTouchMove(createMockTouchEvent(95, 85)); // vertical gesture
       });
       
       // End touch
@@ -460,7 +460,7 @@ describe('useSwipeGesture', () => {
       
       // Continue moving more vertically
       act(() => {
-        result.current.handlers.onTouchMove(createMockTouchEvent(65, 75)); // deltaY becomes 25 > threshold
+        result.current.handlers.onTouchMove(createMockTouchEvent(65, 85)); // deltaY becomes 35 > threshold
       });
       
       // Should reset to 0 when vertical threshold is exceeded

@@ -5,7 +5,7 @@ const MIN_SWIPE_DETECTION = 5;
 const SCROLL_PREVENTION_THRESHOLD = 10;
 const MAX_SWIPE_DISTANCE = 100; // 80 + 20 buffer
 const MIN_SWIPE_DISTANCE = -100; // Allow negative for left swipe
-const VERTICAL_THRESHOLD = 15; // If vertical movement exceeds this, prioritize scrolling over swiping
+const VERTICAL_THRESHOLD = 30; // If vertical movement exceeds this, prioritize scrolling over swiping
 
 export const useSwipeGesture = ({
   disabled = false,
