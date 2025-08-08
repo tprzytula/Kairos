@@ -2,8 +2,8 @@ import { renderHook, act } from '@testing-library/react';
 import { useSwipeGesture } from './index';
 
 // Mock React events
-const createMockTouchEvent = (clientX: number): React.TouchEvent => ({
-  touches: [{ clientX }],
+const createMockTouchEvent = (clientX: number, clientY: number = 0): React.TouchEvent => ({
+  touches: [{ clientX, clientY }],
   preventDefault: jest.fn(),
 } as any);
 
@@ -300,5 +300,147 @@ describe('useSwipeGesture', () => {
     });
     
     expect(touchEvent.preventDefault).toHaveBeenCalled();
+  });
+
+  describe('vertical gesture detection', () => {
+    it('should prevent horizontal swiping when vertical movement exceeds threshold', () => {
+      const onSwipeUpdate = jest.fn();
+      const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
+      
+      // Start touch
+      act(() => {
+        result.current.handlers.onTouchStart(createMockTouchEvent(100, 50));
+      });
+      
+      // Make small horizontal movement with large vertical movement
+      act(() => {
+        result.current.handlers.onTouchMove(createMockTouchEvent(95, 70)); // deltaX = 5, deltaY = 20 > VERTICAL_THRESHOLD (15)
+      });
+      
+      // Horizontal swipe should be reset to 0
+      expect(result.current.translateX).toBe(0);
+      expect(onSwipeUpdate).toHaveBeenLastCalledWith(0, true);
+    });
+
+    it('should allow horizontal swiping when vertical movement is below threshold', () => {
+      const onSwipeUpdate = jest.fn();
+      const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
+      
+      // Start touch
+      act(() => {
+        result.current.handlers.onTouchStart(createMockTouchEvent(100, 50));
+      });
+      
+      // Make horizontal movement with small vertical movement
+      act(() => {
+        result.current.handlers.onTouchMove(createMockTouchEvent(80, 60)); // deltaX = 20, deltaY = 10 < VERTICAL_THRESHOLD (15)
+      });
+      
+      // Horizontal swipe should be allowed
+      expect(result.current.translateX).toBe(20);
+      expect(onSwipeUpdate).toHaveBeenLastCalledWith(20, true);
+    });
+
+    it('should ignore subsequent horizontal movements after vertical gesture is detected', () => {
+      const onSwipeUpdate = jest.fn();
+      const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
+      
+      // Start touch
+      act(() => {
+        result.current.handlers.onTouchStart(createMockTouchEvent(100, 50));
+      });
+      
+      // First movement: large vertical movement (should trigger vertical gesture)
+      act(() => {
+        result.current.handlers.onTouchMove(createMockTouchEvent(95, 70)); // deltaY = 20 > threshold
+      });
+      
+      // Second movement: large horizontal movement (should be ignored)
+      act(() => {
+        result.current.handlers.onTouchMove(createMockTouchEvent(70, 75)); // deltaX = 30, but should be ignored
+      });
+      
+      // Should remain at 0 despite large horizontal movement
+      expect(result.current.translateX).toBe(0);
+    });
+
+    it('should not trigger onSwipeEnd when gesture was vertical', () => {
+      const onSwipeEnd = jest.fn();
+      const { result } = renderHook(() => useSwipeGesture({ onSwipeEnd }));
+      
+      // Start touch
+      act(() => {
+        result.current.handlers.onTouchStart(createMockTouchEvent(100, 50));
+      });
+      
+      // Make vertical movement
+      act(() => {
+        result.current.handlers.onTouchMove(createMockTouchEvent(95, 70)); // vertical gesture
+      });
+      
+      // End touch
+      act(() => {
+        result.current.handlers.onTouchEnd();
+      });
+      
+      // onSwipeEnd should not be called for vertical gestures
+      expect(onSwipeEnd).not.toHaveBeenCalled();
+    });
+
+    it('should reset vertical gesture state on touch start', () => {
+      const onSwipeUpdate = jest.fn();
+      const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
+      
+      // First gesture: vertical
+      act(() => {
+        result.current.handlers.onTouchStart(createMockTouchEvent(100, 50));
+      });
+      
+      act(() => {
+        result.current.handlers.onTouchMove(createMockTouchEvent(95, 70)); // vertical gesture
+      });
+      
+      act(() => {
+        result.current.handlers.onTouchEnd();
+      });
+      
+      // Second gesture: should allow horizontal again
+      act(() => {
+        result.current.handlers.onTouchStart(createMockTouchEvent(100, 50));
+      });
+      
+      act(() => {
+        result.current.handlers.onTouchMove(createMockTouchEvent(80, 55)); // deltaX = 20, deltaY = 5
+      });
+      
+      // Should allow horizontal swipe in new gesture
+      expect(result.current.translateX).toBe(20);
+    });
+
+    it('should handle simultaneous horizontal and vertical movement correctly', () => {
+      const onSwipeUpdate = jest.fn();
+      const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
+      
+      // Start touch
+      act(() => {
+        result.current.handlers.onTouchStart(createMockTouchEvent(100, 50));
+      });
+      
+      // Move diagonally - more horizontal than vertical
+      act(() => {
+        result.current.handlers.onTouchMove(createMockTouchEvent(70, 60)); // deltaX = 30, deltaY = 10
+      });
+      
+      // Should allow horizontal swipe since vertical is below threshold
+      expect(result.current.translateX).toBe(30);
+      
+      // Continue moving more vertically
+      act(() => {
+        result.current.handlers.onTouchMove(createMockTouchEvent(65, 75)); // deltaY becomes 25 > threshold
+      });
+      
+      // Should reset to 0 when vertical threshold is exceeded
+      expect(result.current.translateX).toBe(0);
+    });
   });
 });

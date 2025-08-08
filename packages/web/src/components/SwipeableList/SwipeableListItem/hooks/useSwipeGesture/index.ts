@@ -4,6 +4,7 @@ import { UseSwipeGestureProps } from '../../types';
 const MIN_SWIPE_DETECTION = 5;
 const SCROLL_PREVENTION_THRESHOLD = 10;
 const MAX_SWIPE_DISTANCE = 100; // 80 + 20 buffer
+const VERTICAL_THRESHOLD = 15; // If vertical movement exceeds this, prioritize scrolling over swiping
 
 export const useSwipeGesture = ({
   disabled = false,
@@ -15,6 +16,8 @@ export const useSwipeGesture = ({
   const translateXRef = useRef(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
+  const [startY, setStartY] = useState(0);
+  const [isVerticalGesture, setIsVerticalGesture] = useState(false);
 
   const updateTranslateX = useCallback((newTranslateX: number, dragging?: boolean) => {
     setTranslateX(newTranslateX);
@@ -27,7 +30,9 @@ export const useSwipeGesture = ({
     
     const touch = e.touches[0];
     setStartX(touch.clientX);
+    setStartY(touch.clientY);
     setIsDragging(true);
+    setIsVerticalGesture(false);
     
     // Prevent default to avoid scrolling issues
     if (Math.abs(translateX) > MIN_SWIPE_DETECTION) {
@@ -40,7 +45,21 @@ export const useSwipeGesture = ({
     
     const touch = e.touches[0];
     const currentX = touch.clientX;
+    const currentY = touch.clientY;
     const deltaX = startX - currentX; // Inverted for right-to-left swipe
+    const deltaY = Math.abs(currentY - startY);
+    
+    // Check if this is primarily a vertical gesture
+    if (!isVerticalGesture && deltaY > VERTICAL_THRESHOLD) {
+      setIsVerticalGesture(true);
+      updateTranslateX(0);
+      return;
+    }
+    
+    // If already determined to be vertical gesture, ignore horizontal movement
+    if (isVerticalGesture) {
+      return;
+    }
     
     // Only allow leftward swipe (revealing actions on the right)
     if (deltaX < 0) {
@@ -52,18 +71,23 @@ export const useSwipeGesture = ({
     const newTranslateX = Math.min(deltaX, MAX_SWIPE_DISTANCE);
     updateTranslateX(newTranslateX);
     
-    // Prevent scrolling when actively swiping
+    // Prevent scrolling when actively swiping horizontally
     if (newTranslateX > SCROLL_PREVENTION_THRESHOLD) {
       e.preventDefault();
     }
-  }, [isDragging, startX, disabled, updateTranslateX]);
+  }, [isDragging, startX, startY, isVerticalGesture, disabled, updateTranslateX]);
 
   const handleTouchEnd = useCallback(() => {
     if (!isDragging || disabled) return;
     
     setIsDragging(false);
-    onSwipeEnd?.(translateX);
-  }, [isDragging, translateX, onSwipeEnd, disabled]);
+    setIsVerticalGesture(false);
+    
+    // Only trigger swipe end if it wasn't a vertical gesture
+    if (!isVerticalGesture) {
+      onSwipeEnd?.(translateX);
+    }
+  }, [isDragging, translateX, onSwipeEnd, disabled, isVerticalGesture]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (disabled) return;
