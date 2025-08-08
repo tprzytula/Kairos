@@ -1,7 +1,7 @@
-import { IconButton } from "@mui/material";
 import { Route } from "../../../enums/route";
 import { useLocation, useNavigate } from "react-router";
 import { useCallback } from "react";
+import { StyledNavigationButton } from "./index.styled";
 
 export interface INavigationButtonProps {
     SelectedIcon: React.ElementType<any>;
@@ -20,9 +20,9 @@ const NavigationButton = ({ SelectedIcon, UnselectedIcon, route, isDisabled }: I
     const isSelected = location.pathname === route;
 
     return (
-        <IconButton onClick={onClick} disabled={isDisabled}>
+        <StyledNavigationButton onClick={onClick} disabled={isDisabled} isSelected={isSelected}>
             {isSelected ? <SelectedIcon fontSize="large"/> : <UnselectedIcon fontSize="large"/>}
-        </IconButton>
+        </StyledNavigationButton>
     );
 };
 

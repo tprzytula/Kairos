@@ -25,8 +25,8 @@ export const Divider = styled('div')(({ theme }) => ({
 export const ItemsContainer = styled(Box)({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: '1em',
-  padding: '1em',
+  justifyContent: 'space-around',
+  gap: '0.5em',
+  padding: '1em 0.5em',
 })
 
