@@ -61,7 +61,7 @@ export const ActionsContainer = styled('div')<{ $isVisible: boolean; $translateX
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: 'linear-gradient(135deg, #ff4444 0%, #cc3333 100%)',
+    background: '#cc3333',
     zIndex: 1,
     opacity: $isVisible ? 1 : 0,
     transform: `translateX(${$isVisible ? 0 : '100%'})`,
