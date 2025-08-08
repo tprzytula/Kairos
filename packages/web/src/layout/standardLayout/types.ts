@@ -1,5 +1,5 @@
 export interface IStandardLayoutProps {
-    title: string
+    title?: string
     children: React.ReactNode
     centerVertically?: boolean
 }

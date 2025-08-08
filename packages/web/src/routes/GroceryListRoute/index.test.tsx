@@ -16,7 +16,7 @@ jest.mock('../../providers/AppStateProvider', () => ({
 jest.mock('../../api/groceryList')
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
+  useNavigate: jest.fn(() => jest.fn()),
 }))
 
 describe('Given the GroceryListRoute component', () => {

@@ -10,7 +10,7 @@ const StandardLayout = ({
 }: IStandardLayoutProps) => {
   return (
     <Container>
-      <Header title={title} />
+      {title && <Header title={title} />}
       <Content centerVertically={centerVertically}>
         {children}
       </Content>

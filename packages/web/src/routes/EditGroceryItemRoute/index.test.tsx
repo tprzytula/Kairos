@@ -21,7 +21,7 @@ jest.mock('../../hooks/useItemDefaults', () => ({
 jest.mock('../../components/AddItemForm');
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
+  useNavigate: jest.fn(() => jest.fn()),
   useParams: jest.fn(),
 }))
 

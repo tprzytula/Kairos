@@ -11,7 +11,7 @@ import * as ReactRouter from 'react-router'
 
 jest.mock('react-router', () => ({  
   ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
+  useNavigate: jest.fn(() => jest.fn()),
 }))
 
 jest.mock('../../api/toDoList');

@@ -33,7 +33,9 @@ describe('Given the NoiseTrackingProvider component', () => {
         renderNoiseTrackingProvider()
       })
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch noise tracking items:', new Error('It is what it is'))
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch noise tracking items:', new Error('It is what it is'))
+      })
     })
   })
 })

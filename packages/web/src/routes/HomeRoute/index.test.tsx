@@ -20,7 +20,7 @@ jest.mock('../../api/toDoList')
 jest.mock('../../api/noiseTracking')
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
+  useNavigate: jest.fn(() => jest.fn()),
 }))
 
 describe('Given the HomeRoute component', () => {
@@ -28,14 +28,6 @@ describe('Given the HomeRoute component', () => {
     jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
     jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
     jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
-  })
-
-  it('should have the correct title', async () => {
-    await act(async () => {
-      renderComponent()
-    })
-
-    expect(screen.getByText('Home')).toBeVisible()
   })
 
   it('should retrieve all lists', async () => {

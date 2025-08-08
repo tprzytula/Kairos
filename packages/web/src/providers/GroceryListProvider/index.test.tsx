@@ -35,7 +35,9 @@ describe('Given the GroceryListProvider component', () => {
         renderGroceryListProvider()
       })
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch grocery list:', new Error('It is what it is'))
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch grocery list:', new Error('It is what it is'))
+      })
     })
   })
 })

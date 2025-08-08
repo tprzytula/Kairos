@@ -34,7 +34,9 @@ describe('Given the ToDoListProvider component', () => {
         renderToDoListProvider()
       })
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch to do list:', new Error('It is what it is'))
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch to do list:', new Error('It is what it is'))
+      })
     })
   })
 })

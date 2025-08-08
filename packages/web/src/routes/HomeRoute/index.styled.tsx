@@ -5,7 +5,7 @@ export const Container = styled(Box)({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
   gap: '0.75rem',
-  padding: '1rem 0.75rem',
+  padding: '0 0.75rem 1rem 0.75rem',
   width: '100%',
   maxWidth: '100%',
   boxSizing: 'border-box',
@@ -13,7 +13,7 @@ export const Container = styled(Box)({
   '@media (max-width: 480px)': {
     gridTemplateColumns: '1fr',
     gap: '0.6rem',
-    padding: '0.75rem 0.5rem',
+    padding: '0 0.5rem 0.75rem 0.5rem',
   },
 })
 

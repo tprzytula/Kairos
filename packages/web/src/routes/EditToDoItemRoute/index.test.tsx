@@ -37,7 +37,7 @@ jest.mock('../../providers/ToDoListProvider', () => ({
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
+  useNavigate: jest.fn(() => jest.fn()),
   useParams: jest.fn(),
 }))
 
