@@ -23,7 +23,8 @@ describe('useActionVisibility', () => {
   it('should return initial state and methods', () => {
     const { result } = renderHook(() => useActionVisibility({}));
     
-    expect(result.current.isActionsVisible).toBe(false);
+    expect(result.current.isRightActionsVisible).toBe(false);
+    expect(result.current.isLeftActionsVisible).toBe(false);
     expect(result.current.updateVisibility).toBeDefined();
     expect(result.current.handleSwipeEnd).toBeDefined();
     expect(result.current.createActionClickHandler).toBeDefined();
@@ -31,23 +32,39 @@ describe('useActionVisibility', () => {
     expect(result.current.setupOutsideClickHandler).toBeDefined();
   });
 
-  it('should update visibility based on translateX', () => {
+  it('should update visibility based on translateX for both directions', () => {
     const { result } = renderHook(() => useActionVisibility({}));
     
-    // translateX below threshold should hide actions
+    // Positive translateX below threshold should hide right actions
     act(() => {
       result.current.updateVisibility(3, true);
     });
-    expect(result.current.isActionsVisible).toBe(false);
+    expect(result.current.isRightActionsVisible).toBe(false);
+    expect(result.current.isLeftActionsVisible).toBe(false);
     
-    // translateX above threshold should show actions
+    // Positive translateX above threshold should show right actions
     act(() => {
       result.current.updateVisibility(10, true);
     });
-    expect(result.current.isActionsVisible).toBe(true);
+    expect(result.current.isRightActionsVisible).toBe(true);
+    expect(result.current.isLeftActionsVisible).toBe(false);
+
+    // Negative translateX below threshold should hide left actions
+    act(() => {
+      result.current.updateVisibility(-3, true);
+    });
+    expect(result.current.isRightActionsVisible).toBe(false);
+    expect(result.current.isLeftActionsVisible).toBe(false);
+    
+    // Negative translateX above threshold should show left actions
+    act(() => {
+      result.current.updateVisibility(-10, true);
+    });
+    expect(result.current.isRightActionsVisible).toBe(false);
+    expect(result.current.isLeftActionsVisible).toBe(true);
   });
 
-  it('should handle swipe end - trigger action when threshold exceeded', () => {
+  it('should handle swipe end - trigger delete action when positive threshold exceeded', () => {
     const onAction = jest.fn();
     const { result } = renderHook(() => useActionVisibility({ threshold: 0.3, onAction }));
     
@@ -60,7 +77,26 @@ describe('useActionVisibility', () => {
     });
     
     expect(onAction).toHaveBeenCalled();
-    expect(result.current.isActionsVisible).toBe(false);
+    expect(result.current.isRightActionsVisible).toBe(false);
+    expect(result.current.isLeftActionsVisible).toBe(false);
+    expect(returnValue!).toBe(0);
+  });
+
+  it('should handle swipe end - trigger edit action when negative threshold exceeded', () => {
+    const onEditAction = jest.fn();
+    const { result } = renderHook(() => useActionVisibility({ threshold: 0.3, onEditAction }));
+    
+    const containerRef = createMockContainerRef(300);
+    const translateX = -100; // -100 < -90 (negative threshold)
+    
+    let returnValue: number;
+    act(() => {
+      returnValue = result.current.handleSwipeEnd(translateX, containerRef as any);
+    });
+    
+    expect(onEditAction).toHaveBeenCalled();
+    expect(result.current.isRightActionsVisible).toBe(false);
+    expect(result.current.isLeftActionsVisible).toBe(false);
     expect(returnValue!).toBe(0);
   });
 
@@ -77,7 +113,7 @@ describe('useActionVisibility', () => {
     });
     
     expect(onAction).not.toHaveBeenCalled();
-    expect(result.current.isActionsVisible).toBe(true);
+    expect(result.current.isRightActionsVisible || result.current.isLeftActionsVisible).toBe(true);
     expect(returnValue!).toBe(80); // ACTION_BUTTON_WIDTH
   });
 
@@ -94,7 +130,8 @@ describe('useActionVisibility', () => {
     });
     
     expect(onAction).not.toHaveBeenCalled();
-    expect(result.current.isActionsVisible).toBe(false);
+    expect(result.current.isRightActionsVisible).toBe(false);
+    expect(result.current.isLeftActionsVisible).toBe(false);
     expect(returnValue!).toBe(0);
   });
 
@@ -115,7 +152,8 @@ describe('useActionVisibility', () => {
     
     expect(mockEvent.stopPropagation).toHaveBeenCalled();
     expect(onAction).toHaveBeenCalled();
-    expect(result.current.isActionsVisible).toBe(false);
+    expect(result.current.isRightActionsVisible).toBe(false);
+    expect(result.current.isLeftActionsVisible).toBe(false);
     expect(resetTranslateX).toHaveBeenCalled();
   });
 
@@ -126,13 +164,14 @@ describe('useActionVisibility', () => {
     act(() => {
       result.current.updateVisibility(10, true);
     });
-    expect(result.current.isActionsVisible).toBe(true);
+    expect(result.current.isRightActionsVisible || result.current.isLeftActionsVisible).toBe(true);
     
     // Then reset
     act(() => {
       result.current.resetActions();
     });
-    expect(result.current.isActionsVisible).toBe(false);
+    expect(result.current.isRightActionsVisible).toBe(false);
+    expect(result.current.isLeftActionsVisible).toBe(false);
   });
 
   it('should setup outside click handler when actions are visible', () => {
@@ -192,7 +231,8 @@ describe('useActionVisibility', () => {
       clickHandler({ target: document.body });
     });
     
-    expect(result.current.isActionsVisible).toBe(false);
+    expect(result.current.isRightActionsVisible).toBe(false);
+    expect(result.current.isLeftActionsVisible).toBe(false);
   });
 
   it('should not hide actions on inside click', () => {
@@ -219,7 +259,7 @@ describe('useActionVisibility', () => {
       clickHandler({ target: document.body });
     });
     
-    expect(result.current.isActionsVisible).toBe(true);
+    expect(result.current.isRightActionsVisible || result.current.isLeftActionsVisible).toBe(true);
   });
 
   it('should use default threshold when not provided', () => {
@@ -269,7 +309,8 @@ describe('useActionVisibility', () => {
     }).not.toThrow();
     
     expect(mockEvent.stopPropagation).toHaveBeenCalled();
-    expect(result.current.isActionsVisible).toBe(false);
+    expect(result.current.isRightActionsVisible).toBe(false);
+    expect(result.current.isLeftActionsVisible).toBe(false);
     expect(resetTranslateX).toHaveBeenCalled();
   });
 });

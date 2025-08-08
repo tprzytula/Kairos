@@ -68,7 +68,7 @@ describe('useSwipeGesture', () => {
     expect(onSwipeUpdate).toHaveBeenCalledWith(20, true);
   });
 
-  it('should not allow rightward swipe (negative deltaX)', () => {
+  it('should allow bidirectional swipe', () => {
     const onSwipeUpdate = jest.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
     
@@ -77,19 +77,31 @@ describe('useSwipeGesture', () => {
       result.current.handlers.onTouchStart(createMockTouchEvent(100));
     });
     
-    // Move touch right (should reset to 0)
+    // Move touch right (negative deltaX - should create negative translateX)
     act(() => {
       result.current.handlers.onTouchMove(createMockTouchEvent(120));
     });
     
-    expect(result.current.translateX).toBe(0);
+    expect(result.current.translateX).toBe(-20);
+    
+    // Reset and test left swipe
+    act(() => {
+      result.current.handlers.onTouchStart(createMockTouchEvent(100));
+    });
+    
+    // Move touch left (positive deltaX - should create positive translateX)
+    act(() => {
+      result.current.handlers.onTouchMove(createMockTouchEvent(80));
+    });
+    
+    expect(result.current.translateX).toBe(20);
   });
 
-  it('should limit swipe distance to MAX_SWIPE_DISTANCE', () => {
+  it('should limit swipe distance to MAX_SWIPE_DISTANCE in both directions', () => {
     const onSwipeUpdate = jest.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
     
-    // Start touch
+    // Test positive direction (left swipe - revealing right actions)
     act(() => {
       result.current.handlers.onTouchStart(createMockTouchEvent(200));
     });
@@ -100,6 +112,18 @@ describe('useSwipeGesture', () => {
     });
     
     expect(result.current.translateX).toBe(100); // Limited to MAX_SWIPE_DISTANCE
+    
+    // Test negative direction (right swipe - revealing left actions)
+    act(() => {
+      result.current.handlers.onTouchStart(createMockTouchEvent(50));
+    });
+    
+    // Move touch far right (should be limited to -100)
+    act(() => {
+      result.current.handlers.onTouchMove(createMockTouchEvent(200));
+    });
+    
+    expect(result.current.translateX).toBe(-100); // Limited to MIN_SWIPE_DISTANCE
   });
 
   it('should handle touch end and call onSwipeEnd', () => {
@@ -177,12 +201,12 @@ describe('useSwipeGesture', () => {
       call => call[0] === 'mousemove'
     )[1];
     
-    // Simulate rightward mouse move (should reset to 0)
+    // Simulate rightward mouse move (should create negative translateX for left action)
     act(() => {
       mouseMoveHandler({ clientX: 120 });
     });
     
-    expect(result.current.translateX).toBe(0);
+    expect(result.current.translateX).toBe(-20); // 100 - 120 = -20
   });
 
   it('should handle mouse up events', () => {

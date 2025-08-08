@@ -51,7 +51,7 @@ export const ItemContent = styled('div')<{ $translateX: number; $isDragging: boo
   })
 );
 
-export const ActionsContainer = styled('div')<{ $isVisible: boolean; $translateX: number }>(
+export const RightActionsContainer = styled('div')<{ $isVisible: boolean; $translateX: number }>(
   ({ $isVisible }) => ({
     position: 'absolute',
     top: '4px',
@@ -76,7 +76,32 @@ export const ActionsContainer = styled('div')<{ $isVisible: boolean; $translateX
   })
 );
 
-export const ActionButton = styled('button')({
+export const LeftActionsContainer = styled('div')<{ $isVisible: boolean; $translateX: number }>(
+  ({ $isVisible }) => ({
+    position: 'absolute',
+    top: '4px',
+    left: 0,
+    width: '120px',
+    height: 'calc(100% - 8px)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: '#2196f3',
+    zIndex: 1,
+    opacity: $isVisible ? 1 : 0,
+    transform: `translateX(${$isVisible ? 0 : '-100%'})`,
+    transition: $isVisible ? 'opacity 0.15s ease, transform 0.15s ease' : 'opacity 0.25s ease, transform 0.25s ease',
+    borderRadius: '16px 0 0 16px',
+    overflow: 'hidden',
+    boxShadow: $isVisible ? 'inset -2px 0 4px rgba(0,0,0,0.15)' : 'none',
+    
+    '@media (prefers-reduced-motion: reduce)': {
+      transition: 'opacity 0.1s ease !important',
+    },
+  })
+);
+
+export const RightActionButton = styled('button')({
   background: 'transparent',
   border: 'none',
   color: 'white',
@@ -112,16 +137,67 @@ export const ActionButton = styled('button')({
   '@media (prefers-color-scheme: dark)': {
     color: '#ffffff',
     
-    '&': {
-      background: '#cc3333',
-    },
-    
     '&:hover': {
       background: '#bb2222',
     },
     
     '&:active': {
       background: '#dd4444',
+    },
+  },
+  
+  '@media (prefers-contrast: high)': {
+    border: '2px solid white',
+    
+    '& .MuiSvgIcon-root': {
+      fontSize: '26px',
+      fontWeight: 'bold',
+    },
+  },
+});
+
+export const LeftActionButton = styled('button')({
+  background: 'transparent',
+  border: 'none',
+  color: 'white',
+  padding: 0,
+  height: '100%',
+  width: '80px',
+  cursor: 'pointer',
+  transition: 'all 0.15s ease',
+  touchAction: 'manipulation',
+  WebkitTapHighlightColor: 'transparent',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginRight: 'auto',
+  marginLeft: '12px',
+  
+  '&:hover': {
+    background: 'rgba(255,255,255,0.1)',
+    transform: 'scale(1.05)',
+    borderRadius: '8px',
+  },
+  
+  '&:active': {
+    background: 'rgba(255,255,255,0.2)',
+    transform: 'scale(0.95)',
+  },
+  
+  '& .MuiSvgIcon-root': {
+    fontSize: '24px',
+    filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.4))',
+  },
+  
+  '@media (prefers-color-scheme: dark)': {
+    color: '#ffffff',
+    
+    '&:hover': {
+      background: '#1976d2',
+    },
+    
+    '&:active': {
+      background: '#42a5f5',
     },
   },
   

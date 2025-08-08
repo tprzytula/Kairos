@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Container, ItemContent, ActionsContainer, ActionButton } from './index.styled';
+import EditIcon from '@mui/icons-material/Edit';
+import { Container, ItemContent, RightActionsContainer, LeftActionsContainer, RightActionButton, LeftActionButton } from './index.styled';
 import { SwipeableListItemProps } from './types';
 import { useSwipeGesture } from './hooks/useSwipeGesture';
 import { useHapticFeedback } from './hooks/useHapticFeedback';
@@ -11,6 +12,7 @@ const HAPTIC_FEEDBACK_THRESHOLD = 0;
 export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
   children,
   onSwipeAction,
+  onEditAction,
   threshold = 0.3,
   disabled = false,
 }) => {
@@ -19,6 +21,7 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
   const actionVisibility = useActionVisibility({
     threshold,
     onAction: onSwipeAction,
+    onEditAction,
   });
 
   const {
@@ -46,25 +49,33 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
   // Setup outside click handler that also resets translateX
   React.useEffect(() => {
     const cleanup = actionVisibility.setupOutsideClickHandler(containerRef);
-    if (!actionVisibility.isActionsVisible && translateX > 0) {
+    if (!actionVisibility.isRightActionsVisible && !actionVisibility.isLeftActionsVisible && translateX !== 0) {
       setTranslateX(0);
     }
     return cleanup;
-  }, [actionVisibility.setupOutsideClickHandler, containerRef, actionVisibility.isActionsVisible, translateX, setTranslateX]);
+  }, [actionVisibility.setupOutsideClickHandler, containerRef, actionVisibility.isRightActionsVisible, actionVisibility.isLeftActionsVisible, translateX, setTranslateX]);
 
   return (
     <Container 
       ref={containerRef}
       {...handlers}
     >
-      <ActionsContainer 
-        $isVisible={actionVisibility.isActionsVisible}
+      <LeftActionsContainer 
+        $isVisible={actionVisibility.isLeftActionsVisible}
         $translateX={translateX}
       >
-        <ActionButton onClick={actionVisibility.createActionClickHandler(() => setTranslateX(0))}>
+        <LeftActionButton onClick={actionVisibility.createActionClickHandler(() => setTranslateX(0), true)}>
+          <EditIcon />
+        </LeftActionButton>
+      </LeftActionsContainer>
+      <RightActionsContainer 
+        $isVisible={actionVisibility.isRightActionsVisible}
+        $translateX={translateX}
+      >
+        <RightActionButton onClick={actionVisibility.createActionClickHandler(() => setTranslateX(0), false)}>
           <DeleteIcon />
-        </ActionButton>
-      </ActionsContainer>
+        </RightActionButton>
+      </RightActionsContainer>
       <ItemContent 
         $translateX={-translateX} 
         $isDragging={isDragging}
@@ -76,4 +87,3 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
 };
 
 export { SwipeableListItemProps } from './types';
-export default SwipeableListItem;

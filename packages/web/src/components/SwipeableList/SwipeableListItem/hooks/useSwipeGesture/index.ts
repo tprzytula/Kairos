@@ -4,6 +4,7 @@ import { UseSwipeGestureProps } from '../../types';
 const MIN_SWIPE_DETECTION = 5;
 const SCROLL_PREVENTION_THRESHOLD = 10;
 const MAX_SWIPE_DISTANCE = 100; // 80 + 20 buffer
+const MIN_SWIPE_DISTANCE = -100; // Allow negative for left swipe
 const VERTICAL_THRESHOLD = 15; // If vertical movement exceeds this, prioritize scrolling over swiping
 
 export const useSwipeGesture = ({
@@ -61,18 +62,13 @@ export const useSwipeGesture = ({
       return;
     }
     
-    // Only allow leftward swipe (revealing actions on the right)
-    if (deltaX < 0) {
-      updateTranslateX(0);
-      return;
-    }
-    
-    // Limit swipe distance to action width + some buffer
-    const newTranslateX = Math.min(deltaX, MAX_SWIPE_DISTANCE);
+    // Allow both left and right swipes
+    // Limit swipe distance to action width + some buffer in both directions
+    const newTranslateX = Math.max(MIN_SWIPE_DISTANCE, Math.min(deltaX, MAX_SWIPE_DISTANCE));
     updateTranslateX(newTranslateX);
     
     // Prevent scrolling when actively swiping horizontally
-    if (newTranslateX > SCROLL_PREVENTION_THRESHOLD) {
+    if (Math.abs(newTranslateX) > SCROLL_PREVENTION_THRESHOLD) {
       e.preventDefault();
     }
   }, [isDragging, startX, startY, isVerticalGesture, disabled, updateTranslateX]);
@@ -99,12 +95,8 @@ export const useSwipeGesture = ({
     const handleMouseMove = (e: MouseEvent) => {
       const deltaX = mouseStartX - e.clientX;
       
-      if (deltaX < 0) {
-        updateTranslateX(0, true);
-        return;
-      }
-      
-      const newTranslateX = Math.min(deltaX, MAX_SWIPE_DISTANCE);
+      // Allow both left and right swipes for mouse events too
+      const newTranslateX = Math.max(MIN_SWIPE_DISTANCE, Math.min(deltaX, MAX_SWIPE_DISTANCE));
       updateTranslateX(newTranslateX, true);
     };
     

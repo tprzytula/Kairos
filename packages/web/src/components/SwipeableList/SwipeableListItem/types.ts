@@ -1,6 +1,7 @@
 export interface SwipeableListItemProps {
   children: React.ReactNode;
   onSwipeAction?: () => void;
+  onEditAction?: () => void;
   threshold?: number;
   disabled?: boolean;
 }
@@ -18,4 +19,5 @@ export interface UseSwipeGestureProps {
 export interface UseActionVisibilityProps {
   threshold?: number;
   onAction?: () => void;
+  onEditAction?: () => void;
 }
