@@ -71,6 +71,42 @@ describe("Given the ItemImage component", () => {
       expect(screen.getByLabelText("Placeholder image")).toBeVisible();
     });
   });
+
+  describe('When initialImagePath is provided', () => {
+    it('should use the initial image path and call onChange', () => {
+      const onChange = jest.fn();
+      const initialImagePath = '/path/to/existing/image.png';
+      
+      render(
+        <ItemImage
+          itemName="test"
+          defaults={EXAMPLE_DEFAULTS}
+          initialImagePath={initialImagePath}
+          onChange={onChange}
+        />
+      );
+
+      expect(onChange).toHaveBeenCalledWith(initialImagePath);
+      expect(screen.getByLabelText("test image")).toBeVisible();
+    });
+
+    it('should prioritize initialImagePath over defaults', () => {
+      const onChange = jest.fn();
+      const initialImagePath = '/path/to/existing/image.png';
+      
+      render(
+        <ItemImage
+          itemName="test"
+          defaults={EXAMPLE_DEFAULTS}
+          initialImagePath={initialImagePath}
+          onChange={onChange}
+        />
+      );
+
+      expect(onChange).toHaveBeenCalledWith(initialImagePath);
+      expect(onChange).not.toHaveBeenCalledWith('test-icon');
+    });
+  });
 });
 
 export const EXAMPLE_DEFAULTS = [

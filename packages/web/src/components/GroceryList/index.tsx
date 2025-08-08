@@ -1,10 +1,12 @@
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router';
 import { useAppState } from '../../providers/AppStateProvider';
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import GroceryItem from '../GroceryItem';
 import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
 import { Container, EmptyListContainer, EmptyListMessage } from './index.styled';
 import { ActionName } from '../../providers/AppStateProvider/enums';
+import { Route } from '../../enums/route';
 import SwipeableList from '../SwipeableList';
 
 const PlaceholderComponent = () => (
@@ -24,6 +26,7 @@ const EmptyListComponent = () => (
 export const GroceryList = () => {
   const { dispatch } = useAppState()
   const { groceryList, isLoading, removeGroceryItem } = useGroceryListContext();
+  const navigate = useNavigate()
 
   const handleDelete = useCallback((id: string) => {
     removeGroceryItem(id)
@@ -34,6 +37,10 @@ export const GroceryList = () => {
       },
     })
   }, [removeGroceryItem, dispatch])
+
+  const handleEdit = useCallback((id: string) => {
+    navigate(Route.EditGroceryItem.replace(':id', id))
+  }, [navigate])
 
   if (isLoading) {
     return <PlaceholderComponent />
@@ -49,6 +56,7 @@ export const GroceryList = () => {
         component={GroceryItem}
         list={groceryList}
         onSwipeAction={handleDelete}
+        onEditAction={handleEdit}
         threshold={0.3}
       />
     </Container>

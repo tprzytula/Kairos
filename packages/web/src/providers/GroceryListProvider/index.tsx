@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react'
 import { StateComponentProps } from '../AppStateProvider/types'
 import { IGroceryItem } from '../AppStateProvider/types'
-import { removeGroceryItems, retrieveGroceryList, updateGroceryItem } from '../../api/groceryList'
+import { removeGroceryItems, retrieveGroceryList, updateGroceryItem, updateGroceryItemFields, GroceryItemUpdateFields } from '../../api/groceryList'
 import { IState } from './types'
 import { addPropertyToEachItemInList } from '../../utils/list'
 
@@ -11,6 +11,7 @@ export const initialState: IState = {
   refetchGroceryList: async () => {},
   removeGroceryItem: async (id: string) => {},
   updateGroceryItem: async (id: string, quantity: number) => {},
+  updateGroceryItemFields: async (id: string, fields: GroceryItemUpdateFields) => {},
 }
 
 export const GroceryListContext = createContext<IState>(initialState)
@@ -30,7 +31,12 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
         properties: { toBeRemoved: false },
       })
 
-      setGroceryList(groceryList)
+      const mappedGroceryList = groceryList.map((item) => ({
+        ...item,
+        quantity: Number(item.quantity),
+      }))
+
+      setGroceryList(mappedGroceryList)
     } catch (error) {
       console.error('Failed to fetch grocery list:', error)
       setGroceryList([])
@@ -65,6 +71,19 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     }
   }, [])
 
+  const updateGroceryItemWithFields = useCallback(async (id: string, fields: GroceryItemUpdateFields) => {
+    try {
+      await updateGroceryItemFields(id, fields)
+      setGroceryList((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, ...fields } : item
+        )
+      )
+    } catch (error) {
+      console.error('Failed to update grocery item fields:', error)
+    }
+  }, [])
+
   useEffect(() => {
     fetchGroceryList()
   }, [fetchGroceryList])
@@ -76,8 +95,9 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
       refetchGroceryList,
       removeGroceryItem,
       updateGroceryItem: updateGroceryItemQuantity,
+      updateGroceryItemFields: updateGroceryItemWithFields,
     }),
-    [groceryList, isLoading, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity]
+    [groceryList, isLoading, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields]
   )
 
   return (

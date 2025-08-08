@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router'
 import { ApplicationContainer, Content } from './App.styled'
 import GroceryListRoute from './routes/GroceryListRoute'
 import AddGroceryItemRoute from './routes/AddGroceryItemRoute'
+import EditGroceryItemRoute from './routes/EditGroceryItemRoute'
 import AlertContainer from './components/AlertContainer'
 import PWAUpdateNotification from './components/PWAUpdateNotification'
 import { Route as RouteEnum } from './enums/route'
@@ -18,6 +19,7 @@ export const App = () => {
           <Route path={RouteEnum.Home} element={<HomeRoute />} />
           <Route path={RouteEnum.GroceryList} element={<GroceryListRoute />} />
           <Route path={RouteEnum.AddGroceryItem} element={<AddGroceryItemRoute />} />
+          <Route path={RouteEnum.EditGroceryItem} element={<EditGroceryItemRoute />} />
           <Route path={RouteEnum.NoiseTracking} element={<NoiseTrackingRoute />} />
           <Route path={RouteEnum.ToDoList} element={<ToDoListRoute />} />
           <Route path={RouteEnum.AddToDoItem} element={<AddToDoItemRoute />} />

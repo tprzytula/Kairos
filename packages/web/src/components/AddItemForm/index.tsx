@@ -5,7 +5,7 @@ import { useForm } from "./hooks/useForm";
 import ItemImage from "./components/ItemImage";
 import FormField from "./components/FormField";
 
-const AddItemForm = ({ defaults, fields, hideImage, onSubmit }: IAddItemFormProps) => {
+const AddItemForm = ({ defaults, fields, hideImage, initialImagePath, onSubmit }: IAddItemFormProps) => {
     const [itemName, setItemName] = useState<string | undefined>();
     const [imagePath, setImagePath] = useState<string | undefined>();
 
@@ -52,6 +52,7 @@ const AddItemForm = ({ defaults, fields, hideImage, onSubmit }: IAddItemFormProp
                         <ItemImage
                             itemName={itemName}
                             defaults={defaults}
+                            initialImagePath={initialImagePath}
                             onChange={setImagePath}
                         />
                     )}

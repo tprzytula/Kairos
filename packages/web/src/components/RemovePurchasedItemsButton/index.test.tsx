@@ -132,6 +132,7 @@ const mockUseGroceryListContext = ({ groceryList }: { groceryList: Array<any> })
         refetchGroceryList,
         removeGroceryItem: jest.fn(),
         updateGroceryItem: jest.fn(),
+        updateGroceryItemFields: jest.fn(),
     })
 
     return { refetchGroceryList }

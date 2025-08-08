@@ -88,9 +88,9 @@ paths:
       parameters:
         - in: path
           name: id
+          required: true
           schema:
             type: string
-          required: true
           description: Identifier of the item to be updated
           example: "c8aef3a0-ead3-4e64-b9ce-4ece324720fb"
       requestBody:
@@ -102,12 +102,20 @@ paths:
                 id:
                   type: string
                   example: "c8aef3a0-ead3-4e64-b9ce-4ece324720fb"
+                name:
+                  type: string
+                  example: "Organic Apples"
                 quantity:
                   type: string
                   example: "5"
+                unit:
+                  type: string
+                  example: "kg"
+                imagePath:
+                  type: string
+                  example: "/images/apples.png"
               required:
                 - id
-                - quantity
         required: true
       x-amazon-apigateway-request-validator: Validate body
       x-amazon-apigateway-integration:
@@ -127,9 +135,18 @@ paths:
                   id:
                     type: string
                     example: "c8aef3a0-ead3-4e64-b9ce-4ece324720fb"
+                  name:
+                    type: string
+                    example: "Organic Apples"
                   quantity:
                     type: string
                     example: "5"
+                  unit:
+                    type: string
+                    example: "kg"
+                  imagePath:
+                    type: string
+                    example: "/images/apples.png"
         400:
           description: Incorrect item details
     delete:
@@ -148,9 +165,9 @@ paths:
       parameters:
         - in: path
           name: id
+          required: true
           schema:
             type: string
-          required: true
           description: Identifier of the item to be removed
           example: "c8aef3a0-ead3-4e64-b9ce-4ece324720fb"
       responses:

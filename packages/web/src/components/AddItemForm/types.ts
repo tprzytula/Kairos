@@ -15,6 +15,7 @@ export interface IAddItemFormProps {
     defaults?: Array<IItemDefault>;
     fields: Array<IFormField>
     hideImage?: boolean;
+    initialImagePath?: string;
     onSubmit: (fields: Array<IFormField>, icon?: string) => Promise<void>;
 }
 

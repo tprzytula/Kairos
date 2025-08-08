@@ -145,6 +145,54 @@ describe('Given the useGroceryListContext hook', () => {
       ])
     })
   })
+
+  it('should allow you to update a grocery item with multiple fields', async () => {
+    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    jest.spyOn(API, 'updateGroceryItemFields').mockResolvedValue()
+
+    const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
+      wrapper: GroceryListProvider,
+    }))
+
+    await waitFor(() => {
+      expect(result.current.groceryList).toStrictEqual(EXAMPLE_GROCERY_LIST)
+    })
+
+    await act(async () => {
+      await result.current.updateGroceryItemFields('1', {
+        name: 'Organic Milk',
+        quantity: 3,
+        unit: GroceryItemUnit.UNIT
+      })
+    })
+
+    expect(API.updateGroceryItemFields).toHaveBeenCalledWith('1', {
+      name: 'Organic Milk',
+      quantity: 3,
+      unit: GroceryItemUnit.UNIT
+    })
+
+    await waitFor(() => {
+      expect(result.current.groceryList).toStrictEqual([
+        {
+          id: '1',
+          name: 'Organic Milk',
+          quantity: 3,
+          imagePath: 'https://hostname.com/image.png',
+          unit: GroceryItemUnit.UNIT,
+          toBeRemoved: false,
+        },
+        {
+          id: '2',
+          name: 'Bread',
+          quantity: 2,
+          imagePath: 'https://hostname.com/image.png',
+          unit: GroceryItemUnit.UNIT,
+          toBeRemoved: false,
+        },
+      ])
+    })
+  })
 })
 
 const EXAMPLE_GROCERY_LIST: Array<IGroceryItem> = [

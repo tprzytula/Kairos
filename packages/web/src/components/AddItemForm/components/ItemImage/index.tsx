@@ -5,18 +5,20 @@ import { findItemIcon } from "./utils";
 
 const GENERIC_ITEM_NAME = 'generic';
 
-const ItemImage = ({ defaults, itemName, onChange }: IItemImageProps) => {
+const ItemImage = ({ defaults, itemName, initialImagePath, onChange }: IItemImageProps) => {
     const [imagePath, setImagePath] = useState<string | undefined>();
     const genericIcon = useMemo(() => findItemIcon(GENERIC_ITEM_NAME, defaults), [defaults]);
 
     useEffect(() => {
-        if (genericIcon) {
+        if (initialImagePath) {
+            setImagePath(initialImagePath);
+        } else if (genericIcon) {
             setImagePath(genericIcon);
         }
-    }, [genericIcon]);
+    }, [initialImagePath, genericIcon]);
 
     useEffect(() => {
-        if (!itemName) {
+        if (!itemName || initialImagePath) {
             return;
         }
 
@@ -27,7 +29,7 @@ const ItemImage = ({ defaults, itemName, onChange }: IItemImageProps) => {
         } else if (genericIcon) {
             setImagePath(genericIcon);
         }
-    }, [defaults, itemName]);
+    }, [defaults, itemName, initialImagePath]);
 
     useEffect(() => {
         if (imagePath) {

@@ -1,0 +1,128 @@
+import AddItemForm from '../../components/AddItemForm'
+import { FormFieldType } from '../../components/AddItemForm/enums'
+import { IFormField } from '../../components/AddItemForm/types'
+import { validateFields } from './utils'
+import { useNavigate, useParams } from 'react-router'
+import { useAppState } from '../../providers/AppStateProvider'
+import { useCallback, useEffect, useState, useMemo } from 'react'
+import { AlertColor } from '@mui/material'
+import { Route } from '../../enums/route'
+import { showAlert } from '../../utils/alert'
+import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
+import StandardLayout from '../../layout/standardLayout'
+import { GroceryListProvider, useGroceryListContext } from '../../providers/GroceryListProvider'
+import { IGroceryItem } from '../../providers/AppStateProvider/types'
+import { useItemDefaults } from '../../hooks/useItemDefaults'
+import { retrieveGroceryListDefaults } from '../../api/groceryList'
+
+const EditGroceryItemContent = () => {
+  const { dispatch } = useAppState()
+  const { groceryList, updateGroceryItemFields } = useGroceryListContext()
+  const navigate = useNavigate()
+  const { id } = useParams()
+  const [currentItem, setCurrentItem] = useState<IGroceryItem | null>(null)
+  const { defaults } = useItemDefaults({
+    fetchMethod: retrieveGroceryListDefaults
+  })
+
+  const groceryItem = useMemo(() => {
+    return groceryList.find(item => item.id === id) || null
+  }, [groceryList, id])
+
+  useEffect(() => {
+    if (groceryItem) {
+      setCurrentItem(groceryItem)
+    } else if (!groceryItem && groceryList.length > 0) {
+      createAlert('Grocery item not found', 'error')
+      navigate(Route.GroceryList)
+    }
+  }, [groceryItem, groceryList])
+
+  const FIELDS: Array<IFormField> = useMemo(() => [
+    {
+      name: 'name',
+      label: 'Name',
+      type: FormFieldType.TEXT,
+      required: true,
+      value: currentItem?.name || '',
+    },
+    {
+      name: 'quantity',
+      label: 'Quantity',
+      type: FormFieldType.NUMBER,
+      required: true,
+      value: currentItem?.quantity || 1,
+    },
+    {
+      name: 'unit',
+      label: 'Unit',
+      type: FormFieldType.SELECT,
+      required: true,
+      value: currentItem?.unit || GroceryItemUnit.UNIT,
+      options: Object.entries(GroceryItemUnitLabelMap).map(([key, label]) => ({
+        label,
+        value: key,
+      })),
+    },
+  ], [currentItem])
+
+  const createAlert = useCallback((description: string, severity: AlertColor) => {
+    showAlert({ description, severity }, dispatch)
+  }, [dispatch])
+
+  const onSubmit = useCallback(async (fields: Array<IFormField>, imagePath?: string) => {
+    try {
+      const [name, quantity, unit] = validateFields(fields)
+
+      const updatedFields = {
+        name: name.value,
+        quantity: quantity.value,
+        unit: unit.value as GroceryItemUnit,
+        imagePath: imagePath || currentItem?.imagePath,
+      }
+
+      await updateGroceryItemFields(id!, updatedFields)
+
+      createAlert(`${name.value} has been updated`, 'success')
+      navigate(Route.GroceryList)
+    } catch (error) {
+      console.error(error)
+      createAlert('Error updating grocery item', 'error')
+    }
+  }, [createAlert, navigate, id, currentItem?.imagePath, updateGroceryItemFields])
+
+  if (!currentItem) {
+    return (
+      <StandardLayout
+        title="Edit Grocery Item"
+        centerVertically
+      >
+        <div>Loading...</div>
+      </StandardLayout>
+    )
+  }
+
+  return (
+    <StandardLayout
+      title="Edit Grocery Item"
+      centerVertically
+    >
+      <AddItemForm
+        defaults={defaults}
+        fields={FIELDS}
+        initialImagePath={currentItem?.imagePath}
+        onSubmit={onSubmit}
+      />
+    </StandardLayout>
+  )
+}
+
+export const EditGroceryItemRoute = () => {
+  return (
+    <GroceryListProvider>
+      <EditGroceryItemContent />
+    </GroceryListProvider>
+  )
+}
+
+export default EditGroceryItemRoute

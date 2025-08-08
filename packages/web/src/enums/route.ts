@@ -2,6 +2,7 @@ export enum Route {
     Home = '/home',
     NonExisting = '/non-existing',
     AddGroceryItem = '/groceries/add',
+    EditGroceryItem = '/groceries/edit/:id',
     GroceryList = '/',
     NoiseTracking = '/noise-tracking',
     ToDoList = '/todo',
