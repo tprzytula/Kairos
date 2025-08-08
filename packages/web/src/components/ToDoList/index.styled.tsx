@@ -5,9 +5,9 @@ export const Container = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   gap: '0.2em',
-  width: 'calc(100% - 2em)',
-  margin: '0 0.5em',
-  padding: '0 0.5em'
+  width: '100%',
+  margin: '0',
+  boxSizing: 'border-box'
 })
 
 export const EmptyListMessage = styled(Typography)({

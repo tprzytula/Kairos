@@ -2,7 +2,6 @@ import { styled } from '@mui/material/styles'
 import { Card } from '@mui/material'
 
 export const HeaderWrapper = styled('div')({
-  padding: '0 1rem',
   width: '100%',
 })
 
@@ -43,6 +42,8 @@ export const HeaderContent = styled('div')({
   alignItems: 'center',
   flexWrap: 'wrap',
   gap: '1rem',
+  width: '100%',
+  boxSizing: 'border-box',
 })
 
 export const HeaderTitle = styled('h1')(({ theme }) => ({
@@ -74,16 +75,20 @@ export const HeaderIcon = styled('div')(({ theme }) => ({
 
 export const HeaderStats = styled('div')({
   display: 'flex',
-  gap: '1rem',
+  gap: '0.75rem',
   alignItems: 'center',
   flexWrap: 'wrap',
+  maxWidth: '100%',
+  overflow: 'hidden',
 })
 
 export const StatItem = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  minWidth: '60px',
+  minWidth: '50px',
+  maxWidth: '80px',
+  flex: '1 1 auto',
 })
 
 export const StatValue = styled('div')(({ theme }) => ({

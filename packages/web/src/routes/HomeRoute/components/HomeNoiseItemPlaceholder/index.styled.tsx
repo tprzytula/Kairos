@@ -14,7 +14,6 @@ export const PlaceholderBlock = styled('div')(({ theme }) => ({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: '0.75rem 0.5rem',
   background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%)',
   borderRadius: '12px',
   border: '1px solid rgba(102, 126, 234, 0.12)',

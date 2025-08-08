@@ -2,14 +2,11 @@ import { styled } from '@mui/material/styles'
 import { Box, Card } from '@mui/material'
 
 export const DashboardHeaderContainer = styled(Box)({
-  padding: '1rem 0.75rem 0.75rem 0.75rem',
+  padding: '0.5em 0',
   width: '100%',
   maxWidth: 'none',
   alignSelf: 'stretch',
-  boxSizing: 'border-box',
-  '@media (max-width: 480px)': {
-    padding: '0.75rem 0.5rem 0.6rem 0.5rem',
-  },
+  boxSizing: 'border-box'
 })
 
 export const DashboardHeaderCard = styled(Card)(({ theme }) => ({

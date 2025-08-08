@@ -4,7 +4,6 @@ import { Typography } from '@mui/material'
 export const Container = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.5rem',
   width: '100%',
   margin: 0,
   padding: 0

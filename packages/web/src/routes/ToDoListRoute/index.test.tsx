@@ -17,7 +17,7 @@ describe('Given the ToDoListRoute component', () => {
       renderComponent()
     })
 
-    expect(screen.getByText('To Do List')).toBeVisible()
+    expect(screen.getByText('To-Do List')).toBeVisible()
   })
 })
 
