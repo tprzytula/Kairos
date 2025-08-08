@@ -100,7 +100,7 @@ describe('Given the HomeRoute component', () => {
     })
   })
 
-  it('should display last three pending to-do items', async () => {
+  it('should display last two pending to-do items', async () => {
     const mockToDoList = [
       { id: '1', name: 'Completed Task', description: 'Done', isDone: true },
       { id: '2', name: 'Task 1', description: 'Description 1', isDone: false },
@@ -118,7 +118,7 @@ describe('Given the HomeRoute component', () => {
     await waitFor(() => {
       expect(screen.getByText('Task 4')).toBeVisible()
       expect(screen.getByText('Task 3')).toBeVisible()
-      expect(screen.getByText('Task 2')).toBeVisible()
+      expect(screen.queryByText('Task 2')).not.toBeInTheDocument()
       expect(screen.queryByText('Task 1')).not.toBeInTheDocument()
       expect(screen.queryByText('Completed Task')).not.toBeInTheDocument()
     })

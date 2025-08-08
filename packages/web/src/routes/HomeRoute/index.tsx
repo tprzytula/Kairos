@@ -2,10 +2,16 @@ import { useGroceryListContext, GroceryListProvider } from '../../providers/Groc
 import { useToDoListContext, ToDoListProvider } from '../../providers/ToDoListProvider'
 import { useNoiseTrackingContext, NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
 import StandardLayout from '../../layout/standardLayout'
+import HomeGroceryItemPlaceholder from './components/HomeGroceryItemPlaceholder'
+import HomeToDoItemPlaceholder from './components/HomeToDoItemPlaceholder'
+import HomeNoiseItemPlaceholder from './components/HomeNoiseItemPlaceholder'
+import HomeGroceryItem from './components/HomeGroceryItem'
+import HomeToDoItem from './components/HomeToDoItem'
+import HomeNoiseItem from './components/HomeNoiseItem'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
-import { useTheme } from '@mui/material/styles'
+
 import { formatTimeElapsed, formatTimestamp } from './utils'
 import {
   Container,
@@ -13,20 +19,16 @@ import {
   SectionHeader,
   SectionContent,
   ItemList,
-  ItemText,
-  EmptyState,
-  NoiseItem,
-  TimeElapsed
+  EmptyState
 } from './index.styled'
 
 const HomeContent = () => {
-  const theme = useTheme()
-  const { groceryList } = useGroceryListContext()
-  const { toDoList } = useToDoListContext()
-  const { noiseTrackingItems } = useNoiseTrackingContext()
+  const { groceryList, isLoading: isGroceryLoading } = useGroceryListContext()
+  const { toDoList, isLoading: isToDoLoading } = useToDoListContext()
+  const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
   
   const lastThreeGroceryItems = groceryList.slice(-3).reverse()
-  const lastThreeToDoItems = toDoList.filter(item => !item.isDone).slice(-3).reverse()
+  const lastTwoToDoItems = toDoList.filter(item => !item.isDone).slice(-2).reverse()
   
   const sortedNoiseItems = noiseTrackingItems.sort((a, b) => a.timestamp - b.timestamp)
   const lastThreeNoiseItems = sortedNoiseItems.slice(-3).reverse()
@@ -40,39 +42,26 @@ const HomeContent = () => {
               <ShoppingCartIcon />
               Recent Grocery Items
             </SectionHeader>
-            {lastThreeGroceryItems.length > 0 ? (
+            {isGroceryLoading ? (
               <ItemList>
-                {lastThreeGroceryItems.map((item) => (
-                  <ItemText key={item.id}>{item.name}</ItemText>
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <HomeGroceryItemPlaceholder key={index} />
                 ))}
               </ItemList>
             ) : (
-              <EmptyState>No grocery items found</EmptyState>
-            )}
-          </SectionContent>
-        </SectionCard>
-
-        <SectionCard>
-          <SectionContent>
-            <SectionHeader>
-              <ChecklistIcon />
-              Recent To-Do Items
-            </SectionHeader>
-            {lastThreeToDoItems.length > 0 ? (
               <ItemList>
-                {lastThreeToDoItems.map((item) => (
-                  <ItemText key={item.id}>
-                    {item.name}
-                    {item.description && (
-                      <div style={{ fontSize: '0.85rem', color: theme.palette.text.secondary, marginTop: '0.25rem' }}>
-                        {item.description}
-                      </div>
-                    )}
-                  </ItemText>
-                ))}
+                {Array.from({ length: 3 }).map((_, index) => {
+                  const item = lastThreeGroceryItems[index]
+                  return item ? (
+                    <HomeGroceryItem key={item.id} item={item} />
+                  ) : (
+                    <div key={`empty-${index}`} style={{ height: '3.2rem' }} />
+                  )
+                })}
+                {lastThreeGroceryItems.length === 0 && (
+                  <EmptyState>No grocery items found</EmptyState>
+                )}
               </ItemList>
-            ) : (
-              <EmptyState>No pending to-do items found</EmptyState>
             )}
           </SectionContent>
         </SectionCard>
@@ -83,24 +72,68 @@ const HomeContent = () => {
               <VolumeUpIcon />
               Recent Noise Recordings
             </SectionHeader>
-            {lastThreeNoiseItems.length > 0 ? (
+            {isNoiseLoading ? (
               <ItemList>
-                {lastThreeNoiseItems.map((item) => {
-                  const currentIndex = sortedNoiseItems.findIndex(sortedItem => sortedItem.timestamp === item.timestamp)
-                  const previousItem = currentIndex > 0 ? sortedNoiseItems[currentIndex - 1] : undefined
-                  const timeElapsed = formatTimeElapsed(item.timestamp, previousItem?.timestamp)
-                  const timeFormatted = formatTimestamp(item.timestamp)
-                  
-                  return (
-                    <NoiseItem key={item.timestamp}>
-                      <span>{timeFormatted}</span>
-                      <TimeElapsed>{timeElapsed}</TimeElapsed>
-                    </NoiseItem>
-                  )
-                })}
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <HomeNoiseItemPlaceholder key={index} />
+                ))}
               </ItemList>
             ) : (
-              <EmptyState>No noise recordings found</EmptyState>
+              <ItemList>
+                {Array.from({ length: 3 }).map((_, index) => {
+                  const item = lastThreeNoiseItems[index]
+                  if (item) {
+                    const currentIndex = sortedNoiseItems.findIndex(sortedItem => sortedItem.timestamp === item.timestamp)
+                    const previousItem = currentIndex > 0 ? sortedNoiseItems[currentIndex - 1] : undefined
+                    const timeElapsed = formatTimeElapsed(item.timestamp, previousItem?.timestamp)
+                    const timeFormatted = formatTimestamp(item.timestamp)
+                    
+                    return (
+                      <HomeNoiseItem 
+                        key={item.timestamp} 
+                        item={item} 
+                        timeFormatted={timeFormatted} 
+                        timeElapsed={timeElapsed} 
+                      />
+                    )
+                  } else {
+                    return <div key={`empty-${index}`} style={{ height: '3.2rem' }} />
+                  }
+                })}
+                {lastThreeNoiseItems.length === 0 && (
+                  <EmptyState>No noise recordings found</EmptyState>
+                )}
+              </ItemList>
+            )}
+          </SectionContent>
+        </SectionCard>
+
+        <SectionCard>
+          <SectionContent>
+            <SectionHeader>
+              <ChecklistIcon />
+              Recent To-Do Items
+            </SectionHeader>
+            {isToDoLoading ? (
+              <ItemList>
+                {Array.from({ length: 2 }).map((_, index) => (
+                  <HomeToDoItemPlaceholder key={index} />
+                ))}
+              </ItemList>
+            ) : (
+              <ItemList>
+                {Array.from({ length: 2 }).map((_, index) => {
+                  const item = lastTwoToDoItems[index]
+                  return item ? (
+                    <HomeToDoItem key={item.id} item={item} />
+                  ) : (
+                    <div key={`empty-${index}`} style={{ height: '3.2rem' }} />
+                  )
+                })}
+                {lastTwoToDoItems.length === 0 && (
+                  <EmptyState>No pending to-do items found</EmptyState>
+                )}
+              </ItemList>
             )}
           </SectionContent>
         </SectionCard>
