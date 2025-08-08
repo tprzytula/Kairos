@@ -319,4 +319,64 @@ export const GroceryImageOverflow = styled('div')(({ theme }) => ({
     borderColor: 'rgba(102, 126, 234, 0.4)',
     transform: 'scale(1.05)',
   },
+}))
+
+export const MoreItemsIndicator = styled('div')(({ theme }) => ({
+  fontSize: '0.75rem',
+  fontWeight: '600',
+  color: theme.palette.text.secondary,
+  textAlign: 'center',
+  padding: '0.5rem 0.8rem',
+  background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)',
+  borderRadius: '8px',
+  border: '1px solid rgba(102, 126, 234, 0.15)',
+  marginTop: '0.25rem',
+  cursor: 'pointer',
+  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+  '&:hover': {
+    backgroundColor: 'rgba(102, 126, 234, 0.12)',
+    borderColor: 'rgba(102, 126, 234, 0.25)',
+    transform: 'translateY(-1px)',
+  },
+}))
+
+export const NoiseStats = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.5rem',
+  padding: '0.5rem 0',
+})
+
+export const NoiseStatItem = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '0.6rem 0.8rem',
+  background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,250,252,0.9) 100%)',
+  borderRadius: '8px',
+  border: '1px solid rgba(102, 126, 234, 0.1)',
+  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+  '&:hover': {
+    backgroundColor: 'rgba(102, 126, 234, 0.05)',
+    borderColor: 'rgba(102, 126, 234, 0.2)',
+    transform: 'translateX(2px)',
+  },
+}))
+
+export const NoiseStatLabel = styled('span')(({ theme }) => ({
+  fontSize: '0.8rem',
+  fontWeight: '500',
+  color: theme.palette.text.primary,
+}))
+
+export const NoiseStatCount = styled('span')(({ theme }) => ({
+  fontSize: '0.85rem',
+  fontWeight: '600',
+  color: theme.palette.text.primary,
+  background: 'rgba(102, 126, 234, 0.08)',
+  padding: '0.25rem 0.6rem',
+  borderRadius: '10px',
+  minWidth: '1.8rem',
+  textAlign: 'center',
+  border: '1px solid rgba(102, 126, 234, 0.15)',
 })) 

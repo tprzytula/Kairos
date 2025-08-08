@@ -26,7 +26,12 @@ import {
   StatItem,
   GroceryImagesGrid,
   GroceryImageItem,
-  GroceryImageOverflow
+  GroceryImageOverflow,
+  MoreItemsIndicator,
+  NoiseStats,
+  NoiseStatItem,
+  NoiseStatLabel,
+  NoiseStatCount
 } from './index.styled'
 
 const HomeContent = () => {
@@ -42,10 +47,38 @@ const HomeContent = () => {
     hasOverflow: groceryList.filter(item => !purchasedItems.has(item.id)).length >= 11
   }
   
-  const lastFourToDoItems = toDoList.filter(item => !item.isDone).slice(-4).reverse()
+  const pendingToDoItems = toDoList.filter(item => !item.isDone)
+  const lastThreeToDoItems = pendingToDoItems.slice(-3).reverse()
+  const hasMoreToDoItems = pendingToDoItems.length > 3
   
-  const sortedNoiseItems = noiseTrackingItems.sort((a, b) => a.timestamp - b.timestamp)
-  const lastFiveNoiseItems = sortedNoiseItems.slice(-5).reverse()
+  const calculateNoiseCounts = () => {
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const sevenDaysAgo = new Date(today)
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+    const thirtyDaysAgo = new Date(today)
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+    
+    const todayCount = noiseTrackingItems.filter(item => {
+      const itemDate = new Date(item.timestamp)
+      return itemDate >= today
+    }).length
+    
+    const last7DaysCount = noiseTrackingItems.filter(item => {
+      const itemDate = new Date(item.timestamp)
+      return itemDate >= sevenDaysAgo
+    }).length
+    
+    const last30DaysCount = noiseTrackingItems.filter(item => {
+      const itemDate = new Date(item.timestamp)
+      return itemDate >= thirtyDaysAgo
+    }).length
+    
+    return { todayCount, last7DaysCount, last30DaysCount }
+  }
+  
+  const { todayCount, last7DaysCount, last30DaysCount } = calculateNoiseCounts()
+  const totalNoiseItems = noiseTrackingItems.length
   
   return (
     <StandardLayout title="Home">
@@ -95,38 +128,37 @@ const HomeContent = () => {
             <SectionHeader>
               <div className="header-content">
                 <VolumeUpIcon />
-                Recent Noise Recordings
+                Noise Recordings
               </div>
-              <span className="item-count">{lastFiveNoiseItems.length}</span>
+              <span className="item-count">{totalNoiseItems}</span>
             </SectionHeader>
             {isNoiseLoading ? (
-              <ItemList>
-                {Array.from({ length: 5 }).map((_, index) => (
+              <NoiseStats>
+                {Array.from({ length: 3 }).map((_, index) => (
                   <HomeNoiseItemPlaceholder key={index} />
                 ))}
-              </ItemList>
+              </NoiseStats>
             ) : (
-              <ItemList>
-                {lastFiveNoiseItems.length > 0 ? (
-                  lastFiveNoiseItems.map((item) => {
-                    const currentIndex = sortedNoiseItems.findIndex(sortedItem => sortedItem.timestamp === item.timestamp)
-                    const previousItem = currentIndex > 0 ? sortedNoiseItems[currentIndex - 1] : undefined
-                    const timeElapsed = formatTimeElapsed(item.timestamp, previousItem?.timestamp)
-                    const timeFormatted = formatTimestamp(item.timestamp)
-                    
-                    return (
-                      <HomeNoiseItem 
-                        key={item.timestamp} 
-                        item={item} 
-                        timeFormatted={timeFormatted} 
-                        timeElapsed={timeElapsed} 
-                      />
-                    )
-                  })
+              <NoiseStats>
+                {totalNoiseItems > 0 ? (
+                  <>
+                    <NoiseStatItem>
+                      <NoiseStatLabel>Today</NoiseStatLabel>
+                      <NoiseStatCount>{todayCount}</NoiseStatCount>
+                    </NoiseStatItem>
+                    <NoiseStatItem>
+                      <NoiseStatLabel>Last 7 days</NoiseStatLabel>
+                      <NoiseStatCount>{last7DaysCount}</NoiseStatCount>
+                    </NoiseStatItem>
+                    <NoiseStatItem>
+                      <NoiseStatLabel>Last 30 days</NoiseStatLabel>
+                      <NoiseStatCount>{last30DaysCount}</NoiseStatCount>
+                    </NoiseStatItem>
+                  </>
                 ) : (
                   <EmptyState>No noise recordings found</EmptyState>
                 )}
-              </ItemList>
+              </NoiseStats>
             )}
           </SectionContent>
         </SectionCard>
@@ -137,24 +169,29 @@ const HomeContent = () => {
               <SectionHeader>
                 <div className="header-content">
                   <ChecklistIcon />
-                  Recent To-Do Items
+                  To-Do Items
                 </div>
-                <span className="item-count">{lastFourToDoItems.length}</span>
+                <span className="item-count">{pendingToDoItems.length}</span>
               </SectionHeader>
               {isToDoLoading ? (
               <ItemList>
-                {Array.from({ length: 4 }).map((_, index) => (
+                {Array.from({ length: 3 }).map((_, index) => (
                   <HomeToDoItemPlaceholder key={index} />
                 ))}
               </ItemList>
             ) : (
               <ItemList>
-                {lastFourToDoItems.length > 0 ? (
-                  lastFourToDoItems.map((item) => (
+                {lastThreeToDoItems.length > 0 ? (
+                  lastThreeToDoItems.map((item) => (
                     <HomeToDoItem key={item.id} item={item} />
                   ))
                 ) : (
                   <EmptyState>No pending to-do items found</EmptyState>
+                )}
+                {hasMoreToDoItems && (
+                  <MoreItemsIndicator>
+                    +{pendingToDoItems.length - 3} more items
+                  </MoreItemsIndicator>
                 )}
               </ItemList>
               )}
