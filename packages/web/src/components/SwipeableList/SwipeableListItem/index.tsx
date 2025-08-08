@@ -3,6 +3,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Container, ItemContent, ActionsContainer, ActionButton } from './index.styled';
 import { SwipeableListItemProps } from './types';
 
+const ACTION_BUTTON_WIDTH = 80;
+const SWIPE_BUFFER = 20;
+const MAX_SWIPE_DISTANCE = ACTION_BUTTON_WIDTH + SWIPE_BUFFER;
+const VISIBILITY_THRESHOLD = ACTION_BUTTON_WIDTH * 0.4;
+const MIN_SWIPE_DETECTION = 5;
+const SCROLL_PREVENTION_THRESHOLD = 10;
+const HAPTIC_FEEDBACK_THRESHOLD = 0;
+
 export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
   children,
   onSwipeAction,
@@ -13,7 +21,6 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
   const [translateX, setTranslateX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
-  const [actionWidth, setActionWidth] = useState(80);
   const [isActionsVisible, setIsActionsVisible] = useState(false);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -24,12 +31,12 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
     setIsDragging(true);
     
     // Prevent default to avoid scrolling issues
-    if (Math.abs(translateX) > 5) {
+    if (Math.abs(translateX) > MIN_SWIPE_DETECTION) {
       e.preventDefault();
     }
     
     // Add haptic feedback on iOS if available
-    if ('vibrate' in navigator && Math.abs(translateX) === 0) {
+    if ('vibrate' in navigator && Math.abs(translateX) === HAPTIC_FEEDBACK_THRESHOLD) {
       navigator.vibrate(1);
     }
   }, [disabled, translateX]);
@@ -48,18 +55,17 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
     }
     
     // Limit swipe distance to action width + some buffer
-    const maxSwipe = actionWidth + 20;
-    const newTranslateX = Math.min(deltaX, maxSwipe);
+    const newTranslateX = Math.min(deltaX, MAX_SWIPE_DISTANCE);
     setTranslateX(newTranslateX);
     
     // Show actions when swiping
-    setIsActionsVisible(newTranslateX > 5);
+    setIsActionsVisible(newTranslateX > MIN_SWIPE_DETECTION);
     
     // Prevent scrolling when actively swiping
-    if (newTranslateX > 10) {
+    if (newTranslateX > SCROLL_PREVENTION_THRESHOLD) {
       e.preventDefault();
     }
-  }, [isDragging, startX, actionWidth, disabled]);
+  }, [isDragging, startX, disabled]);
 
   const handleTouchEnd = useCallback(() => {
     if (!isDragging || disabled) return;
@@ -74,16 +80,16 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
       onSwipeAction();
       setTranslateX(0);
       setIsActionsVisible(false);
-    } else if (translateX > actionWidth * 0.4) {
+    } else if (translateX > VISIBILITY_THRESHOLD) {
       // Keep actions visible
-      setTranslateX(actionWidth);
+      setTranslateX(ACTION_BUTTON_WIDTH);
       setIsActionsVisible(true);
     } else {
       // Snap back
       setTranslateX(0);
       setIsActionsVisible(false);
     }
-  }, [isDragging, translateX, threshold, actionWidth, onSwipeAction, disabled]);
+  }, [isDragging, translateX, threshold, onSwipeAction, disabled]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (disabled) return;
@@ -101,10 +107,9 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
         return;
       }
       
-      const maxSwipe = actionWidth + 20;
-      const newTranslateX = Math.min(deltaX, maxSwipe);
+      const newTranslateX = Math.min(deltaX, MAX_SWIPE_DISTANCE);
       setTranslateX(newTranslateX);
-      setIsActionsVisible(newTranslateX > 5);
+      setIsActionsVisible(newTranslateX > MIN_SWIPE_DETECTION);
     };
     
     const handleMouseUp = () => {
@@ -117,8 +122,8 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
         onSwipeAction();
         setTranslateX(0);
         setIsActionsVisible(false);
-      } else if (translateX > actionWidth * 0.4) {
-        setTranslateX(actionWidth);
+      } else if (translateX > VISIBILITY_THRESHOLD) {
+        setTranslateX(ACTION_BUTTON_WIDTH);
         setIsActionsVisible(true);
       } else {
         setTranslateX(0);
@@ -131,7 +136,7 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
     
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [disabled, startX, isDragging, translateX, threshold, actionWidth, onSwipeAction]);
+  }, [disabled, startX, isDragging, translateX, threshold, onSwipeAction]);
 
   const handleActionClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
