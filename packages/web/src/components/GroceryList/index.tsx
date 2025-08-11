@@ -4,10 +4,11 @@ import { useAppState } from '../../providers/AppStateProvider';
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import GroceryItem from '../GroceryItem';
 import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
-import { Container, EmptyListContainer, EmptyListMessage } from './index.styled';
+import { Container, EmptyListContainer } from './index.styled';
 import { ActionName } from '../../providers/AppStateProvider/enums';
 import { Route } from '../../enums/route';
 import SwipeableList from '../SwipeableList';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 
 const PlaceholderComponent = () => (
   <Container>
@@ -19,7 +20,7 @@ const PlaceholderComponent = () => (
 
 const EmptyListComponent = () => (
   <EmptyListContainer>
-    <EmptyListMessage>No items in your grocery list</EmptyListMessage>
+    <ShoppingCartOutlinedIcon aria-label="Empty grocery list" />
   </EmptyListContainer>
 )
 

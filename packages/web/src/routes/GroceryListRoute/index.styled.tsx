@@ -9,6 +9,8 @@ export const Container = styled('div')({
 })
 
 export const ScrollableContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
   flex: 1,
   minHeight: 0,
   overflowY: 'auto',

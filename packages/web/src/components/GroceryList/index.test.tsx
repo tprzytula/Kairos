@@ -37,7 +37,7 @@ describe('Given the GroceryList component', () => {
   })
 
   describe('When the grocery list is empty', () => {
-    it('should render the empty list message', () => {
+    it('should render the empty list icon', () => {
       jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
         groceryList: [],
         isLoading: false,
@@ -49,7 +49,7 @@ describe('Given the GroceryList component', () => {
 
       renderComponent()
 
-      expect(screen.getByText('No items in your grocery list')).toBeVisible()
+      expect(screen.getByLabelText('Empty grocery list')).toBeVisible()
     })
   })
 
