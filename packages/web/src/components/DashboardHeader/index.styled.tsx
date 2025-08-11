@@ -44,9 +44,16 @@ export const DashboardHeaderCard = styled(Card)(({ theme }) => ({
 }))
 
 export const GreetingSection = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
+  display: 'grid',
+  gridTemplateColumns: 'auto 1fr',
+  gridTemplateRows: 'auto auto',
+  gridTemplateAreas: `
+    "icon greeting"
+    ". date"
+  `,
+  columnGap: '0.5rem',
+  rowGap: '0.125rem',
+  alignItems: 'center',
 })
 
 export const GreetingText = styled('div')(({ theme }) => ({
@@ -66,12 +73,10 @@ export const DateText = styled('div')(({ theme }) => ({
   fontWeight: '500',
   color: theme.palette.text.secondary,
   lineHeight: 1.2,
-  marginLeft: '2.1rem',
   opacity: 0.8,
   transition: 'opacity 0.3s ease',
   '@media (max-width: 480px)': {
     fontSize: '0.75rem',
-    marginLeft: '2.1rem',
   },
 }))
 

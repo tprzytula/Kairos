@@ -22,17 +22,16 @@ const DashboardHeader = () => {
     <DashboardHeaderContainer>
       <DashboardHeaderCard>
         <GreetingSection>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem', fontWeight: '700', marginBottom: '0.125rem' }}>
-            <HomeOutlinedIcon style={{ 
-              fontSize: '1.1rem',
-              padding: '0.25rem',
-              borderRadius: '6px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              color: 'white'
-            }} />
-            <GreetingText>{getGreeting()}</GreetingText>
-          </div>
-          <DateText>{formatDate()}</DateText>
+          <HomeOutlinedIcon style={{ 
+            fontSize: '1.1rem',
+            padding: '0.25rem',
+            borderRadius: '6px',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            gridArea: 'icon'
+          }} />
+          <GreetingText style={{ gridArea: 'greeting' }}>{getGreeting()}</GreetingText>
+          <DateText style={{ gridArea: 'date' }}>{formatDate()}</DateText>
         </GreetingSection>
         <BrandingSection>
           <AppBranding>Kairos</AppBranding>
