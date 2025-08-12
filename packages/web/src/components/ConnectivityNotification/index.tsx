@@ -39,19 +39,19 @@ const ConnectivityNotification = () => {
     }, 300)
   }
 
-  if (!isOnline) {
+    if (!isOnline) {
     return (
         <AnimatedNotificationContainer>
-            <NotificationCard severity="error">
-            <NotificationContent>
-                <IconWrapper>
-                <WifiOffIcon />
-                </IconWrapper>
-                <NotificationText>
-                No internet connection
-                </NotificationText>
-            </NotificationContent>
-            </NotificationCard>
+             <NotificationCard severity="error">
+              <NotificationContent>
+                 <IconWrapper>
+                  <WifiOffIcon />
+                 </IconWrapper>
+                 <NotificationText>
+                  Offline
+                 </NotificationText>
+              </NotificationContent>
+             </NotificationCard>
         </AnimatedNotificationContainer>
       );
   }

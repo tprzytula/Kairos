@@ -28,7 +28,7 @@ describe('ConnectivityNotification', () => {
 
     render(<ConnectivityNotification />)
     
-    expect(screen.getByText('No internet connection')).toBeInTheDocument()
+    expect(screen.getByText('Offline')).toBeInTheDocument()
   })
 
   it('should not show offline notification when connected', () => {
@@ -132,7 +132,7 @@ describe('ConnectivityNotification', () => {
 
     render(<ConnectivityNotification />)
     
-    expect(screen.getByText('No internet connection')).toBeInTheDocument()
+    expect(screen.getByText('Offline')).toBeInTheDocument()
     expect(screen.queryByText('Connection restored')).not.toBeInTheDocument()
   })
 })
