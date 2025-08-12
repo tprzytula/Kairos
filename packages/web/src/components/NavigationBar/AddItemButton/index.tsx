@@ -37,7 +37,7 @@ const PrimaryActionButton = styled(IconButton)(({ theme }) => ({
         opacity: 0,
         transition: 'opacity 0.3s ease',
     },
-    '&:hover': {
+    '&:hover:not(:disabled)': {
               background: `linear-gradient(135deg, #ffffff 0%, ${theme.palette.custom?.surfaces?.secondary} 100%)`,
       color: theme.palette.custom?.hover?.primary,
         transform: 'translateY(-2px) scale(1.05)',
@@ -51,12 +51,23 @@ const PrimaryActionButton = styled(IconButton)(({ theme }) => ({
             opacity: 1,
         },
     },
-    '&:active': {
+    '&:active:not(:disabled)': {
         transform: 'translateY(-1px) scale(1.02)',
         boxShadow: `
             0 1px 3px rgba(0, 0, 0, 0.1),
             0 4px 12px rgba(0, 0, 0, 0.06),
             inset 0 1px 0 rgba(255, 255, 255, 0.9)
+        `,
+    },
+    '&:disabled': {
+        opacity: 0.4,
+        background: `linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)`,
+        color: theme.palette.text.disabled,
+        cursor: 'not-allowed',
+        transform: 'none',
+        boxShadow: `
+            0 1px 2px rgba(0, 0, 0, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5)
         `,
     },
     '& .MuiSvgIcon-root': {
@@ -86,6 +97,10 @@ const AddItemButton = () => {
         return RouteToAddItemMapping[path];
     }, [location.pathname]);
 
+    const isOnHomePage = useMemo(() => {
+        return location.pathname === Route.Home;
+    }, [location.pathname]);
+
     const onClick = useCallback(() => {
         if (addItemRoute) {
             navigate(addItemRoute);
@@ -101,7 +116,7 @@ const AddItemButton = () => {
     const handleClick = useThrottle(onClick, 1000);
 
     return (
-        <PrimaryActionButton onClick={handleClick}>
+        <PrimaryActionButton onClick={handleClick} disabled={isOnHomePage}>
             <AddCircleIcon />
         </PrimaryActionButton>
     )
