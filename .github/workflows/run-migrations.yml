@@ -1,0 +1,113 @@
+name: Run Database Migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      lambda_function_name:
+        description: 'Lambda function name (e.g., db_migrations_abcdef1234)'
+        required: false
+        type: string
+      confirm_execution:
+        description: 'Type "CONFIRM" to execute migrations'
+        required: true
+        type: string
+
+jobs:
+  run-migrations:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+      - name: Validate confirmation
+        if: github.event.inputs.confirm_execution != 'CONFIRM'
+        run: |
+          echo "❌ Migrations execution cancelled. You must type 'CONFIRM' to execute migrations."
+          exit 1
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: eu-west-2
+
+      - name: Find Lambda Function
+        id: find-lambda
+        run: |
+          if [ -n "${{ github.event.inputs.lambda_function_name }}" ]; then
+            FUNCTION_NAME="${{ github.event.inputs.lambda_function_name }}"
+            echo "Using provided function name: $FUNCTION_NAME"
+          else
+            echo "🔍 Searching for db_migrations lambda function..."
+            FUNCTION_NAME=$(aws lambda list-functions \
+              --query "Functions[?starts_with(FunctionName, 'db_migrations_')].FunctionName" \
+              --output text)
+            
+            if [ -z "$FUNCTION_NAME" ]; then
+              echo "❌ No db_migrations lambda function found"
+              echo "Available functions:"
+              aws lambda list-functions --query "Functions[].FunctionName" --output table
+              exit 1
+            fi
+            
+            echo "✅ Found function: $FUNCTION_NAME"
+          fi
+          
+          echo "function_name=$FUNCTION_NAME" >> $GITHUB_OUTPUT
+
+      - name: Verify Lambda Function Exists
+        run: |
+          echo "🔍 Verifying lambda function exists..."
+          aws lambda get-function --function-name "${{ steps.find-lambda.outputs.function_name }}" > /dev/null
+          echo "✅ Lambda function verified"
+
+      - name: Execute Database Migrations
+        id: execute-migrations
+        run: |
+          echo "🚀 Executing database migrations..."
+          echo "Function: ${{ steps.find-lambda.outputs.function_name }}"
+          
+          # Invoke the lambda function
+          aws lambda invoke \
+            --function-name "${{ steps.find-lambda.outputs.function_name }}" \
+            --payload '{}' \
+            --cli-binary-format raw-in-base64-out \
+            response.json
+          
+          echo "📋 Migration Response:"
+          cat response.json | jq '.'
+          
+          # Check if migrations were successful
+          SUCCESS=$(cat response.json | jq -r '.success // false')
+          if [ "$SUCCESS" = "true" ]; then
+            echo "✅ Migrations completed successfully"
+          else
+            echo "❌ Migrations failed"
+            exit 1
+          fi
+
+      - name: Upload Migration Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: migration-results
+          path: response.json
+          retention-days: 30
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Migration Execution Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Function:** ${{ steps.find-lambda.outputs.function_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ${{ steps.execute-migrations.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Migration Response" >> $GITHUB_STEP_SUMMARY
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          if [ -f response.json ]; then
+            cat response.json | jq '.' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No response file generated" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo '```' >> $GITHUB_STEP_SUMMARY
