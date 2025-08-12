@@ -47,9 +47,17 @@ data "aws_iam_policy_document" "cloudfront_kairos_web" {
 
 data "aws_iam_policy_document" "lambda_invoke_migrations" {
   statement {
+    sid = "LambdaListFunctions"
+    actions = [
+      "lambda:ListFunctions"
+    ]
+    effect = "Allow"
+    resources = ["*"]
+  }
+  
+  statement {
     sid = "LambdaInvokeMigrations"
     actions = [
-      "lambda:ListFunctions",
       "lambda:GetFunction",
       "lambda:InvokeFunction"
     ]
