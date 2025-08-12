@@ -5,6 +5,7 @@ import AddGroceryItemRoute from './routes/AddGroceryItemRoute'
 import EditGroceryItemRoute from './routes/EditGroceryItemRoute'
 import AlertContainer from './components/AlertContainer'
 import PWAUpdateNotification from './components/PWAUpdateNotification'
+import ConnectivityNotification from './components/ConnectivityNotification'
 import { Route as RouteEnum } from './enums/route'
 import NoiseTrackingRoute from './routes/NoiseTrackingRoute'
 import ToDoListRoute from './routes/ToDoListRoute'
@@ -28,6 +29,7 @@ export const App = () => {
         </Routes>
         <AlertContainer />
         <PWAUpdateNotification />
+        <ConnectivityNotification />
       </Content>
     </ApplicationContainer>
   )
