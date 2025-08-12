@@ -96,6 +96,30 @@ describe('Given the useGroceryListContext hook', () => {
       })
     })
   })
+
+  describe('Context initialization', () => {
+    it('should provide initial state values', async () => {
+      const { result } = renderHook(() => useNoiseTrackingContext(), {
+        wrapper: NoiseTrackingProvider,
+      })
+
+      await waitFor(() => {
+        expect(result.current.noiseTrackingItems).toEqual([])
+        expect(result.current.isLoading).toBe(false)
+        expect(typeof result.current.refetchNoiseTrackingItems).toBe('function')
+      })
+    })
+
+    it('should handle context usage outside provider', () => {
+      // Test the useContext behavior when used outside provider
+      const { result } = renderHook(() => useNoiseTrackingContext())
+      
+      // Should return initial state values
+      expect(result.current.noiseTrackingItems).toEqual([])
+      expect(result.current.isLoading).toBe(false)
+      expect(typeof result.current.refetchNoiseTrackingItems).toBe('function')
+    })
+  })
 })
 
 const EXAMPLE_NOISE_TRACKING_ITEMS: Array<INoiseTrackingItem> = [

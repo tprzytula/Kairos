@@ -188,6 +188,153 @@ describe('Given the HomeRoute component', () => {
       expect(errorSpy).toHaveBeenCalledWith('Failed to fetch noise tracking items:', new Error('Noise API failed'))
     })
   })
+
+  describe('Due date calculations', () => {
+    beforeEach(() => {
+      // Mock current date to a fixed value for consistent testing
+      jest.useFakeTimers()
+      jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
+    })
+
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    it('should display overdue items correctly', async () => {
+      const overdueItem = {
+        id: '1',
+        name: 'Overdue Task',
+        isDone: false,
+        description: 'This is overdue',
+        dueDate: new Date('2024-01-10T12:00:00Z').getTime() // 5 days ago
+      }
+
+      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([overdueItem])
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('overdue by 5 days')).toBeInTheDocument()
+      })
+    })
+
+    it('should display items due today correctly', async () => {
+      const todayItem = {
+        id: '2',
+        name: 'Today Task',
+        isDone: false,
+        description: 'Due today',
+        dueDate: new Date('2024-01-15T15:00:00Z').getTime() // Same day
+      }
+
+      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([todayItem])
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText(/due today/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should display items due tomorrow correctly', async () => {
+      const tomorrowItem = {
+        id: '3',
+        name: 'Tomorrow Task',
+        isDone: false,
+        description: 'Due tomorrow',
+        dueDate: new Date('2024-01-16T12:00:00Z').getTime() // Next day
+      }
+
+      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([tomorrowItem])
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('due tomorrow')).toBeInTheDocument()
+      })
+    })
+
+    it('should display items due in weeks correctly', async () => {
+      const weekItem = {
+        id: '4',
+        name: 'Week Task',
+        isDone: false,
+        description: 'Due in weeks',
+        dueDate: new Date('2024-01-29T12:00:00Z').getTime() // 14 days later
+      }
+
+      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([weekItem])
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('in 2 weeks')).toBeInTheDocument()
+      })
+    })
+
+    it('should display items due in months correctly', async () => {
+      const monthItem = {
+        id: '5',
+        name: 'Month Task',
+        isDone: false,
+        description: 'Due in months',
+        dueDate: new Date('2024-03-15T12:00:00Z').getTime() // 60 days later
+      }
+
+      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([monthItem])
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('in 2 months')).toBeInTheDocument()
+      })
+    })
+
+    it('should handle items without due dates', async () => {
+      const noDateItem = {
+        id: '6',
+        name: 'No Date Task',
+        isDone: false,
+        description: 'No due date',
+        dueDate: undefined
+      }
+
+      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([noDateItem])
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('No Date Task')).toBeInTheDocument()
+        // Should not display specific due date text
+        expect(screen.queryByText('due today')).not.toBeInTheDocument()
+        expect(screen.queryByText('overdue by')).not.toBeInTheDocument()
+      })
+    })
+  })
 })
 
 const renderComponent = () => {
