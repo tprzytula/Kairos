@@ -75,30 +75,77 @@ self.addEventListener('activate', (event) => {
   })
 })
 
-// Fetch event - network first for API calls, cache first for assets
+// Fetch event - cache strategy based on request type
 self.addEventListener('fetch', (event) => {
   const { request } = event
   const url = new URL(request.url)
 
-  // Handle API calls - always try network first
+  // Handle API calls with improved caching strategy
   if (url.pathname.includes('/api/') || url.hostname.includes('amazonaws.com')) {
-    event.respondWith(
-      fetch(request)
-        .then(response => {
-          // Cache successful API responses for offline support
-          if (response.status === 200) {
-            const responseClone = response.clone()
-            caches.open(RUNTIME_CACHE).then(cache => {
-              cache.put(request, responseClone)
-            })
+    // Check if this is a GET request for retrieving data
+    if (request.method === 'GET' && isDataRetrievalEndpoint(url.pathname)) {
+      // Cache First strategy for GET requests - show cached data immediately, update in background
+      event.respondWith(
+        caches.match(request).then(cachedResponse => {
+          // If we have cached data, return it immediately
+          if (cachedResponse && !isCacheExpired(cachedResponse)) {
+            // Update in background (Stale While Revalidate)
+            fetch(request)
+              .then(response => {
+                if (response.status === 200) {
+                  const responseClone = response.clone()
+                  caches.open(RUNTIME_CACHE).then(cache => {
+                    cache.put(request, addCacheTimestamp(responseClone))
+                  })
+                }
+              })
+              .catch(() => {
+                // Background update failed, but we still have cached data
+              })
+            
+            return cachedResponse
           }
-          return response
+
+          // No cache or cache expired, try network first
+          return fetch(request)
+            .then(response => {
+              if (response.status === 200) {
+                const responseClone = response.clone()
+                caches.open(RUNTIME_CACHE).then(cache => {
+                  cache.put(request, addCacheTimestamp(responseClone))
+                })
+              }
+              return response
+            })
+            .catch(() => {
+              // Network failed, return stale cache if available
+              return cachedResponse || new Response('[]', { 
+                status: 200, 
+                headers: { 'Content-Type': 'application/json' } 
+              })
+            })
         })
-        .catch(() => {
-          // Return cached response if network fails
-          return caches.match(request).then(response => response || new Response('Offline', { status: 503 }))
-        })
-    )
+      )
+    } else {
+      // For POST/PUT/DELETE requests - always try network first
+      event.respondWith(
+        fetch(request)
+          .then(response => {
+            // If successful mutation, invalidate related cache entries
+            if (response.status >= 200 && response.status < 300) {
+              invalidateRelatedCache(url.pathname)
+            }
+            return response
+          })
+          .catch(error => {
+            // For mutations, we can't use cache - return error
+            return new Response(JSON.stringify({ error: 'Offline - changes cannot be saved' }), {
+              status: 503,
+              headers: { 'Content-Type': 'application/json' }
+            })
+          })
+      )
+    }
     return
   }
 
@@ -133,6 +180,53 @@ self.addEventListener('fetch', (event) => {
       })
   )
 })
+
+// Helper function to check if URL is a data retrieval endpoint
+function isDataRetrievalEndpoint(pathname: string): boolean {
+  return pathname.includes('/items') && (
+    pathname.includes('grocery_list') ||
+    pathname.includes('todo_list') ||
+    pathname.includes('noise_tracking')
+  )
+}
+
+// Helper function to check if cache is expired (30 minutes)
+function isCacheExpired(response: Response): boolean {
+  const cacheTimestamp = response.headers.get('sw-cache-timestamp')
+  if (!cacheTimestamp) return false
+  
+  const thirtyMinutes = 30 * 60 * 1000
+  return Date.now() - parseInt(cacheTimestamp) > thirtyMinutes
+}
+
+// Helper function to add cache timestamp to response
+function addCacheTimestamp(response: Response): Response {
+  const newHeaders = new Headers(response.headers)
+  newHeaders.set('sw-cache-timestamp', Date.now().toString())
+  
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: newHeaders
+  })
+}
+
+// Helper function to invalidate cache entries related to a mutation
+function invalidateRelatedCache(pathname: string): void {
+  caches.open(RUNTIME_CACHE).then(cache => {
+    cache.keys().then(requests => {
+      requests.forEach(request => {
+        const requestUrl = new URL(request.url)
+        // Invalidate cache for the same resource type
+        if (pathname.includes('grocery_list') && requestUrl.pathname.includes('grocery_list') ||
+            pathname.includes('todo_list') && requestUrl.pathname.includes('todo_list') ||
+            pathname.includes('noise_tracking') && requestUrl.pathname.includes('noise_tracking')) {
+          cache.delete(request)
+        }
+      })
+    })
+  })
+}
 
 // Listen for update check requests from the app
 self.addEventListener('message', (event) => {
