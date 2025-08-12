@@ -101,17 +101,20 @@ const AddItemButton = () => {
         return location.pathname === Route.Home;
     }, [location.pathname]);
 
-    const onClick = useCallback(() => {
+    const onClick = useCallback(async () => {
         if (addItemRoute) {
             navigate(addItemRoute);
         }
 
         if (location.pathname === Route.NoiseTracking) {
-            addNoiseTrackingItem().then(() => {
-                refetchNoiseTrackingItems()
-            })
+            try {
+                await addNoiseTrackingItem();
+                refetchNoiseTrackingItems();
+            } catch (error) {
+                console.error('Failed to add noise tracking item:', error);
+            }
         }
-    }, [navigate, addItemRoute]);
+    }, [navigate, addItemRoute, location.pathname, refetchNoiseTrackingItems]);
 
     const handleClick = useThrottle(onClick, 1000);
 
