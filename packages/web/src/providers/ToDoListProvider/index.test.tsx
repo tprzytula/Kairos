@@ -105,6 +105,99 @@ describe('Given the useGroceryListContext hook', () => {
       })
     })
   })
+
+  it('should handle removing items from the todo list', async () => {
+    jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
+
+    const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
+      wrapper: ToDoListProvider,
+    }))
+
+    await waitFor(() => {
+      expect(result.current.toDoList).toHaveLength(2)
+    })
+
+    await act(async () => {
+      await result.current.removeFromToDoList('1')
+    })
+
+    expect(result.current.toDoList).toHaveLength(1)
+    expect(result.current.toDoList[0].id).toBe('2')
+  })
+
+
+
+  it('should handle updating todo item fields', async () => {
+    jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
+    jest.spyOn(API, 'updateToDoItemFields').mockResolvedValue()
+
+    const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
+      wrapper: ToDoListProvider,
+    }))
+
+    await waitFor(() => {
+      expect(result.current.toDoList).toHaveLength(2)
+    })
+
+    await act(async () => {
+      await result.current.updateToDoItemFields('1', { isDone: true, name: 'Updated task' })
+    })
+
+    expect(API.updateToDoItemFields).toHaveBeenCalledWith('1', { isDone: true, name: 'Updated task' })
+    
+    const updatedItem = result.current.toDoList.find(item => item.id === '1')
+    expect(updatedItem?.isDone).toBe(true)
+    expect(updatedItem?.name).toBe('Updated task')
+  })
+
+  it('should handle errors when updating todo item fields fails', async () => {
+    jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
+    jest.spyOn(API, 'updateToDoItemFields').mockRejectedValue(new Error('Update failed'))
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+
+    const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
+      wrapper: ToDoListProvider,
+    }))
+
+    await waitFor(() => {
+      expect(result.current.toDoList).toHaveLength(2)
+    })
+
+    await expect(async () => {
+      await act(async () => {
+        await result.current.updateToDoItemFields('1', { isDone: true })
+      })
+    }).rejects.toThrow('Update failed')
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to update todo item:', expect.any(Error))
+    consoleErrorSpy.mockRestore()
+  })
+
+  it('should show loading state during API requests', async () => {
+    let resolvePromise: any
+    const promise = new Promise<ITodoItem[]>((resolve) => {
+      resolvePromise = resolve
+    })
+    
+    jest.spyOn(API, 'retrieveToDoList').mockReturnValue(promise)
+
+    const { result } = renderHook(() => useToDoListContext(), {
+      wrapper: ToDoListProvider,
+    })
+
+    // Should be loading initially
+    expect(result.current.isLoading).toBe(true)
+
+    // Resolve the promise
+    await act(async () => {
+      resolvePromise(EXAMPLE_TODO_LIST)
+      await promise
+    })
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false)
+    })
+  })
 })
 
 const EXAMPLE_TODO_LIST: Array<ITodoItem> = [

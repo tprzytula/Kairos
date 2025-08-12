@@ -195,6 +195,90 @@ describe('Given the useGroceryListContext hook', () => {
       ])
     })
   })
+
+  it('should handle removeGroceryItem', async () => {
+    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    jest.spyOn(API, 'removeGroceryItems').mockResolvedValue()
+
+    const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
+      wrapper: GroceryListProvider,
+    }))
+
+    await waitFor(() => {
+      expect(result.current.groceryList).toHaveLength(2)
+    })
+
+    await act(async () => {
+      await result.current.removeGroceryItem('1')
+    })
+
+    expect(API.removeGroceryItems).toHaveBeenCalledWith(['1'])
+    expect(result.current.groceryList).toHaveLength(1)
+    expect(result.current.groceryList[0].id).toBe('2')
+  })
+
+  it('should handle error when removeGroceryItem fails', async () => {
+    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    jest.spyOn(API, 'removeGroceryItems').mockRejectedValue(new Error('Remove failed'))
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+
+    const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
+      wrapper: GroceryListProvider,
+    }))
+
+    await waitFor(() => {
+      expect(result.current.groceryList).toHaveLength(2)
+    })
+
+    await act(async () => {
+      await result.current.removeGroceryItem('1')
+    })
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to remove grocery item:', expect.any(Error))
+    consoleErrorSpy.mockRestore()
+  })
+
+  it('should handle error when updateGroceryItem fails', async () => {
+    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    jest.spyOn(API, 'updateGroceryItem').mockRejectedValue(new Error('Update failed'))
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+
+    const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
+      wrapper: GroceryListProvider,
+    }))
+
+    await waitFor(() => {
+      expect(result.current.groceryList).toHaveLength(2)
+    })
+
+    await act(async () => {
+      await result.current.updateGroceryItem('1', 5)
+    })
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to update grocery item:', expect.any(Error))
+    consoleErrorSpy.mockRestore()
+  })
+
+  it('should handle error when updateGroceryItemFields fails', async () => {
+    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    jest.spyOn(API, 'updateGroceryItemFields').mockRejectedValue(new Error('Update fields failed'))
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+
+    const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
+      wrapper: GroceryListProvider,
+    }))
+
+    await waitFor(() => {
+      expect(result.current.groceryList).toHaveLength(2)
+    })
+
+    await act(async () => {
+      await result.current.updateGroceryItemFields('1', { name: 'Updated Item' })
+    })
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to update grocery item fields:', expect.any(Error))
+    consoleErrorSpy.mockRestore()
+  })
 })
 
 const EXAMPLE_GROCERY_LIST: Array<IGroceryItem> = [
