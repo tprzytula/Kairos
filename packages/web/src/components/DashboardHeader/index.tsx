@@ -1,8 +1,6 @@
 import { DashboardHeaderContainer, DashboardHeaderCard, GreetingSection, GreetingText, DateText, AppBranding, BrandingSection, VersionText } from './index.styled'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
-
-// Import version from package.json
-import packageJson from '../../../package.json'
+import { useVersion } from '../../hooks/useVersion'
 
 const getGreeting = (): string => {
   const hour = new Date().getHours()
@@ -20,6 +18,10 @@ const formatDate = (): string => {
 }
 
 const DashboardHeader = () => {
+  const { version } = useVersion()
+  
+  const displayVersion = version || '...'
+  
   return (
     <DashboardHeaderContainer>
       <DashboardHeaderCard>
@@ -38,7 +40,7 @@ const DashboardHeader = () => {
         <BrandingSection>
           <AppBranding>Kairos</AppBranding>
           <VersionText>
-            v{packageJson.version}
+            {displayVersion}
           </VersionText>
         </BrandingSection>
       </DashboardHeaderCard>
