@@ -16,6 +16,15 @@ export const handler: Handler = middleware(async (event) => {
     
     console.log(`Loaded ${migrations.length} embedded migrations`);
     
+    const { getExecutedMigrations, getMigration } = await import("./tracker");
+    
+    console.log("DEBUG: Checking migrations table...");
+    const executedMigrations = await getExecutedMigrations();
+    console.log("DEBUG: Executed migrations:", executedMigrations);
+    
+    const migration001Record = await getMigration("001");
+    console.log("DEBUG: Migration 001 record:", migration001Record);
+    
     if (migrations.length === 0) {
       console.log("No migrations found");
       return createResponse({
