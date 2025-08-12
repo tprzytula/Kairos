@@ -1,4 +1,4 @@
-import { GroceryItemUnit } from '../../enums'
+import { GroceryItemUnit, GroceryItemCategory } from '../../enums'
 
 export interface IGroceryItem {
     id: string
@@ -6,6 +6,7 @@ export interface IGroceryItem {
     name: string
     quantity: number
     unit: GroceryItemUnit
+    category?: GroceryItemCategory
 }
   
 export interface IGroceryItemDefault {

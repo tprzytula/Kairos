@@ -39,7 +39,7 @@ const createNewItem = async (item: Omit<IGroceryItem, "id">): Promise<string> =>
 };
 
 export const upsertItem = async (item: Omit<IGroceryItem, "id">): Promise<{ id: string, statusCode: number }> => {
-  const { name, quantity, unit, imagePath } = item;
+  const { name, quantity, unit, imagePath, category } = item;
 
   const existingItem = await findExistingItem({
     name,
@@ -47,10 +47,16 @@ export const upsertItem = async (item: Omit<IGroceryItem, "id">): Promise<{ id: 
   });
 
   if (existingItem) {
+    const updateFields: Partial<IGroceryItem> = {
+      quantity: (Number(existingItem.quantity) + Number(quantity)).toString(),
+    };
+
+    if (category && !existingItem.category) {
+      updateFields.category = category;
+    }
+
     return {
-      id: await updateExistingItem(existingItem.id, {
-        quantity: (Number(existingItem.quantity) + Number(quantity)).toString(),
-      }),
+      id: await updateExistingItem(existingItem.id, updateFields),
       statusCode: 200,
     };
   }
@@ -61,6 +67,7 @@ export const upsertItem = async (item: Omit<IGroceryItem, "id">): Promise<{ id: 
       quantity,
       unit,
       imagePath,
+      category,
     }),
     statusCode: 201,
   };

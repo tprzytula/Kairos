@@ -1,6 +1,8 @@
 import { getBody } from "./body";
 import { upsertItem } from "./database";
 import { IRequestBody } from "./body/types";
+import { getCategoryForItem } from "./utils";
+import { GroceryItemCategory } from "@kairos-lambdas-libs/dynamodb/enums";
 
 import { handler } from "./index";
 
@@ -10,6 +12,10 @@ jest.mock('./body', () => ({
 
 jest.mock('./database', () => ({
     upsertItem: jest.fn(),
+}));
+
+jest.mock('./utils', () => ({
+    getCategoryForItem: jest.fn(),
 }));
 
 describe('Given the add_grocery_item lambda handler', () => {
@@ -24,17 +30,23 @@ describe('Given the add_grocery_item lambda handler', () => {
     });
 
     describe('When the body is valid', () => {
-        it('should upsert the item in the grocery list table', async () => {
+        it('should fetch category and upsert the item in the grocery list table', async () => {
             jest.mocked(getBody).mockReturnValue(EXAMPLE_GROCERY_ITEM);
+            jest.mocked(getCategoryForItem).mockResolvedValue(GroceryItemCategory.FRUITS_VEGETABLES);
 
             await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
 
-            expect(jest.mocked(upsertItem)).toHaveBeenCalledWith(EXAMPLE_GROCERY_ITEM);
+            expect(jest.mocked(getCategoryForItem)).toHaveBeenCalledWith("Apple");
+            expect(jest.mocked(upsertItem)).toHaveBeenCalledWith({
+                ...EXAMPLE_GROCERY_ITEM,
+                category: GroceryItemCategory.FRUITS_VEGETABLES,
+            });
         });
 
         describe('And the upsert succeeds', () => {
             it('should return status 200', async () => {
                 jest.mocked(getBody).mockReturnValue(EXAMPLE_GROCERY_ITEM);
+                jest.mocked(getCategoryForItem).mockResolvedValue(GroceryItemCategory.FRUITS_VEGETABLES);
                 jest.mocked(upsertItem).mockResolvedValue({
                     id: EXAMPLE_ID,
                     statusCode: 200,
@@ -49,6 +61,8 @@ describe('Given the add_grocery_item lambda handler', () => {
 
         describe('And the upsert fails', () => {
             it('should return status 500', async () => {
+                jest.mocked(getBody).mockReturnValue(EXAMPLE_GROCERY_ITEM);
+                jest.mocked(getCategoryForItem).mockResolvedValue(GroceryItemCategory.FRUITS_VEGETABLES);
                 jest.mocked(upsertItem).mockRejectedValue(new Error('Upsert failed'));
 
                 const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
