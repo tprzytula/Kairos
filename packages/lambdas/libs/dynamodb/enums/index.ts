@@ -22,3 +22,14 @@ export enum GroceryItemUnit {
   ROLL = 'roll(s)',
   UNIT = 'unit(s)',
 }
+
+export enum GroceryItemCategory {
+  MEAT_POULTRY = "Meat & Poultry",
+  DAIRY = "Dairy",
+  FRUITS_VEGETABLES = "Fruits & Vegetables",
+  BAKERY_GRAINS = "Bakery & Grains",
+  PANTRY_GRAINS = "Pantry & Grains",
+  BEVERAGES = "Beverages",
+  HOUSEHOLD = "Household",
+  OTHER = "Other",
+}

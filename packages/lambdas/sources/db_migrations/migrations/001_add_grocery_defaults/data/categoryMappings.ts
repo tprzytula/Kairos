@@ -1,12 +1,6 @@
-export type CategoryName = 
-  | "Meat & Poultry"
-  | "Dairy"
-  | "Fruits & Vegetables"
-  | "Bakery & Grains"
-  | "Pantry & Grains"
-  | "Beverages"
-  | "Household"
-  | "Other";
+import { GroceryItemCategory } from "@kairos-lambdas-libs/dynamodb/enums";
+
+export type CategoryName = GroceryItemCategory;
 
 export interface CategoryMapping {
   [itemName: string]: CategoryName;
@@ -14,50 +8,50 @@ export interface CategoryMapping {
 
 export const categoryMap: CategoryMapping = {
   // Proteins
-  "beef": "Meat & Poultry",
-  "chicken": "Meat & Poultry", 
-  "chicken breast": "Meat & Poultry",
-  "meat": "Meat & Poultry",
-  "bacon": "Meat & Poultry",
+  "beef": GroceryItemCategory.MEAT_POULTRY,
+  "chicken": GroceryItemCategory.MEAT_POULTRY, 
+  "chicken breast": GroceryItemCategory.MEAT_POULTRY,
+  "meat": GroceryItemCategory.MEAT_POULTRY,
+  "bacon": GroceryItemCategory.MEAT_POULTRY,
   
   // Dairy
-  "cheese": "Dairy",
-  "parmesan": "Dairy",
-  "milk": "Dairy",
-  "creme": "Dairy",
+  "cheese": GroceryItemCategory.DAIRY,
+  "parmesan": GroceryItemCategory.DAIRY,
+  "milk": GroceryItemCategory.DAIRY,
+  "creme": GroceryItemCategory.DAIRY,
   
   // Fruits & Vegetables
-  "apple": "Fruits & Vegetables",
-  "banana": "Fruits & Vegetables",
-  "avocado": "Fruits & Vegetables",
-  "tomato": "Fruits & Vegetables",
-  "lemon": "Fruits & Vegetables",
-  "onion": "Fruits & Vegetables",
-  "carrot": "Fruits & Vegetables",
-  "spinach": "Fruits & Vegetables",
-  "parsley": "Fruits & Vegetables",
-  "chilli": "Fruits & Vegetables",
-  "squash": "Fruits & Vegetables",
+  "apple": GroceryItemCategory.FRUITS_VEGETABLES,
+  "banana": GroceryItemCategory.FRUITS_VEGETABLES,
+  "avocado": GroceryItemCategory.FRUITS_VEGETABLES,
+  "tomato": GroceryItemCategory.FRUITS_VEGETABLES,
+  "lemon": GroceryItemCategory.FRUITS_VEGETABLES,
+  "onion": GroceryItemCategory.FRUITS_VEGETABLES,
+  "carrot": GroceryItemCategory.FRUITS_VEGETABLES,
+  "spinach": GroceryItemCategory.FRUITS_VEGETABLES,
+  "parsley": GroceryItemCategory.FRUITS_VEGETABLES,
+  "chilli": GroceryItemCategory.FRUITS_VEGETABLES,
+  "squash": GroceryItemCategory.FRUITS_VEGETABLES,
   
   // Bakery & Grains
-  "bread": "Bakery & Grains",
-  "ciabatta": "Bakery & Grains",
-  "rice": "Pantry & Grains",
-  "oats": "Pantry & Grains",
-  "oat": "Pantry & Grains",
+  "bread": GroceryItemCategory.BAKERY_GRAINS,
+  "ciabatta": GroceryItemCategory.BAKERY_GRAINS,
+  "rice": GroceryItemCategory.PANTRY_GRAINS,
+  "oats": GroceryItemCategory.PANTRY_GRAINS,
+  "oat": GroceryItemCategory.PANTRY_GRAINS,
   
   // Pantry
-  "beans": "Pantry & Grains",
-  "spice": "Pantry & Grains",
-  "coffee": "Beverages",
+  "beans": GroceryItemCategory.PANTRY_GRAINS,
+  "spice": GroceryItemCategory.PANTRY_GRAINS,
+  "coffee": GroceryItemCategory.BEVERAGES,
   
   // Household
-  "toilet paper": "Household",
+  "toilet paper": GroceryItemCategory.HOUSEHOLD,
   
   // Generic
-  "generic": "Other",
+  "generic": GroceryItemCategory.OTHER,
 };
 
 export const getCategory = (itemName: string): CategoryName => {
-  return categoryMap[itemName.toLowerCase()] || "Other";
+  return categoryMap[itemName.toLowerCase()] || GroceryItemCategory.OTHER;
 };
