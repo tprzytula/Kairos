@@ -7,9 +7,8 @@ import { LastMigrationRecord } from './tracker/types';
 jest.mock('./runner');
 jest.mock('./tracker');
 
-// Mock path module
-jest.mock('path', () => ({
-  join: jest.fn().mockReturnValue('/mocked/path/migrations'),
+jest.mock('./migrations/001_add_grocery_defaults', () => ({
+  default: { id: '001', name: 'Migration 1', execute: jest.fn() }
 }));
 
 describe('db_migrations lambda handler', () => {
@@ -20,9 +19,14 @@ describe('db_migrations lambda handler', () => {
   const runHandler = (event: any = {}) => 
     handler(event, {} as any, {} as any);
 
-  describe('when no migrations are found', () => {
-    it('should return success with no migrations message', async () => {
-      jest.mocked(runner.loadMigrationsFromDirectory).mockResolvedValue([]);
+  describe('when no migrations to run', () => {
+    it('should return success when all migrations are skipped', async () => {
+      const mockResults: MigrationResult[] = [
+        { id: '001', name: 'Migration 1', status: 'skipped' },
+      ];
+      
+      jest.mocked(runner.runMigrations).mockResolvedValue(mockResults);
+      jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(null);
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
       const result = await runHandler();
@@ -30,10 +34,17 @@ describe('db_migrations lambda handler', () => {
       expect(result.statusCode).toBe(200);
       expect(JSON.parse(result.body)).toEqual({
         success: true,
-        message: 'No migrations to execute',
-        results: [],
+        message: 'Migrations completed. Success: 0, Skipped: 1, Failed: 0',
+        results: mockResults,
+        lastMigration: null,
+        summary: {
+          total: 1,
+          success: 0,
+          skipped: 1,
+          failed: 0,
+        },
       });
-      expect(consoleSpy).toHaveBeenCalledWith('No migrations found');
+      expect(consoleSpy).toHaveBeenCalledWith('Loaded 1 embedded migrations');
     });
   });
 
@@ -57,13 +68,11 @@ describe('db_migrations lambda handler', () => {
     };
 
     it('should execute migrations successfully', async () => {
-      jest.mocked(runner.loadMigrationsFromDirectory).mockResolvedValue(mockMigrations);
       jest.mocked(runner.runMigrations).mockResolvedValue(mockResults);
       jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(mockLastMigration);
 
       const result = await runHandler();
 
-      expect(runner.loadMigrationsFromDirectory).toHaveBeenCalledWith('/mocked/path/migrations');
       expect(runner.runMigrations).toHaveBeenCalled();
       expect(result.statusCode).toBe(200);
 
@@ -87,7 +96,6 @@ describe('db_migrations lambda handler', () => {
         { id: '003', name: 'Migration 3', status: 'failed', error: 'Something went wrong' },
       ];
 
-      jest.mocked(runner.loadMigrationsFromDirectory).mockResolvedValue(mockMigrations);
       jest.mocked(runner.runMigrations).mockResolvedValue(mixedResults);
       jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(mockLastMigration);
 
@@ -108,14 +116,13 @@ describe('db_migrations lambda handler', () => {
     it('should log migration progress', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
       
-      jest.mocked(runner.loadMigrationsFromDirectory).mockResolvedValue(mockMigrations);
       jest.mocked(runner.runMigrations).mockResolvedValue(mockResults);
       jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(mockLastMigration);
 
       await runHandler();
 
       expect(consoleSpy).toHaveBeenCalledWith('Starting database migrations...');
-      expect(consoleSpy).toHaveBeenCalledWith('Loading migrations from: /mocked/path/migrations');
+      expect(consoleSpy).toHaveBeenCalledWith('Loaded 1 embedded migrations');
       expect(consoleSpy).toHaveBeenCalledWith('Migration run summary:', {
         total: 2,
         success: 2,
@@ -125,31 +132,9 @@ describe('db_migrations lambda handler', () => {
     });
   });
 
-  describe('when migration loading fails', () => {
-    it('should handle errors gracefully', async () => {
-      const error = new Error('Failed to load migrations');
-      jest.mocked(runner.loadMigrationsFromDirectory).mockRejectedValue(error);
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-
-      const result = await runHandler();
-
-      expect(result.statusCode).toBe(500);
-      const body = JSON.parse(result.body);
-      expect(body.success).toBe(false);
-      expect(body.message).toBe('Failed to run migrations');
-      expect(body.error).toBe('Failed to load migrations');
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to run migrations:', 'Failed to load migrations');
-    });
-  });
-
   describe('when migration execution fails', () => {
-    it('should handle runner errors gracefully', async () => {
-      const mockMigrations: Migration[] = [
-        { id: '001', name: 'Migration 1', execute: jest.fn() },
-      ];
-
+    it('should handle errors gracefully', async () => {
       const error = new Error('Migration execution failed');
-      jest.mocked(runner.loadMigrationsFromDirectory).mockResolvedValue(mockMigrations);
       jest.mocked(runner.runMigrations).mockRejectedValue(error);
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
@@ -164,19 +149,16 @@ describe('db_migrations lambda handler', () => {
     });
   });
 
+
+
   describe('when last migration tracking fails', () => {
     it('should still return successful response if migrations succeeded', async () => {
-      const mockMigrations: Migration[] = [
-        { id: '001', name: 'Migration 1', execute: jest.fn() },
-      ];
-
       const mockResults: MigrationResult[] = [
         { id: '001', name: 'Migration 1', status: 'success', executedAt: '2024-01-01T00:00:00Z' },
       ];
 
-      jest.mocked(runner.loadMigrationsFromDirectory).mockResolvedValue(mockMigrations);
       jest.mocked(runner.runMigrations).mockResolvedValue(mockResults);
-      jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(null); // Return null instead of rejecting
+      jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(null);
 
       const result = await runHandler();
 
