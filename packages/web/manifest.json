@@ -5,7 +5,7 @@
   "start_url": "https://d1568c842iynon.cloudfront.net",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "portrait",
   "background_color": "#f5f6fa",
   "theme_color": "#E63E5D",
   "description": "Kairos helps you manage your grocery lists, todo items, and noise tracking with a native app experience.",
