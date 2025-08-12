@@ -65,15 +65,24 @@ jobs:
             --cli-binary-format raw-in-base64-out \
             response.json
           
-          echo "📋 Migration Response:"
+          echo "📋 Lambda Invoke Response:"
           cat response.json | jq '.'
           
+          # Parse the actual migration response from the body
+          MIGRATION_BODY=$(cat response.json | jq -r '.body')
+          echo "📋 Migration Response Body:"
+          echo "$MIGRATION_BODY" | jq '.'
+          
           # Check if migrations were successful
-          SUCCESS=$(cat response.json | jq -r '.success // false')
+          SUCCESS=$(echo "$MIGRATION_BODY" | jq -r '.success // false')
           if [ "$SUCCESS" = "true" ]; then
             echo "✅ Migrations completed successfully"
+            MESSAGE=$(echo "$MIGRATION_BODY" | jq -r '.message // "No message"')
+            echo "📝 Message: $MESSAGE"
           else
             echo "❌ Migrations failed"
+            ERROR_MSG=$(echo "$MIGRATION_BODY" | jq -r '.error // .message // "Unknown error"')
+            echo "❌ Error: $ERROR_MSG"
             exit 1
           fi
 
@@ -93,11 +102,21 @@ jobs:
           echo "- **Status:** ${{ steps.execute-migrations.outcome }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Migration Response" >> $GITHUB_STEP_SUMMARY
+          echo "### Lambda Invoke Response" >> $GITHUB_STEP_SUMMARY
           echo '```json' >> $GITHUB_STEP_SUMMARY
           if [ -f response.json ]; then
             cat response.json | jq '.' >> $GITHUB_STEP_SUMMARY
           else
             echo "No response file generated" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Migration Details" >> $GITHUB_STEP_SUMMARY
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          if [ -f response.json ]; then
+            MIGRATION_BODY=$(cat response.json | jq -r '.body')
+            echo "$MIGRATION_BODY" | jq '.' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No migration details available" >> $GITHUB_STEP_SUMMARY
           fi
           echo '```' >> $GITHUB_STEP_SUMMARY

@@ -1,18 +1,20 @@
 import { Handler } from "aws-lambda";
 import { middleware } from "@kairos-lambdas-libs/middleware";
 import { createResponse } from "@kairos-lambdas-libs/response";
-import { runMigrations, loadMigrationsFromDirectory } from "./runner";
+import { runMigrations } from "./runner";
 import { getLastExecutedMigration } from "./tracker";
-import { join } from "path";
+
+import migration001 from "./migrations/001_add_grocery_defaults";
 
 export const handler: Handler = middleware(async (event) => {
   console.log("Starting database migrations...");
 
   try {
-    const migrationsPath = join(__dirname, 'migrations');
-    console.log(`Loading migrations from: ${migrationsPath}`);
-
-    const migrations = await loadMigrationsFromDirectory(migrationsPath);
+    const migrations = [
+      migration001,
+    ];
+    
+    console.log(`Loaded ${migrations.length} embedded migrations`);
     
     if (migrations.length === 0) {
       console.log("No migrations found");
