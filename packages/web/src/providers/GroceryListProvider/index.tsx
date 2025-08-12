@@ -4,23 +4,35 @@ import { IGroceryItem } from '../AppStateProvider/types'
 import { removeGroceryItems, retrieveGroceryList, updateGroceryItem, updateGroceryItemFields, GroceryItemUpdateFields } from '../../api/groceryList'
 import { IState } from './types'
 import { addPropertyToEachItemInList } from '../../utils/list'
+import { GroceryViewMode } from '../../enums/groceryCategory'
 
 export const initialState: IState = {
   groceryList: [],
   isLoading: false,
+  viewMode: GroceryViewMode.CATEGORIZED,
   refetchGroceryList: async () => {},
   removeGroceryItem: async (id: string) => {},
   updateGroceryItem: async (id: string, quantity: number) => {},
   updateGroceryItemFields: async (id: string, fields: GroceryItemUpdateFields) => {},
+  setViewMode: (mode: GroceryViewMode) => {},
 }
 
 export const GroceryListContext = createContext<IState>(initialState)
 
 export const useGroceryListContext = () => useContext(GroceryListContext)
 
+const GROCERY_VIEW_MODE_STORAGE_KEY = 'grocery-view-mode'
+
 export const GroceryListProvider = ({ children }: StateComponentProps) => {
   const [groceryList, setGroceryList] = useState<Array<IGroceryItem>>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [viewMode, setViewMode] = useState<GroceryViewMode>(() => {
+    const saved = localStorage.getItem(GROCERY_VIEW_MODE_STORAGE_KEY) as GroceryViewMode | null
+    if (saved === GroceryViewMode.ALPHABETICAL || saved === GroceryViewMode.CATEGORIZED) {
+      return saved
+    }
+    return GroceryViewMode.CATEGORIZED
+  })
 
   const fetchGroceryList = useCallback(async () => {
     try {
@@ -84,6 +96,11 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     }
   }, [])
 
+  const handleSetViewMode = useCallback((mode: GroceryViewMode) => {
+    setViewMode(mode)
+    localStorage.setItem(GROCERY_VIEW_MODE_STORAGE_KEY, mode)
+  }, [])
+
   useEffect(() => {
     fetchGroceryList()
   }, [fetchGroceryList])
@@ -92,12 +109,14 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     () => ({
       groceryList,
       isLoading,
+      viewMode,
       refetchGroceryList,
       removeGroceryItem,
       updateGroceryItem: updateGroceryItemQuantity,
       updateGroceryItemFields: updateGroceryItemWithFields,
+      setViewMode: handleSetViewMode,
     }),
-    [groceryList, isLoading, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields]
+    [groceryList, isLoading, viewMode, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields, handleSetViewMode]
   )
 
   return (

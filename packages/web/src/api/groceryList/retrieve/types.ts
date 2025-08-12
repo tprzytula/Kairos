@@ -6,10 +6,12 @@ export interface IDBGroceryItem {
   quantity: number
   unit: GroceryItemUnit
   imagePath?: string
+  category?: string
 }
 
 export interface IDBGroceryItemDefault {
   name: string
   unit?: GroceryItemUnit
   icon?: string
+  category?: string
 }

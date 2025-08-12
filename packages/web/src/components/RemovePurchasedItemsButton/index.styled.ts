@@ -2,8 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 export const RemoveButton = styled(Button)({
-    width: 'calc(100% - 1em)',
-    maxWidth: 400,
+    width: '100%',
     minHeight: '2em',
     marginBottom: '0.25em',
     display: 'flex',
@@ -20,8 +19,7 @@ export const RemoveButton = styled(Button)({
 });
 
 export const StatusText = styled(Typography)({
-    width: 'calc(100% - 1em)',
-    maxWidth: 400,
+    width: '100%',
     minHeight: '2em',
     marginBottom: '0.25em',
     display: 'flex',
@@ -48,7 +46,7 @@ export const RemoveButtonContainer = styled(Box)({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    maxWidth: 400,
     minHeight: '2em',
     marginBottom: '0.25em',
+    flex: 1,
 });

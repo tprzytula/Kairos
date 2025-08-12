@@ -25,6 +25,7 @@ export type IGroceryItem = {
   quantity: number
   imagePath?: string
   unit: GroceryItemUnit
+  category?: string
   toBeRemoved: boolean
 }
 

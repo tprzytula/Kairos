@@ -5,6 +5,7 @@ import * as GroceryListProvider from '../../providers/GroceryListProvider'
 import * as ReactRouter from 'react-router'
 import { IState } from "../../providers/GroceryListProvider/types"
 import { GroceryItemUnit } from "../../enums/groceryItem"
+import { GroceryViewMode } from "../../enums/groceryCategory"
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
@@ -17,6 +18,14 @@ describe('Given the GroceryList component', () => {
   beforeEach(() => {
     jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate)
     mockNavigate.mockClear()
+  })
+
+  it('should render expand/collapse all toggle in categorized view', () => {
+    jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue(EXAMPLE_GROCERY_LIST_CONTEXT)
+
+    renderComponent()
+
+    expect(screen.getByLabelText('Collapse all')).toBeInTheDocument()
   })
 
   it('should render the grocery list', () => {
@@ -41,10 +50,12 @@ describe('Given the GroceryList component', () => {
       jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
         groceryList: [],
         isLoading: false,
+        viewMode: GroceryViewMode.CATEGORIZED,
         refetchGroceryList: jest.fn(),
         removeGroceryItem: jest.fn(),
         updateGroceryItem: jest.fn(),
         updateGroceryItemFields: jest.fn(),
+        setViewMode: jest.fn(),
       })
 
       renderComponent()
@@ -58,10 +69,12 @@ describe('Given the GroceryList component', () => {
       jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
         groceryList: [],
         isLoading: true,
+        viewMode: GroceryViewMode.CATEGORIZED,
         refetchGroceryList: jest.fn(),
         removeGroceryItem: jest.fn(),
         updateGroceryItem: jest.fn(),
         updateGroceryItemFields: jest.fn(),
+        setViewMode: jest.fn(),
       })
 
       renderComponent()
@@ -99,8 +112,10 @@ const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
     },
   ],
   isLoading: false,
+  viewMode: GroceryViewMode.CATEGORIZED,
   refetchGroceryList: jest.fn(),
   removeGroceryItem: jest.fn(),
   updateGroceryItem: jest.fn(),
   updateGroceryItemFields: jest.fn(),
+  setViewMode: jest.fn(),
 }

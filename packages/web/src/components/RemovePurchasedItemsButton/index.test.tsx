@@ -4,6 +4,7 @@ import * as AppState from '../../providers/AppStateProvider'
 import * as GroceryListProvider from '../../providers/GroceryListProvider'
 import * as GroceryListAPI from '../../api/groceryList'
 import { showAlert } from "../../utils/alert"
+import { GroceryViewMode } from "../../enums/groceryCategory"
 
 jest.mock('../../providers/AppStateProvider')
 jest.mock('../../providers/GroceryListProvider')
@@ -129,10 +130,12 @@ const mockUseGroceryListContext = ({ groceryList }: { groceryList: Array<any> })
     jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
         groceryList,
         isLoading: false,
+        viewMode: GroceryViewMode.CATEGORIZED,
         refetchGroceryList,
         removeGroceryItem: jest.fn(),
         updateGroceryItem: jest.fn(),
         updateGroceryItemFields: jest.fn(),
+        setViewMode: jest.fn(),
     })
 
     return { refetchGroceryList }

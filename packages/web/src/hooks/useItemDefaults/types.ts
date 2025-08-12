@@ -4,6 +4,7 @@ export interface IItemDefault {
   name: string;
   unit?: GroceryItemUnit;
   icon?: string;
+  category?: string;
 }
 
 export interface IUseItemDefaultsProps {

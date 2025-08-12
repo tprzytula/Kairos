@@ -4,11 +4,18 @@ import { useAppState } from '../../providers/AppStateProvider';
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import GroceryItem from '../GroceryItem';
 import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
+import GroceryCategorySection from '../GroceryCategorySection';
+import { GroceryViewMode } from '../../enums/groceryCategory'
 import { Container, EmptyListContainer } from './index.styled';
 import { ActionName } from '../../providers/AppStateProvider/enums';
 import { Route } from '../../enums/route';
 import SwipeableList from '../SwipeableList';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import { useGroceryCategories } from '../../hooks/useGroceryCategories';
+import { useState } from 'react';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import { Box, IconButton } from '@mui/material';
 
 const PlaceholderComponent = () => (
   <Container>
@@ -24,10 +31,23 @@ const EmptyListComponent = () => (
   </EmptyListContainer>
 )
 
-export const GroceryList = () => {
+type GroceryListProps = {
+  allExpanded?: boolean
+  expandKey?: number
+}
+
+export const GroceryList = ({ allExpanded: allExpandedProp, expandKey: expandKeyProp }: GroceryListProps = {}) => {
   const { dispatch } = useAppState()
-  const { groceryList, isLoading, removeGroceryItem } = useGroceryListContext();
+  const { groceryList, isLoading, removeGroceryItem, viewMode } = useGroceryListContext();
   const navigate = useNavigate()
+  const { categorizedGroups, isUncategorized } = useGroceryCategories(groceryList, viewMode)
+
+  const [allExpanded, setAllExpanded] = useState<boolean>(true)
+  const [expandKey, setExpandKey] = useState<number>(0)
+  const toggleAll = useCallback(() => {
+    setAllExpanded((v) => !v)
+    setExpandKey((k) => k + 1)
+  }, [])
 
   const handleDelete = useCallback((id: string) => {
     removeGroceryItem(id)
@@ -51,15 +71,44 @@ export const GroceryList = () => {
     return <EmptyListComponent />
   }
 
+  if (viewMode === GroceryViewMode.UNCATEGORIZED) {
+    return (
+      <Container>
+        <SwipeableList
+          component={GroceryItem}
+          list={groceryList}
+          onSwipeAction={handleDelete}
+          onEditAction={handleEdit}
+          threshold={0.3}
+        />
+      </Container>
+    )
+  }
+
+  const effectiveAllExpanded = allExpandedProp ?? allExpanded
+  const effectiveExpandKey = expandKeyProp ?? expandKey
+
   return (
     <Container>
-      <SwipeableList
-        component={GroceryItem}
-        list={groceryList}
-        onSwipeAction={handleDelete}
-        onEditAction={handleEdit}
-        threshold={0.3}
-      />
+      {allExpandedProp === undefined && (
+        <Box display="flex" justifyContent="flex-end" pb={1} pr={0.5}>
+          <IconButton aria-label={allExpanded ? 'Collapse all' : 'Expand all'} onClick={toggleAll} size="small">
+            {allExpanded ? <UnfoldLessIcon /> : <UnfoldMoreIcon />}
+          </IconButton>
+        </Box>
+      )}
+      {categorizedGroups?.map((group) => (
+        <GroceryCategorySection
+          key={group.category}
+          category={group.category}
+          categoryLabel={group.label}
+          items={group.items}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+          expandTo={effectiveAllExpanded}
+          expandKey={effectiveExpandKey}
+        />
+      ))}
     </Container>
   );
 };

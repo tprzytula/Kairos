@@ -6,24 +6,24 @@ export const Container = styled(({ isPurchased, ...props }: { isPurchased: boole
 ))(({ isPurchased, theme }: { isPurchased: boolean } & { theme: any }) => ({
   display: 'flex',
   width: '100%',
-  borderRadius: '16px',
-  minHeight: '80px',
-  margin: '4px 0',
+  borderRadius: '14px',
+  minHeight: '72px',
+  margin: '2px 0',
   justifyContent: 'flex-start',
   boxSizing: 'border-box',
   opacity: isPurchased ? 0.65 : 1,
   transition: 'all 200ms ease-in-out',
   position: 'relative',
   boxShadow: isPurchased 
-    ? '0 1px 3px rgba(0, 0, 0, 0.06)' 
-    : '0 2px 6px rgba(0, 0, 0, 0.1)',
+    ? '0 1px 2px rgba(0, 0, 0, 0.05)' 
+    : '0 1px 4px rgba(0, 0, 0, 0.08)',
   border: '1px solid rgba(0, 0, 0, 0.06)',
   backgroundColor: isPurchased ? theme.palette.custom?.surfaces?.secondary : '#ffffff',
   '&:hover': {
     boxShadow: isPurchased 
       ? '0 1px 3px rgba(0, 0, 0, 0.06)' 
-      : '0 4px 12px rgba(0, 0, 0, 0.15)',
-    transform: isPurchased ? 'none' : 'translateY(-1px)',
+      : '0 3px 10px rgba(0, 0, 0, 0.12)',
+    transform: isPurchased ? 'none' : 'translateY(-0.5px)',
   },
   '&::after': isPurchased ? {
     content: '""',
@@ -40,7 +40,7 @@ export const Container = styled(({ isPurchased, ...props }: { isPurchased: boole
 
 export const ActionArea = styled(CardActionArea)({
   display: 'flex',
-  padding: '12px',
+  padding: '10px',
   flex: 1,
   minWidth: 0,
   alignItems: 'center',
@@ -50,12 +50,12 @@ export const ActionArea = styled(CardActionArea)({
 })
 
 export const Media = styled(CardMedia)(({ theme }) => ({
-  width: '68px',
-  height: '68px',
+  width: '60px',
+  height: '60px',
   position: 'relative',
   flexShrink: 0,
-  borderRadius: '12px',
-  marginRight: '12px',
+  borderRadius: '10px',
+  marginRight: '10px',
   backgroundColor: theme.palette.custom?.surfaces?.secondary,
   border: '1px solid rgba(0, 0, 0, 0.08)',
 }))
@@ -89,12 +89,12 @@ export const ActionContainer = styled(CardContent)({
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: '8px',
-  padding: '8px 12px !important',
-  minWidth: '90px',
+  gap: '6px',
+  padding: '6px 10px !important',
+  minWidth: '84px',
   flexShrink: 0,
   borderLeft: '1px solid rgba(0, 0, 0, 0.06)',
-  minHeight: '68px', // Fixed height to ensure consistent alignment
+  minHeight: '60px',
 })
 
 export const QuantityDisplay = styled('div')({
@@ -102,24 +102,24 @@ export const QuantityDisplay = styled('div')({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '36px', // Fixed width instead of minWidth to ensure consistent button positioning
-  height: '40px', // Fixed height for consistent alignment
+  width: '34px',
+  height: '36px',
   gap: '1px',
-  padding: '2px 4px',
+  padding: '2px 3px',
   backgroundColor: 'rgba(0, 0, 0, 0.02)',
   borderRadius: '6px',
   border: '1px solid rgba(0, 0, 0, 0.08)',
 })
 
 export const QuantityText = styled('div')(({ theme }) => ({
-  fontSize: '15px',
+  fontSize: '14px',
   fontWeight: 600,
   lineHeight: '1.1',
   color: theme.palette.text.primary,
 }))
 
 export const UnitText = styled('div')(({ theme }) => ({
-  fontSize: '9px',
+  fontSize: '8px',
   fontWeight: 500,
   lineHeight: '1',
   color: theme.palette.text.secondary,
