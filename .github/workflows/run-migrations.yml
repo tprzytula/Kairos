@@ -3,10 +3,6 @@ name: Run Database Migrations
 on:
   workflow_dispatch:
     inputs:
-      lambda_function_name:
-        description: 'Lambda function name (e.g., db_migrations_abcdef1234)'
-        required: false
-        type: string
       confirm_execution:
         description: 'Type "CONFIRM" to execute migrations'
         required: true
@@ -35,25 +31,19 @@ jobs:
       - name: Find Lambda Function
         id: find-lambda
         run: |
-          if [ -n "${{ github.event.inputs.lambda_function_name }}" ]; then
-            FUNCTION_NAME="${{ github.event.inputs.lambda_function_name }}"
-            echo "Using provided function name: $FUNCTION_NAME"
-          else
-            echo "🔍 Searching for db_migrations lambda function..."
-            FUNCTION_NAME=$(aws lambda list-functions \
-              --query "Functions[?starts_with(FunctionName, 'db_migrations_')].FunctionName" \
-              --output text)
-            
-            if [ -z "$FUNCTION_NAME" ]; then
-              echo "❌ No db_migrations lambda function found"
-              echo "Available functions:"
-              aws lambda list-functions --query "Functions[].FunctionName" --output table
-              exit 1
-            fi
-            
-            echo "✅ Found function: $FUNCTION_NAME"
+          echo "🔍 Searching for db_migrations lambda function..."
+          FUNCTION_NAME=$(aws lambda list-functions \
+            --query "Functions[?starts_with(FunctionName, 'db_migrations_')].FunctionName" \
+            --output text)
+          
+          if [ -z "$FUNCTION_NAME" ]; then
+            echo "❌ No db_migrations lambda function found"
+            echo "Available functions:"
+            aws lambda list-functions --query "Functions[].FunctionName" --output table
+            exit 1
           fi
           
+          echo "✅ Found function: $FUNCTION_NAME"
           echo "function_name=$FUNCTION_NAME" >> $GITHUB_OUTPUT
 
       - name: Verify Lambda Function Exists
