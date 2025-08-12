@@ -1,4 +1,5 @@
 import { DynamoDBTable, putItem } from "@kairos-lambdas-libs/dynamodb";
+import { randomUUID } from "node:crypto";
 import { Migration } from "../../runner/types";
 import { groceryItems } from "./data/groceryItems";
 import { getCategory } from "./data/categoryMappings";
@@ -14,9 +15,9 @@ const migration: Migration = {
       await putItem({
         tableName: DynamoDBTable.GROCERY_ITEMS_DEFAULTS,
         item: {
-          id: `default-${item.name.toLowerCase().replace(/\s+/g, '-')}`,
+          id: randomUUID(),
           name: item.name,
-          imagePath: item.icon.replace('/assets/icons/', ''),
+          icon: item.icon,
           unit: item.unit,
           quantity: 1,
           category: getCategory(item.name),
