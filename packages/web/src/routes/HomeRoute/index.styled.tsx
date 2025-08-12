@@ -3,23 +3,16 @@ import { Card, CardContent, Typography, Box } from '@mui/material'
 
 export const Container = styled(Box)({
   display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: '0.75rem',
+  gridTemplateColumns: '1fr',
+  gap: '0.6rem',
   width: '100%',
   maxWidth: '100%',
   boxSizing: 'border-box',
-  background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.02) 0%, rgba(118, 75, 162, 0.02) 50%, rgba(240, 147, 251, 0.02) 100%)',
-  '@media (max-width: 480px)': {
-    gridTemplateColumns: '1fr',
-    gap: '0.6rem',
-  },
+  background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.02) 0%, rgba(118, 75, 162, 0.02) 50%, rgba(240, 147, 251, 0.02) 100%)'
 })
 
 export const FullWidthSection = styled(Box)({
-  gridColumn: '1 / -1',
-  '@media (max-width: 480px)': {
-    gridColumn: 'auto',
-  },
+  gridColumn: 'auto',
 })
 
 export const SectionCard = styled(Card)(({ theme }) => ({
