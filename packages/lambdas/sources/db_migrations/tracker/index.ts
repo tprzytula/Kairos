@@ -47,11 +47,9 @@ export const recordMigration = async (id: string, name: string, migrationContent
 
 export const isMigrationExecuted = async (id: string): Promise<boolean> => {
   const migration = await getMigration(id);
+  const result = Boolean(migration);
   console.log(`DEBUG isMigrationExecuted: id=${id}, migration=`, migration);
-  console.log(`DEBUG isMigrationExecuted: migration !== null = ${migration !== null}`);
-  console.log(`DEBUG isMigrationExecuted: typeof migration = ${typeof migration}`);
-  const result = migration !== null;
-  console.log(`DEBUG isMigrationExecuted: returning ${result}`);
+  console.log(`DEBUG isMigrationExecuted: Boolean(migration) = ${result}`);
   return result;
 };
 
