@@ -1,0 +1,39 @@
+openapi: 3.0.1
+info:
+  title: Database Migrations
+  description: |
+    API for Database Migrations
+  version: "1.0"
+paths:
+  /migrations/run:
+    post:
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["db_migrations"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Migrations executed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  results:
+                    type: array
+                    items:
+                      type: object
+                  lastMigration:
+                    type: object
+                  summary:
+                    type: object
+        500:
+          description: Migration execution failed
+components:
+  schemas: {}

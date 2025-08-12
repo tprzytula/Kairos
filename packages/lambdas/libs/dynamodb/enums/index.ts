@@ -3,6 +3,7 @@ export enum DynamoDBTable {
   GROCERY_ITEMS_DEFAULTS = "GroceryItemsDefaults",
   NOISE_TRACKING = "NoiseTracking",
   TODO_LIST = "TodoList",
+  MIGRATIONS = "Migrations",
 }
 
 export enum DynamoDBIndex {
@@ -14,9 +15,10 @@ export enum GroceryItemUnit {
   BOTTLE = 'bottle(s)',
   BOX = 'box(es)',
   CAN = 'can(s)',
-  GRAM = 'g',
+  GRAM = 'gram(s)',
   KILOGRAM = 'kg',
-  LITER = 'l',
-  MILLILITER = 'ml',
+  LITER = 'liter(s)',
+  MILLILITER = 'ml(s)',
+  ROLL = 'roll(s)',
   UNIT = 'unit(s)',
 }

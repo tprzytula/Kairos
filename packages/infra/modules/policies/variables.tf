@@ -18,6 +18,7 @@ variable "lambda_functions" {
         grocery_items_defaults = optional(string, "none")
         noise_tracking         = optional(string, "none")
         todo_list              = optional(string, "none")
+        migrations             = optional(string, "none")
       })
     })
   }))
@@ -40,5 +41,9 @@ variable "dynamodb_grocery_items_defaults_arn" {
 }
 
 variable "dynamodb_todo_list_arn" {
+  type = string
+}
+
+variable "dynamodb_migrations_arn" {
   type = string
 }

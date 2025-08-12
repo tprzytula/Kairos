@@ -10,4 +10,5 @@ export type TableResponseMap = {
     [DynamoDBTable.GROCERY_ITEMS_DEFAULTS]: IGroceryItemDefault;
     [DynamoDBTable.NOISE_TRACKING]: INoiseTracking;
     [DynamoDBTable.TODO_LIST]: ITodoItem;
+    [DynamoDBTable.MIGRATIONS]: { [key: string]: string | number | boolean | undefined; };
 };

@@ -13,3 +13,7 @@ output "grocery_items_defaults_arn" {
 output "todo_list_arn" {
   value = aws_dynamodb_table.todo_list.arn
 }
+
+output "migrations_arn" {
+  value = aws_dynamodb_table.migrations.arn
+}

@@ -113,6 +113,15 @@ locals {
           grocery_list = "read-write"
         }
       }
+    },
+    "db_migrations" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          migrations             = "read-write"
+          grocery_items_defaults = "read-write"
+        }
+      }
     }
   }
 }
