@@ -135,4 +135,6 @@ describe('useVersion', () => {
       expect(mockFetch).toHaveBeenCalledWith('/version.json')
     })
   })
+
+
 })

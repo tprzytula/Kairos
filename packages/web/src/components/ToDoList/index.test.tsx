@@ -1,10 +1,11 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import { BrowserRouter } from 'react-router'
 import ToDoList from "."
 import * as ToDoListProvider from '../../providers/ToDoListProvider'
 import * as ReactRouter from 'react-router'
 import { IState } from "../../providers/ToDoListProvider/types"
 import { ThemeProvider, createTheme } from '@mui/material/styles'
+import * as ToDoAPI from '../../api/toDoList'
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
@@ -35,6 +36,24 @@ describe('Given the ToDoList component', () => {
     // The SwipeableList should receive both onSwipeAction and onEditAction
     // This test ensures the edit navigation is properly set up
     expect(mockNavigate).toHaveBeenCalledTimes(0) // Should not navigate on render
+  })
+
+  it('should filter to show only non-completed items', () => {
+    const contextWithMixedItems = {
+      ...EXAMPLE_TO_DO_LIST_CONTEXT,
+      toDoList: [
+        ...EXAMPLE_TO_DO_LIST_CONTEXT.toDoList,
+        { id: '3', name: 'Completed Item', isDone: true, description: '', dueDate: undefined }
+      ]
+    }
+    
+    jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue(contextWithMixedItems)
+
+    renderWithTheme(<ToDoList />)
+
+    expect(screen.getByText('Buy Groceries')).toBeVisible()
+    expect(screen.getByText('Buy Bread')).toBeVisible()
+    expect(screen.queryByText('Completed Item')).not.toBeInTheDocument()
   })
 
   describe('When the to do list is empty', () => {

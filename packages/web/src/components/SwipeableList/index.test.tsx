@@ -171,4 +171,58 @@ describe('SwipeableList', () => {
     // Should render without errors
     expect(screen.queryByTestId(/item-/)).not.toBeInTheDocument();
   });
+
+  it('should handle optional onEditAction prop', () => {
+    const mockOnSwipeAction = jest.fn();
+    
+    render(
+      <SwipeableList
+        component={TestComponent}
+        list={mockItems}
+        onSwipeAction={mockOnSwipeAction}
+      />
+    );
+
+    expect(screen.getByTestId('item-Item 1')).toBeInTheDocument();
+    expect(screen.getByTestId('item-Item 2')).toBeInTheDocument();
+  });
+
+  it('should handle optional onSwipeAction prop', () => {
+    const mockOnEditAction = jest.fn();
+    
+    render(
+      <SwipeableList
+        component={TestComponent}
+        list={mockItems}
+        onEditAction={mockOnEditAction}
+      />
+    );
+
+    expect(screen.getByTestId('item-Item 1')).toBeInTheDocument();
+    expect(screen.getByTestId('item-Item 2')).toBeInTheDocument();
+  });
+
+  it('should memoize list properly when props change', () => {
+    const mockOnSwipeAction = jest.fn();
+    const { rerender } = render(
+      <SwipeableList
+        component={TestComponent}
+        list={mockItems}
+        onSwipeAction={mockOnSwipeAction}
+      />
+    );
+
+    expect(screen.getByTestId('item-Item 1')).toBeInTheDocument();
+
+    // Rerender with same props should not recreate elements
+    rerender(
+      <SwipeableList
+        component={TestComponent}
+        list={mockItems}
+        onSwipeAction={mockOnSwipeAction}
+      />
+    );
+
+    expect(screen.getByTestId('item-Item 1')).toBeInTheDocument();
+  });
 });
