@@ -104,12 +104,12 @@ export const AppBranding = styled('div')(({ theme }) => ({
 export const VersionText = styled('div')(({ theme }) => ({
   fontSize: '0.7rem',
   fontWeight: '500',
-  color: '#4ade80',
+  color: theme.palette.text.secondary,
   letterSpacing: '0.25px',
   display: 'flex',
   alignItems: 'center',
-  opacity: 0.8,
-  transition: 'opacity 0.3s ease',
+  opacity: 0.7,
+  transition: 'all 0.3s ease',
   '@media (max-width: 480px)': {
     fontSize: '0.65rem',
   },

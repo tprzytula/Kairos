@@ -1,6 +1,8 @@
 import { DashboardHeaderContainer, DashboardHeaderCard, GreetingSection, GreetingText, DateText, AppBranding, BrandingSection, VersionText } from './index.styled'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
+
+// Import version from package.json
+import packageJson from '../../../package.json'
 
 const getGreeting = (): string => {
   const hour = new Date().getHours()
@@ -36,8 +38,7 @@ const DashboardHeader = () => {
         <BrandingSection>
           <AppBranding>Kairos</AppBranding>
           <VersionText>
-            <FiberManualRecordIcon style={{ fontSize: '6px', margin: '0 0.25rem' }} />
-            Online
+            v{packageJson.version}
           </VersionText>
         </BrandingSection>
       </DashboardHeaderCard>
