@@ -51,3 +51,13 @@ resource "aws_iam_role_policy_attachment" "cloudfront_kairos_web_policy_role_att
   role       = aws_iam_role.web_identity_github_role.name
   policy_arn = aws_iam_policy.cloudfront_kairos_web_policy.arn
 }
+
+resource "aws_iam_policy" "lambda_invoke_migrations_policy" {
+  name   = format("lambda_invoke_migrations_policy_%s", var.random_name)
+  policy = data.aws_iam_policy_document.lambda_invoke_migrations.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_invoke_migrations_policy_role_attachment" {
+  role       = aws_iam_role.web_identity_github_role.name
+  policy_arn = aws_iam_policy.lambda_invoke_migrations_policy.arn
+}

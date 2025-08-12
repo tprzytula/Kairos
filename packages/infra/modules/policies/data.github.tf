@@ -44,3 +44,18 @@ data "aws_iam_policy_document" "cloudfront_kairos_web" {
     resources = ["*"]
   }
 }
+
+data "aws_iam_policy_document" "lambda_invoke_migrations" {
+  statement {
+    sid = "LambdaInvokeMigrations"
+    actions = [
+      "lambda:ListFunctions",
+      "lambda:GetFunction",
+      "lambda:InvokeFunction"
+    ]
+    effect = "Allow"
+    resources = [
+      "arn:aws:lambda:*:*:function:db_migrations_*"
+    ]
+  }
+}
