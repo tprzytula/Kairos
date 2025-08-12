@@ -3,7 +3,7 @@ import { Box } from '@mui/material'
 
 export const NotificationContainer = styled(Box)({
   position: 'fixed',
-  top: 24,
+  bottom: 110,
   left: '50%',
   transform: 'translateX(-50%)',
   zIndex: 9999,
@@ -53,7 +53,7 @@ export const NotificationCard = styled(Box)<{ severity: 'error' | 'success' }>((
       top: 0,
       left: 0,
       right: 0,
-      height: '3px',
+      borderRadius: '16px 16px 0 0',
       background: isError 
         ? 'linear-gradient(90deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%)'
         : 'linear-gradient(90deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%)',
@@ -156,9 +156,9 @@ export const CloseButton = styled(Box)({
 })
 
 export const AnimatedNotificationContainer = styled(NotificationContainer)({
-  '@keyframes slideInFromTop': {
+  '@keyframes slideInFromBottom': {
     '0%': {
-      transform: 'translateY(-100%) translateX(-50%) scale(0.95)',
+      transform: 'translateY(100%) translateX(-50%) scale(0.95)',
       opacity: 0,
     },
     '100%': {
@@ -166,18 +166,18 @@ export const AnimatedNotificationContainer = styled(NotificationContainer)({
       opacity: 1,
     },
   },
-  '@keyframes slideOutToTop': {
+  '@keyframes slideOutToBottom': {
     '0%': {
       transform: 'translateY(0) translateX(-50%) scale(1)',
       opacity: 1,
     },
     '100%': {
-      transform: 'translateY(-100%) translateX(-50%) scale(0.95)',
+      transform: 'translateY(100%) translateX(-50%) scale(0.95)',
       opacity: 0,
     },
   },
-  animation: 'slideInFromTop 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+  animation: 'slideInFromBottom 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards',
   '&.exit': {
-    animation: 'slideOutToTop 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+    animation: 'slideOutToBottom 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards',
   },
 })
