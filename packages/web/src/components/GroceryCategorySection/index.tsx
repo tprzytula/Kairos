@@ -30,14 +30,14 @@ export const GroceryCategorySection = ({
   expandKey,
 }: IGroceryCategorySectionProps) => {
   const [internalExpanded, setInternalExpanded] = useState(true)
-  const isExpanded = expandTo !== null && expandTo !== undefined ? expandTo : internalExpanded
+  const isExpanded = internalExpanded
 
   // When expandKey changes, apply expandTo to force all open/close synchronously
   useEffect(() => {
     if (expandTo !== null && expandTo !== undefined) {
       setInternalExpanded(expandTo)
     }
-  }, [expandKey])
+  }, [expandKey, expandTo])
 
   const handleToggleExpanded = useCallback(() => {
     setInternalExpanded(!internalExpanded)
@@ -58,7 +58,7 @@ export const GroceryCategorySection = ({
         </Box>
         <Box display="flex" alignItems="center" gap={0.75}>
           <ItemCountChip label={items.length} size="small" />
-          <IconButton size="small" aria-label={isExpanded ? 'Collapse' : 'Expand'}>
+          <IconButton size="small" aria-label={isExpanded ? 'Collapse' : 'Expand'} onClick={handleToggleExpanded}>
             <ChevronBox expanded={isExpanded}>
               <ExpandMoreIcon />
             </ChevronBox>
