@@ -10,7 +10,7 @@ export const CategoryHeader = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'space-between',
   padding: '8px 10px',
-  background: 'linear-gradient(180deg, #ffffff 0%, #fafafa 100%)',
+  background: '#ffffff',
   borderRadius: 12,
   boxShadow: '0 2px 6px rgba(102, 126, 234, 0.05)',
   border: '1px solid rgba(102,126,234,0.12)',
@@ -65,7 +65,7 @@ export const ChevronBox = styled(Box)<{ expanded: boolean }>(({ expanded }) => (
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  transition: 'transform 200ms ease',
+  transition: 'transform 120ms ease',
   transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
   opacity: 0.7,
 }))

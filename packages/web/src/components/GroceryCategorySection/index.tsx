@@ -66,7 +66,7 @@ export const GroceryCategorySection = ({
         </Box>
       </CategoryHeader>
 
-      <Collapse in={isExpanded}>
+      <Collapse in={isExpanded} timeout={120}>
         <CategoryContent>
           <SwipeableList
             component={GroceryItem}
