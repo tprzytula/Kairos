@@ -40,7 +40,7 @@ const GroceryListContent = () => {
         stats={stats}
       />
       <Container>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
           <Box display="flex" alignItems="center" gap={1} flex={1}>
             <IconButton aria-label={allExpanded ? 'Collapse all' : 'Expand all'} onClick={toggleAll} size="small">
               {allExpanded ? <UnfoldLessIcon /> : <UnfoldMoreIcon />}

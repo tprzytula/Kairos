@@ -2,17 +2,17 @@ import styled from '@emotion/styled'
 import { Box, Chip, Typography } from '@mui/material'
 
 export const CategoryWrapper = styled(Box)({
-  marginBottom: 8,
+  marginBottom: 6,
 })
 
 export const CategoryHeader = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  padding: '10px 12px',
-  background: 'linear-gradient(180deg, #ffffff 0%, #f9fafb 100%)',
-  borderRadius: 14,
-  boxShadow: '0 2px 8px rgba(102, 126, 234, 0.06)',
+  padding: '8px 10px',
+  background: 'linear-gradient(180deg, #ffffff 0%, #fafafa 100%)',
+  borderRadius: 12,
+  boxShadow: '0 2px 6px rgba(102, 126, 234, 0.05)',
   border: '1px solid rgba(102,126,234,0.12)',
   backgroundClip: 'padding-box, border-box',
   backgroundImage:
@@ -28,14 +28,14 @@ export const CategoryHeader = styled(Box)(({ theme }) => ({
 export const CategoryTitle = styled(Typography)({
   fontWeight: 600,
   color: '#111827',
-  fontSize: '0.95rem',
+  fontSize: '0.9rem',
   letterSpacing: '-0.01em',
 })
 
 export const ItemCountChip = styled(Chip)({
-  height: 18,
+  height: 16,
   borderRadius: 999,
-  fontSize: 10,
+  fontSize: 9,
   paddingInline: 2,
   backgroundColor: '#eef2ff',
   color: '#4f46e5',
@@ -44,19 +44,19 @@ export const ItemCountChip = styled(Chip)({
 })
 
 export const CategoryContent = styled(Box)({
-  paddingTop: 4,
+  paddingTop: 2,
 })
 
 export const CategoryIconCircle = styled(Box)<{ bg?: string; fg?: string }>(({ bg = '#eef2ff', fg = '#4f46e5' }) => ({
-  width: 24,
-  height: 24,
+  width: 22,
+  height: 22,
   borderRadius: '50%',
   backgroundColor: bg,
   color: fg,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: 14,
+  fontSize: 12,
   fontWeight: 700,
   boxShadow: 'inset 0 -2px 6px rgba(0,0,0,0.04)',
 }))
