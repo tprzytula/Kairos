@@ -1,0 +1,142 @@
+import { GroceryItemCategory } from "@kairos-lambdas-libs/dynamodb/enums";
+
+export type CategoryName = GroceryItemCategory;
+
+export interface CategoryMapping {
+  [itemName: string]: CategoryName;
+}
+
+export const categoryMap: CategoryMapping = {
+  // Fruits & Vegetables
+  "orange": GroceryItemCategory.FRUITS_VEGETABLES,
+  "grapes": GroceryItemCategory.FRUITS_VEGETABLES,
+  "strawberries": GroceryItemCategory.FRUITS_VEGETABLES,
+  "blueberries": GroceryItemCategory.FRUITS_VEGETABLES,
+  "raspberries": GroceryItemCategory.FRUITS_VEGETABLES,
+  "blackberries": GroceryItemCategory.FRUITS_VEGETABLES,
+  "pineapple": GroceryItemCategory.FRUITS_VEGETABLES,
+  "mango": GroceryItemCategory.FRUITS_VEGETABLES,
+  "pear": GroceryItemCategory.FRUITS_VEGETABLES,
+  "peach": GroceryItemCategory.FRUITS_VEGETABLES,
+  "plum": GroceryItemCategory.FRUITS_VEGETABLES,
+  "kiwi": GroceryItemCategory.FRUITS_VEGETABLES,
+  "watermelon": GroceryItemCategory.FRUITS_VEGETABLES,
+  "cantaloupe": GroceryItemCategory.FRUITS_VEGETABLES,
+  "lime": GroceryItemCategory.FRUITS_VEGETABLES,
+  "grapefruit": GroceryItemCategory.FRUITS_VEGETABLES,
+  "broccoli": GroceryItemCategory.FRUITS_VEGETABLES,
+  "cauliflower": GroceryItemCategory.FRUITS_VEGETABLES,
+  "bell pepper": GroceryItemCategory.FRUITS_VEGETABLES,
+  "cucumber": GroceryItemCategory.FRUITS_VEGETABLES,
+  "lettuce": GroceryItemCategory.FRUITS_VEGETABLES,
+  "cabbage": GroceryItemCategory.FRUITS_VEGETABLES,
+  "celery": GroceryItemCategory.FRUITS_VEGETABLES,
+  "zucchini": GroceryItemCategory.FRUITS_VEGETABLES,
+  "eggplant": GroceryItemCategory.FRUITS_VEGETABLES,
+  "mushrooms": GroceryItemCategory.FRUITS_VEGETABLES,
+  "garlic": GroceryItemCategory.FRUITS_VEGETABLES,
+  "ginger": GroceryItemCategory.FRUITS_VEGETABLES,
+  "potato": GroceryItemCategory.FRUITS_VEGETABLES,
+  "sweet potato": GroceryItemCategory.FRUITS_VEGETABLES,
+  "asparagus": GroceryItemCategory.FRUITS_VEGETABLES,
+
+  // Meat & Poultry
+  "salmon": GroceryItemCategory.MEAT_POULTRY,
+  "tuna": GroceryItemCategory.MEAT_POULTRY,
+  "shrimp": GroceryItemCategory.MEAT_POULTRY,
+  "cod": GroceryItemCategory.MEAT_POULTRY,
+  "pork": GroceryItemCategory.MEAT_POULTRY,
+  "lamb": GroceryItemCategory.MEAT_POULTRY,
+  "turkey": GroceryItemCategory.MEAT_POULTRY,
+  "ham": GroceryItemCategory.MEAT_POULTRY,
+  "sausage": GroceryItemCategory.MEAT_POULTRY,
+  "ground beef": GroceryItemCategory.MEAT_POULTRY,
+  "steak": GroceryItemCategory.MEAT_POULTRY,
+  "tilapia": GroceryItemCategory.MEAT_POULTRY,
+
+  // Dairy
+  "butter": GroceryItemCategory.DAIRY,
+  "yogurt": GroceryItemCategory.DAIRY,
+  "eggs": GroceryItemCategory.DAIRY,
+  "cream cheese": GroceryItemCategory.DAIRY,
+  "mozzarella": GroceryItemCategory.DAIRY,
+  "cheddar": GroceryItemCategory.DAIRY,
+  "cottage cheese": GroceryItemCategory.DAIRY,
+  "sour cream": GroceryItemCategory.DAIRY,
+  "heavy cream": GroceryItemCategory.DAIRY,
+  "ice cream": GroceryItemCategory.DAIRY,
+
+  // Bakery & Grains
+  "bagels": GroceryItemCategory.BAKERY_GRAINS,
+  "muffins": GroceryItemCategory.BAKERY_GRAINS,
+  "croissant": GroceryItemCategory.BAKERY_GRAINS,
+  "pasta": GroceryItemCategory.BAKERY_GRAINS,
+  "noodles": GroceryItemCategory.BAKERY_GRAINS,
+  "cereal": GroceryItemCategory.BAKERY_GRAINS,
+  "crackers": GroceryItemCategory.BAKERY_GRAINS,
+  "tortillas": GroceryItemCategory.BAKERY_GRAINS,
+  "quinoa": GroceryItemCategory.PANTRY_GRAINS,
+  "couscous": GroceryItemCategory.PANTRY_GRAINS,
+  "barley": GroceryItemCategory.PANTRY_GRAINS,
+  "wraps": GroceryItemCategory.BAKERY_GRAINS,
+
+  // Pantry & Grains
+  "olive oil": GroceryItemCategory.PANTRY_GRAINS,
+  "vegetable oil": GroceryItemCategory.PANTRY_GRAINS,
+  "coconut oil": GroceryItemCategory.PANTRY_GRAINS,
+  "vinegar": GroceryItemCategory.PANTRY_GRAINS,
+  "balsamic vinegar": GroceryItemCategory.PANTRY_GRAINS,
+  "salt": GroceryItemCategory.PANTRY_GRAINS,
+  "pepper": GroceryItemCategory.PANTRY_GRAINS,
+  "sugar": GroceryItemCategory.PANTRY_GRAINS,
+  "brown sugar": GroceryItemCategory.PANTRY_GRAINS,
+  "flour": GroceryItemCategory.PANTRY_GRAINS,
+  "all-purpose flour": GroceryItemCategory.PANTRY_GRAINS,
+  "baking powder": GroceryItemCategory.PANTRY_GRAINS,
+  "baking soda": GroceryItemCategory.PANTRY_GRAINS,
+  "vanilla extract": GroceryItemCategory.PANTRY_GRAINS,
+  "honey": GroceryItemCategory.PANTRY_GRAINS,
+  "maple syrup": GroceryItemCategory.PANTRY_GRAINS,
+  "jam": GroceryItemCategory.PANTRY_GRAINS,
+  "jelly": GroceryItemCategory.PANTRY_GRAINS,
+  "peanut butter": GroceryItemCategory.PANTRY_GRAINS,
+  "almond butter": GroceryItemCategory.PANTRY_GRAINS,
+  "pasta sauce": GroceryItemCategory.PANTRY_GRAINS,
+  "marinara sauce": GroceryItemCategory.PANTRY_GRAINS,
+  "ketchup": GroceryItemCategory.PANTRY_GRAINS,
+  "mustard": GroceryItemCategory.PANTRY_GRAINS,
+  "mayonnaise": GroceryItemCategory.PANTRY_GRAINS,
+  "soy sauce": GroceryItemCategory.PANTRY_GRAINS,
+  "hot sauce": GroceryItemCategory.PANTRY_GRAINS,
+  "worcestershire sauce": GroceryItemCategory.PANTRY_GRAINS,
+  "garlic powder": GroceryItemCategory.PANTRY_GRAINS,
+  "onion powder": GroceryItemCategory.PANTRY_GRAINS,
+
+  // Beverages
+  "bottled water": GroceryItemCategory.BEVERAGES,
+  "sparkling water": GroceryItemCategory.BEVERAGES,
+  "orange juice": GroceryItemCategory.BEVERAGES,
+  "apple juice": GroceryItemCategory.BEVERAGES,
+  "cranberry juice": GroceryItemCategory.BEVERAGES,
+  "soda": GroceryItemCategory.BEVERAGES,
+  "cola": GroceryItemCategory.BEVERAGES,
+  "tea bags": GroceryItemCategory.BEVERAGES,
+  "green tea": GroceryItemCategory.BEVERAGES,
+  "wine": GroceryItemCategory.BEVERAGES,
+
+  // Household
+  "paper towels": GroceryItemCategory.HOUSEHOLD,
+  "tissues": GroceryItemCategory.HOUSEHOLD,
+  "dish soap": GroceryItemCategory.HOUSEHOLD,
+  "laundry detergent": GroceryItemCategory.HOUSEHOLD,
+  "fabric softener": GroceryItemCategory.HOUSEHOLD,
+  "shampoo": GroceryItemCategory.HOUSEHOLD,
+  "conditioner": GroceryItemCategory.HOUSEHOLD,
+  "toothpaste": GroceryItemCategory.HOUSEHOLD,
+  "toilet cleaner": GroceryItemCategory.HOUSEHOLD,
+  "all-purpose cleaner": GroceryItemCategory.HOUSEHOLD,
+};
+
+export const getCategory = (itemName: string): CategoryName => {
+  return categoryMap[itemName.toLowerCase()] || GroceryItemCategory.OTHER;
+};
