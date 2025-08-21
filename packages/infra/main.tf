@@ -45,3 +45,13 @@ module "assets" {
   source    = "./modules/assets"
   bucket_id = module.s3.kairos_web_bucket_id
 }
+
+module "cognito" {
+  source = "./modules/cognito"
+
+  random_name = module.random.random_name
+
+  # Google OAuth credentials from Terraform Cloud workspace variables
+  google_client_id     = var.google_client_id
+  google_client_secret = var.google_client_secret
+}
