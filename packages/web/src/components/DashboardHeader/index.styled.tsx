@@ -19,10 +19,9 @@ export const DashboardHeaderCard = styled(Card)(({ theme }) => ({
   position: 'relative',
   overflow: 'hidden',
   padding: '1.25rem',
-  display: 'grid',
-  gridTemplateColumns: '1fr auto 1fr',
+  display: 'flex',
+  justifyContent: 'space-between',
   alignItems: 'center',
-  gap: '1rem',
   cursor: 'pointer',
   '&:before': {
     content: '""',
@@ -81,39 +80,31 @@ export const DateText = styled('div')(({ theme }) => ({
   },
 }))
 
-export const UserSection = styled('div')({
+export const BrandingSection = styled('div')({
   display: 'flex',
-  justifyContent: 'center',
   alignItems: 'center',
+  gap: '1rem',
 })
 
-export const UserInfo = styled('div')({
+export const UserSection = styled('div')({
   display: 'flex',
   alignItems: 'center',
   gap: '0.75rem',
-  padding: '0.5rem 0.75rem',
-  borderRadius: '12px',
-  background: 'rgba(102, 126, 234, 0.08)',
-  border: '1px solid rgba(102, 126, 234, 0.15)',
-  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-  cursor: 'pointer',
-  '&:hover': {
-    background: 'rgba(102, 126, 234, 0.12)',
-    borderColor: 'rgba(102, 126, 234, 0.25)',
-    transform: 'translateY(-1px)',
-  },
 })
 
 export const UserAvatar = styled('div')({
-  width: '2rem',
-  height: '2rem',
-  borderRadius: '8px',
+  width: '2.25rem',
+  height: '2.25rem',
+  borderRadius: '50%',
   overflow: 'hidden',
   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   flexShrink: 0,
+  border: '2px solid rgba(102, 126, 234, 0.2)',
+  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+  cursor: 'pointer',
   '& img': {
     width: '100%',
     height: '100%',
@@ -123,19 +114,13 @@ export const UserAvatar = styled('div')({
     fontSize: '1.2rem',
     color: 'white',
   },
+  '&:hover': {
+    borderColor: 'rgba(102, 126, 234, 0.4)',
+    transform: 'scale(1.05)',
+  },
 })
 
-export const UserName = styled('div')(({ theme }) => ({
-  fontSize: '0.85rem',
-  fontWeight: '600',
-  color: theme.palette.text.primary,
-  whiteSpace: 'nowrap',
-  '@media (max-width: 480px)': {
-    display: 'none',
-  },
-}))
-
-export const BrandingSection = styled('div')({
+export const BrandingInfo = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-end',

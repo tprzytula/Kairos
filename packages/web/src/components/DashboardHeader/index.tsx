@@ -1,4 +1,4 @@
-import { DashboardHeaderContainer, DashboardHeaderCard, GreetingSection, GreetingText, DateText, AppBranding, BrandingSection, VersionText, UserSection, UserAvatar, UserInfo, UserName } from './index.styled'
+import { DashboardHeaderContainer, DashboardHeaderCard, GreetingSection, GreetingText, DateText, AppBranding, BrandingSection, VersionText, UserSection, UserAvatar, BrandingInfo } from './index.styled'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
 import PersonIcon from '@mui/icons-material/Person'
 import { useVersion } from '../../hooks/useVersion'
@@ -41,9 +41,16 @@ const DashboardHeader = () => {
           <DateText style={{ gridArea: 'date' }}>{formatDate()}</DateText>
         </GreetingSection>
         
-        <UserSection>
+        <BrandingSection>
+          <BrandingInfo>
+            <AppBranding>Kairos</AppBranding>
+            <VersionText>
+              {displayVersion}
+            </VersionText>
+          </BrandingInfo>
+          
           {auth.user && (
-            <UserInfo>
+            <UserSection>
               <UserAvatar>
                 {auth.user.profile?.picture ? (
                   <img src={auth.user.profile.picture} alt="Profile" />
@@ -51,16 +58,8 @@ const DashboardHeader = () => {
                   <PersonIcon />
                 )}
               </UserAvatar>
-              <UserName>{userName || 'User'}</UserName>
-            </UserInfo>
+            </UserSection>
           )}
-        </UserSection>
-        
-        <BrandingSection>
-          <AppBranding>Kairos</AppBranding>
-          <VersionText>
-            {displayVersion}
-          </VersionText>
         </BrandingSection>
       </DashboardHeaderCard>
     </DashboardHeaderContainer>
