@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import { Box, Card } from '@mui/material'
 
 export const DashboardHeaderContainer = styled(Box)({
-  padding: '0.75rem 0 0.5rem 0',
+  padding: '0 0 0.5rem 0',
   width: '100%',
   maxWidth: 'none',
   alignSelf: 'stretch',
@@ -31,7 +31,7 @@ export const DashboardHeaderCard = styled(Card)(({ theme }) => ({
     right: 0,
     height: '3px',
     background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-    opacity: 0.8,
+    opacity: 0,
     transition: 'opacity 0.3s ease',
   },
   '&:hover': {
@@ -79,12 +79,6 @@ export const DateText = styled('div')(({ theme }) => ({
     fontSize: '0.75rem',
   },
 }))
-
-export const BrandingSection = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '1rem',
-})
 
 export const UserSection = styled('div')({
   display: 'flex',
@@ -147,37 +141,3 @@ export const UserAvatar = styled('div')({
   },
 })
 
-export const BrandingInfo = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-end',
-  gap: '0.25rem',
-})
-
-export const AppBranding = styled('div')(({ theme }) => ({
-  fontSize: '1rem',
-  fontWeight: '700',
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  backgroundClip: 'text',
-  letterSpacing: '0.5px',
-  transition: 'all 0.3s ease',
-  '@media (max-width: 480px)': {
-    fontSize: '0.9rem',
-  },
-}))
-
-export const VersionText = styled('div')(({ theme }) => ({
-  fontSize: '0.7rem',
-  fontWeight: '500',
-  color: theme.palette.text.secondary,
-  letterSpacing: '0.25px',
-  display: 'flex',
-  alignItems: 'center',
-  opacity: 0.7,
-  transition: 'all 0.3s ease',
-  '@media (max-width: 480px)': {
-    fontSize: '0.65rem',
-  },
-}))

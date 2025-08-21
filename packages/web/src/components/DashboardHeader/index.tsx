@@ -1,6 +1,5 @@
-import { DashboardHeaderContainer, DashboardHeaderCard, GreetingSection, GreetingText, DateText, AppBranding, BrandingSection, VersionText, UserSection, BrandingInfo } from './index.styled'
+import { DashboardHeaderContainer, DashboardHeaderCard, GreetingSection, GreetingText, DateText, UserSection } from './index.styled'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
-import { useVersion } from '../../hooks/useVersion'
 import { useAuth } from 'react-oidc-context'
 import UserMenu from '../UserMenu'
 
@@ -19,10 +18,7 @@ const formatDate = (): string => {
 }
 
 const DashboardHeader = () => {
-  const { version } = useVersion()
   const auth = useAuth()
-  
-  const displayVersion = version || '...'
   const userName = auth.user?.profile?.given_name || auth.user?.profile?.name
   
   return (
@@ -41,20 +37,11 @@ const DashboardHeader = () => {
           <DateText style={{ gridArea: 'date' }}>{formatDate()}</DateText>
         </GreetingSection>
         
-        <BrandingSection>
-          <BrandingInfo>
-            <AppBranding>Kairos</AppBranding>
-            <VersionText>
-              {displayVersion}
-            </VersionText>
-          </BrandingInfo>
-          
-          {auth.user && (
-            <UserSection>
-              <UserMenu />
-            </UserSection>
-          )}
-        </BrandingSection>
+        {auth.user && (
+          <UserSection>
+            <UserMenu />
+          </UserSection>
+        )}
       </DashboardHeaderCard>
     </DashboardHeaderContainer>
   )

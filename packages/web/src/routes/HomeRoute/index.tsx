@@ -3,6 +3,7 @@ import { useToDoListContext, ToDoListProvider } from '../../providers/ToDoListPr
 import { useNoiseTrackingContext, NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import StandardLayout from '../../layout/standardLayout'
+import AppInfoCard from '../../components/AppInfoCard'
 import DashboardHeader from '../../components/DashboardHeader'
 import HomeGroceryItemPlaceholder from './components/HomeGroceryItemPlaceholder'
 import HomeToDoItemPlaceholder from './components/HomeToDoItemPlaceholder'
@@ -139,6 +140,7 @@ const HomeContent = () => {
   
   return (
     <StandardLayout>
+      <AppInfoCard />
       <DashboardHeader />
       <Container>
         <SectionCard>

@@ -3,10 +3,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { createTheme } from '@mui/material/styles'
 import DashboardHeader from './index'
 
-// Mock the useVersion hook
-jest.mock('../../hooks/useVersion', () => ({
-  useVersion: jest.fn()
-}))
+
 
 // Mock the useAuth hook
 jest.mock('react-oidc-context', () => ({
@@ -20,7 +17,6 @@ jest.mock('../UserMenu', () => {
   }
 })
 
-const mockUseVersion = require('../../hooks/useVersion').useVersion
 const mockUseAuth = require('react-oidc-context').useAuth
 
 const theme = createTheme()
@@ -53,43 +49,7 @@ describe('DashboardHeader', () => {
     jest.useRealTimers()
   })
 
-  describe('version display', () => {
-    it('should display version when available', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
-        isLoading: false,
-        error: null
-      })
 
-      renderWithTheme(<DashboardHeader />)
-
-      expect(screen.getByText('v2025.08.07.1703')).toBeInTheDocument()
-    })
-
-    it('should display ... when version is loading', () => {
-      mockUseVersion.mockReturnValue({
-        version: null,
-        isLoading: true,
-        error: null
-      })
-
-      renderWithTheme(<DashboardHeader />)
-
-      expect(screen.getByText('...')).toBeInTheDocument()
-    })
-
-    it('should display ... when version is not available', () => {
-      mockUseVersion.mockReturnValue({
-        version: null,
-        isLoading: false,
-        error: null
-      })
-
-      renderWithTheme(<DashboardHeader />)
-
-      expect(screen.getByText('...')).toBeInTheDocument()
-    })
-  })
 
   describe('greeting display', () => {
     beforeEach(() => {
@@ -98,12 +58,6 @@ describe('DashboardHeader', () => {
     })
 
     it('should display "Good morning" when time is before 12 PM', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
-        isLoading: false,
-        error: null
-      })
-
       mockUseAuth.mockReturnValue({
         user: {
           profile: {
@@ -123,12 +77,6 @@ describe('DashboardHeader', () => {
     it('should display "Good afternoon" when time is between 12 PM and 6 PM', () => {
       // Set time to afternoon (2:30 PM)
       jest.setSystemTime(new Date('2025-01-08T14:30:00.000Z'))
-
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
-        isLoading: false,
-        error: null
-      })
 
       mockUseAuth.mockReturnValue({
         user: {
@@ -150,12 +98,6 @@ describe('DashboardHeader', () => {
       // Set time to evening (8 PM)
       jest.setSystemTime(new Date('2025-01-08T20:00:00.000Z'))
 
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
-        isLoading: false,
-        error: null
-      })
-
       mockUseAuth.mockReturnValue({
         user: {
           profile: {
@@ -173,12 +115,6 @@ describe('DashboardHeader', () => {
     })
 
     it('should not display greeting when no user', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
-        isLoading: false,
-        error: null
-      })
-
       // Ensure no user is set
       mockUseAuth.mockReturnValue({
         user: null,
@@ -194,12 +130,6 @@ describe('DashboardHeader', () => {
     })
 
     it('should handle user with full name from profile.name', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
-        isLoading: false,
-        error: null
-      })
-
       mockUseAuth.mockReturnValue({
         user: {
           profile: {
@@ -219,12 +149,6 @@ describe('DashboardHeader', () => {
 
   describe('current date display', () => {
     it('should display current date in proper format', async () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
-        isLoading: false,
-        error: null
-      })
-
       renderWithTheme(<DashboardHeader />)
 
       // Wait for the date to be displayed
@@ -236,12 +160,6 @@ describe('DashboardHeader', () => {
 
   describe('user menu', () => {
     it('should render user menu when authenticated', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
-        isLoading: false,
-        error: null
-      })
-
       mockUseAuth.mockReturnValue({
         user: {
           profile: {
@@ -260,12 +178,6 @@ describe('DashboardHeader', () => {
     })
 
     it('should not render user menu when user is not authenticated', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
-        isLoading: false,
-        error: null
-      })
-
       mockUseAuth.mockReturnValue({
         user: null,
         isAuthenticated: false,
@@ -279,12 +191,6 @@ describe('DashboardHeader', () => {
     })
 
     it('should not render user menu when user is null but authenticated is true', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
-        isLoading: false,
-        error: null
-      })
-
       mockUseAuth.mockReturnValue({
         user: null,
         isAuthenticated: true,
