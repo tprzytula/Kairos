@@ -97,7 +97,7 @@ resource "aws_cognito_user_pool_client" "kairos_user_pool_client" {
     "http://127.0.0.1:1234/auth/callback"
   ]
   logout_urls = [
-    "https://d1568c842iynon.cloudfront.net/logout",
+    "https://d1568c842iynon.cloudfront.net",
     "http://localhost:1234",
     "http://127.0.0.1:1234"
   ]
