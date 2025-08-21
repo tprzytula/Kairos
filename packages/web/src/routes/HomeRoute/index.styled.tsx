@@ -543,4 +543,4 @@ export const UserEmail = styled('div')(({ theme }) => ({
   fontWeight: '500',
   color: theme.palette.text.secondary,
   lineHeight: 1.2,
-}))) 
+}))
