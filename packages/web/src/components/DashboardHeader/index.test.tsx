@@ -8,7 +8,13 @@ jest.mock('../../hooks/useVersion', () => ({
   useVersion: jest.fn()
 }))
 
+// Mock the useAuth hook
+jest.mock('react-oidc-context', () => ({
+  useAuth: jest.fn()
+}))
+
 const mockUseVersion = require('../../hooks/useVersion').useVersion
+const mockUseAuth = require('react-oidc-context').useAuth
 
 const theme = createTheme()
 
@@ -26,6 +32,14 @@ describe('DashboardHeader', () => {
     // Mock Date to have consistent tests
     jest.useFakeTimers()
     jest.setSystemTime(new Date('2025-01-08T14:30:00.000Z')) // 2:30 PM UTC
+    
+    // Mock auth context - default to no user
+    mockUseAuth.mockReturnValue({
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      error: null
+    })
   })
 
   afterEach(() => {
@@ -161,6 +175,84 @@ describe('DashboardHeader', () => {
       renderWithTheme(<DashboardHeader />)
 
       expect(screen.getByText('Good evening')).toBeInTheDocument()
+    })
+  })
+
+  describe('authenticated user state', () => {
+    it('should render personalized greeting when user is authenticated', () => {
+      mockUseVersion.mockReturnValue({
+        version: 'v2025.08.07.1703',
+        isLoading: false,
+        error: null
+      })
+
+      mockUseAuth.mockReturnValue({
+        user: {
+          profile: {
+            given_name: 'John',
+            family_name: 'Doe',
+            name: 'John Doe',
+            email: 'john.doe@example.com',
+            picture: 'https://example.com/avatar.jpg'
+          }
+        },
+        isAuthenticated: true,
+        isLoading: false,
+        error: null
+      })
+
+      renderWithTheme(<DashboardHeader />)
+
+      expect(screen.getByText('Good afternoon, John')).toBeInTheDocument()
+    })
+
+    it('should render user avatar when authenticated', () => {
+      mockUseVersion.mockReturnValue({
+        version: 'v2025.08.07.1703',
+        isLoading: false,
+        error: null
+      })
+
+      mockUseAuth.mockReturnValue({
+        user: {
+          profile: {
+            given_name: 'John',
+            picture: 'https://example.com/avatar.jpg'
+          }
+        },
+        isAuthenticated: true,
+        isLoading: false,
+        error: null
+      })
+
+      renderWithTheme(<DashboardHeader />)
+
+      const avatar = screen.getByAltText('Profile')
+      expect(avatar).toBeInTheDocument()
+      expect(avatar).toHaveAttribute('src', 'https://example.com/avatar.jpg')
+    })
+
+    it('should render fallback icon when no avatar picture', () => {
+      mockUseVersion.mockReturnValue({
+        version: 'v2025.08.07.1703',
+        isLoading: false,
+        error: null
+      })
+
+      mockUseAuth.mockReturnValue({
+        user: {
+          profile: {
+            given_name: 'John'
+          }
+        },
+        isAuthenticated: true,
+        isLoading: false,
+        error: null
+      })
+
+      renderWithTheme(<DashboardHeader />)
+
+      expect(screen.getByTestId('PersonIcon')).toBeInTheDocument()
     })
   })
 })

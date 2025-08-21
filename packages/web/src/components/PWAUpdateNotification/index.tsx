@@ -34,7 +34,7 @@ export const PWAUpdateNotification = () => {
           variant="filled"
           sx={{ 
             width: '100%',
-            maxWidth: '400px'
+            maxWidth: '500px'
           }}
           action={
             <Box sx={{ display: 'flex', gap: 1 }}>

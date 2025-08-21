@@ -18,7 +18,7 @@ export const Content = styled('div')({
   justifyContent: 'center',
   alignItems: 'center',
   maxHeight: '1000px',
-  maxWidth: '400px',
+  maxWidth: '500px',
   height: '100%',
   width: '100%',
   margin: 0,

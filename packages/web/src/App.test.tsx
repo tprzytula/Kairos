@@ -5,6 +5,16 @@ import { AppStateProvider } from './providers/AppStateProvider'
 import theme from './theme'
 import { App } from './App'
 
+// Mock the auth context
+jest.mock('react-oidc-context', () => ({
+  useAuth: () => ({
+    isAuthenticated: true,
+    isLoading: false,
+    error: null,
+    user: { profile: { name: 'Test User' } }
+  }),
+}))
+
 const renderApp = () => {
   render(
     <ThemeProvider theme={theme}>

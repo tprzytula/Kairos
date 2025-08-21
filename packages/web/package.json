@@ -12,7 +12,6 @@
     "inject:version": "node scripts/inject-version.js",
     "dev": "yarn dev:app",
     "dev:app": "parcel src/index.html",
-
     "prettier": "prettier src --check",
     "prettier:fix": "yarn prettier -- --write",
     "test": "TZ=Europe/London jest",
@@ -25,14 +24,15 @@
     "@fontsource/roboto": "^5.2.6",
     "@mui/icons-material": "^7.1.1",
     "@mui/material": "^7.1.1",
-    "@mui/styled-engine-sc": "^7.1.1",
+    "@mui/styled-engine": "^7.3.1",
     "@mui/x-date-pickers": "^8.5.2",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "oidc-client-ts": "^3.3.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router": "^7.6.2",
-    "styled-components": "^6.1.19"
+    "react-oidc-context": "^3.3.0",
+    "react-router": "^7.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.27.4",

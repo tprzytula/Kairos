@@ -23,6 +23,16 @@ jest.mock('react-router', () => ({
   useNavigate: jest.fn(() => jest.fn()),
 }))
 
+// Mock the useAuth hook for DashboardHeader
+jest.mock('react-oidc-context', () => ({
+  useAuth: jest.fn(() => ({
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    error: null
+  }))
+}))
+
 describe('Given the HomeRoute component', () => {
   beforeEach(() => {
     jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
