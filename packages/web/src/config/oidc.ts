@@ -14,10 +14,10 @@ const getPostLogoutRedirectUri = (): string => {
   const origin = window.location.origin
   
   if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-    return origin
+    return `${origin}/`
   }
   
-  return "https://d1568c842iynon.cloudfront.net"
+  return "https://d1568c842iynon.cloudfront.net/"
 }
 
 export const oidcConfig: UserManagerSettings = {

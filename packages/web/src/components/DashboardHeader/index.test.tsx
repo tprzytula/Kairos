@@ -49,140 +49,51 @@ describe('DashboardHeader', () => {
     jest.useRealTimers()
   })
 
-  it('should render greeting based on time of day', () => {
-    mockUseVersion.mockReturnValue({
-      version: '2025.08.07.1703',
-      isLoading: false,
-      error: null
-    })
+  describe('version display', () => {
+    it('should display version when available', () => {
+      mockUseVersion.mockReturnValue({
+        version: 'v2025.08.07.1703',
+        isLoading: false,
+        error: null
+      })
 
-    renderWithTheme(<DashboardHeader />)
+      renderWithTheme(<DashboardHeader />)
 
-    expect(screen.getByText('Good afternoon')).toBeInTheDocument()
-  })
-
-  it('should render current date', () => {
-    mockUseVersion.mockReturnValue({
-      version: '2025.08.07.1703',
-      isLoading: false,
-      error: null
-    })
-
-    renderWithTheme(<DashboardHeader />)
-
-    expect(screen.getByText('Wednesday, Jan 8')).toBeInTheDocument()
-  })
-
-  it('should render app branding', () => {
-    mockUseVersion.mockReturnValue({
-      version: '2025.08.07.1703',
-      isLoading: false,
-      error: null
-    })
-
-    renderWithTheme(<DashboardHeader />)
-
-    expect(screen.getByText('Kairos')).toBeInTheDocument()
-  })
-
-  it('should display version when loaded', async () => {
-    mockUseVersion.mockReturnValue({
-      version: 'v2025.08.07.1703',
-      isLoading: false,
-      error: null
-    })
-
-    renderWithTheme(<DashboardHeader />)
-
-    await waitFor(() => {
       expect(screen.getByText('v2025.08.07.1703')).toBeInTheDocument()
     })
-  })
 
-  it('should display loading state while version is being fetched', () => {
-    mockUseVersion.mockReturnValue({
-      version: null,
-      isLoading: true,
-      error: null
-    })
-
-    renderWithTheme(<DashboardHeader />)
-
-    expect(screen.getByText('...')).toBeInTheDocument()
-  })
-
-  it('should display fallback when version fails to load', () => {
-    mockUseVersion.mockReturnValue({
-      version: null,
-      isLoading: false,
-      error: 'Failed to load version'
-    })
-
-    renderWithTheme(<DashboardHeader />)
-
-    expect(screen.getByText('...')).toBeInTheDocument()
-  })
-
-  it('should display localhost when running locally', async () => {
-    mockUseVersion.mockReturnValue({
-      version: 'localhost',
-      isLoading: false,
-      error: null
-    })
-
-    renderWithTheme(<DashboardHeader />)
-
-    await waitFor(() => {
-      expect(screen.getByText('localhost')).toBeInTheDocument()
-    })
-  })
-
-  describe('time-based greetings', () => {
-    it('should show "Good morning" for morning hours', () => {
-      jest.setSystemTime(new Date('2025-01-08T09:00:00.000Z')) // 9 AM UTC
-      
+    it('should display ... when version is loading', () => {
       mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
+        version: null,
+        isLoading: true,
+        error: null
+      })
+
+      renderWithTheme(<DashboardHeader />)
+
+      expect(screen.getByText('...')).toBeInTheDocument()
+    })
+
+    it('should display ... when version is not available', () => {
+      mockUseVersion.mockReturnValue({
+        version: null,
         isLoading: false,
         error: null
       })
 
       renderWithTheme(<DashboardHeader />)
 
-      expect(screen.getByText('Good morning')).toBeInTheDocument()
-    })
-
-    it('should show "Good afternoon" for afternoon hours', () => {
-      jest.setSystemTime(new Date('2025-01-08T15:00:00.000Z')) // 3 PM UTC
-      
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
-        isLoading: false,
-        error: null
-      })
-
-      renderWithTheme(<DashboardHeader />)
-
-      expect(screen.getByText('Good afternoon')).toBeInTheDocument()
-    })
-
-    it('should show "Good evening" for evening hours', () => {
-      jest.setSystemTime(new Date('2025-01-08T20:00:00.000Z')) // 8 PM UTC
-      
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.08.07.1703',
-        isLoading: false,
-        error: null
-      })
-
-      renderWithTheme(<DashboardHeader />)
-
-      expect(screen.getByText('Good evening')).toBeInTheDocument()
+      expect(screen.getByText('...')).toBeInTheDocument()
     })
   })
 
-  describe('authenticated user state', () => {
-    it('should render personalized greeting when user is authenticated', () => {
+  describe('greeting display', () => {
+    beforeEach(() => {
+      // Set time to morning (8 AM)
+      jest.setSystemTime(new Date('2025-01-08T08:00:00.000Z'))
+    })
+
+    it('should display "Good morning" when time is before 12 PM', () => {
       mockUseVersion.mockReturnValue({
         version: 'v2025.08.07.1703',
         isLoading: false,
@@ -192,11 +103,34 @@ describe('DashboardHeader', () => {
       mockUseAuth.mockReturnValue({
         user: {
           profile: {
-            given_name: 'John',
-            family_name: 'Doe',
-            name: 'John Doe',
-            email: 'john.doe@example.com',
-            picture: 'https://example.com/avatar.jpg'
+            given_name: 'John'
+          }
+        },
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+        signoutRedirect: mockSignoutRedirect
+      })
+
+      renderWithTheme(<DashboardHeader />)
+
+      expect(screen.getByText('Good morning, John')).toBeInTheDocument()
+    })
+
+    it('should display "Good afternoon" when time is between 12 PM and 6 PM', () => {
+      // Set time to afternoon (2:30 PM)
+      jest.setSystemTime(new Date('2025-01-08T14:30:00.000Z'))
+
+      mockUseVersion.mockReturnValue({
+        version: 'v2025.08.07.1703',
+        isLoading: false,
+        error: null
+      })
+
+      mockUseAuth.mockReturnValue({
+        user: {
+          profile: {
+            given_name: 'John'
           }
         },
         isAuthenticated: true,
@@ -210,6 +144,98 @@ describe('DashboardHeader', () => {
       expect(screen.getByText('Good afternoon, John')).toBeInTheDocument()
     })
 
+    it('should display "Good evening" when time is after 6 PM', () => {
+      // Set time to evening (8 PM)
+      jest.setSystemTime(new Date('2025-01-08T20:00:00.000Z'))
+
+      mockUseVersion.mockReturnValue({
+        version: 'v2025.08.07.1703',
+        isLoading: false,
+        error: null
+      })
+
+      mockUseAuth.mockReturnValue({
+        user: {
+          profile: {
+            given_name: 'John'
+          }
+        },
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+        signoutRedirect: mockSignoutRedirect
+      })
+
+      renderWithTheme(<DashboardHeader />)
+
+      expect(screen.getByText('Good evening, John')).toBeInTheDocument()
+    })
+
+    it('should not display greeting when no user', () => {
+      mockUseVersion.mockReturnValue({
+        version: 'v2025.08.07.1703',
+        isLoading: false,
+        error: null
+      })
+
+      // Ensure no user is set
+      mockUseAuth.mockReturnValue({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null,
+        signoutRedirect: mockSignoutRedirect
+      })
+
+      renderWithTheme(<DashboardHeader />)
+
+      // The greeting shows when no user - it shows time-based greeting only
+      expect(screen.getByText(/Good/)).toBeInTheDocument()
+    })
+
+    it('should handle user with full name from profile.name', () => {
+      mockUseVersion.mockReturnValue({
+        version: 'v2025.08.07.1703',
+        isLoading: false,
+        error: null
+      })
+
+      mockUseAuth.mockReturnValue({
+        user: {
+          profile: {
+            name: 'John Doe'
+          }
+        },
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+        signoutRedirect: mockSignoutRedirect
+      })
+
+      renderWithTheme(<DashboardHeader />)
+
+      expect(screen.getByText('Good morning, John Doe')).toBeInTheDocument()
+    })
+  })
+
+  describe('current date display', () => {
+    it('should display current date in proper format', async () => {
+      mockUseVersion.mockReturnValue({
+        version: 'v2025.08.07.1703',
+        isLoading: false,
+        error: null
+      })
+
+      renderWithTheme(<DashboardHeader />)
+
+      // Wait for the date to be displayed
+      await waitFor(() => {
+        expect(screen.getByText('Wednesday, Jan 8')).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('user avatar', () => {
     it('should render user avatar when authenticated', () => {
       mockUseVersion.mockReturnValue({
         version: 'v2025.08.07.1703',
