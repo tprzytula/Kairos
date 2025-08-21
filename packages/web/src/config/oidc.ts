@@ -10,7 +10,7 @@ const getRedirectUri = (): string => {
   return "https://d1568c842iynon.cloudfront.net/auth/callback"
 }
 
-const getPostLogoutRedirectUri = (): string => {
+export const getPostLogoutRedirectUri = (): string => {
   const origin = window.location.origin
   
   if (origin.includes('localhost') || origin.includes('127.0.0.1')) {

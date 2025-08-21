@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import { Box, Typography, Button } from '@mui/material'
 
 export const LoginContainer = styled(Box)(({ theme }) => ({
-  minHeight: '100vh',
+  minHeight: '100%',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
