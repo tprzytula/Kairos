@@ -4,7 +4,7 @@ const getRedirectUri = (): string => {
   const origin = window.location.origin
   
   if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-    return `${origin}/auth/callback`
+    return `${origin}/callback`
   }
   
   return "https://d1568c842iynon.cloudfront.net/callback"
@@ -23,5 +23,5 @@ export const oidcConfig: UserManagerSettings = {
   
   revokeTokensOnSignout: true,
   
-  silent_redirect_uri: `${window.location.origin}/auth/silent-callback`,
+  silent_redirect_uri: `${window.location.origin}/silent-callback`,
 }

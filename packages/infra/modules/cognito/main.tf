@@ -80,7 +80,7 @@ resource "aws_cognito_user_pool_client" "kairos_user_pool_client" {
   
   # Callback URLs for your CloudFront hosted app and localhost development
   callback_urls = [
-    "https://d1568c842iynon.cloudfront.net/callback",
+    "https://d1568c842iynon.cloudfront.net/auth/callback",
     "http://localhost:1234/auth/callback",
     "http://127.0.0.1:1234/auth/callback"
   ]
