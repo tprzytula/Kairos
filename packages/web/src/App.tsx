@@ -12,25 +12,84 @@ import ToDoListRoute from './routes/ToDoListRoute'
 import AddToDoItemRoute from './routes/AddToDoItemRoute'
 import EditToDoItemRoute from './routes/EditToDoItemRoute'
 import HomeRoute from './routes/HomeRoute'
+import ProtectedRoute from './components/ProtectedRoute'
+import AuthCallback from './components/AuthCallback'
+import SilentCallback from './components/SilentCallback'
 
 export const App = () => {
   return (
     <ApplicationContainer>
-      <Content>
-        <Routes>
-          <Route path={RouteEnum.Home} element={<HomeRoute />} />
-          <Route path={RouteEnum.GroceryList} element={<GroceryListRoute />} />
-          <Route path={RouteEnum.AddGroceryItem} element={<AddGroceryItemRoute />} />
-          <Route path={RouteEnum.EditGroceryItem} element={<EditGroceryItemRoute />} />
-          <Route path={RouteEnum.NoiseTracking} element={<NoiseTrackingRoute />} />
-          <Route path={RouteEnum.ToDoList} element={<ToDoListRoute />} />
-          <Route path={RouteEnum.AddToDoItem} element={<AddToDoItemRoute />} />
-          <Route path={RouteEnum.EditToDoItem} element={<EditToDoItemRoute />} />
-        </Routes>
-        <AlertContainer />
-        <PWAUpdateNotification />
-        <ConnectivityNotification />
-      </Content>
+      <Routes>
+        {/* Auth routes - full viewport, no Content wrapper constraints */}
+        <Route path={RouteEnum.AuthCallback} element={<AuthCallback />} />
+        <Route path={RouteEnum.SilentCallback} element={<SilentCallback />} />
+        
+        {/* App routes - wrapped in Content for proper layout */}
+        <Route path={RouteEnum.Home} element={
+          <Content>
+            <ProtectedRoute><HomeRoute /></ProtectedRoute>
+            <AlertContainer />
+            <PWAUpdateNotification />
+            <ConnectivityNotification />
+          </Content>
+        } />
+        <Route path={RouteEnum.GroceryList} element={
+          <Content>
+            <ProtectedRoute><GroceryListRoute /></ProtectedRoute>
+            <AlertContainer />
+            <PWAUpdateNotification />
+            <ConnectivityNotification />
+          </Content>
+        } />
+        <Route path={RouteEnum.AddGroceryItem} element={
+          <Content>
+            <ProtectedRoute><AddGroceryItemRoute /></ProtectedRoute>
+            <AlertContainer />
+            <PWAUpdateNotification />
+            <ConnectivityNotification />
+          </Content>
+        } />
+        <Route path={RouteEnum.EditGroceryItem} element={
+          <Content>
+            <ProtectedRoute><EditGroceryItemRoute /></ProtectedRoute>
+            <AlertContainer />
+            <PWAUpdateNotification />
+            <ConnectivityNotification />
+          </Content>
+        } />
+        <Route path={RouteEnum.NoiseTracking} element={
+          <Content>
+            <ProtectedRoute><NoiseTrackingRoute /></ProtectedRoute>
+            <AlertContainer />
+            <PWAUpdateNotification />
+            <ConnectivityNotification />
+          </Content>
+        } />
+        <Route path={RouteEnum.ToDoList} element={
+          <Content>
+            <ProtectedRoute><ToDoListRoute /></ProtectedRoute>
+            <AlertContainer />
+            <PWAUpdateNotification />
+            <ConnectivityNotification />
+          </Content>
+        } />
+        <Route path={RouteEnum.AddToDoItem} element={
+          <Content>
+            <ProtectedRoute><AddToDoItemRoute /></ProtectedRoute>
+            <AlertContainer />
+            <PWAUpdateNotification />
+            <ConnectivityNotification />
+          </Content>
+        } />
+        <Route path={RouteEnum.EditToDoItem} element={
+          <Content>
+            <ProtectedRoute><EditToDoItemRoute /></ProtectedRoute>
+            <AlertContainer />
+            <PWAUpdateNotification />
+            <ConnectivityNotification />
+          </Content>
+        } />
+      </Routes>
     </ApplicationContainer>
   )
 }

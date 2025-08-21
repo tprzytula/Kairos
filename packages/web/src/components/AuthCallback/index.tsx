@@ -39,11 +39,16 @@ const AuthCallback: React.FC = () => {
   if (auth.error) {
     return (
       <div style={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center', 
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        zIndex: 9999
       }}>
         <div style={{ color: 'white', fontSize: '18px', textAlign: 'center' }}>
           <div>Authentication Error</div>
@@ -60,11 +65,16 @@ const AuthCallback: React.FC = () => {
 
   return (
     <div style={{ 
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center', 
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      zIndex: 9999
     }}>
       <div style={{ color: 'white', fontSize: '18px', textAlign: 'center' }}>
         <div>Completing authentication...</div>
