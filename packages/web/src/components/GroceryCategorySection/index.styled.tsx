@@ -47,7 +47,9 @@ export const CategoryContent = styled(Box)({
   paddingTop: 2,
 })
 
-export const CategoryIconCircle = styled(Box)<{ bg?: string; fg?: string }>(({ bg = '#eef2ff', fg = '#4f46e5' }) => ({
+export const CategoryIconCircle = styled(Box, {
+  shouldForwardProp: (prop) => !['bg', 'fg'].includes(prop),
+})<{ bg?: string; fg?: string }>(({ bg = '#eef2ff', fg = '#4f46e5' }) => ({
   width: 22,
   height: 22,
   borderRadius: '50%',
@@ -61,7 +63,9 @@ export const CategoryIconCircle = styled(Box)<{ bg?: string; fg?: string }>(({ b
   boxShadow: 'inset 0 -2px 6px rgba(0,0,0,0.04)',
 }))
 
-export const ChevronBox = styled(Box)<{ expanded: boolean }>(({ expanded }) => ({
+export const ChevronBox = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'expanded',
+})<{ expanded: boolean }>(({ expanded }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
