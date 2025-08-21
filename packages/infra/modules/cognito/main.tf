@@ -38,6 +38,18 @@ resource "aws_cognito_user_pool" "kairos_user_pool" {
     }
   }
 
+  schema {
+    attribute_data_type = "String"
+    name               = "picture"
+    required           = false
+    mutable            = true
+
+    string_attribute_constraints {
+      min_length = 1
+      max_length = 2048
+    }
+  }
+
   # Email configuration
   auto_verified_attributes = ["email"]
   
@@ -105,8 +117,8 @@ resource "aws_cognito_user_pool_client" "kairos_user_pool_client" {
   prevent_user_existence_errors = "ENABLED"
 
   # Read and write attributes
-  read_attributes  = ["email", "given_name", "family_name"]
-  write_attributes = ["email", "given_name", "family_name"]
+  read_attributes  = ["email", "given_name", "family_name", "picture"]
+  write_attributes = ["email", "given_name", "family_name", "picture"]
 }
 
 # Google Identity Provider (only created when credentials are provided)
@@ -130,6 +142,7 @@ resource "aws_cognito_identity_provider" "google" {
     given_name  = "given_name"
     family_name = "family_name"
     username    = "sub"
+    picture     = "picture"
   }
 }
 
