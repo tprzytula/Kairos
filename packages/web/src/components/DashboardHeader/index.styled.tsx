@@ -19,9 +19,10 @@ export const DashboardHeaderCard = styled(Card)(({ theme }) => ({
   position: 'relative',
   overflow: 'hidden',
   padding: '1.25rem',
-  display: 'flex',
-  justifyContent: 'space-between',
+  display: 'grid',
+  gridTemplateColumns: '1fr auto 1fr',
   alignItems: 'center',
+  gap: '1rem',
   cursor: 'pointer',
   '&:before': {
     content: '""',
@@ -77,6 +78,60 @@ export const DateText = styled('div')(({ theme }) => ({
   transition: 'opacity 0.3s ease',
   '@media (max-width: 480px)': {
     fontSize: '0.75rem',
+  },
+}))
+
+export const UserSection = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+})
+
+export const UserInfo = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.75rem',
+  padding: '0.5rem 0.75rem',
+  borderRadius: '12px',
+  background: 'rgba(102, 126, 234, 0.08)',
+  border: '1px solid rgba(102, 126, 234, 0.15)',
+  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+  cursor: 'pointer',
+  '&:hover': {
+    background: 'rgba(102, 126, 234, 0.12)',
+    borderColor: 'rgba(102, 126, 234, 0.25)',
+    transform: 'translateY(-1px)',
+  },
+})
+
+export const UserAvatar = styled('div')({
+  width: '2rem',
+  height: '2rem',
+  borderRadius: '8px',
+  overflow: 'hidden',
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+  '& img': {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+  },
+  '& .MuiSvgIcon-root': {
+    fontSize: '1.2rem',
+    color: 'white',
+  },
+})
+
+export const UserName = styled('div')(({ theme }) => ({
+  fontSize: '0.85rem',
+  fontWeight: '600',
+  color: theme.palette.text.primary,
+  whiteSpace: 'nowrap',
+  '@media (max-width: 480px)': {
+    display: 'none',
   },
 }))
 

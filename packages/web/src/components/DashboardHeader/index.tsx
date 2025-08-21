@@ -1,12 +1,13 @@
-import { DashboardHeaderContainer, DashboardHeaderCard, GreetingSection, GreetingText, DateText, AppBranding, BrandingSection, VersionText } from './index.styled'
+import { DashboardHeaderContainer, DashboardHeaderCard, GreetingSection, GreetingText, DateText, AppBranding, BrandingSection, VersionText, UserSection, UserAvatar, UserInfo, UserName } from './index.styled'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
+import PersonIcon from '@mui/icons-material/Person'
 import { useVersion } from '../../hooks/useVersion'
+import { useAuth } from 'react-oidc-context'
 
-const getGreeting = (): string => {
+const getGreeting = (userName?: string): string => {
   const hour = new Date().getHours()
-  if (hour < 12) return 'Good morning'
-  if (hour < 17) return 'Good afternoon'
-  return 'Good evening'
+  const timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  return userName ? `${timeGreeting}, ${userName}` : timeGreeting
 }
 
 const formatDate = (): string => {
@@ -19,8 +20,10 @@ const formatDate = (): string => {
 
 const DashboardHeader = () => {
   const { version } = useVersion()
+  const auth = useAuth()
   
   const displayVersion = version || '...'
+  const userName = auth.user?.profile?.given_name || auth.user?.profile?.name
   
   return (
     <DashboardHeaderContainer>
@@ -34,9 +37,25 @@ const DashboardHeader = () => {
             color: 'white',
             gridArea: 'icon'
           }} />
-          <GreetingText style={{ gridArea: 'greeting' }}>{getGreeting()}</GreetingText>
+          <GreetingText style={{ gridArea: 'greeting' }}>{getGreeting(userName)}</GreetingText>
           <DateText style={{ gridArea: 'date' }}>{formatDate()}</DateText>
         </GreetingSection>
+        
+        <UserSection>
+          {auth.user && (
+            <UserInfo>
+              <UserAvatar>
+                {auth.user.profile?.picture ? (
+                  <img src={auth.user.profile.picture} alt="Profile" />
+                ) : (
+                  <PersonIcon />
+                )}
+              </UserAvatar>
+              <UserName>{userName || 'User'}</UserName>
+            </UserInfo>
+          )}
+        </UserSection>
+        
         <BrandingSection>
           <AppBranding>Kairos</AppBranding>
           <VersionText>

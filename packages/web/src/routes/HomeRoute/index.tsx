@@ -2,7 +2,6 @@ import { useGroceryListContext, GroceryListProvider } from '../../providers/Groc
 import { useToDoListContext, ToDoListProvider } from '../../providers/ToDoListProvider'
 import { useNoiseTrackingContext, NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
 import { useAppState } from '../../providers/AppStateProvider'
-import { useAuth } from 'react-oidc-context'
 import StandardLayout from '../../layout/standardLayout'
 import DashboardHeader from '../../components/DashboardHeader'
 import HomeGroceryItemPlaceholder from './components/HomeGroceryItemPlaceholder'
@@ -14,7 +13,6 @@ import HomeNoiseItem from './components/HomeNoiseItem'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
-import PersonIcon from '@mui/icons-material/Person'
 
 import { formatTimeElapsed, formatTimestamp } from './utils'
 
@@ -81,12 +79,7 @@ import {
   CompactItemContent,
   CompactItemMeta,
   CompactDescription,
-  DueDateText,
-  UserProfileCard,
-  UserProfileContent,
-  UserName,
-  UserEmail,
-  WelcomeText
+  DueDateText
 } from './index.styled'
 
 const HomeContent = () => {
@@ -94,7 +87,6 @@ const HomeContent = () => {
   const { toDoList, isLoading: isToDoLoading } = useToDoListContext()
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
   const { state: { purchasedItems } } = useAppState()
-  const auth = useAuth()
   
   const unpurchasedItems = groceryList.filter(item => !purchasedItems.has(item.id))
   const groceryStats = {
@@ -149,31 +141,6 @@ const HomeContent = () => {
     <StandardLayout>
       <DashboardHeader />
       <Container>
-        {auth.user && (
-          <UserProfileCard>
-            <UserProfileContent>
-              <div className="user-info">
-                {auth.user.profile?.picture ? (
-                  <div className="user-avatar">
-                    <img src={auth.user.profile.picture} alt="Profile" />
-                  </div>
-                ) : (
-                  <PersonIcon />
-                )}
-                <div className="user-details">
-                  <WelcomeText>Welcome back!</WelcomeText>
-                  <UserName>
-                    {auth.user.profile?.given_name && auth.user.profile?.family_name
-                      ? `${auth.user.profile.given_name} ${auth.user.profile.family_name}`
-                      : auth.user.profile?.given_name || auth.user.profile?.family_name || auth.user.profile?.name || 'User'
-                    }
-                  </UserName>
-                  <UserEmail>{auth.user.profile?.email}</UserEmail>
-                </div>
-              </div>
-            </UserProfileContent>
-          </UserProfileCard>
-        )}
         <SectionCard>
           <SectionContent>
             <SectionHeader>
