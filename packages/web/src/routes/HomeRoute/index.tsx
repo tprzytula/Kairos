@@ -153,7 +153,13 @@ const HomeContent = () => {
           <UserProfileCard>
             <UserProfileContent>
               <div className="user-info">
-                <PersonIcon />
+                {auth.user.profile?.picture ? (
+                  <div className="user-avatar">
+                    <img src={auth.user.profile.picture} alt="Profile" />
+                  </div>
+                ) : (
+                  <PersonIcon />
+                )}
                 <div className="user-details">
                   <WelcomeText>Welcome back!</WelcomeText>
                   <UserName>

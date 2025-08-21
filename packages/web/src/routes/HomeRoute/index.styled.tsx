@@ -522,6 +522,23 @@ export const UserProfileContent = styled(CardContent)({
     color: 'white',
     flexShrink: 0,
   },
+  '& .user-avatar': {
+    width: '3rem',
+    height: '3rem',
+    borderRadius: '12px',
+    overflow: 'hidden',
+    border: '2px solid transparent',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    padding: '2px',
+    flexShrink: 0,
+    '& img': {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      borderRadius: '10px',
+      display: 'block',
+    },
+  },
 })
 
 export const WelcomeText = styled('div')(({ theme }) => ({
