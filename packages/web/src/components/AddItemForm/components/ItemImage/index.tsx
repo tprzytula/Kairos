@@ -38,11 +38,31 @@ const ItemImage = ({ defaults, itemName, initialImagePath, onChange }: IItemImag
     }, [imagePath, onChange]);
 
     if (!imagePath) {
-        return <StyledItemImage aria-label="Placeholder image" />;
+        return (
+            <StyledItemImage 
+                aria-label="Placeholder image"
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '2rem',
+                    color: 'text.secondary',
+                    fontWeight: '600'
+                }}
+            >
+                📸
+            </StyledItemImage>
+        );
     }
 
     return (
-        <StyledItemImage aria-label={`${itemName} image`} image={imagePath} />
+        <StyledItemImage 
+            aria-label={`${itemName} image`} 
+            image={imagePath}
+            sx={{
+                backgroundImage: `url(${imagePath})`,
+            }}
+        />
     )
 };
 

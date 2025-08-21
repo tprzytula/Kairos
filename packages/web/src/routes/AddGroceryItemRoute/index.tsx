@@ -11,7 +11,10 @@ import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import StandardLayout from '../../layout/standardLayout'
+import ModernPageHeader from '../../components/ModernPageHeader'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
+import { GroceryListProvider, useGroceryListContext } from '../../providers/GroceryListProvider'
 
 const FIELDS: Array<IFormField> = [
   {
@@ -41,9 +44,10 @@ const FIELDS: Array<IFormField> = [
   },
 ]
 
-export const AddGroceryItemRoute = () => {
-  const { dispatch } = useAppState()
+export const AddGroceryItemContent = () => {
+  const { dispatch, state } = useAppState()
   const navigate = useNavigate()
+  const { groceryList } = useGroceryListContext()
   const { defaults } = useItemDefaults({
     fetchMethod: retrieveGroceryListDefaults
   })
@@ -71,17 +75,37 @@ export const AddGroceryItemRoute = () => {
     }
   }, [createAlert, navigate])
 
+  // Use same statistics as grocery list page for consistency
+  const unpurchasedItems = groceryList.filter(item => !state.purchasedItems.has(item.id))
+  const purchasedCount = groceryList.length - unpurchasedItems.length
+
+  const stats = [
+    { value: groceryList.length, label: 'Total Items' },
+    { value: unpurchasedItems.length, label: 'Remaining' },
+    { value: purchasedCount, label: 'Purchased' }
+  ]
+
   return (
-    <StandardLayout
-      title="Add Grocery Item"
-      centerVertically
-    >
+    <StandardLayout>
+      <ModernPageHeader
+        title="Add Grocery Item"
+        icon={<ShoppingCartIcon />}
+        stats={stats}
+      />
       <AddItemForm
         defaults={defaults}
         fields={FIELDS}
         onSubmit={onSubmit}
       />
     </StandardLayout>
+  )
+}
+
+export const AddGroceryItemRoute = () => {
+  return (
+    <GroceryListProvider>
+      <AddGroceryItemContent />
+    </GroceryListProvider>
   )
 }
 

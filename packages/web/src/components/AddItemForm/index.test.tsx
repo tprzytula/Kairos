@@ -64,7 +64,7 @@ describe('Given the AddItemForm component', () => {
             mockUseForm({ isSubmitting: true });
             renderAddItemForm();
             
-            expect(screen.getByText('Submitting...')).toBeDisabled()
+            expect(screen.getByText('Adding Item...')).toBeDisabled()
         })
 
         it('should show circular progress', () => {
@@ -107,7 +107,7 @@ const mockUseForm = ({
 
 const submitForm = async () => {
     await act(async () => {
-        fireEvent.click(screen.getByText('Submit'))
+        fireEvent.click(screen.getByText('Add Item'))
     })
 }
 

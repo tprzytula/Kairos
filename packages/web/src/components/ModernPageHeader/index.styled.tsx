@@ -75,21 +75,22 @@ export const HeaderIcon = styled('div')(({ theme }) => ({
 
 export const HeaderStats = styled('div')({
   display: 'flex',
-  gap: '0.75rem',
+  gap: '0.5rem',
   alignItems: 'center',
   flexWrap: 'wrap',
   maxWidth: '100%',
   overflow: 'hidden',
 })
 
-export const StatItem = styled('div')({
+export const StatItem = styled('div')<{ wide?: boolean }>(() => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   minWidth: '50px',
-  maxWidth: '80px',
+  maxWidth: '70px',
   flex: '1 1 auto',
-})
+  textAlign: 'center',
+}))
 
 export const StatValue = styled('div')(({ theme }) => ({
   fontSize: '1.1rem',

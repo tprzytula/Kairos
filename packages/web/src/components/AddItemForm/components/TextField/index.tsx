@@ -1,6 +1,6 @@
-import { TextField as MuiTextField } from '@mui/material'
 import { IFormField } from '../../types'
 import { IFieldProps } from '../../hooks/useForm/types'
+import { StyledTextField } from './index.styled'
 
 export interface ITextFieldProps {
     field: IFormField
@@ -18,7 +18,7 @@ export const TextField = ({
     const { name, label, type, required } = field
 
     return (
-        <MuiTextField 
+        <StyledTextField 
             key={name}
             fullWidth
             label={label}

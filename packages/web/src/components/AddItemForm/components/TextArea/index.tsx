@@ -1,6 +1,6 @@
-import { TextField as MuiTextField } from "@mui/material";
 import { IFormField } from "../../types";
 import { IFieldProps } from "../../hooks/useForm/types";
+import { StyledTextField } from "../TextField/index.styled";
 
 export interface ITextAreaProps {
     field: IFormField
@@ -14,7 +14,7 @@ export const TextArea = ({ field, fieldProps, errors, isSubmitting, placeholder 
     const error = errors[field.name];
     
     return (
-        <MuiTextField
+        <StyledTextField
             {...fieldProps}
             multiline
             rows={4}

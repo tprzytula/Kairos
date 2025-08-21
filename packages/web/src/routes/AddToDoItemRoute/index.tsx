@@ -10,6 +10,9 @@ import { AlertColor } from '@mui/material'
 import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
 import StandardLayout from '../../layout/standardLayout'
+import ModernPageHeader from '../../components/ModernPageHeader'
+import ChecklistIcon from '@mui/icons-material/Checklist'
+import { ToDoListProvider, useToDoListContext } from '../../providers/ToDoListProvider'
 import dayjs from 'dayjs'
 
 const FIELDS: Array<IFormField> = [
@@ -36,9 +39,10 @@ const FIELDS: Array<IFormField> = [
   },
 ]
 
-export const AddToDoItemRoute = () => {
+export const AddToDoItemContent = () => {
   const { dispatch } = useAppState()
   const navigate = useNavigate()
+  const { toDoList } = useToDoListContext()
 
   const createAlert = useCallback((description: string, severity: AlertColor) => {
     showAlert({ description, severity }, dispatch)
@@ -64,17 +68,41 @@ export const AddToDoItemRoute = () => {
     }
   }, [createAlert, navigate])
 
+  // Format current date parts with consistent lengths
+  const today = new Date()
+  const currentDay = today.toLocaleDateString('en-US', { weekday: 'short' }) // Thu
+  const dayNumber = today.toLocaleDateString('en-US', { day: 'numeric' })   // 21
+  const monthName = today.toLocaleDateString('en-US', { month: 'short' })   // Aug
+  const yearNumber = today.toLocaleDateString('en-US', { year: 'numeric' }) // 2025
+
+  const stats = [
+    { value: currentDay, label: 'Today' },
+    { value: dayNumber, label: 'Day' },
+    { value: monthName, label: 'Month' },
+    { value: yearNumber, label: 'Year' }
+  ]
+
   return (
-    <StandardLayout
-      title="Add To Do Item"
-      centerVertically
-    >
+    <StandardLayout>
+      <ModernPageHeader
+        title="Add To-Do Item"
+        icon={<ChecklistIcon />}
+        stats={stats}
+      />
       <AddItemForm
         fields={FIELDS}
         onSubmit={onSubmit}
         hideImage={true}
       />
     </StandardLayout>
+  )
+}
+
+export const AddToDoItemRoute = () => {
+  return (
+    <ToDoListProvider>
+      <AddToDoItemContent />
+    </ToDoListProvider>
   )
 }
 

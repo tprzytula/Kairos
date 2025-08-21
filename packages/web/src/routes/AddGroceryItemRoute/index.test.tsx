@@ -4,21 +4,44 @@ import { AppStateProvider } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
 import { Route } from '../../enums/route'
-import AddGroceryItemRoute from '.'
+import { AddGroceryItemContent } from '.'
 import * as ReactRouter from 'react-router'
 import AddItemForm from '../../components/AddItemForm'
 import { addGroceryItem } from '../../api/groceryList'
 import { FormFieldType } from '../../components/AddItemForm/enums'
 import { GroceryItemUnit } from '../../enums/groceryItem'
+import { useItemDefaults } from '../../hooks/useItemDefaults'
+import { useGroceryListContext } from '../../providers/GroceryListProvider'
 
 jest.mock('../../api/groceryList');
 jest.mock('../../components/AddItemForm');
+jest.mock('../../hooks/useItemDefaults');
+jest.mock('../../providers/GroceryListProvider');
+jest.mock('../../components/ModernPageHeader', () => ({ title }: any) => <div>{title}</div>);
+jest.mock('@mui/icons-material/ShoppingCart', () => () => <div>ShoppingCartIcon</div>);
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(() => jest.fn()),
 }))
 
-describe('Given the AddGroceryItemRoute component', () => {
+describe('Given the AddGroceryItemContent component', () => {
+  beforeEach(() => {
+    (useGroceryListContext as jest.Mock).mockReturnValue({
+      groceryList: [],
+      isLoading: false,
+      viewMode: 'CATEGORIZED' as any,
+      setViewMode: jest.fn(),
+      refetchGroceryList: jest.fn(),
+      removeGroceryItem: jest.fn(),
+      updateGroceryItem: jest.fn(),
+      updateGroceryItemFields: jest.fn(),
+    });
+
+    (useItemDefaults as jest.Mock).mockReturnValue({
+      defaults: []
+    });
+  })
+
   it('should have the correct title', async () => {
     await renderComponent()
     expect(screen.getByText('Add Grocery Item')).toBeVisible()
@@ -158,7 +181,7 @@ const renderComponent = () => {
     <ThemeProvider theme={theme}>
       <AppStateProvider>
         <BrowserRouter>
-          <AddGroceryItemRoute />
+          <AddGroceryItemContent />
         </BrowserRouter>
       </AppStateProvider>
     </ThemeProvider>

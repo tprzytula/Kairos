@@ -1,6 +1,7 @@
-import { Alert, FormControl, InputLabel, MenuItem, Select as MuiSelect, SelectChangeEvent } from '@mui/material';
+import { Alert, MenuItem, SelectChangeEvent, Select as MuiSelect } from '@mui/material';
 import { useCallback, useMemo } from 'react';
 import { ISelectProps } from './types';
+import { StyledFormControl, StyledInputLabel } from './index.styled';
 
 export const Select = ({
     field,
@@ -35,25 +36,35 @@ export const Select = ({
     }, [errors, name]);
 
     return (
-        <FormControl 
+        <StyledFormControl 
             key={name}
             fullWidth
             error={!!errors[name]}
             disabled={isSubmitting}
         >
-            <InputLabel>{label}</InputLabel>
+            <StyledInputLabel>{label}</StyledInputLabel>
             <MuiSelect
                 label={label}
-                {...fieldProps}
+                value={fieldProps.value}
                 required={required}
                 aria-label={label}
                 aria-required={required}
                 aria-invalid={!!errors[name]}
                 onChange={handleChange}
+                sx={{
+                    '& .MuiSelect-icon': {
+                        color: 'text.secondary',
+                        transition: 'transform 0.2s ease',
+                    },
+                    '&.Mui-focused .MuiSelect-icon': {
+                        color: '#667eea',
+                        transform: 'rotate(180deg)',
+                    },
+                }}
             >
                 {menuItems}
             </MuiSelect>
             {alert}
-        </FormControl>
+        </StyledFormControl>
     );
 };

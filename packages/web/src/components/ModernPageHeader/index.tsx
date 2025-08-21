@@ -17,6 +17,7 @@ export interface ModernPageHeaderProps {
   stats?: Array<{
     value: string | number
     label: string
+    wide?: boolean
   }>
 }
 
@@ -39,7 +40,7 @@ const ModernPageHeader: React.FC<ModernPageHeaderProps> = ({
           {stats && stats.length > 0 && (
             <HeaderStats>
               {stats.map((stat, index) => (
-                <StatItem key={index}>
+                <StatItem key={index} wide={stat.wide}>
                   <StatValue>{stat.value}</StatValue>
                   <StatLabel>{stat.label}</StatLabel>
                 </StatItem>

@@ -1,9 +1,10 @@
-import { Button, Container, Stack, CircularProgress, Alert } from "@mui/material";
+import { Stack, CircularProgress, Alert } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
 import { IAddItemFormProps, IFormField } from "./types";
 import { useForm } from "./hooks/useForm";
 import ItemImage from "./components/ItemImage";
 import FormField from "./components/FormField";
+import { FormContainer, FormCard, FormContent, FormFieldsContainer, SubmitButton, ImageContainer } from "./index.styled";
 
 const AddItemForm = ({ defaults, fields, hideImage, initialImagePath, onSubmit }: IAddItemFormProps) => {
     const [itemName, setItemName] = useState<string | undefined>();
@@ -45,36 +46,43 @@ const AddItemForm = ({ defaults, fields, hideImage, initialImagePath, onSubmit }
     , [formFields, getFieldProps, errors, isSubmitting]);
 
     return (
-        <Container maxWidth="sm">
-            <form onSubmit={handleSubmit} noValidate>
-                <Stack spacing={3}>
-                    {!hideImage && (
-                        <ItemImage
-                            itemName={itemName}
-                            defaults={defaults}
-                            initialImagePath={initialImagePath}
-                            onChange={setImagePath}
-                        />
-                    )}
-                    <Stack spacing={2}>
-                        {formFieldsComponents}
-                    </Stack>
-                    <Button 
-                        type="submit" 
-                        variant="contained" 
-                        disabled={isSubmitting}
-                        startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
-                    >
-                        {isSubmitting ? 'Submitting...' : 'Submit'}
-                    </Button>
-                    {submitError && (
-                        <Alert severity="error" role="alert">
-                            {submitError}
-                        </Alert>
-                    )}
-                </Stack>
-            </form>
-        </Container>
+        <FormContainer>
+            <FormCard>
+                <FormContent>
+                    <form onSubmit={handleSubmit} noValidate>
+                        <Stack spacing={2.5}>
+                            {!hideImage && (
+                                <ImageContainer>
+                                    <ItemImage
+                                        itemName={itemName}
+                                        defaults={defaults}
+                                        initialImagePath={initialImagePath}
+                                        onChange={setImagePath}
+                                    />
+                                </ImageContainer>
+                            )}
+                            <FormFieldsContainer>
+                                {formFieldsComponents}
+                            </FormFieldsContainer>
+                            <SubmitButton 
+                                type="submit" 
+                                variant="contained" 
+                                disabled={isSubmitting}
+                                startIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : null}
+                                fullWidth
+                            >
+                                {isSubmitting ? 'Adding Item...' : 'Add Item'}
+                            </SubmitButton>
+                            {submitError && (
+                                <Alert severity="error" role="alert" sx={{ borderRadius: '12px' }}>
+                                    {submitError}
+                                </Alert>
+                            )}
+                        </Stack>
+                    </form>
+                </FormContent>
+            </FormCard>
+        </FormContainer>
     );
 };
 

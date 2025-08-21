@@ -3,11 +3,12 @@ import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
-import AddToDoItemRoute from '.'
+import { AddToDoItemContent } from '.'
 import AddItemForm from '../../components/AddItemForm'
 import { addTodoItem } from '../../api/toDoList'
 import { FormFieldType } from '../../components/AddItemForm/enums'
 import * as ReactRouter from 'react-router'
+import { useToDoListContext } from '../../providers/ToDoListProvider'
 
 jest.mock('react-router', () => ({  
   ...jest.requireActual('react-router'),
@@ -16,11 +17,24 @@ jest.mock('react-router', () => ({
 
 jest.mock('../../api/toDoList');
 jest.mock('../../components/AddItemForm');
+jest.mock('../../providers/ToDoListProvider');
+jest.mock('../../components/ModernPageHeader', () => ({ title }: any) => <div>{title}</div>);
+jest.mock('@mui/icons-material/Checklist', () => () => <div>ChecklistIcon</div>)
 
-describe('Given the AddToDoItemRoute component', () => {
+describe('Given the AddToDoItemContent component', () => {
+  beforeEach(() => {
+    (useToDoListContext as jest.Mock).mockReturnValue({
+      toDoList: [],
+      isLoading: false,
+      refetchToDoList: jest.fn(),
+      removeFromToDoList: jest.fn(),
+      updateToDoItemFields: jest.fn(),
+    });
+  })
+
   it('should have the correct title', async () => {
     await renderComponent()
-    expect(screen.getByText('Add To Do Item')).toBeVisible()
+    expect(screen.getByText('Add To-Do Item')).toBeVisible()
   })
 
   it('should render the AddItemForm component', async () => {
@@ -157,7 +171,7 @@ const renderComponent = () => {
     <ThemeProvider theme={theme}>
       <AppStateProvider>
         <BrowserRouter>
-          <AddToDoItemRoute />
+          <AddToDoItemContent />
         </BrowserRouter>
       </AppStateProvider>
     </ThemeProvider>
