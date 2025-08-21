@@ -8,6 +8,6 @@ export enum Route {
     ToDoList = '/todo',
     AddToDoItem = '/todo/add',
     EditToDoItem = '/todo/edit/:id',
-    AuthCallback = '/callback',
+    AuthCallback = '/auth/callback',
     SilentCallback = '/silent-callback',
 }
