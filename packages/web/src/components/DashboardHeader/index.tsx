@@ -1,8 +1,8 @@
-import { DashboardHeaderContainer, DashboardHeaderCard, GreetingSection, GreetingText, DateText, AppBranding, BrandingSection, VersionText, UserSection, UserAvatar, BrandingInfo } from './index.styled'
+import { DashboardHeaderContainer, DashboardHeaderCard, GreetingSection, GreetingText, DateText, AppBranding, BrandingSection, VersionText, UserSection, BrandingInfo } from './index.styled'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
-import PersonIcon from '@mui/icons-material/Person'
 import { useVersion } from '../../hooks/useVersion'
 import { useAuth } from 'react-oidc-context'
+import UserMenu from '../UserMenu'
 
 const getGreeting = (userName?: string): string => {
   const hour = new Date().getHours()
@@ -24,17 +24,6 @@ const DashboardHeader = () => {
   
   const displayVersion = version || '...'
   const userName = auth.user?.profile?.given_name || auth.user?.profile?.name
-
-  const handleLogout = () => {
-    auth.signoutRedirect()
-  }
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      handleLogout()
-    }
-  }
   
   return (
     <DashboardHeaderContainer>
@@ -62,19 +51,7 @@ const DashboardHeader = () => {
           
           {auth.user && (
             <UserSection>
-              <UserAvatar 
-                onClick={handleLogout} 
-                onKeyDown={handleKeyDown}
-                role="button" 
-                tabIndex={0} 
-                title="Click to log out"
-              >
-                {auth.user.profile?.picture ? (
-                  <img src={auth.user.profile.picture} alt="Profile" />
-                ) : (
-                  <PersonIcon />
-                )}
-              </UserAvatar>
+              <UserMenu />
             </UserSection>
           )}
         </BrandingSection>
