@@ -16,6 +16,8 @@ const UserMenu: React.FC = () => {
     const cognitoDomain = "https://5rndghxqgv-kairos.auth.eu-west-2.amazoncognito.com";
     
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+  
+    auth.removeUser()
   }
 
   const toggleDropdown = () => {

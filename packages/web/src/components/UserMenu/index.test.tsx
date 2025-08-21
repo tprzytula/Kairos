@@ -5,6 +5,7 @@ import UserMenu from './index'
 
 // Mock the react-oidc-context hook
 const defaultMockAuthState = {
+  removeUser: jest.fn(),
   user: {
     profile: {
       name: 'John Doe',
@@ -140,6 +141,7 @@ describe('UserMenu', () => {
 
   it('should not render when no user', () => {
     mockUseAuth.mockReturnValue({
+      removeUser: jest.fn(),
       user: null,
     })
     
