@@ -156,13 +156,13 @@ const HomeContent = () => {
                 <PersonIcon />
                 <div className="user-details">
                   <WelcomeText>Welcome back!</WelcomeText>
-                  <UserName>{auth.user.given_name || auth.user.family_name || auth.user.name || auth.user.preferred_username || 'User'}</UserName>
-                  <UserEmail>{auth.user.email}</UserEmail>
-                  {process.env.NODE_ENV === 'development' && (
-                    <div style={{ fontSize: '0.7rem', color: '#666', marginTop: '0.5rem' }}>
-                      Debug: {JSON.stringify(auth.user, null, 2)}
-                    </div>
-                  )}
+                  <UserName>
+                    {auth.user.profile?.given_name && auth.user.profile?.family_name
+                      ? `${auth.user.profile.given_name} ${auth.user.profile.family_name}`
+                      : auth.user.profile?.given_name || auth.user.profile?.family_name || auth.user.profile?.name || 'User'
+                    }
+                  </UserName>
+                  <UserEmail>{auth.user.profile?.email}</UserEmail>
                 </div>
               </div>
             </UserProfileContent>
