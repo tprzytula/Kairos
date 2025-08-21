@@ -38,9 +38,7 @@ export const HeaderCard = styled(Card)(({ theme }) => ({
 export const HeaderContent = styled('div')({
   padding: '1rem 1.25rem',
   display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  flexWrap: 'wrap',
+  flexDirection: 'column',
   gap: '1rem',
   width: '100%',
   boxSizing: 'border-box',
@@ -77,6 +75,7 @@ export const HeaderStats = styled('div')({
   display: 'flex',
   gap: '0.5rem',
   alignItems: 'center',
+  justifyContent: 'center',
   flexWrap: 'wrap',
   maxWidth: '100%',
   overflow: 'hidden',
