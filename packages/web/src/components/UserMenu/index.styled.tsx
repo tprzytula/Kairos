@@ -35,16 +35,12 @@ export const DropdownOverlay = styled(Box)({
 })
 
 export const UserDropdown = styled(Box)({
-  position: 'absolute',
-  top: '100%',
-  right: 0,
   background: 'white',
   borderRadius: '12px',
   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
   padding: '16px',
   minWidth: '200px',
   zIndex: 1000,
-  marginTop: '8px',
   
   '&::before': {
     content: '""',
