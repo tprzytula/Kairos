@@ -475,4 +475,72 @@ export const NoiseStatItem = styled('div')(({ theme }) => ({
     borderColor: 'rgba(102, 126, 234, 0.2)',
     transform: 'translateX(2px)',
   },
-})) 
+}))
+
+export const UserProfileCard = styled(Card)(({ theme }) => ({
+  borderRadius: '16px',
+  boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
+  border: 'none',
+  background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 50%, rgba(240, 147, 251, 0.08) 100%)',
+  backdropFilter: 'blur(10px)',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  position: 'relative',
+  overflow: 'hidden',
+  marginBottom: '0.6rem',
+  '&:before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '3px',
+    background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+    opacity: 1,
+  },
+}))
+
+export const UserProfileContent = styled(CardContent)({
+  padding: '1rem 1.25rem',
+  '&:last-child': {
+    paddingBottom: '1rem',
+  },
+  '& .user-info': {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem',
+  },
+  '& .user-details': {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.2rem',
+  },
+  '& .MuiSvgIcon-root': {
+    fontSize: '2rem',
+    padding: '0.5rem',
+    borderRadius: '12px',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white',
+    flexShrink: 0,
+  },
+})
+
+export const WelcomeText = styled('div')(({ theme }) => ({
+  fontSize: '0.8rem',
+  fontWeight: '500',
+  color: theme.palette.text.secondary,
+  marginBottom: '0.1rem',
+}))
+
+export const UserName = styled('div')(({ theme }) => ({
+  fontSize: '1.1rem',
+  fontWeight: '700',
+  color: theme.palette.text.primary,
+  lineHeight: 1.2,
+}))
+
+export const UserEmail = styled('div')(({ theme }) => ({
+  fontSize: '0.85rem',
+  fontWeight: '500',
+  color: theme.palette.text.secondary,
+  lineHeight: 1.2,
+}))) 
