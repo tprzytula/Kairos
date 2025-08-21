@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import { Box, Card } from '@mui/material'
 
 export const DashboardHeaderContainer = styled(Box)({
-  padding: '0.5em 0',
+  padding: '0.75rem 0 0.5rem 0',
   width: '100%',
   maxWidth: 'none',
   alignSelf: 'stretch',
