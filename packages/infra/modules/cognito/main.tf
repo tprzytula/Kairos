@@ -73,7 +73,7 @@ resource "aws_cognito_user_pool_client" "kairos_user_pool_client" {
   user_pool_id = aws_cognito_user_pool.kairos_user_pool.id
 
   # OAuth configuration for social logins
-  supported_identity_providers         = ["Google"]
+  supported_identity_providers         = var.google_client_id != "" && var.google_client_secret != "" ? ["Google"] : ["COGNITO"]
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
@@ -101,8 +101,10 @@ resource "aws_cognito_user_pool_client" "kairos_user_pool_client" {
   write_attributes = ["email", "given_name", "family_name"]
 }
 
-# Google Identity Provider
+# Google Identity Provider (only created when credentials are provided)
 resource "aws_cognito_identity_provider" "google" {
+  count = var.google_client_id != "" && var.google_client_secret != "" ? 1 : 0
+
   user_pool_id  = aws_cognito_user_pool.kairos_user_pool.id
   provider_name = "Google"
   provider_type = "Google"
