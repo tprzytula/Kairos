@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useAuth } from 'react-oidc-context'
 import * as Styled from './index.styled'
+import { getPostLogoutRedirectUri, oidcConfig } from '../../config/oidc'
 
 const UserMenu: React.FC = () => {
   const auth = useAuth()
@@ -10,7 +11,11 @@ const UserMenu: React.FC = () => {
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const handleLogout = () => {
-    auth.signoutRedirect()
+    const clientId = oidcConfig.client_id;
+    const logoutUri = getPostLogoutRedirectUri();
+    const cognitoDomain = "https://5rndghxqgv-kairos.auth.eu-west-2.amazoncognito.com";
+    
+    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
   }
 
   const toggleDropdown = () => {
