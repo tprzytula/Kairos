@@ -24,6 +24,15 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
   }
 }
 
+# Cognito User Pool Authorizer
+resource "aws_api_gateway_authorizer" "cognito_authorizer" {
+  name                   = "cognito-authorizer"
+  rest_api_id           = aws_api_gateway_rest_api.kairos_api.id
+  type                  = "COGNITO_USER_POOLS"
+  provider_arns         = [var.cognito_user_pool_arn]
+  identity_source       = "method.request.header.Authorization"
+}
+
 resource "aws_lambda_permission" "kairos_api_lambda_permissions" {
   for_each = var.lambda_functions
 

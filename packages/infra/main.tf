@@ -17,8 +17,9 @@ module "lambda" {
 module "api_gateway" {
   source = "./modules/api_gateway"
 
-  random_name      = module.random.random_name
-  lambda_functions = module.lambda.lambda_functions
+  random_name            = module.random.random_name
+  lambda_functions       = module.lambda.lambda_functions
+  cognito_user_pool_arn  = module.cognito.user_pool_arn
 }
 
 module "s3" {

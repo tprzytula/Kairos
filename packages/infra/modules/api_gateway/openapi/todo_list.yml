@@ -7,6 +7,8 @@ info:
 paths:
   /todo_list/items:
     get:
+      security:
+        - CognitoAuthorizer: []
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
@@ -23,6 +25,8 @@ paths:
                 items:
                   $ref: "#/components/schemas/todoItem"
     put:
+      security:
+        - CognitoAuthorizer: []
       requestBody:
         content:
           application/json:
@@ -42,6 +46,8 @@ paths:
         500:
           description: Error adding todo item
     post:
+      security:
+        - CognitoAuthorizer: []
       requestBody:
         content:
           application/json:
@@ -71,6 +77,8 @@ paths:
         400:
           description: Invalid request body
     delete:
+      security:
+        - CognitoAuthorizer: []
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
@@ -110,6 +118,8 @@ paths:
         type: "mock"
   /todo_list/items/{id}:
     patch:
+      security:
+        - CognitoAuthorizer: []
       parameters:
         - in: path
           name: id
@@ -224,6 +234,16 @@ components:
           type: number
         isDone:
           type: boolean
+  securitySchemes:
+    CognitoAuthorizer:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: cognito_user_pools
+      x-amazon-apigateway-authorizer:
+        type: cognito_user_pools
+        providerARNs:
+          - ${cognito_authorizer_id}
 x-amazon-apigateway-request-validators:
   Validate body:
     validateRequestParameters: false

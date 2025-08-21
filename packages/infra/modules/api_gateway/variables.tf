@@ -8,3 +8,8 @@ variable "lambda_functions" {
     function_name : string
   }))
 }
+
+variable "cognito_user_pool_arn" {
+  description = "ARN of the Cognito User Pool for API Gateway authorization"
+  type        = string
+}

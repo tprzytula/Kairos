@@ -9,7 +9,10 @@ locals {
     spec => yamldecode(
       templatefile(
         "${path.module}/openapi/${spec}.yml",
-        { lambda_functions = var.lambda_functions }
+        { 
+          lambda_functions = var.lambda_functions
+          cognito_authorizer_id = aws_api_gateway_authorizer.cognito_authorizer.id
+        }
       )
     )
   }
