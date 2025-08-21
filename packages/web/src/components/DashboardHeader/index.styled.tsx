@@ -105,18 +105,45 @@ export const UserAvatar = styled('div')({
   border: '2px solid rgba(102, 126, 234, 0.2)',
   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
   cursor: 'pointer',
+  position: 'relative',
   '& img': {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
   },
   '& .MuiSvgIcon-root': {
     fontSize: '1.2rem',
     color: 'white',
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
   },
   '&:hover': {
-    borderColor: 'rgba(102, 126, 234, 0.4)',
+    borderColor: 'rgba(102, 126, 234, 0.6)',
     transform: 'scale(1.05)',
+    boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+    '&::after': {
+      content: '"Click to logout"',
+      position: 'absolute',
+      bottom: '-2.5rem',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      background: 'rgba(0, 0, 0, 0.8)',
+      color: 'white',
+      padding: '0.25rem 0.5rem',
+      borderRadius: '4px',
+      fontSize: '0.75rem',
+      whiteSpace: 'nowrap',
+      opacity: 1,
+      pointerEvents: 'none',
+      zIndex: 1000,
+    },
+  },
+  '&:focus': {
+    outline: '2px solid rgba(102, 126, 234, 0.6)',
+    outlineOffset: '2px',
+  },
+  '&:active': {
+    transform: 'scale(0.95)',
   },
 })
 

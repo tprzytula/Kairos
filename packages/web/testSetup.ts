@@ -5,7 +5,7 @@ import './__mocks__/serviceWorkerMock'
 import { TextEncoder } from 'node:util'
 
 if (!global.TextEncoder) {
-  global.TextEncoder = TextEncoder
+  global.TextEncoder = TextEncoder as any
 }
 
 Object.defineProperty(window, 'crypto', {

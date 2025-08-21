@@ -24,6 +24,17 @@ const DashboardHeader = () => {
   
   const displayVersion = version || '...'
   const userName = auth.user?.profile?.given_name || auth.user?.profile?.name
+
+  const handleLogout = () => {
+    auth.signoutRedirect()
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      handleLogout()
+    }
+  }
   
   return (
     <DashboardHeaderContainer>
@@ -51,7 +62,13 @@ const DashboardHeader = () => {
           
           {auth.user && (
             <UserSection>
-              <UserAvatar>
+              <UserAvatar 
+                onClick={handleLogout} 
+                onKeyDown={handleKeyDown}
+                role="button" 
+                tabIndex={0} 
+                title="Click to log out"
+              >
                 {auth.user.profile?.picture ? (
                   <img src={auth.user.profile.picture} alt="Profile" />
                 ) : (
