@@ -19,44 +19,53 @@ const UserMenu: React.FC = () => {
   }
 
   const user = auth.user?.profile
+  const userName = user?.name || user?.given_name || 'User'
+  const userEmail = user?.email || ''
+  const userInitial = userName.charAt(0).toUpperCase() || 'U'
 
-  if (!user) return null
+  // Only return null if there's absolutely no user at all
+  if (!auth.user) return null
 
   return (
     <>
       {isOpen && <Styled.DropdownOverlay onClick={closeDropdown} />}
       <div style={{ position: 'relative' }}>
         <Styled.UserButton onClick={toggleDropdown}>
-          <Styled.UserAvatar 
-            src={user.picture} 
-            alt={user.name || 'User'}
-            onError={(e) => {
-              e.currentTarget.style.display = 'none'
-            }}
-          />
-          {!user.picture && (
-            <div style={{ 
+          {user?.picture ? (
+            <Styled.UserAvatar 
+              src={user.picture} 
+              alt={userName}
+              onError={(e) => {
+                // Hide the failed image and show the fallback
+                e.currentTarget.style.display = 'none'
+                const fallback = e.currentTarget.nextElementSibling as HTMLElement
+                if (fallback) fallback.style.display = 'flex'
+              }}
+            />
+          ) : null}
+          <div 
+            style={{ 
               width: 32, 
               height: 32, 
               borderRadius: '50%', 
               background: '#667eea', 
-              display: 'flex', 
+              display: user?.picture ? 'none' : 'flex',
               alignItems: 'center', 
               justifyContent: 'center', 
               color: 'white', 
               fontSize: '14px',
               fontWeight: 'bold'
-            }}>
-              {user.name?.charAt(0).toUpperCase() || 'U'}
-            </div>
-          )}
+            }}
+          >
+            {userInitial}
+          </div>
         </Styled.UserButton>
         
         {isOpen && (
           <Styled.UserDropdown>
             <Styled.UserInfo>
-              <Styled.UserName>{user.name}</Styled.UserName>
-              <Styled.UserEmail>{user.email}</Styled.UserEmail>
+              <Styled.UserName>{userName}</Styled.UserName>
+              {userEmail && <Styled.UserEmail>{userEmail}</Styled.UserEmail>}
             </Styled.UserInfo>
             <Styled.LogoutButton onClick={handleLogout}>
               Sign Out
