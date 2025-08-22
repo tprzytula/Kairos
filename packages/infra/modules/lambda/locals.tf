@@ -15,6 +15,7 @@ locals {
       permissions = {
         database = {
           grocery_list = "read-write"
+          grocery_items_defaults = "read-only"
         }
       }
     }
