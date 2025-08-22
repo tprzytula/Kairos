@@ -40,6 +40,10 @@ This document tracks the implementation of a multi-tenancy system for the Kairos
 - Implemented migration script (`003_add_project_support`) to create "legacy-shared-project" for existing data
 - Updated all unit tests to include `projectId` validation
 
+### ✅ Phase 2B: Make frontend work with the new backend (COMPLETED)
+- Add `projectId` to the headers of each API request
+- For now always point to `legacy-shared-project`
+
 ### ✅ Phase 3: Frontend Project Management UI (PENDING)
 - Created `ProjectProvider` React context with full project management capabilities:
   - Fetch user projects
