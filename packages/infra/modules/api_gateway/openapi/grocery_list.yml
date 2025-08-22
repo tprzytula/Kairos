@@ -9,6 +9,8 @@ paths:
     get:
       security:
         - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
@@ -27,6 +29,8 @@ paths:
     put:
       security:
         - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
       requestBody:
         content:
           application/json:
@@ -52,6 +56,8 @@ paths:
     delete:
       security:
         - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
@@ -83,7 +89,7 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Methods: "'GET, DELETE, PUT'"
-              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:
           application/json: '{"statusCode": 200}'
@@ -94,6 +100,7 @@ paths:
       security:
         - CognitoAuthorizer: []
       parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
         - in: path
           name: id
           required: true
@@ -160,6 +167,15 @@ paths:
     delete:
       security:
         - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identifier of the item to be removed
+          example: "c8aef3a0-ead3-4e64-b9ce-4ece324720fb"
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
@@ -199,7 +215,7 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Methods: "'DELETE, POST, PATCH'"
-              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:
           application/json: '{"statusCode": 200}'
@@ -244,13 +260,21 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Methods: "'GET'"
-              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:
           application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
 components:
+  parameters:
+    ProjectIDHeader:
+      name: X-Project-ID
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Project ID for multi-tenancy data isolation
   schemas:
     details:
       title: Grocery Item Details

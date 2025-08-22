@@ -9,6 +9,8 @@ paths:
     get:
       security:
         - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
@@ -27,6 +29,8 @@ paths:
     put:
       security:
         - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
       requestBody:
         content:
           application/json:
@@ -48,6 +52,8 @@ paths:
     post:
       security:
         - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
       requestBody:
         content:
           application/json:
@@ -79,6 +85,8 @@ paths:
     delete:
       security:
         - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
       x-amazon-apigateway-integration:
         httpMethod: POST
         type: AWS_PROXY
@@ -110,7 +118,7 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Methods: "'POST, PUT, DELETE'"
-              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:
           application/json: '{"statusCode": 200}'
@@ -212,13 +220,21 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Methods: "'PATCH'"
-              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:
           application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
 components:
+  parameters:
+    ProjectIDHeader:
+      name: X-Project-ID
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Project ID for multi-tenancy data isolation
   schemas:
     todoItem:
       title: Todo Item

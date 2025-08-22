@@ -75,7 +75,7 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Methods: "'GET, POST'"
-              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:
           application/json: '{"statusCode": 200}'
@@ -134,7 +134,7 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Methods: "'POST'"
-              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:
           application/json: '{"statusCode": 200}'
@@ -195,7 +195,7 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Methods: "'GET'"
-              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:
           application/json: '{"statusCode": 200}'
