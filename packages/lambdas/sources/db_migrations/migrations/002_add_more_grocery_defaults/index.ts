@@ -14,22 +14,38 @@ const migration: Migration = {
     for (let i = 0; i < groceryItems.length; i++) {
       const item = groceryItems[i];
       
-      await putItem({
-        tableName: DynamoDBTable.GROCERY_ITEMS_DEFAULTS,
-        item: {
-          id: randomUUID(),
-          name: item.name,
-          icon: item.icon,
-          unit: item.unit,
-          quantity: 1,
-          category: getCategory(item.name),
-          createdAt: new Date().toISOString(),
-        },
-      });
+      let retries = 0;
+      const maxRetries = 3;
       
-      console.log(`Added grocery item default: ${item.name} (${i + 1}/${groceryItems.length})`);
+      while (retries <= maxRetries) {
+        try {
+          await putItem({
+            tableName: DynamoDBTable.GROCERY_ITEMS_DEFAULTS,
+            item: {
+              id: randomUUID(),
+              name: item.name,
+              icon: item.icon,
+              unit: item.unit,
+              quantity: 1,
+              category: getCategory(item.name),
+              createdAt: new Date().toISOString(),
+            },
+          });
+          
+          console.log(`Added grocery item default: ${item.name} (${i + 1}/${groceryItems.length})`);
+          break;
+        } catch (error) {
+          retries++;
+          if (retries > maxRetries) {
+            console.error(`Failed to add grocery item ${item.name} after ${maxRetries} retries:`, error);
+            throw error;
+          }
+          console.log(`Retry ${retries}/${maxRetries} for item: ${item.name}`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * retries));
+        }
+      }
       
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 250));
     }
     
     console.log("Additional grocery item defaults migration completed successfully");

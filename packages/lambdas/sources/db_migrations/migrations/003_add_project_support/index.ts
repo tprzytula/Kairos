@@ -54,16 +54,33 @@ const migrateGroceryItems = async () => {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
     
-    await updateItem({
-      tableName: DynamoDBTable.GROCERY_LIST,
-      key: { id: item.id },
-      updatedFields: {
-        projectId: LEGACY_PROJECT_ID,
-      },
-    });
+    let retries = 0;
+    const maxRetries = 3;
     
-    console.log(`Migrated grocery item ${i + 1}/${items.length}`);
-    await new Promise(resolve => setTimeout(resolve, 100));
+    while (retries <= maxRetries) {
+      try {
+        await updateItem({
+          tableName: DynamoDBTable.GROCERY_LIST,
+          key: { id: item.id },
+          updatedFields: {
+            projectId: LEGACY_PROJECT_ID,
+          },
+        });
+        
+        console.log(`Migrated grocery item ${i + 1}/${items.length}`);
+        break;
+      } catch (error) {
+        retries++;
+        if (retries > maxRetries) {
+          console.error(`Failed to migrate grocery item ${item.id} after ${maxRetries} retries:`, error);
+          throw error;
+        }
+        console.log(`Retry ${retries}/${maxRetries} for grocery item: ${item.id}`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * retries));
+      }
+    }
+    
+    await new Promise(resolve => setTimeout(resolve, 250));
   }
 
   console.log(`Migrated ${items.length} grocery items`);
@@ -81,16 +98,33 @@ const migrateTodoItems = async () => {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
     
-    await updateItem({
-      tableName: DynamoDBTable.TODO_LIST,
-      key: { id: item.id },
-      updatedFields: {
-        projectId: LEGACY_PROJECT_ID,
-      },
-    });
+    let retries = 0;
+    const maxRetries = 3;
     
-    console.log(`Migrated todo item ${i + 1}/${items.length}`);
-    await new Promise(resolve => setTimeout(resolve, 100));
+    while (retries <= maxRetries) {
+      try {
+        await updateItem({
+          tableName: DynamoDBTable.TODO_LIST,
+          key: { id: item.id },
+          updatedFields: {
+            projectId: LEGACY_PROJECT_ID,
+          },
+        });
+        
+        console.log(`Migrated todo item ${i + 1}/${items.length}`);
+        break;
+      } catch (error) {
+        retries++;
+        if (retries > maxRetries) {
+          console.error(`Failed to migrate todo item ${item.id} after ${maxRetries} retries:`, error);
+          throw error;
+        }
+        console.log(`Retry ${retries}/${maxRetries} for todo item: ${item.id}`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * retries));
+      }
+    }
+    
+    await new Promise(resolve => setTimeout(resolve, 250));
   }
 
   console.log(`Migrated ${items.length} todo items`);
@@ -110,20 +144,37 @@ const migrateNoiseTrackingItems = async () => {
     
     console.log(`Migrating noise tracking item: ${item.timestamp} (${i + 1}/${items.length})`);
     
-    await deleteItem({
-      tableName: DynamoDBTable.NOISE_TRACKING,
-      key: { timestamp: item.timestamp },
-    });
-
-    await putItem({
-      tableName: DynamoDBTable.NOISE_TRACKING,
-      item: {
-        projectId: LEGACY_PROJECT_ID,
-        timestamp: item.timestamp,
-      },
-    });
+    let retries = 0;
+    const maxRetries = 3;
     
-    await new Promise(resolve => setTimeout(resolve, 150));
+    while (retries <= maxRetries) {
+      try {
+        await deleteItem({
+          tableName: DynamoDBTable.NOISE_TRACKING,
+          key: { timestamp: item.timestamp },
+        });
+
+        await putItem({
+          tableName: DynamoDBTable.NOISE_TRACKING,
+          item: {
+            projectId: LEGACY_PROJECT_ID,
+            timestamp: item.timestamp,
+          },
+        });
+        
+        break;
+      } catch (error) {
+        retries++;
+        if (retries > maxRetries) {
+          console.error(`Failed to migrate noise tracking item ${item.timestamp} after ${maxRetries} retries:`, error);
+          throw error;
+        }
+        console.log(`Retry ${retries}/${maxRetries} for noise tracking item: ${item.timestamp}`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * retries));
+      }
+    }
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
   }
 
   console.log(`Migrated ${items.length} noise tracking items`);
