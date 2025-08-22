@@ -12,11 +12,13 @@ import { FormFieldType } from '../../components/AddItemForm/enums'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { useGroceryListContext } from '../../providers/GroceryListProvider'
+import { useProjectContext } from '../../providers/ProjectProvider'
 
 jest.mock('../../api/groceryList');
 jest.mock('../../components/AddItemForm');
 jest.mock('../../hooks/useItemDefaults');
 jest.mock('../../providers/GroceryListProvider');
+jest.mock('../../providers/ProjectProvider');
 jest.mock('../../components/ModernPageHeader', () => ({ title }: any) => <div>{title}</div>);
 jest.mock('@mui/icons-material/ShoppingCart', () => () => <div>ShoppingCartIcon</div>);
 jest.mock('react-router', () => ({
@@ -25,7 +27,16 @@ jest.mock('react-router', () => ({
 }))
 
 describe('Given the AddGroceryItemContent component', () => {
+  const mockProject = {
+    id: 'test-project-id',
+    name: 'Test Project',
+    isPersonal: false
+  };
+
   beforeEach(() => {
+    // Clear all mocks before each test
+    jest.clearAllMocks();
+
     (useGroceryListContext as jest.Mock).mockReturnValue({
       groceryList: [],
       isLoading: false,
@@ -35,6 +46,17 @@ describe('Given the AddGroceryItemContent component', () => {
       removeGroceryItem: jest.fn(),
       updateGroceryItem: jest.fn(),
       updateGroceryItemFields: jest.fn(),
+    });
+
+    (useProjectContext as jest.Mock).mockReturnValue({
+      currentProject: mockProject,
+      projects: [mockProject],
+      isLoading: false,
+      createProject: jest.fn(),
+      joinProject: jest.fn(),
+      switchProject: jest.fn(),
+      fetchProjects: jest.fn(),
+      getProjectInviteInfo: jest.fn(),
     });
 
     (useItemDefaults as jest.Mock).mockReturnValue({
@@ -90,7 +112,7 @@ describe('Given the AddGroceryItemContent component', () => {
         name: 'Test',
         quantity: 1,
         unit: GroceryItemUnit.KILOGRAM,
-      })  
+      }, 'test-project-id')  
     })
 
     describe('And the createGroceryItem call succeeds', () => {
@@ -171,6 +193,54 @@ describe('Given the AddGroceryItemContent component', () => {
         })
 
         expect(consoleSpy).toHaveBeenCalledWith(new Error('Error creating grocery item'))
+      })
+    })
+
+    describe('And no project is selected', () => {
+      it('should show an error alert and not call addGroceryItem', async () => {
+        (useProjectContext as jest.Mock).mockReturnValue({
+          currentProject: null,
+          projects: [],
+          isLoading: false,
+          createProject: jest.fn(),
+          joinProject: jest.fn(),
+          switchProject: jest.fn(),
+          fetchProjects: jest.fn(),
+          getProjectInviteInfo: jest.fn(),
+        });
+
+        let onSubmitCallback: any;
+
+        jest.mocked(AddItemForm).mockImplementation(({ onSubmit }) => {
+          onSubmitCallback = onSubmit;
+          return <div>AddItemForm</div>
+        })
+
+        renderComponent()
+        await act(async () => {
+          onSubmitCallback([
+            {
+              name: 'Name',
+              type: FormFieldType.TEXT,
+              required: true,
+              value: 'Test',
+            },
+            {
+              name: 'Quantity',
+              type: FormFieldType.NUMBER,
+              required: true,
+              value: 1,
+            },
+            {
+              name: 'GroceryItemUnit',
+              type: FormFieldType.SELECT,
+              required: true,
+              value: 'kg',
+            },
+          ])
+        })
+
+        expect(addGroceryItem).not.toHaveBeenCalled()
       })
     })
   })

@@ -21,7 +21,7 @@ const exampleResponse = [
 ]
 
 describe('Given the addGroceryItem function', () => {
-  it('should make the correct request to the API', async () => {
+  it('should make the correct request to the API with legacy project when no project ID provided', async () => {
     fetchMock.mockResponse(JSON.stringify(exampleResponse[0]))
 
     await addGroceryItem({
@@ -38,6 +38,29 @@ describe('Given the addGroceryItem function', () => {
         body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, imagePath: '/assets/icons/milk.png' }),
         headers: {
           'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+  })
+
+  it('should make the correct request to the API with provided project ID', async () => {
+    fetchMock.mockResponse(JSON.stringify(exampleResponse[0]))
+
+    await addGroceryItem({
+      name: 'Milk',
+      quantity: 5,
+      unit: GroceryItemUnit.LITER,
+      imagePath: '/assets/icons/milk.png'
+    }, 'test-project-id')
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items',
+      {
+        method: 'PUT',
+        body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, imagePath: '/assets/icons/milk.png' }),
+        headers: {
+          'X-Project-ID': 'test-project-id',
           'Content-Type': 'application/json',
         },
       }

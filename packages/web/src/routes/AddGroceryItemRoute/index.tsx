@@ -15,6 +15,7 @@ import ModernPageHeader from '../../components/ModernPageHeader'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { GroceryListProvider, useGroceryListContext } from '../../providers/GroceryListProvider'
+import { useProjectContext } from '../../providers/ProjectProvider'
 
 const FIELDS: Array<IFormField> = [
   {
@@ -48,6 +49,7 @@ export const AddGroceryItemContent = () => {
   const { dispatch, state } = useAppState()
   const navigate = useNavigate()
   const { groceryList } = useGroceryListContext()
+  const { currentProject } = useProjectContext()
   const { defaults } = useItemDefaults({
     fetchMethod: retrieveGroceryListDefaults
   })
@@ -57,6 +59,11 @@ export const AddGroceryItemContent = () => {
   }, [dispatch])
 
   const onSubmit = useCallback(async (fields: Array<IFormField>, imagePath?: string) => {
+    if (!currentProject) {
+      createAlert('No project selected', 'error')
+      return
+    }
+
     try {
       const [name, quantity, unit] = validateFields(fields)
 
@@ -65,7 +72,7 @@ export const AddGroceryItemContent = () => {
         quantity: quantity.value,
         unit: unit.value as GroceryItemUnit,
         imagePath,
-      })
+      }, currentProject.id)
 
       createAlert(`${name.value} has been added to your grocery list`, 'success')
       navigate(Route.GroceryList)
@@ -73,7 +80,7 @@ export const AddGroceryItemContent = () => {
       console.error(error)
       createAlert('Error creating grocery item', 'error')
     }
-  }, [createAlert, navigate])
+  }, [createAlert, navigate, currentProject])
 
   // Use same statistics as grocery list page for consistency
   const unpurchasedItems = groceryList.filter(item => !state.purchasedItems.has(item.id))
