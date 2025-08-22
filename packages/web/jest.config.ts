@@ -3,7 +3,8 @@ import type { Config } from 'jest'
 const config: Config = {
   coverageDirectory: '.coverage',
   collectCoverage: true,
-  verbose: true,
+  verbose: false,
+  silent: true,
   setupFilesAfterEnv: ['./testSetup.ts'],
   testEnvironment: 'jsdom',
   preset: 'ts-jest',

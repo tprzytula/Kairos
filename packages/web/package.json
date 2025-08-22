@@ -14,8 +14,8 @@
     "dev:app": "parcel src/index.html",
     "prettier": "prettier src --check",
     "prettier:fix": "yarn prettier -- --write",
-    "test": "TZ=Europe/London jest",
-    "test:watch": "TZ=Europe/London jest --watch"
+    "test": "TZ=Europe/London jest --silent",
+    "test:watch": "TZ=Europe/London jest --watch --silent"
   },
   "dependencies": {
     "@date-io/date-fns": "^3.2.1",
