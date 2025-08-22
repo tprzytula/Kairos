@@ -46,7 +46,7 @@ export const NoiseTrackingProvider = ({ children }: INoiseTrackingProviderProps)
     } else {
       setNoiseTrackingItems([])
     }
-  }, [currentProject, fetchNoiseTrackingItems])
+  }, [currentProject])
 
   const value = useMemo(
     () => ({

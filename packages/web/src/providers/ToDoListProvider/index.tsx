@@ -77,7 +77,7 @@ export const ToDoListProvider = ({ children }: StateComponentProps) => {
     } else {
       setToDoList([])
     }
-  }, [currentProject, fetchToDoList])
+  }, [currentProject])
 
   const value = useMemo(
     () => ({

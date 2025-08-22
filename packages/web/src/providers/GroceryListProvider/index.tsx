@@ -119,7 +119,7 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     } else {
       setGroceryList([])
     }
-  }, [currentProject, fetchGroceryList])
+  }, [currentProject])
 
   const value = useMemo(
     () => ({
