@@ -95,6 +95,7 @@ export const ProjectProvider = ({ children }: IProjectProviderProps) => {
   const switchProject = useCallback((projectId: string) => {
     const project = projects.find(p => p.id === projectId)
     if (project) {
+
       setCurrentProject(project)
       localStorage.setItem(PROJECT_STORAGE_KEY, projectId)
     }

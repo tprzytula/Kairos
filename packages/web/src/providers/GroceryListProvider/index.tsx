@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { StateComponentProps } from '../AppStateProvider/types'
 import { IGroceryItem } from '../AppStateProvider/types'
 import { removeGroceryItems, retrieveGroceryList, updateGroceryItem, updateGroceryItemFields, GroceryItemUpdateFields } from '../../api/groceryList'
@@ -43,6 +43,7 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     
     try {
       setIsLoading(true)
+
 
       const groceryList = addPropertyToEachItemInList({
         list: await retrieveGroceryList(currentProject.id),
@@ -113,7 +114,7 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     localStorage.setItem(GROCERY_VIEW_MODE_STORAGE_KEY, mode)
   }, [])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (currentProject) {
       fetchGroceryList()
     } else {

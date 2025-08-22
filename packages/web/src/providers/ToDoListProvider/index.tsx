@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { StateComponentProps } from '../AppStateProvider/types'
 import { IState } from './types'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
@@ -29,6 +29,7 @@ export const ToDoListProvider = ({ children }: StateComponentProps) => {
     
     try {
       setIsLoading(true)
+
       const list = await retrieveToDoList(currentProject.id)
       setToDoList(list)
     } catch (error) {
@@ -71,7 +72,7 @@ export const ToDoListProvider = ({ children }: StateComponentProps) => {
     }
   }, [currentProject])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (currentProject) {
       fetchToDoList()
     } else {

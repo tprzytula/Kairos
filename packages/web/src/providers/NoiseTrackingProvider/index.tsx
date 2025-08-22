@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { INoiseTrackingItem } from '../../api/noiseTracking'
 import { retrieveNoiseTrackingItems } from '../../api/noiseTracking'
 import { IState, INoiseTrackingProviderProps } from './types'
@@ -26,6 +26,7 @@ export const NoiseTrackingProvider = ({ children }: INoiseTrackingProviderProps)
     
     try {
       setIsLoading(true)
+
       const list = await retrieveNoiseTrackingItems(currentProject.id)
       setNoiseTrackingItems(list)
     } catch (error) {
@@ -40,7 +41,7 @@ export const NoiseTrackingProvider = ({ children }: INoiseTrackingProviderProps)
     await fetchNoiseTrackingItems()
   }, [fetchNoiseTrackingItems])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (currentProject) {
       fetchNoiseTrackingItems()
     } else {
