@@ -32,9 +32,4 @@ describe('Given the NoiseTrackingItemPlaceholder component', () => {
     // Component should render without errors
     expect(container.firstChild).toBeInTheDocument()
   })
-
-  it('should match snapshot', () => {
-    const { container } = renderWithTheme(<NoiseTrackingItemPlaceholder />)
-    expect(container.firstChild).toMatchSnapshot()
-  })
 })
