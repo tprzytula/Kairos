@@ -9,8 +9,8 @@
     "bundle": "rm -rf dist && esbuild ./sources/* --entry-names=[dir]/[name]/index --bundle --minify --sourcemap --platform=node --target=node20 --outdir=dist",
     "package": "cd dist && for f in * ; do ([ -d \"$f\" ] && cd $f && zip $f.zip *) ; done",
     "prettier": "prettier . --write",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "jest --silent",
+    "test:watch": "jest --watch --silent"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.0.0",
