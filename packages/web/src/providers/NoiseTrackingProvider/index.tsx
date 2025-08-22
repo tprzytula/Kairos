@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect, useMemo } 
 import { INoiseTrackingItem } from '../../api/noiseTracking'
 import { retrieveNoiseTrackingItems } from '../../api/noiseTracking'
 import { IState, INoiseTrackingProviderProps } from './types'
+import { useProjectContext } from '../ProjectProvider'
 
 export const initialState: IState = {
   noiseTrackingItems: [],
@@ -14,13 +15,18 @@ export const NoiseTrackingContext = createContext<IState>(initialState)
 export const useNoiseTrackingContext = () => useContext(NoiseTrackingContext)
 
 export const NoiseTrackingProvider = ({ children }: INoiseTrackingProviderProps) => {
+  const { currentProject } = useProjectContext()
   const [noiseTrackingItems, setNoiseTrackingItems] = useState<Array<INoiseTrackingItem>>([])
   const [isLoading, setIsLoading] = useState(false)
 
   const fetchNoiseTrackingItems = useCallback(async () => {
+    if (!currentProject) {
+      return
+    }
+    
     try {
       setIsLoading(true)
-      const list = await retrieveNoiseTrackingItems()
+      const list = await retrieveNoiseTrackingItems(currentProject.id)
       setNoiseTrackingItems(list)
     } catch (error) {
       console.error('Failed to fetch noise tracking items:', error)
@@ -28,15 +34,19 @@ export const NoiseTrackingProvider = ({ children }: INoiseTrackingProviderProps)
     } finally {
       setIsLoading(false)
     }
-  }, [setNoiseTrackingItems])
+  }, [currentProject])
 
   const refetchNoiseTrackingItems = useCallback(async () => {
     await fetchNoiseTrackingItems()
   }, [fetchNoiseTrackingItems])
 
   useEffect(() => {
-    fetchNoiseTrackingItems()
-  }, [fetchNoiseTrackingItems])
+    if (currentProject) {
+      fetchNoiseTrackingItems()
+    } else {
+      setNoiseTrackingItems([])
+    }
+  }, [currentProject, fetchNoiseTrackingItems])
 
   const value = useMemo(
     () => ({

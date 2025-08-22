@@ -1,3 +1,4 @@
+import React from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
@@ -6,6 +7,8 @@ import { BrowserRouter } from 'react-router'
 import NoiseTrackingRoute from '.'
 import * as API from '../../api/noiseTracking'
 import { useAppState } from '../../providers/AppStateProvider'
+import { ProjectContext } from '../../providers/ProjectProvider'
+import { IProject } from '../../types/project'
 
 jest.mock('../../providers/AppStateProvider', () => ({
   ...jest.requireActual('../../providers/AppStateProvider'),
@@ -13,6 +16,15 @@ jest.mock('../../providers/AppStateProvider', () => ({
 }))
 
 jest.mock('../../api/noiseTracking')
+jest.mock('react-oidc-context', () => ({
+  useAuth: () => ({
+    isAuthenticated: true,
+    user: { access_token: 'mock-token' }
+  })
+}))
+jest.mock('../../api/projects', () => ({
+  retrieveUserProjects: jest.fn().mockResolvedValue([])
+}))
 
 describe('Given the NoiseTrackingRoute component', () => {
   it('should have the correct title', async () => {
@@ -32,7 +44,9 @@ describe('Given the NoiseTrackingRoute component', () => {
       renderComponent()
     })
 
-    expect(noiseTrackingItemsSpy).toHaveBeenCalled()
+    await waitFor(() => {
+      expect(noiseTrackingItemsSpy).toHaveBeenCalledWith('test-project-id')
+    })
   })
 
   it('should display the noise tracking items', async () => {
@@ -72,10 +86,41 @@ describe('Given the NoiseTrackingRoute component', () => {
         renderComponent()
       })
 
-      expect(errorSpy).toHaveBeenCalledWith('Failed to fetch noise tracking items:', new Error('Bad things happen all the time'))
+      await waitFor(() => {
+        expect(errorSpy).toHaveBeenCalledWith('Failed to fetch noise tracking items:', new Error('Bad things happen all the time'))
+      })
     })
   })
 })
+
+const MOCK_PROJECT: IProject = {
+  id: 'test-project-id',
+  name: 'Test Project',
+  isPersonal: true,
+  ownerId: 'test-user-id',
+  maxMembers: 10,
+  inviteCode: 'test-invite-code',
+  createdAt: new Date().toISOString()
+}
+
+const MockProjectProvider = ({ children }: { children: React.ReactNode }) => {
+  const mockValue = {
+    projects: [MOCK_PROJECT],
+    currentProject: MOCK_PROJECT,
+    isLoading: false,
+    createProject: jest.fn(),
+    joinProject: jest.fn(),
+    switchProject: jest.fn(),
+    fetchProjects: jest.fn(),
+    getProjectInviteInfo: jest.fn(),
+  }
+
+  return (
+    <ProjectContext.Provider value={mockValue}>
+      {children}
+    </ProjectContext.Provider>
+  )
+}
 
 const renderComponent = () => {
   jest.mocked(useAppState).mockReturnValue({
@@ -87,7 +132,9 @@ const renderComponent = () => {
     <ThemeProvider theme={theme}>
       <AppStateProvider>
         <BrowserRouter>
-          <NoiseTrackingRoute />
+          <MockProjectProvider>
+            <NoiseTrackingRoute />
+          </MockProjectProvider>
         </BrowserRouter>
       </AppStateProvider>
     </ThemeProvider>

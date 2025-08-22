@@ -5,6 +5,7 @@ import { removeGroceryItems, retrieveGroceryList, updateGroceryItem, updateGroce
 import { IState } from './types'
 import { addPropertyToEachItemInList } from '../../utils/list'
 import { GroceryViewMode } from '../../enums/groceryCategory'
+import { useProjectContext } from '../ProjectProvider'
 
 export const initialState: IState = {
   groceryList: [],
@@ -24,6 +25,7 @@ export const useGroceryListContext = () => useContext(GroceryListContext)
 const GROCERY_VIEW_MODE_STORAGE_KEY = 'grocery-view-mode'
 
 export const GroceryListProvider = ({ children }: StateComponentProps) => {
+  const { currentProject } = useProjectContext()
   const [groceryList, setGroceryList] = useState<Array<IGroceryItem>>([])
   const [isLoading, setIsLoading] = useState(false)
   const [viewMode, setViewMode] = useState<GroceryViewMode>(() => {
@@ -35,11 +37,15 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
   })
 
   const fetchGroceryList = useCallback(async () => {
+    if (!currentProject) {
+      return
+    }
+    
     try {
       setIsLoading(true)
 
       const groceryList = addPropertyToEachItemInList({
-        list: await retrieveGroceryList(),
+        list: await retrieveGroceryList(currentProject.id),
         properties: { toBeRemoved: false },
       })
 
@@ -55,24 +61,28 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     } finally {
       setIsLoading(false)
     }
-  }, [setGroceryList])
+  }, [currentProject])
 
   const refetchGroceryList = useCallback(async () => {
     await fetchGroceryList()
   }, [fetchGroceryList])
 
   const removeGroceryItem = useCallback(async (id: string) => {
+    if (!currentProject) return
+    
     try {
-      await removeGroceryItems([id])
+      await removeGroceryItems([id], currentProject.id)
       setGroceryList((prev) => prev.filter((item) => item.id !== id))
     } catch (error) {
       console.error('Failed to remove grocery item:', error)
     }
-  }, [groceryList])
+  }, [currentProject])
 
   const updateGroceryItemQuantity = useCallback(async (id: string, quantity: number) => {
+    if (!currentProject) return
+    
     try {
-      await updateGroceryItem(id, quantity)
+      await updateGroceryItem(id, quantity, currentProject.id)
       setGroceryList((prev) =>
         prev.map((item) =>
           item.id === id ? { ...item, quantity } : item
@@ -81,11 +91,13 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     } catch (error) {
       console.error('Failed to update grocery item:', error)
     }
-  }, [])
+  }, [currentProject])
 
   const updateGroceryItemWithFields = useCallback(async (id: string, fields: GroceryItemUpdateFields) => {
+    if (!currentProject) return
+    
     try {
-      await updateGroceryItemFields(id, fields)
+      await updateGroceryItemFields(id, fields, currentProject.id)
       setGroceryList((prev) =>
         prev.map((item) =>
           item.id === id ? { ...item, ...fields } : item
@@ -94,7 +106,7 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     } catch (error) {
       console.error('Failed to update grocery item fields:', error)
     }
-  }, [])
+  }, [currentProject])
 
   const handleSetViewMode = useCallback((mode: GroceryViewMode) => {
     setViewMode(mode)
@@ -102,8 +114,12 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
   }, [])
 
   useEffect(() => {
-    fetchGroceryList()
-  }, [fetchGroceryList])
+    if (currentProject) {
+      fetchGroceryList()
+    } else {
+      setGroceryList([])
+    }
+  }, [currentProject, fetchGroceryList])
 
   const value = useMemo(
     () => ({

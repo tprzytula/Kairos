@@ -10,6 +10,7 @@ import theme from './theme'
 import { AppStateProvider } from './providers/AppStateProvider'
 import { BrowserRouter } from 'react-router'
 import AuthProvider from './providers/AuthProvider'
+import { ProjectProvider } from './providers/ProjectProvider'
 
 const container = document.getElementById('app')
 
@@ -19,11 +20,13 @@ if (container) {
   root.render(
     <ThemeProvider theme={theme}>
       <AuthProvider>
-        <AppStateProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </AppStateProvider>
+        <ProjectProvider>
+          <AppStateProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </AppStateProvider>
+        </ProjectProvider>
       </AuthProvider>
     </ThemeProvider>
   )

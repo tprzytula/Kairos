@@ -3,6 +3,7 @@ import { StateComponentProps } from '../AppStateProvider/types'
 import { IState } from './types'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import { retrieveToDoList, updateToDoItemFields } from '../../api/toDoList'
+import { useProjectContext } from '../ProjectProvider'
 
 export const initialState: IState = {
   toDoList: [],
@@ -17,13 +18,18 @@ export const ToDoListContext = createContext<IState>(initialState)
 export const useToDoListContext = () => useContext(ToDoListContext)
 
 export const ToDoListProvider = ({ children }: StateComponentProps) => {
+  const { currentProject } = useProjectContext()
   const [toDoList, setToDoList] = useState<Array<ITodoItem>>([])
   const [isLoading, setIsLoading] = useState(false)
 
   const fetchToDoList = useCallback(async () => {
+    if (!currentProject) {
+      return
+    }
+    
     try {
       setIsLoading(true)
-      const list = await retrieveToDoList()
+      const list = await retrieveToDoList(currentProject.id)
       setToDoList(list)
     } catch (error) {
       console.error('Failed to fetch to do list:', error)
@@ -31,7 +37,7 @@ export const ToDoListProvider = ({ children }: StateComponentProps) => {
     } finally {
       setIsLoading(false)
     }
-  }, [setToDoList])
+  }, [currentProject])
 
   const removeFromToDoList = useCallback(async (id: string) => {
     try {
@@ -46,8 +52,10 @@ export const ToDoListProvider = ({ children }: StateComponentProps) => {
   }, [fetchToDoList])
 
   const updateToDoItemFieldsHandler = useCallback(async (id: string, fields: any) => {
+    if (!currentProject) return
+    
     try {
-      await updateToDoItemFields(id, fields)
+      await updateToDoItemFields(id, fields, currentProject.id)
       
       // Update the local state to reflect the changes
       setToDoList((prev) => 
@@ -61,11 +69,15 @@ export const ToDoListProvider = ({ children }: StateComponentProps) => {
       console.error('Failed to update todo item:', error)
       throw error
     }
-  }, [])
+  }, [currentProject])
 
   useEffect(() => {
-    fetchToDoList()
-  }, [fetchToDoList])
+    if (currentProject) {
+      fetchToDoList()
+    } else {
+      setToDoList([])
+    }
+  }, [currentProject, fetchToDoList])
 
   const value = useMemo(
     () => ({

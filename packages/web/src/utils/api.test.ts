@@ -38,6 +38,25 @@ describe('createApiHeaders', () => {
       'Content-Type': 'text/plain',
     })
   })
+
+  it('should add authorization header when access token provided', () => {
+    const headers = createApiHeaders({}, undefined, 'test-access-token')
+    
+    expect(headers).toEqual({
+      'X-Project-ID': 'legacy-shared-project',
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer test-access-token',
+    })
+  })
+
+  it('should use custom project ID when provided', () => {
+    const headers = createApiHeaders({}, 'custom-project-id')
+    
+    expect(headers).toEqual({
+      'X-Project-ID': 'custom-project-id',
+      'Content-Type': 'application/json',
+    })
+  })
 })
 
 describe('createFetchOptions', () => {
@@ -86,6 +105,39 @@ describe('createFetchOptions', () => {
         'X-Project-ID': 'legacy-shared-project',
         'Content-Type': 'application/json',
         'Authorization': 'Bearer token',
+      },
+    })
+  })
+
+  it('should include access token when provided', () => {
+    const options = createFetchOptions({}, undefined, 'test-access-token')
+    
+    expect(options).toEqual({
+      headers: {
+        'X-Project-ID': 'legacy-shared-project',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer test-access-token',
+      },
+    })
+  })
+
+  it('should handle custom project ID and access token together', () => {
+    const existingOptions = {
+      method: 'POST',
+      headers: {
+        'Custom-Header': 'custom-value',
+      },
+    }
+    
+    const options = createFetchOptions(existingOptions, 'custom-project', 'access-token')
+    
+    expect(options).toEqual({
+      method: 'POST',
+      headers: {
+        'X-Project-ID': 'custom-project',
+        'Content-Type': 'application/json',
+        'Custom-Header': 'custom-value',
+        'Authorization': 'Bearer access-token',
       },
     })
   })

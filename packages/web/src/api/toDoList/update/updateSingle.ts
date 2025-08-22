@@ -9,7 +9,7 @@ export type ToDoItemUpdateFields = {
   isDone?: boolean
 }
 
-export const updateToDoItemFields = async (id: string, fields: ToDoItemUpdateFields): Promise<void> => {
+export const updateToDoItemFields = async (id: string, fields: ToDoItemUpdateFields, projectId?: string): Promise<void> => {
   const body = {
     id,
     ...fields,
@@ -18,7 +18,7 @@ export const updateToDoItemFields = async (id: string, fields: ToDoItemUpdateFie
   const response = await fetch(`${API_BASE_URL}/todo_list/items/${id}`, createFetchOptions({
     method: 'PATCH',
     body: JSON.stringify(body),
-  }))
+  }, projectId))
 
   if (!response.ok) {
     throw new Error('Failed to update todo item')

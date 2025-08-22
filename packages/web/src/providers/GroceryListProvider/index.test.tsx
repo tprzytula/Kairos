@@ -4,10 +4,45 @@ import { GroceryListProvider } from './index'
 import * as API from '../../api/groceryList'
 import { IGroceryItem } from '../AppStateProvider/types'
 import { GroceryItemUnit } from '../../enums/groceryItem'
+import { ProjectProvider, useProjectContext } from '../ProjectProvider'
+import { IProject, ProjectRole } from '../../types/project'
 
 jest.mock('../../api/groceryList')
+jest.mock('../ProjectProvider', () => ({
+  ...jest.requireActual('../ProjectProvider'),
+  useProjectContext: jest.fn(),
+}))
+
+const mockUseProjectContext = useProjectContext as jest.MockedFunction<typeof useProjectContext>
+
+const MOCK_PROJECT: IProject = {
+  id: 'test-project-id',
+  ownerId: 'test-user-id',
+  name: 'Test Project',
+  isPersonal: false,
+  maxMembers: 10,
+  inviteCode: 'test-invite',
+  createdAt: new Date().toISOString(),
+}
 
 describe('Given the GroceryListProvider component', () => {
+  beforeEach(() => {
+    mockUseProjectContext.mockReturnValue({
+      projects: [MOCK_PROJECT],
+      currentProject: MOCK_PROJECT,
+      isLoading: false,
+      fetchProjects: jest.fn(),
+      createProject: jest.fn(),
+      joinProject: jest.fn(),
+      switchProject: jest.fn(),
+      getProjectInviteInfo: jest.fn(),
+    })
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should render the component', async () => {
     await act(async () => {
       renderGroceryListProvider()
@@ -23,7 +58,7 @@ describe('Given the GroceryListProvider component', () => {
       renderGroceryListProvider()
     })
 
-    await waitFor(() => expect(API.retrieveGroceryList).toHaveBeenCalled())
+    await waitFor(() => expect(API.retrieveGroceryList).toHaveBeenCalledWith('test-project-id'))
   })
 
   describe('When the API request fails', () => {
@@ -43,6 +78,23 @@ describe('Given the GroceryListProvider component', () => {
 })
 
 describe('Given the useGroceryListContext hook', () => {
+  beforeEach(() => {
+    mockUseProjectContext.mockReturnValue({
+      projects: [MOCK_PROJECT],
+      currentProject: MOCK_PROJECT,
+      isLoading: false,
+      fetchProjects: jest.fn(),
+      createProject: jest.fn(),
+      joinProject: jest.fn(),
+      switchProject: jest.fn(),
+      getProjectInviteInfo: jest.fn(),
+    })
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should return the grocery list', async () => {
     jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
 
@@ -124,7 +176,7 @@ describe('Given the useGroceryListContext hook', () => {
       await result.current.updateGroceryItem('1', 10)
     })
 
-    expect(API.updateGroceryItem).toHaveBeenCalledWith('1', 10)
+    expect(API.updateGroceryItem).toHaveBeenCalledWith('1', 10, 'test-project-id')
 
     await waitFor(() => {
       expect(result.current.groceryList).toStrictEqual([
@@ -172,7 +224,7 @@ describe('Given the useGroceryListContext hook', () => {
       name: 'Organic Milk',
       quantity: 3,
       unit: GroceryItemUnit.UNIT
-    })
+    }, 'test-project-id')
 
     await waitFor(() => {
       expect(result.current.groceryList).toStrictEqual([
@@ -212,7 +264,7 @@ describe('Given the useGroceryListContext hook', () => {
       await result.current.removeGroceryItem('1')
     })
 
-    expect(API.removeGroceryItems).toHaveBeenCalledWith(['1'])
+    expect(API.removeGroceryItems).toHaveBeenCalledWith(['1'], 'test-project-id')
     expect(result.current.groceryList).toHaveLength(1)
     expect(result.current.groceryList[0].id).toBe('2')
   })

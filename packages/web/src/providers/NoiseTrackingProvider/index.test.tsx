@@ -1,9 +1,21 @@
+import React from 'react'
 import { render, screen, renderHook, waitFor, act } from '@testing-library/react'
 import * as API from '../../api/noiseTracking'
 import { INoiseTrackingItem } from '../../api/noiseTracking'
 import { NoiseTrackingProvider, useNoiseTrackingContext } from './index'
+import { ProjectContext } from '../ProjectProvider'
+import { IProject } from '../../types/project'
 
 jest.mock('../../api/noiseTracking')
+jest.mock('react-oidc-context', () => ({
+  useAuth: () => ({
+    isAuthenticated: true,
+    user: { access_token: 'mock-token' }
+  })
+}))
+jest.mock('../../api/projects', () => ({
+  retrieveUserProjects: jest.fn().mockResolvedValue([])
+}))
 
 describe('Given the NoiseTrackingProvider component', () => {
   it('should render the component', async () => {
@@ -40,12 +52,18 @@ describe('Given the NoiseTrackingProvider component', () => {
   })
 })
 
-describe('Given the useGroceryListContext hook', () => {
+describe('Given the useNoiseTrackingContext hook', () => {
   it('should return the noise tracking items', async () => {
       jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(EXAMPLE_NOISE_TRACKING_ITEMS)
 
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <MockProjectProvider>
+        <NoiseTrackingProvider>{children}</NoiseTrackingProvider>
+      </MockProjectProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useNoiseTrackingContext(), {
-      wrapper: NoiseTrackingProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -56,8 +74,14 @@ describe('Given the useGroceryListContext hook', () => {
   it('should allow you to refetch the noise tracking items', async () => {
     jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(EXAMPLE_NOISE_TRACKING_ITEMS)
 
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <MockProjectProvider>
+        <NoiseTrackingProvider>{children}</NoiseTrackingProvider>
+      </MockProjectProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useNoiseTrackingContext(), {
-      wrapper: NoiseTrackingProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -87,8 +111,14 @@ describe('Given the useGroceryListContext hook', () => {
     it('should return an empty array', async () => {
       jest.spyOn(API, 'retrieveNoiseTrackingItems').mockRejectedValue(new Error('It is what it is'))
 
+      const Wrapper = ({ children }: { children: React.ReactNode }) => (
+        <MockProjectProvider>
+          <NoiseTrackingProvider>{children}</NoiseTrackingProvider>
+        </MockProjectProvider>
+      )
+
       const { result } = await waitFor(() => renderHook(() => useNoiseTrackingContext(), {
-        wrapper: NoiseTrackingProvider,
+        wrapper: Wrapper,
       }))
 
       await waitFor(() => {
@@ -99,8 +129,14 @@ describe('Given the useGroceryListContext hook', () => {
 
   describe('Context initialization', () => {
     it('should provide initial state values', async () => {
+      const Wrapper = ({ children }: { children: React.ReactNode }) => (
+        <MockProjectProvider>
+          <NoiseTrackingProvider>{children}</NoiseTrackingProvider>
+        </MockProjectProvider>
+      )
+
       const { result } = renderHook(() => useNoiseTrackingContext(), {
-        wrapper: NoiseTrackingProvider,
+        wrapper: Wrapper,
       })
 
       await waitFor(() => {
@@ -131,10 +167,41 @@ const EXAMPLE_NOISE_TRACKING_ITEMS: Array<INoiseTrackingItem> = [
   },
 ]
 
+const MOCK_PROJECT: IProject = {
+  id: 'test-project-id',
+  name: 'Test Project',
+  isPersonal: true,
+  ownerId: 'test-user-id',
+  maxMembers: 10,
+  inviteCode: 'test-invite-code',
+  createdAt: new Date().toISOString()
+}
+
+const MockProjectProvider = ({ children }: { children: React.ReactNode }) => {
+  const mockValue = {
+    projects: [MOCK_PROJECT],
+    currentProject: MOCK_PROJECT,
+    isLoading: false,
+    createProject: jest.fn(),
+    joinProject: jest.fn(),
+    switchProject: jest.fn(),
+    fetchProjects: jest.fn(),
+    getProjectInviteInfo: jest.fn(),
+  }
+
+  return (
+    <ProjectContext.Provider value={mockValue}>
+      {children}
+    </ProjectContext.Provider>
+  )
+}
+
 const renderNoiseTrackingProvider = () => {
   return render(
-    <NoiseTrackingProvider>
-      <div>Test</div>
-    </NoiseTrackingProvider>
+    <MockProjectProvider>
+      <NoiseTrackingProvider>
+        <div>Test</div>
+      </NoiseTrackingProvider>
+    </MockProjectProvider>
   )
 }

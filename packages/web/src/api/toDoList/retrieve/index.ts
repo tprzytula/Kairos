@@ -2,8 +2,8 @@ import { API_BASE_URL } from '../../index'
 import { ITodoItem } from './types'
 import { createFetchOptions } from '../../../utils/api'
 
-export const retrieveToDoList = async (): Promise<Array<ITodoItem>> => {
-  const response = await fetch(`${API_BASE_URL}/todo_list/items`, createFetchOptions())
+export const retrieveToDoList = async (projectId?: string): Promise<Array<ITodoItem>> => {
+  const response = await fetch(`${API_BASE_URL}/todo_list/items`, createFetchOptions({}, projectId))
 
   if (response.ok) {
     return await response.json()

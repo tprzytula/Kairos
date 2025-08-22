@@ -9,10 +9,17 @@ import * as ToDoAPI from '../../api/toDoList'
 import * as NoiseAPI from '../../api/noiseTracking'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 import { useAppState } from '../../providers/AppStateProvider'
+import { ProjectProvider, useProjectContext } from '../../providers/ProjectProvider'
+import { IProject, ProjectRole } from '../../types/project'
 
 jest.mock('../../providers/AppStateProvider', () => ({
   ...jest.requireActual('../../providers/AppStateProvider'),
   useAppState: jest.fn(),
+}))
+
+jest.mock('../../providers/ProjectProvider', () => ({
+  ...jest.requireActual('../../providers/ProjectProvider'),
+  useProjectContext: jest.fn(),
 }))
 
 jest.mock('../../api/groceryList')
@@ -23,21 +30,48 @@ jest.mock('react-router', () => ({
   useNavigate: jest.fn(() => jest.fn()),
 }))
 
-// Mock the useAuth hook for DashboardHeader
+// Mock the useAuth hook for DashboardHeader and ProjectProvider
 jest.mock('react-oidc-context', () => ({
   useAuth: jest.fn(() => ({
-    user: null,
-    isAuthenticated: false,
+    user: { access_token: 'mock-access-token' },
+    isAuthenticated: true,
     isLoading: false,
     error: null
   }))
 }))
 
+const mockUseProjectContext = useProjectContext as jest.MockedFunction<typeof useProjectContext>
+
+const MOCK_PROJECT: IProject = {
+  id: 'test-project-id',
+  ownerId: 'test-user-id',
+  name: 'Test Project',
+  isPersonal: false,
+  maxMembers: 10,
+  inviteCode: 'test-invite',
+  createdAt: new Date().toISOString(),
+}
+
 describe('Given the HomeRoute component', () => {
   beforeEach(() => {
+    mockUseProjectContext.mockReturnValue({
+      projects: [MOCK_PROJECT],
+      currentProject: MOCK_PROJECT,
+      isLoading: false,
+      fetchProjects: jest.fn(),
+      createProject: jest.fn(),
+      joinProject: jest.fn(),
+      switchProject: jest.fn(),
+      getProjectInviteInfo: jest.fn(),
+    })
+    
     jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
     jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
     jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
   it('should retrieve all lists', async () => {
@@ -49,9 +83,9 @@ describe('Given the HomeRoute component', () => {
       renderComponent()
     })
 
-    expect(groceryListSpy).toHaveBeenCalled()
-    expect(toDoListSpy).toHaveBeenCalled()
-    expect(noiseListSpy).toHaveBeenCalled()
+    expect(groceryListSpy).toHaveBeenCalledWith('test-project-id')
+    expect(toDoListSpy).toHaveBeenCalledWith('test-project-id')
+    expect(noiseListSpy).toHaveBeenCalledWith('test-project-id')
   })
 
   it('should display section headers', async () => {
@@ -357,11 +391,13 @@ const renderComponent = () => {
 
   render(
     <ThemeProvider theme={theme}>
-      <AppStateProvider>
-        <BrowserRouter>
-          <HomeRoute />
-        </BrowserRouter>
-      </AppStateProvider>
+      <ProjectProvider>
+        <AppStateProvider>
+          <BrowserRouter>
+            <HomeRoute />
+          </BrowserRouter>
+        </AppStateProvider>
+      </ProjectProvider>
     </ThemeProvider>
   )
 } 

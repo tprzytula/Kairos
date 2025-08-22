@@ -1,10 +1,22 @@
+import React from 'react'
 import { render, screen, renderHook, waitFor, act } from '@testing-library/react'
 import { useToDoListContext } from './index'
 import { ToDoListProvider } from './index'
 import * as API from '../../api/toDoList'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
+import { ProjectContext } from '../ProjectProvider'
+import { IProject } from '../../types/project'
 
 jest.mock('../../api/toDoList')
+jest.mock('react-oidc-context', () => ({
+  useAuth: () => ({
+    isAuthenticated: true,
+    user: { access_token: 'mock-token' }
+  })
+}))
+jest.mock('../../api/projects', () => ({
+  retrieveUserProjects: jest.fn().mockResolvedValue([])
+}))
 
 describe('Given the ToDoListProvider component', () => {
   it('should render the component', async () => {
@@ -41,12 +53,18 @@ describe('Given the ToDoListProvider component', () => {
   })
 })
 
-describe('Given the useGroceryListContext hook', () => {
-  it('should return the grocery list', async () => {
+describe('Given the useToDoListContext hook', () => {
+  it('should return the todo list', async () => {
     jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
 
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <MockProjectProvider>
+        <ToDoListProvider>{children}</ToDoListProvider>
+      </MockProjectProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
-      wrapper: ToDoListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -54,11 +72,17 @@ describe('Given the useGroceryListContext hook', () => {
     })
   })
 
-  it('should allow you to refetch the grocery list', async () => {
+  it('should allow you to refetch the todo list', async () => {
     jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
 
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <MockProjectProvider>
+        <ToDoListProvider>{children}</ToDoListProvider>
+      </MockProjectProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
-      wrapper: ToDoListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -96,8 +120,14 @@ describe('Given the useGroceryListContext hook', () => {
     it('should return an empty array', async () => {
       jest.spyOn(API, 'retrieveToDoList').mockRejectedValue(new Error('It is what it is'))
 
+      const Wrapper = ({ children }: { children: React.ReactNode }) => (
+        <MockProjectProvider>
+          <ToDoListProvider>{children}</ToDoListProvider>
+        </MockProjectProvider>
+      )
+
       const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
-        wrapper: ToDoListProvider,
+        wrapper: Wrapper,
       }))
 
       await waitFor(() => {
@@ -109,8 +139,14 @@ describe('Given the useGroceryListContext hook', () => {
   it('should handle removing items from the todo list', async () => {
     jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
 
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <MockProjectProvider>
+        <ToDoListProvider>{children}</ToDoListProvider>
+      </MockProjectProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
-      wrapper: ToDoListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -131,8 +167,14 @@ describe('Given the useGroceryListContext hook', () => {
     jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
     jest.spyOn(API, 'updateToDoItemFields').mockResolvedValue()
 
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <MockProjectProvider>
+        <ToDoListProvider>{children}</ToDoListProvider>
+      </MockProjectProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
-      wrapper: ToDoListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -143,7 +185,7 @@ describe('Given the useGroceryListContext hook', () => {
       await result.current.updateToDoItemFields('1', { isDone: true, name: 'Updated task' })
     })
 
-    expect(API.updateToDoItemFields).toHaveBeenCalledWith('1', { isDone: true, name: 'Updated task' })
+    expect(API.updateToDoItemFields).toHaveBeenCalledWith('1', { isDone: true, name: 'Updated task' }, 'test-project-id')
     
     const updatedItem = result.current.toDoList.find(item => item.id === '1')
     expect(updatedItem?.isDone).toBe(true)
@@ -155,8 +197,14 @@ describe('Given the useGroceryListContext hook', () => {
     jest.spyOn(API, 'updateToDoItemFields').mockRejectedValue(new Error('Update failed'))
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
 
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <MockProjectProvider>
+        <ToDoListProvider>{children}</ToDoListProvider>
+      </MockProjectProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
-      wrapper: ToDoListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -181,8 +229,14 @@ describe('Given the useGroceryListContext hook', () => {
     
     jest.spyOn(API, 'retrieveToDoList').mockReturnValue(promise)
 
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <MockProjectProvider>
+        <ToDoListProvider>{children}</ToDoListProvider>
+      </MockProjectProvider>
+    )
+
     const { result } = renderHook(() => useToDoListContext(), {
-      wrapper: ToDoListProvider,
+      wrapper: Wrapper,
     })
 
     // Should be loading initially
@@ -217,10 +271,41 @@ const EXAMPLE_TODO_LIST: Array<ITodoItem> = [
   },
 ]
 
+const MOCK_PROJECT: IProject = {
+  id: 'test-project-id',
+  name: 'Test Project',
+  isPersonal: true,
+  ownerId: 'test-user-id',
+  maxMembers: 10,
+  inviteCode: 'test-invite-code',
+  createdAt: new Date().toISOString()
+}
+
+const MockProjectProvider = ({ children }: { children: React.ReactNode }) => {
+  const mockValue = {
+    projects: [MOCK_PROJECT],
+    currentProject: MOCK_PROJECT,
+    isLoading: false,
+    createProject: jest.fn(),
+    joinProject: jest.fn(),
+    switchProject: jest.fn(),
+    fetchProjects: jest.fn(),
+    getProjectInviteInfo: jest.fn(),
+  }
+
+  return (
+    <ProjectContext.Provider value={mockValue}>
+      {children}
+    </ProjectContext.Provider>
+  )
+}
+
 const renderToDoListProvider = () => {
   return render(
-    <ToDoListProvider>
-      <div>Test</div>
-    </ToDoListProvider>
+    <MockProjectProvider>
+      <ToDoListProvider>
+        <div>Test</div>
+      </ToDoListProvider>
+    </MockProjectProvider>
   )
 }
