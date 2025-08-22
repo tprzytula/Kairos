@@ -1,5 +1,7 @@
-import { DynamoDBTable } from "@kairos-lambdas-libs/dynamodb";
-import { putItem } from "@kairos-lambdas-libs/dynamodb";
+import * as DynamoDB from "@kairos-lambdas-libs/dynamodb";
+
+const { DynamoDBTable } = DynamoDB;
+
 import { handler } from "./index";
 
 jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
@@ -8,36 +10,50 @@ jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
 }));
 
 describe('Given the add_noise_tracking_item lambda handler', () => {
-        it('should add the item in the noise tracking table', async () => {
-            await runHandler();
+    it('should require project ID', async () => {
+        const result = await runHandler();
 
-            expect(jest.mocked(putItem)).toHaveBeenCalledWith({
-                tableName: DynamoDBTable.NOISE_TRACKING,
-                item: {
-                    timestamp: expect.any(Number),
-                },
-            });
+        expect(result.statusCode).toBe(400);
+        expect(result.body).toBe("Project ID is required");
+    });
+
+    it('should add the item in the noise tracking table', async () => {
+        await runHandler(createMockEvent());
+
+        expect(jest.mocked(DynamoDB.putItem)).toHaveBeenCalledWith({
+            tableName: DynamoDBTable.NOISE_TRACKING,
+            item: {
+                projectId: "test-project",
+                timestamp: expect.any(Number),
+            },
         });
+    });
 
-        describe('And the putItem succeeds', () => {
-            it('should return status 201', async () => {
-                const result = await runHandler();
+    describe('And the putItem succeeds', () => {
+        it('should return status 201', async () => {
+            const result = await runHandler(createMockEvent());
 
-                expect(result.statusCode).toBe(201);
-            });
+            expect(result.statusCode).toBe(201);
         });
+    });
 
-        describe('And the putItem fails', () => {
-            it('should return status 500', async () => {
-                jest.mocked(putItem).mockRejectedValue(new Error('PutItem failed'));
+    describe('And the putItem fails', () => {
+        it('should return status 500', async () => {
+            jest.mocked(DynamoDB.putItem).mockRejectedValue(new Error('PutItem failed'));
 
-                const result = await runHandler();
+            const result = await runHandler(createMockEvent());
 
-                expect(result.statusCode).toBe(500);
-            });
+            expect(result.statusCode).toBe(500);
         });
+    });
 });
 
-const runHandler = async () => {
-    return await handler({} as any, {} as any, {} as any);
+const createMockEvent = (projectId: string = "test-project") => ({
+    headers: {
+        "X-Project-ID": projectId,
+    },
+} as any);
+
+const runHandler = async (event: any = {}) => {
+    return await handler(event, {} as any, {} as any);
 }

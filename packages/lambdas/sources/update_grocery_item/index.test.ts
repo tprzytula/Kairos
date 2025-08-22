@@ -7,19 +7,30 @@ jest.mock("./body");
 jest.mock("@kairos-lambdas-libs/dynamodb");
 
 describe("Given the update_grocery_item lambda handler", () => {
-  const runHandler = (event: any) => 
-    handler(event, {} as any, {} as any);
+  const runHandler = (event: any, includeProjectId: boolean = false) => {
+    if (includeProjectId) {
+      event.headers = { "X-Project-ID": "test-project" };
+    }
+    return handler(event, {} as any, {} as any);
+  };
 
   const EXAMPLE_BODY = {
     id: "test-id",
     quantity: "5",
   };
 
+  it("should require project ID", async () => {
+    const result = await runHandler({ body: null });
+
+    expect(result.statusCode).toBe(400);
+    expect(result.body).toBe("Project ID is required");
+  });
+
   describe("When the body is invalid", () => {
     it("should return status 400", async () => {
       jest.mocked(getBody).mockReturnValue(null);
 
-      const result = await runHandler({ body: null });
+      const result = await runHandler({ body: null }, true);
 
       expect(result.statusCode).toBe(400);
     });
@@ -29,7 +40,7 @@ describe("Given the update_grocery_item lambda handler", () => {
     it("should update the item in the grocery list table with quantity only", async () => {
       jest.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
 
-      await runHandler({ body: JSON.stringify(EXAMPLE_BODY) });
+      await runHandler({ body: JSON.stringify(EXAMPLE_BODY) }, true);
 
       expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
         tableName: DynamoDBTable.GROCERY_LIST,
@@ -51,7 +62,7 @@ describe("Given the update_grocery_item lambda handler", () => {
       
       jest.mocked(getBody).mockReturnValue(multiFieldBody);
 
-      await runHandler({ body: JSON.stringify(multiFieldBody) });
+      await runHandler({ body: JSON.stringify(multiFieldBody) }, true);
 
       expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
         tableName: DynamoDBTable.GROCERY_LIST,
@@ -73,7 +84,7 @@ describe("Given the update_grocery_item lambda handler", () => {
       
       jest.mocked(getBody).mockReturnValue(nameOnlyBody);
 
-      await runHandler({ body: JSON.stringify(nameOnlyBody) });
+      await runHandler({ body: JSON.stringify(nameOnlyBody) }, true);
 
       expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
         tableName: DynamoDBTable.GROCERY_LIST,
@@ -93,7 +104,7 @@ describe("Given the update_grocery_item lambda handler", () => {
           },
         });
 
-        const result = await runHandler({ body: JSON.stringify(EXAMPLE_BODY) });
+        const result = await runHandler({ body: JSON.stringify(EXAMPLE_BODY) }, true);
 
         expect(result.statusCode).toBe(200);
         expect(result.body).toEqual(JSON.stringify({
@@ -108,7 +119,7 @@ describe("Given the update_grocery_item lambda handler", () => {
         jest.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
         jest.mocked(updateItem).mockRejectedValue(new Error("Update failed"));
 
-        const result = await runHandler({ body: JSON.stringify(EXAMPLE_BODY) });
+        const result = await runHandler({ body: JSON.stringify(EXAMPLE_BODY) }, true);
 
         expect(result.statusCode).toBe(500);
       });

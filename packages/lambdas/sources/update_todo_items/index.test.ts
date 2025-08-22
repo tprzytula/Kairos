@@ -18,11 +18,18 @@ jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
 }));
 
 describe('Given the update_todo_items lambda handler', () => {
+    it('should require project ID', async () => {
+        const result = await runHandler({ body: null });
+
+        expect(result.statusCode).toBe(400);
+        expect(result.body).toBe("Project ID is required");
+    });
+
     describe('When the body is invalid', () => {
         it('should return status 400', async () => {
             jest.mocked(getBody).mockReturnValue(null);
 
-            const result = await runHandler({ body: null });
+            const result = await runHandler({ body: null }, true);
 
             expect(result.statusCode).toBe(400);
         });
@@ -33,7 +40,7 @@ describe('Given the update_todo_items lambda handler', () => {
             jest.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
             jest.mocked(getBody).mockReturnValue(EXAMPLE_UPDATE_TODO_ITEM_STATUS_BODY);
 
-            await runHandler(EXAMPLE_REQUEST);
+            await runHandler(EXAMPLE_REQUEST, true);
 
             expect(jest.mocked(updateItems)).toHaveBeenCalledWith({
                 tableName: DynamoDBTable.TODO_LIST,
@@ -63,7 +70,7 @@ describe('Given the update_todo_items lambda handler', () => {
                     },
                 });
 
-                const result = await runHandler(EXAMPLE_REQUEST);
+                const result = await runHandler(EXAMPLE_REQUEST, true);
 
                 expect(result.statusCode).toBe(200);
                 expect(result.body).toEqual(JSON.stringify({ items: EXAMPLE_UPDATE_TODO_ITEM_STATUS_BODY.items }));
@@ -74,7 +81,7 @@ describe('Given the update_todo_items lambda handler', () => {
             it('should return status 500', async () => {
                 jest.mocked(updateItems).mockRejectedValue(new Error('Update failed'));
 
-                const result = await runHandler(EXAMPLE_REQUEST)
+                const result = await runHandler(EXAMPLE_REQUEST, true)
 
                 expect(result.statusCode).toBe(500);
             });
@@ -106,6 +113,10 @@ interface IAPIGatewayProxyEvent {
     body: string | null;
 }
 
-const runHandler = async ({ body }: IAPIGatewayProxyEvent) => {
-    return await handler({ body } as any, {} as any, {} as any);
+const runHandler = async ({ body }: IAPIGatewayProxyEvent, includeProjectId: boolean = false) => {
+    const event = { body } as any;
+    if (includeProjectId) {
+        event.headers = { "X-Project-ID": "test-project" };
+    }
+    return await handler(event, {} as any, {} as any);
 }

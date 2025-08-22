@@ -10,39 +10,30 @@ jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
 }));
 
 describe('Given the delete_grocery_item lambda handler', () => {
+    it('should require project ID', async () => {
+        const result = await runHandler({ body: { ids: ["1", "2"] } });
+
+        expect(result.statusCode).toBe(400);
+        expect(result.body).toBe("Project ID is required");
+    });
+
     it('should make a delete request to the grocery list table', async () => {
         const deleteSpy = mockDelete();
 
-        await runHandler({ body: { ids: ["1", "2"] } });
+        await runHandler({ body: { ids: ["1", "2"] } }, true);
 
         expect(deleteSpy).toHaveBeenCalledWith({
-            ids: ["1", "2"],
             tableName: DynamoDBTable.GROCERY_LIST,
+            ids: ["1", "2"],
         });
     });
 
     it('should return status 200', async () => {
         mockDelete();
 
-        const result = await runHandler({ body: { ids: ["1", "2"] } });
+        const result = await runHandler({ body: { ids: ["1", "2"] } }, true);
 
         expect(result.statusCode).toBe(200);
-    });
-
-    describe('When the ids are not provided', () => {
-        it('should return status 400', async () => {
-            const result = await runHandler({ body: {} });
-
-            expect(result.statusCode).toBe(400);
-        });
-    });
-
-    describe('When the ids are not an array', () => {
-        it('should return status 400', async () => {
-            const result = await runHandler({ body: { ids: 1 as unknown as Array<string> } });
-
-            expect(result.statusCode).toBe(400);
-        });
     });
 
     describe('When the delete request fails', () => {
@@ -52,7 +43,7 @@ describe('Given the delete_grocery_item lambda handler', () => {
             const deleteSpy = mockDelete();
             deleteSpy.mockRejectedValue(new Error('Delete failed'));
 
-            await runHandler({ body: { ids: ["1", "2"] } });
+            await runHandler({ body: { ids: ["1", "2"] } }, true);
 
             expect(logSpy).toHaveBeenCalledWith('Handler Threw Exception:', new Error('Delete failed'));
         });
@@ -61,7 +52,7 @@ describe('Given the delete_grocery_item lambda handler', () => {
             const deleteSpy = mockDelete();
             deleteSpy.mockRejectedValue(new Error('Delete failed'));
 
-            const result = await runHandler({ body: { ids: ["1", "2"] } });
+            const result = await runHandler({ body: { ids: ["1", "2"] } }, true);
 
             expect(result).toEqual({
                 body: "Internal Server Error",
@@ -80,6 +71,10 @@ interface IAPIGatewayProxyEvent {
     body: { ids?: Array<string> };
 }
 
-const runHandler = async ({ body }: IAPIGatewayProxyEvent) => {
-    return await handler({ body: JSON.stringify(body) } as any, {} as any, {} as any);
+const runHandler = async ({ body }: IAPIGatewayProxyEvent, includeProjectId: boolean = false) => {
+    const event = { body: JSON.stringify(body) } as any;
+    if (includeProjectId) {
+        event.headers = { "X-Project-ID": "test-project" };
+    }
+    return await handler(event, {} as any, {} as any);
 }

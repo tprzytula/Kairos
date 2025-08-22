@@ -9,4 +9,17 @@ resource "aws_dynamodb_table" "todo_list" {
     name = "id"
     type = "S"
   }
+
+  attribute {
+    name = "projectId"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "ProjectTodosIndex"
+    hash_key        = "projectId"
+    write_capacity  = 1
+    read_capacity   = 1
+    projection_type = "ALL"
+  }
 }

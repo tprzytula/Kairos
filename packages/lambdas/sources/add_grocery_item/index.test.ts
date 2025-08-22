@@ -19,11 +19,18 @@ jest.mock('./utils', () => ({
 }));
 
 describe('Given the add_grocery_item lambda handler', () => {
+    it('should require project ID', async () => {
+        const result = await runHandler({ body: null });
+
+        expect(result.statusCode).toBe(400);
+        expect(result.body).toBe("Project ID is required");
+    });
+
     describe('When the body is invalid', () => {
         it('should return status 400', async () => {
             jest.mocked(getBody).mockReturnValue(null);
 
-            const result = await runHandler({ body: null });
+            const result = await runHandler({ body: null }, true);
 
             expect(result.statusCode).toBe(400);
         });
@@ -34,11 +41,12 @@ describe('Given the add_grocery_item lambda handler', () => {
             jest.mocked(getBody).mockReturnValue(EXAMPLE_GROCERY_ITEM);
             jest.mocked(getCategoryForItem).mockResolvedValue(GroceryItemCategory.FRUITS_VEGETABLES);
 
-            await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
+            await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) }, true);
 
             expect(jest.mocked(getCategoryForItem)).toHaveBeenCalledWith("Apple");
             expect(jest.mocked(upsertItem)).toHaveBeenCalledWith({
                 ...EXAMPLE_GROCERY_ITEM,
+                projectId: "test-project",
                 category: GroceryItemCategory.FRUITS_VEGETABLES,
             });
         });
@@ -52,7 +60,7 @@ describe('Given the add_grocery_item lambda handler', () => {
                     statusCode: 200,
                 });
 
-                const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
+                const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) }, true);
 
                 expect(result.statusCode).toBe(200);
                 expect(result.body).toEqual(JSON.stringify({ id: EXAMPLE_ID }));
@@ -65,7 +73,7 @@ describe('Given the add_grocery_item lambda handler', () => {
                 jest.mocked(getCategoryForItem).mockResolvedValue(GroceryItemCategory.FRUITS_VEGETABLES);
                 jest.mocked(upsertItem).mockRejectedValue(new Error('Upsert failed'));
 
-                const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) });
+                const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) }, true);
 
                 expect(result.statusCode).toBe(500);
             });
@@ -86,6 +94,10 @@ interface IAPIGatewayProxyEvent {
     body: string | null;
 }
 
-const runHandler = async ({ body }: IAPIGatewayProxyEvent) => {
-    return await handler({ body } as any, {} as any, {} as any);
+const runHandler = async ({ body }: IAPIGatewayProxyEvent, includeProjectId: boolean = false) => {
+    const event = { body } as any;
+    if (includeProjectId) {
+        event.headers = { "X-Project-ID": "test-project" };
+    }
+    return await handler(event, {} as any, {} as any);
 }

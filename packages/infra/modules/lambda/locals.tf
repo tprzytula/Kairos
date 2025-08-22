@@ -150,14 +150,14 @@ locals {
         }
       }
     },
-    "get_project_invite_info" = {
-      environment_variables = {}
-      permissions = {
-        database = {
-          projects = "read-only"
-          project_members = "read-only"
-        }
+      "get_project_invite_info" = {
+    environment_variables = {}
+    permissions = {
+      database = {
+        projects = "read-only"
+        project_members = "read-only"
       }
     }
+  }
   }
 }

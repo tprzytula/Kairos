@@ -3,13 +3,23 @@ import { IGroceryItem } from "@kairos-lambdas-libs/dynamodb/types/index";
 import { randomUUID } from "node:crypto";
 
 const findExistingItem = async (itemProperties: Partial<IGroceryItem>): Promise<IGroceryItem | null> => {
-  const items = await query({
+  const { projectId, name, unit } = itemProperties;
+  
+  if (!projectId) {
+    return null;
+  }
+
+  const projectItems = await query({
     tableName: DynamoDBTable.GROCERY_LIST,
-    indexName: DynamoDBIndex.GROCERY_LIST_NAME_UNIT,
-    attributes: itemProperties,
+    indexName: DynamoDBIndex.GROCERY_LIST_PROJECT,
+    attributes: { projectId },
   });
 
-  return items?.[0] ?? null;
+  const matchingItem = projectItems.find(item => 
+    item.name === name && item.unit === unit
+  );
+
+  return matchingItem || null;
 };
 
 const updateExistingItem = async (id: string, fields: Partial<IGroceryItem>) => {
@@ -39,9 +49,10 @@ const createNewItem = async (item: Omit<IGroceryItem, "id">): Promise<string> =>
 };
 
 export const upsertItem = async (item: Omit<IGroceryItem, "id">): Promise<{ id: string, statusCode: number }> => {
-  const { name, quantity, unit, imagePath, category } = item;
+  const { projectId, name, quantity, unit, imagePath, category } = item;
 
   const existingItem = await findExistingItem({
+    projectId,
     name,
     unit,
   });
@@ -63,6 +74,7 @@ export const upsertItem = async (item: Omit<IGroceryItem, "id">): Promise<{ id: 
 
   return {
     id: await createNewItem({
+      projectId,
       name,
       quantity,
       unit,

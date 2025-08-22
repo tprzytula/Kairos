@@ -10,6 +10,9 @@ export enum DynamoDBTable {
 
 export enum DynamoDBIndex {
   GROCERY_LIST_NAME_UNIT = "NameUnitIndex",
+  GROCERY_LIST_PROJECT = "ProjectItemsIndex",
+  TODO_LIST_PROJECT = "ProjectTodosIndex",
+  NOISE_TRACKING_PROJECT = "ProjectNoiseIndex",
   PROJECTS_OWNER = "OwnerIndex",
   PROJECTS_INVITE_CODE = "InviteCodeIndex",
   PROJECT_MEMBERS_USER_PROJECTS = "UserProjectsIndex",

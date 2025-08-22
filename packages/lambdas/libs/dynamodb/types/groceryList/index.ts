@@ -2,6 +2,7 @@ import { GroceryItemUnit, GroceryItemCategory } from '../../enums'
 
 export interface IGroceryItem {
     id: string
+    projectId: string
     imagePath: string
     name: string
     quantity: number

@@ -12,15 +12,18 @@ jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
 }));
 
 describe('Given the upsertItem function', () => {
+    beforeEach(() => {
+        jest.mocked(query).mockResolvedValue([]);
+    });
+
     it('should check if the item already exists', async () => {
         await upsertItem(EXAMPLE_GROCERY_ITEM);
 
         expect(jest.mocked(query)).toHaveBeenCalledWith({
             tableName: DynamoDBTable.GROCERY_LIST,
-            indexName: DynamoDBIndex.GROCERY_LIST_NAME_UNIT,
+            indexName: DynamoDBIndex.GROCERY_LIST_PROJECT,
             attributes: {
-                name: EXAMPLE_GROCERY_ITEM.name,
-                unit: EXAMPLE_GROCERY_ITEM.unit,
+                projectId: EXAMPLE_GROCERY_ITEM.projectId,
             },
         });
     });
@@ -42,7 +45,7 @@ describe('Given the upsertItem function', () => {
             jest.mocked(query).mockResolvedValue([EXAMPLE_GROCERY_ITEM]);
             const result = await upsertItem(EXAMPLE_GROCERY_ITEM);
 
-            expect(result).toEqual({ id: "1", statusCode: 200 });
+            expect(result).toEqual({ id: EXAMPLE_GROCERY_ITEM.id, statusCode: 200 });
         });
     });
 
@@ -55,6 +58,7 @@ describe('Given the upsertItem function', () => {
             expect(jest.mocked(putItem)).toHaveBeenCalledWith({
                 tableName: DynamoDBTable.GROCERY_LIST,
                 item: expect.objectContaining({
+                    projectId: EXAMPLE_GROCERY_ITEM.projectId,
                     name: EXAMPLE_GROCERY_ITEM.name,
                     quantity: EXAMPLE_GROCERY_ITEM.quantity,
                     unit: EXAMPLE_GROCERY_ITEM.unit,
@@ -75,6 +79,7 @@ describe('Given the upsertItem function', () => {
 
 const EXAMPLE_GROCERY_ITEM: IGroceryItem = {
     id: '1',
+    projectId: 'test-project',
     name: 'Example Item',
     quantity: '1',
     unit: 'kg',

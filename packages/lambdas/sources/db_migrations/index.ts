@@ -6,6 +6,7 @@ import { getLastExecutedMigration } from "./tracker";
 
 import migration001 from "./migrations/001_add_grocery_defaults";
 import migration002 from "./migrations/002_add_more_grocery_defaults";
+import migration003 from "./migrations/003_add_project_support";
 
 export const handler: Handler = middleware(async (event) => {
   console.log("Starting database migrations...");
@@ -14,6 +15,7 @@ export const handler: Handler = middleware(async (event) => {
     const migrations = [
       migration001,
       migration002,
+      migration003,
     ];
     
     console.log(`Loaded ${migrations.length} embedded migrations`);
