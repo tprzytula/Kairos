@@ -1,12 +1,18 @@
 import { createResponse } from ".";
 
+const expectedHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID",
+  "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+};
+
 describe("Given the creteResponse function", () => {
   it("should return generic 200 response by default", () => {
     const response = createResponse({});
 
     expect(response).toStrictEqual({
       body: "OK",
-      headers: { "Access-Control-Allow-Origin": "*" },
+      headers: expectedHeaders,
       statusCode: 200,
     });
   });
@@ -34,11 +40,9 @@ describe("Given the creteResponse function", () => {
       const response = createResponse({ statusCode });
 
       expect(response).toStrictEqual({
-        statusCode,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-        },
         body: expectedBody,
+        headers: expectedHeaders,
+        statusCode,
       });
     },
   );
@@ -51,7 +55,7 @@ describe("Given the creteResponse function", () => {
 
     expect(response).toStrictEqual({
       body: "Everything went well",
-      headers: { "Access-Control-Allow-Origin": "*" },
+      headers: expectedHeaders,
       statusCode: 200,
     });
   });
@@ -63,11 +67,8 @@ describe("Given the creteResponse function", () => {
     });
 
     expect(response).toStrictEqual({
-      body: JSON.stringify({
-        something: "Hello",
-        somethingElse: "There",
-      }),
-      headers: { "Access-Control-Allow-Origin": "*" },
+      body: '{"something":"Hello","somethingElse":"There"}',
+      headers: expectedHeaders,
       statusCode: 200,
     });
   });
