@@ -115,7 +115,7 @@ export const CreateProjectDialog: React.FC<ICreateProjectDialogProps> = ({
       fullWidth
     >
       <DialogTitle>
-        <Typography variant="h6" component="h2">
+        <Typography variant="h6">
           Create New Project
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
