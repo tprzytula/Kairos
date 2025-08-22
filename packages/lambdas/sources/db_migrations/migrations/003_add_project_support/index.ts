@@ -51,7 +51,9 @@ const migrateGroceryItems = async () => {
 
   console.log(`Found ${items.length} grocery items to migrate`);
 
-  for (const item of items) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    
     await updateItem({
       tableName: DynamoDBTable.GROCERY_LIST,
       key: { id: item.id },
@@ -59,6 +61,9 @@ const migrateGroceryItems = async () => {
         projectId: LEGACY_PROJECT_ID,
       },
     });
+    
+    console.log(`Migrated grocery item ${i + 1}/${items.length}`);
+    await new Promise(resolve => setTimeout(resolve, 100));
   }
 
   console.log(`Migrated ${items.length} grocery items`);
@@ -73,7 +78,9 @@ const migrateTodoItems = async () => {
 
   console.log(`Found ${items.length} todo items to migrate`);
 
-  for (const item of items) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    
     await updateItem({
       tableName: DynamoDBTable.TODO_LIST,
       key: { id: item.id },
@@ -81,6 +88,9 @@ const migrateTodoItems = async () => {
         projectId: LEGACY_PROJECT_ID,
       },
     });
+    
+    console.log(`Migrated todo item ${i + 1}/${items.length}`);
+    await new Promise(resolve => setTimeout(resolve, 100));
   }
 
   console.log(`Migrated ${items.length} todo items`);
@@ -95,8 +105,10 @@ const migrateNoiseTrackingItems = async () => {
 
   console.log(`Found ${items.length} noise tracking items to migrate`);
 
-  for (const item of items) {
-    console.log(`Migrating noise tracking item: ${item.timestamp}`);
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    
+    console.log(`Migrating noise tracking item: ${item.timestamp} (${i + 1}/${items.length})`);
     
     await deleteItem({
       tableName: DynamoDBTable.NOISE_TRACKING,
@@ -110,6 +122,8 @@ const migrateNoiseTrackingItems = async () => {
         timestamp: item.timestamp,
       },
     });
+    
+    await new Promise(resolve => setTimeout(resolve, 150));
   }
 
   console.log(`Migrated ${items.length} noise tracking items`);

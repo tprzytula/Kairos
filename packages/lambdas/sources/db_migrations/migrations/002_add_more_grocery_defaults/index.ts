@@ -11,7 +11,9 @@ const migration: Migration = {
     console.log("Adding additional grocery item defaults...");
     console.log(`Adding ${groceryItems.length} more grocery item defaults...`);
 
-    for (const item of groceryItems) {
+    for (let i = 0; i < groceryItems.length; i++) {
+      const item = groceryItems[i];
+      
       await putItem({
         tableName: DynamoDBTable.GROCERY_ITEMS_DEFAULTS,
         item: {
@@ -25,7 +27,9 @@ const migration: Migration = {
         },
       });
       
-      console.log(`Added grocery item default: ${item.name}`);
+      console.log(`Added grocery item default: ${item.name} (${i + 1}/${groceryItems.length})`);
+      
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
     
     console.log("Additional grocery item defaults migration completed successfully");
