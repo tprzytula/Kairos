@@ -279,7 +279,6 @@ components:
     details:
       title: Grocery Item Details
       required:
-        - id
         - name
       type: object
       properties:
@@ -290,8 +289,17 @@ components:
           type: string
           example: Paper Towel
         quantity:
-          type: number
-          example: 5
+          type: string
+          example: "5"
+        unit:
+          type: string
+          example: "kg"
+        imagePath:
+          type: string
+          example: "/images/paper-towel.png"
+        category:
+          type: string
+          example: "household"
     groceryItemsDefaults:
       title: Grocery Items Defaults
       type: object
