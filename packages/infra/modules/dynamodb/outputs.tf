@@ -17,3 +17,11 @@ output "todo_list_arn" {
 output "migrations_arn" {
   value = aws_dynamodb_table.migrations.arn
 }
+
+output "projects_arn" {
+  value = aws_dynamodb_table.projects.arn
+}
+
+output "project_members_arn" {
+  value = aws_dynamodb_table.project_members.arn
+}

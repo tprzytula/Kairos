@@ -154,4 +154,60 @@ data "aws_iam_policy_document" "lambda_policies" {
       ]
     }
   }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.projects == local.permissions.read_only ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadOnlyProjects"
+      actions = local.database_read_only_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_projects_arn,
+        "${var.dynamodb_projects_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.projects == local.permissions.read_write ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadWriteProjects"
+      actions = local.database_read_write_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_projects_arn,
+        "${var.dynamodb_projects_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.project_members == local.permissions.read_only ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadOnlyProjectMembers"
+      actions = local.database_read_only_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_project_members_arn,
+        "${var.dynamodb_project_members_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.project_members == local.permissions.read_write ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadWriteProjectMembers"
+      actions = local.database_read_write_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_project_members_arn,
+        "${var.dynamodb_project_members_arn}/index/*",
+      ]
+    }
+  }
 }

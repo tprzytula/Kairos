@@ -19,6 +19,8 @@ variable "lambda_functions" {
         noise_tracking         = optional(string, "none")
         todo_list              = optional(string, "none")
         migrations             = optional(string, "none")
+        projects               = optional(string, "none")
+        project_members        = optional(string, "none")
       })
     })
   }))
@@ -45,5 +47,13 @@ variable "dynamodb_todo_list_arn" {
 }
 
 variable "dynamodb_migrations_arn" {
+  type = string
+}
+
+variable "dynamodb_projects_arn" {
+  type = string
+}
+
+variable "dynamodb_project_members_arn" {
   type = string
 }

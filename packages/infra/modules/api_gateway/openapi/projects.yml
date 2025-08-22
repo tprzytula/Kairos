@@ -1,0 +1,199 @@
+openapi: "3.0.1"
+paths:
+  /projects:
+    get:
+      summary: Get user's projects
+      security:
+        - CognitoAuthorizer: []
+      responses:
+        "200":
+          description: "List of user's projects"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/project"
+        "401":
+          description: "Unauthorized"
+        "500":
+          description: "Internal server error"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "${lambda_functions.get_user_projects.invoke_arn}"
+        passthroughBehavior: "when_no_match"
+    post:
+      summary: Create a new project
+      security:
+        - CognitoAuthorizer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createProjectRequest"
+      responses:
+        "201":
+          description: "Project created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/projectWithRole"
+        "400":
+          description: "Invalid request"
+        "401":
+          description: "Unauthorized"
+        "500":
+          description: "Internal server error"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "${lambda_functions.create_project.invoke_arn}"
+        passthroughBehavior: "when_no_match"
+  /projects/join:
+    post:
+      summary: Join a project using invite code
+      security:
+        - CognitoAuthorizer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/joinProjectRequest"
+      responses:
+        "201":
+          description: "Successfully joined project"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/projectWithRole"
+        "400":
+          description: "Invalid request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Invalid invite code"
+        "409":
+          description: "Already a member"
+        "500":
+          description: "Internal server error"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "${lambda_functions.join_project.invoke_arn}"
+        passthroughBehavior: "when_no_match"
+  /projects/invite/{inviteCode}:
+    get:
+      summary: Get project invite information
+      parameters:
+        - name: inviteCode
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^[A-Z0-9]{6}$"
+      responses:
+        "200":
+          description: "Project invite information"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/projectInviteInfo"
+        "400":
+          description: "Invalid invite code format"
+        "404":
+          description: "Invite code not found"
+        "500":
+          description: "Internal server error"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "${lambda_functions.get_project_invite_info.invoke_arn}"
+        passthroughBehavior: "when_no_match"
+components:
+  schemas:
+    project:
+      type: object
+      required:
+        - id
+        - name
+        - ownerId
+        - createdAt
+        - isPersonal
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        ownerId:
+          type: string
+        createdAt:
+          type: number
+        isPersonal:
+          type: boolean
+        inviteCode:
+          type: string
+        maxMembers:
+          type: number
+    projectWithRole:
+      allOf:
+        - $ref: "#/components/schemas/project"
+        - type: object
+          properties:
+            userRole:
+              type: string
+              enum: [owner, member]
+    createProjectRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        isPersonal:
+          type: boolean
+    joinProjectRequest:
+      type: object
+      required:
+        - inviteCode
+      properties:
+        inviteCode:
+          type: string
+          pattern: "^[A-Z0-9]{6}$"
+    projectInviteInfo:
+      type: object
+      required:
+        - projectId
+        - projectName
+        - ownerName
+        - memberCount
+        - maxMembers
+      properties:
+        projectId:
+          type: string
+        projectName:
+          type: string
+        ownerName:
+          type: string
+        memberCount:
+          type: number
+        maxMembers:
+          type: number
+  securitySchemes:
+    CognitoAuthorizer:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: cognito_user_pools
+      x-amazon-apigateway-authorizer:
+        type: cognito_user_pools
+        providerARNs:
+          - ${cognito_user_pool_arn}
+x-amazon-apigateway-request-validators:
+  Validate body:
+    validateRequestParameters: false
+    validateRequestBody: true

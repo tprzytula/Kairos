@@ -38,6 +38,8 @@ module "policies" {
   dynamodb_noise_tracking_arn         = module.dynamodb.noise_tracking_arn
   dynamodb_todo_list_arn              = module.dynamodb.todo_list_arn
   dynamodb_migrations_arn             = module.dynamodb.migrations_arn
+  dynamodb_projects_arn               = module.dynamodb.projects_arn
+  dynamodb_project_members_arn        = module.dynamodb.project_members_arn
   s3_kairos_web_arn                   = module.s3.kairos_web_arn
   s3_kairos_lambdas_arn               = module.s3.kairos_lambdas_arn
 }

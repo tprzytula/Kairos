@@ -122,6 +122,42 @@ locals {
           grocery_items_defaults = "read-write"
         }
       }
+    },
+    "get_user_projects" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          projects = "read-only"
+          project_members = "read-only"
+        }
+      }
+    },
+    "create_project" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          projects = "read-write"
+          project_members = "read-write"
+        }
+      }
+    },
+    "join_project" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          projects = "read-only"
+          project_members = "read-write"
+        }
+      }
+    },
+    "get_project_invite_info" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          projects = "read-only"
+          project_members = "read-only"
+        }
+      }
     }
   }
 }
