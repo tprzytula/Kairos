@@ -15,6 +15,10 @@ describe('Given the updateToDoItems function', () => {
       {
         method: 'POST',
         body: JSON.stringify({ items: EXAMPLE_UPDATE_TODO_ITEMS_REQUEST }),
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
       }
     )
   })

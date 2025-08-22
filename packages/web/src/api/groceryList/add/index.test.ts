@@ -36,6 +36,10 @@ describe('Given the addGroceryItem function', () => {
       {
         method: 'PUT',
         body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, imagePath: '/assets/icons/milk.png' }),
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
       }
     )
   })

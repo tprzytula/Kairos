@@ -1,5 +1,6 @@
 import { GROCERY_LIST_API_URL } from '..'
 import { GroceryItemUnit } from '../../../enums/groceryItem'
+import { createFetchOptions } from '../../../utils/api'
 
 export type GroceryItemUpdateFields = {
   name?: string
@@ -9,10 +10,10 @@ export type GroceryItemUpdateFields = {
 }
 
 export const updateGroceryItem = async (id: string, quantity: number): Promise<void> => {
-  const response = await fetch(`${GROCERY_LIST_API_URL}/grocery_list/items/${id}`, {
+  const response = await fetch(`${GROCERY_LIST_API_URL}/grocery_list/items/${id}`, createFetchOptions({
     method: 'PATCH',
     body: JSON.stringify({ id, quantity: quantity.toString() }),
-  })
+  }))
 
   if (!response.ok) {
     throw new Error('Failed to update grocery item')
@@ -26,10 +27,10 @@ export const updateGroceryItemFields = async (id: string, fields: GroceryItemUpd
     quantity: fields.quantity?.toString(),
   }
 
-  const response = await fetch(`${GROCERY_LIST_API_URL}/grocery_list/items/${id}`, {
+  const response = await fetch(`${GROCERY_LIST_API_URL}/grocery_list/items/${id}`, createFetchOptions({
     method: 'PATCH',
     body: JSON.stringify(body),
-  })
+  }))
 
   if (!response.ok) {
     throw new Error('Failed to update grocery item')

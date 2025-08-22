@@ -25,6 +25,10 @@ describe('Given the addTodoItem function', () => {
       {
         method: 'PUT',
         body: JSON.stringify({ name: 'Groceries', description: 'Buy groceries for the week', isDone: false }),
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
       }
     )
   })

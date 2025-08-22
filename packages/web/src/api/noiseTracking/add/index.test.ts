@@ -13,6 +13,10 @@ describe('Given the addNoiseTrackingItem function', () => {
       'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/noise_tracking/items',
       {
         method: 'PUT',
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
       }
     )
   })

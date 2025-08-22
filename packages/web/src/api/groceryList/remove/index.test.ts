@@ -12,6 +12,10 @@ describe('Given the removeGroceryItems function', () => {
       {
         method: 'DELETE',
         body: JSON.stringify({ ids: ['1', '2'] }),
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
       }
     )
   })

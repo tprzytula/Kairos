@@ -15,6 +15,10 @@ describe('Given the updateGroceryItem function', () => {
       {
         method: 'PATCH',
         body: JSON.stringify({ id: 'test-id', quantity: '5' }),
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
       }
     )
   })
@@ -52,6 +56,10 @@ describe('Given the updateGroceryItemFields function', () => {
           unit: GroceryItemUnit.KILOGRAM,
           imagePath: '/test.png'
         }),
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
       }
     )
   })
@@ -75,6 +83,10 @@ describe('Given the updateGroceryItemFields function', () => {
           unit: undefined,
           imagePath: undefined
         }),
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
       }
     )
   })

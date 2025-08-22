@@ -12,7 +12,13 @@ describe('Given the retrieveItems function', () => {
     await retrieveGroceryList()
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items'
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items',
+      {
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
+      }
     )
   })
 
@@ -44,7 +50,13 @@ describe('Given the retrieveItemsDefaults function', () => {
     await retrieveGroceryListDefaults()
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items_defaults'
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items_defaults',
+      {
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
+      }
     )
   })
 

@@ -18,7 +18,13 @@ describe('Given the retrieveNoiseTracking Items function', () => {
     await retrieveNoiseTrackingItems()
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/noise_tracking/items'
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/noise_tracking/items',
+      {
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
+      }
     )
   })
 

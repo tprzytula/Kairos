@@ -11,6 +11,10 @@ describe('Given the removeNoiseTrackingItem function', () => {
       'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/noise_tracking/items/1714003200000',
       {
         method: 'DELETE',
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
       }
     )
   })

@@ -25,6 +25,10 @@ describe('Given the updateToDoItemFields function', () => {
           dueDate: 1234567890,
           isDone: true
         }),
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
       }
     )
   })
@@ -46,6 +50,10 @@ describe('Given the updateToDoItemFields function', () => {
           name: 'Updated Name Only',
           isDone: false
         }),
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
       }
     )
   })
@@ -65,6 +73,10 @@ describe('Given the updateToDoItemFields function', () => {
           id: 'test-id',
           name: 'Just Name Update'
         }),
+        headers: {
+          'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
       }
     )
   })
