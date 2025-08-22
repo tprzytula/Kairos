@@ -75,6 +75,8 @@ describe('Given the get_grocery_items lambda handler', () => {
                 body: "Internal Server Error",
                 headers: {
                     "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID",
+                    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
                 },
                 statusCode: 500,
             });
