@@ -116,6 +116,7 @@ locals {
     },
     "db_migrations" = {
       environment_variables = {}
+      timeout               = 900
       permissions = {
         database = {
           migrations             = "read-write"
