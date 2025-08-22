@@ -280,6 +280,8 @@ components:
       title: Grocery Item Details
       required:
         - name
+        - quantity
+        - unit
       type: object
       properties:
         id:
@@ -289,8 +291,8 @@ components:
           type: string
           example: Paper Towel
         quantity:
-          type: string
-          example: "5"
+          type: number
+          example: 5
         unit:
           type: string
           example: "kg"

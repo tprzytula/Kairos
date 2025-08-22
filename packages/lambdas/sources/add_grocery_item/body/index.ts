@@ -1,7 +1,7 @@
 import { IRequestBody } from "./types";
 
 const validateBody = (body: IRequestBody) => {
-  if (!body.name || !body.unit || !body.imagePath) {
+  if (!body.name || !body.unit) {
     return false;
   }
 
