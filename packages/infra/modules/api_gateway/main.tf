@@ -17,6 +17,53 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
         validateRequestBody = true
       }
     }
+    x-amazon-apigateway-gateway-responses = {
+      DEFAULT_4XX = {
+        responseParameters = {
+          "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'"
+          "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
+          "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,PUT,POST,DELETE,PATCH,OPTIONS'"
+        }
+        responseTemplates = {
+          "application/json" = jsonencode({
+            error = {
+              message = "$context.error.message"
+              type = "$context.error.responseType"
+            }
+          })
+        }
+      }
+      DEFAULT_5XX = {
+        responseParameters = {
+          "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'"
+          "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
+          "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,PUT,POST,DELETE,PATCH,OPTIONS'"
+        }
+        responseTemplates = {
+          "application/json" = jsonencode({
+            error = {
+              message = "$context.error.message"
+              type = "$context.error.responseType"
+            }
+          })
+        }
+      }
+      UNAUTHORIZED = {
+        responseParameters = {
+          "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'"
+          "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
+          "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,PUT,POST,DELETE,PATCH,OPTIONS'"
+        }
+        responseTemplates = {
+          "application/json" = jsonencode({
+            error = {
+              message = "Unauthorized"
+              type = "UNAUTHORIZED"
+            }
+          })
+        }
+      }
+    }
   })
 
   endpoint_configuration {
