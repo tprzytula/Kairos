@@ -1,13 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useAuth } from 'react-oidc-context'
+import { Divider, ListItemIcon, ListItemText } from '@mui/material'
+import { Add as AddIcon, Group as GroupIcon, FolderOpen as ProjectIcon } from '@mui/icons-material'
 import * as Styled from './index.styled'
 import { getPostLogoutRedirectUri, oidcConfig } from '../../config/oidc'
+import { useProjectContext } from '../../providers/ProjectProvider'
+import CreateProjectDialog from '../CreateProjectDialog'
 
 const UserMenu: React.FC = () => {
   const auth = useAuth()
+  const { projects, currentProject, switchProject } = useProjectContext()
   const [isOpen, setIsOpen] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 })
+  const [showCreateDialog, setShowCreateDialog] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const handleLogout = () => {
@@ -26,6 +32,22 @@ const UserMenu: React.FC = () => {
 
   const closeDropdown = () => {
     setIsOpen(false)
+  }
+
+  const handleProjectSwitch = (projectId: string) => {
+    switchProject(projectId)
+    closeDropdown()
+  }
+
+  const handleCreateProject = () => {
+    setShowCreateDialog(true)
+    closeDropdown()
+  }
+
+  const handleJoinProject = () => {
+    // TODO: Open join project dialog
+    console.log('Join project clicked')
+    closeDropdown()
   }
 
   useEffect(() => {
@@ -106,6 +128,63 @@ const UserMenu: React.FC = () => {
               <Styled.UserName>{userName}</Styled.UserName>
               {userEmail && <Styled.UserEmail>{userEmail}</Styled.UserEmail>}
             </Styled.UserInfo>
+            
+            {currentProject && (
+              <>
+                <Styled.SectionTitle>Current Project</Styled.SectionTitle>
+                <Styled.CurrentProject>
+                  <ListItemIcon>
+                    <ProjectIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary={currentProject.name}
+                    secondary={currentProject.isPersonal ? 'Personal' : 'Shared'}
+                  />
+                </Styled.CurrentProject>
+              </>
+            )}
+
+            {projects.length > 1 && (
+              <>
+                <Styled.SectionTitle>Switch Project</Styled.SectionTitle>
+                {projects
+                  .filter(project => project.id !== currentProject?.id)
+                  .map(project => (
+                    <Styled.ProjectMenuItem 
+                      key={project.id}
+                      onClick={() => handleProjectSwitch(project.id)}
+                    >
+                      <ListItemIcon>
+                        <ProjectIcon fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary={project.name}
+                        secondary={project.isPersonal ? 'Personal' : 'Shared'}
+                      />
+                    </Styled.ProjectMenuItem>
+                  ))
+                }
+              </>
+            )}
+
+            <Divider sx={{ my: 1 }} />
+            
+            <Styled.ProjectMenuItem onClick={handleCreateProject}>
+              <ListItemIcon>
+                <AddIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Create Project" />
+            </Styled.ProjectMenuItem>
+            
+            <Styled.ProjectMenuItem onClick={handleJoinProject}>
+              <ListItemIcon>
+                <GroupIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Join Project" />
+            </Styled.ProjectMenuItem>
+
+            <Divider sx={{ my: 1 }} />
+            
             <Styled.LogoutButton onClick={handleLogout}>
               Sign Out
             </Styled.LogoutButton>
@@ -113,6 +192,15 @@ const UserMenu: React.FC = () => {
         </>,
         document.body
       )}
+      
+      <CreateProjectDialog
+        open={showCreateDialog}
+        onClose={() => setShowCreateDialog(false)}
+        onSuccess={() => {
+          // Project will automatically be selected by ProjectProvider
+          setShowCreateDialog(false)
+        }}
+      />
     </>
   )
 }

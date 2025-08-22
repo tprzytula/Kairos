@@ -59,17 +59,17 @@ This document tracks the implementation of a multi-tenancy system for the Kairos
 - Integrated `ProjectProvider` into main app entry point
 - Updated `GroceryListProvider` to be project-aware
 
-### 🔄 Phase 4: Frontend API Integration (PENDING)
-**Completed:**
+### ✅ Phase 4: Frontend API Integration (COMPLETED)
 - ✅ Updated grocery list APIs to include project context
 - ✅ Updated GroceryListProvider to use currentProject
+- ✅ Fixed all failing unit tests
+- ✅ Updated ToDoListProvider to use project context
+- ✅ Updated NoiseTrackingProvider to use project context
+- ✅ Updated all API calls to include `X-Project-ID` headers via `createFetchOptions` utility
+- ✅ All providers now properly depend on `currentProject` from `ProjectProvider`
+- ✅ Comprehensive test coverage with proper project context mocking
 
-**Remaining:**
-- 🔨 Fix failing unit tests
-- ⏳ Update TodoList and NoiseTracking providers to use project context
-- ⏳ Update remaining API calls to include `X-Project-ID` headers
-
-### ⏳ Phase 5: Additional Features (PENDING)
+### 🔄 Phase 5: Enhanced User Experience (IN PROGRESS)
 - QR code generation and scanning for project invitations
 - Project creation form with validation
 - Integration with user avatar menu for project switching
@@ -77,38 +77,41 @@ This document tracks the implementation of a multi-tenancy system for the Kairos
 
 ## Current Status & Issues
 
-### 🔨 Active Issue: Failing Unit Tests
-The frontend tests are failing because:
-1. Components now depend on `ProjectProvider` context but tests don't provide it
-2. API function signatures changed to accept `projectId` parameters
-3. Test mocks need to be updated to match new API expectations
+### ✅ Resolved: Unit Tests
+All frontend tests are now passing with proper project context integration:
 
-**Files with failing tests:**
+**Fixed test files:**
 - `packages/web/src/api/groceryList/retrieve/index.test.ts` ✅ FIXED
 - `packages/web/src/providers/GroceryListProvider/index.test.tsx` ✅ FIXED
-- `packages/web/src/routes/HomeRoute/index.test.tsx` - needs project provider mock
+- `packages/web/src/providers/ToDoListProvider/index.test.tsx` ✅ FIXED
+- `packages/web/src/providers/NoiseTrackingProvider/index.test.tsx` ✅ FIXED
+- `packages/web/src/routes/NoiseTrackingRoute/index.test.tsx` ✅ FIXED
 - `packages/web/src/routes/GroceryListRoute/index.test.tsx` ✅ FIXED
+- `packages/web/src/routes/HomeRoute/index.test.tsx` ✅ FIXED
 
 **New test files created:**
 - `packages/web/src/api/projects/retrieve/index.test.ts` ✅ CREATED
 - `packages/web/src/components/ProjectSelector/index.test.tsx` ✅ CREATED
 
+**Current Test Status:** 92/92 test suites passing, 570/570 tests passing
+
 ## Remaining TODO Items
 
-### 🔨 High Priority (Phase 4 Completion)
-1. **fix_failing_tests** (IN PROGRESS)
-   - Fix remaining failing unit tests by updating mocks and providers
-   - Ensure all existing tests pass with new project context
+### 🚀 High Priority (Phase 5 Features)
+1. **project_creation_ui** (NEXT)
+   - Build intuitive project creation flow accessible from user menu
+   - Include project name validation and member limit settings
+   - Handle edge cases (project limit reached, duplicate names, etc.)
 
-2. **update_todo_providers** 
-   - Update `ToDoListProvider` to use `currentProject` from `ProjectProvider`
-   - Update todo-related API calls to include `X-Project-ID` headers
-   - Add unit tests for updated functionality
+2. **qr_code_integration** 
+   - Implement QR code generation for project invite codes
+   - Implement QR code scanning to join projects
+   - Consider using libraries like `qrcode` and `qr-scanner`
 
-3. **update_noise_providers**
-   - Update `NoiseTrackingProvider` to use `currentProject` from `ProjectProvider` 
-   - Update noise tracking API calls to include `X-Project-ID` headers
-   - Add unit tests for updated functionality
+3. **enhanced_project_management**
+   - Improve project switching UX in user avatar menu
+   - Add project member management capabilities
+   - Display project statistics (member count, creation date, etc.)
 
 ### ⏳ Medium Priority (Phase 5 Features)
 4. **project_creation_form**

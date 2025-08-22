@@ -39,7 +39,10 @@ export const UserDropdown = styled(Box)({
   borderRadius: '12px',
   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
   padding: '16px',
-  minWidth: '200px',
+  minWidth: '260px',
+  maxWidth: '320px',
+  maxHeight: '400px',
+  overflowY: 'auto',
   zIndex: 1000,
   
   '&::before': {
@@ -89,5 +92,68 @@ export const LogoutButton = styled(Button)({
   '&:hover': {
     background: '#f3f4f6',
     borderColor: '#d1d5db',
+  },
+})
+
+export const SectionTitle = styled(Typography)({
+  fontSize: '11px',
+  fontWeight: 600,
+  color: '#6b7280',
+  textTransform: 'uppercase',
+  letterSpacing: '0.5px',
+  marginTop: '12px',
+  marginBottom: '8px',
+})
+
+export const CurrentProject = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '8px 0',
+  marginBottom: '8px',
+  
+  '& .MuiListItemIcon-root': {
+    minWidth: '32px',
+    color: '#667eea',
+  },
+  
+  '& .MuiListItemText-primary': {
+    fontSize: '14px',
+    fontWeight: 500,
+    color: '#1f2937',
+  },
+  
+  '& .MuiListItemText-secondary': {
+    fontSize: '12px',
+    color: '#6b7280',
+  },
+})
+
+export const ProjectMenuItem = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '8px 0',
+  borderRadius: '6px',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  
+  '&:hover': {
+    background: '#f9fafb',
+    paddingLeft: '8px',
+    paddingRight: '8px',
+  },
+  
+  '& .MuiListItemIcon-root': {
+    minWidth: '32px',
+    color: '#6b7280',
+  },
+  
+  '& .MuiListItemText-primary': {
+    fontSize: '14px',
+    color: '#374151',
+  },
+  
+  '& .MuiListItemText-secondary': {
+    fontSize: '12px',
+    color: '#6b7280',
   },
 })
