@@ -8,6 +8,17 @@ describe('Given the getBody function', () => {
 
             expect(body).toEqual(EXAMPLE_GROCERY_ITEM);
         });
+
+        it('should return the body even without imagePath', () => {
+            const itemWithoutImage = {
+                name: 'Example Item',
+                quantity: 1,
+                unit: 'kg',
+            };
+            const body = getBody(JSON.stringify(itemWithoutImage));
+
+            expect(body).toEqual(itemWithoutImage);
+        });
     });
 
     describe('When the body is invalid', () => {
@@ -18,7 +29,7 @@ describe('Given the getBody function', () => {
         });
     });
 
-    describe.each(['name', 'quantity', 'unit', 'imagePath'])(
+    describe.each(['name', 'quantity', 'unit'])(
         'When the body is missing the %s field',
         (field) => {
             it('should return null', () => {
@@ -48,7 +59,7 @@ describe('Given the getBody function', () => {
 
 const EXAMPLE_GROCERY_ITEM: IRequestBody = {
     name: 'Example Item',
-    quantity: '1',
+    quantity: 1,
     unit: 'kg',
     imagePath: 'https://example.com/image.jpg',
 };
