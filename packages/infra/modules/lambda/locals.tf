@@ -120,6 +120,10 @@ locals {
         database = {
           migrations             = "read-write"
           grocery_items_defaults = "read-write"
+          projects               = "read-write"
+          grocery_list           = "read-write"
+          todo_list              = "read-write"
+          noise_tracking         = "read-write"
         }
       }
     },
