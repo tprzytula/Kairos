@@ -5,8 +5,7 @@ export const Container = styled('div')({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  marginBottom: '1rem',
-  minHeight: '48px',
+  minHeight: '40px',
 })
 
 export const LeftSection = styled('div')({
@@ -22,7 +21,6 @@ export const CenterSection = styled('div')({
   justifyContent: 'center',
   width: '100%',
   minHeight: '2em',
-  marginBottom: '0.25em',
 })
 
 export const RightSection = styled('div')({
@@ -35,7 +33,6 @@ export const RightSection = styled('div')({
 export const ActionButton = styled(Button)({
   width: '100%',
   minHeight: '2em',
-  marginBottom: '0.25em',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -52,7 +49,6 @@ export const ActionButton = styled(Button)({
 export const StatusText = styled('div')({
   width: '100%',
   minHeight: '2em',
-  marginBottom: '0.25em',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
