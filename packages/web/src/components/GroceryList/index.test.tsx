@@ -25,7 +25,7 @@ describe('Given the GroceryList component', () => {
 
     renderComponent()
 
-    expect(screen.getByLabelText('Collapse all')).toBeInTheDocument()
+    expect(screen.getAllByLabelText('Collapse')).toHaveLength(2)
   })
 
   it('should render the grocery list', () => {

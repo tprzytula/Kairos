@@ -3,6 +3,7 @@ import { ReactNode } from 'react'
 export interface IExpandCollapseButtonProps {
   isExpanded: boolean
   onToggle: () => void
+  children?: ReactNode
   disabled?: boolean
 }
 
