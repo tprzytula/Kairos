@@ -47,7 +47,8 @@ export const EmptyState = styled('div')(({ theme }) => ({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  height: '200px',
+  flex: 1,
+  minHeight: '300px',
   gap: '12px',
   opacity: 0.6,
 }))

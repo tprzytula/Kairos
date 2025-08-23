@@ -74,6 +74,45 @@ describe('Given the NoiseTrackingList component', () => {
     expect(screen.getByTestId('volume-up-icon')).toBeVisible()
   })
 
+  describe('Empty state layout behavior', () => {
+    it('should center empty state vertically within available space', () => {
+      jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
+        noiseTrackingItems: [],
+        isLoading: false,
+        refetchNoiseTrackingItems: mockRefetch,
+      })
+
+      const { container } = render(<NoiseTrackingList />)
+
+      const emptyStateElement = screen.getByText('No noise events recorded yet').closest('div')
+      expect(emptyStateElement).toBeInTheDocument()
+      
+      const computedStyle = window.getComputedStyle(emptyStateElement as Element)
+      expect(computedStyle.display).toBe('flex')
+      expect(computedStyle.flexDirection).toBe('column')
+      expect(computedStyle.justifyContent).toBe('center')
+      expect(computedStyle.alignItems).toBe('center')
+      expect(computedStyle.flex).toBe('1 1 0%')
+    })
+
+    it('should maintain proper spacing and opacity in empty state', () => {
+      jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
+        noiseTrackingItems: [],
+        isLoading: false,
+        refetchNoiseTrackingItems: mockRefetch,
+      })
+
+      render(<NoiseTrackingList />)
+
+      const emptyStateElement = screen.getByText('No noise events recorded yet').closest('div')
+      const computedStyle = window.getComputedStyle(emptyStateElement as Element)
+      
+      expect(computedStyle.gap).toBe('12px')
+      expect(computedStyle.opacity).toBe('0.6')
+      expect(computedStyle.minHeight).toBe('300px')
+    })
+  })
+
   it('should render grouped noise tracking items', () => {
     jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue(EXAMPLE_NOISE_TRACKING_CONTEXT)
 
