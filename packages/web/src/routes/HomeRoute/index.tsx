@@ -2,6 +2,7 @@ import { useGroceryListContext, GroceryListProvider } from '../../providers/Groc
 import { useToDoListContext, ToDoListProvider } from '../../providers/ToDoListProvider'
 import { useNoiseTrackingContext, NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
 import { useAppState } from '../../providers/AppStateProvider'
+import { useProjectContext } from '../../providers/ProjectProvider'
 import StandardLayout from '../../layout/standardLayout'
 import AppInfoCard from '../../components/AppInfoCard'
 import DashboardHeader from '../../components/DashboardHeader'
@@ -285,10 +286,12 @@ const HomeContent = () => {
 }
 
 export const HomeRoute = () => {
+  const { currentProject } = useProjectContext()
+  
   return (
-    <GroceryListProvider>
-      <ToDoListProvider>
-        <NoiseTrackingProvider>
+    <GroceryListProvider key={`grocery-${currentProject?.id || 'no-project'}`}>
+      <ToDoListProvider key={`todo-${currentProject?.id || 'no-project'}`}>
+        <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>
           <HomeContent />
         </NoiseTrackingProvider>
       </ToDoListProvider>
