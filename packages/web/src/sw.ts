@@ -84,30 +84,10 @@ self.addEventListener('fetch', (event) => {
   if (url.pathname.includes('/api/') || url.hostname.includes('amazonaws.com')) {
     // Check if this is a GET request for retrieving data
     if (request.method === 'GET' && isDataRetrievalEndpoint(url.pathname)) {
-      // Cache First strategy for GET requests - show cached data immediately, update in background
-      event.respondWith(
-        caches.match(request).then(cachedResponse => {
-          // If we have cached data, return it immediately
-          if (cachedResponse && !isCacheExpired(cachedResponse)) {
-            // Update in background (Stale While Revalidate)
-            fetch(request)
-              .then(response => {
-                if (response.status === 200) {
-                  const responseClone = response.clone()
-                  caches.open(RUNTIME_CACHE).then(cache => {
-                    cache.put(request, addCacheTimestamp(responseClone))
-                  })
-                }
-              })
-              .catch(() => {
-                // Background update failed, but we still have cached data
-              })
-            
-            return cachedResponse
-          }
-
-          // No cache or cache expired, try network first
-          return fetch(request)
+      // User preferences need fresh data - use Network First
+      if (url.pathname.includes('/user/preferences')) {
+        event.respondWith(
+          fetch(request)
             .then(response => {
               if (response.status === 200) {
                 const responseClone = response.clone()
@@ -118,14 +98,59 @@ self.addEventListener('fetch', (event) => {
               return response
             })
             .catch(() => {
-              // Network failed, return stale cache if available
-              return cachedResponse || new Response('[]', { 
-                status: 200, 
-                headers: { 'Content-Type': 'application/json' } 
+              // Network failed, return cached preferences if available
+              return caches.match(request).then(cachedResponse => {
+                return cachedResponse || new Response('{"userId":"","lastUpdated":0}', {
+                  status: 200,
+                  headers: { 'Content-Type': 'application/json' }
+                })
               })
             })
-        })
-      )
+        )
+      } else {
+        // Cache First strategy for item lists - show cached data immediately, update in background
+        event.respondWith(
+          caches.match(request).then(cachedResponse => {
+            // If we have cached data, return it immediately
+            if (cachedResponse && !isCacheExpired(cachedResponse)) {
+              // Update in background (Stale While Revalidate)
+              fetch(request)
+                .then(response => {
+                  if (response.status === 200) {
+                    const responseClone = response.clone()
+                    caches.open(RUNTIME_CACHE).then(cache => {
+                      cache.put(request, addCacheTimestamp(responseClone))
+                    })
+                  }
+                })
+                .catch(() => {
+                  // Background update failed, but we still have cached data
+                })
+              
+              return cachedResponse
+            }
+
+            // No cache or cache expired, try network first
+            return fetch(request)
+              .then(response => {
+                if (response.status === 200) {
+                  const responseClone = response.clone()
+                  caches.open(RUNTIME_CACHE).then(cache => {
+                    cache.put(request, addCacheTimestamp(responseClone))
+                  })
+                }
+                return response
+              })
+              .catch(() => {
+                // Network failed, return stale cache if available
+                return cachedResponse || new Response('[]', { 
+                  status: 200, 
+                  headers: { 'Content-Type': 'application/json' } 
+                })
+              })
+          })
+        )
+      }
     } else {
       // For POST/PUT/DELETE requests - always try network first
       event.respondWith(
@@ -183,11 +208,17 @@ self.addEventListener('fetch', (event) => {
 
 // Helper function to check if URL is a data retrieval endpoint
 function isDataRetrievalEndpoint(pathname: string): boolean {
-  return pathname.includes('/items') && (
+  // Item-based endpoints (cache-friendly) - use Cache First strategy
+  const isItemEndpoint = pathname.includes('/items') && (
     pathname.includes('grocery_list') ||
     pathname.includes('todo_list') ||
     pathname.includes('noise_tracking')
   )
+  
+  // User preferences endpoints (network-first for freshness) - use Network First strategy
+  const isUserPreferencesEndpoint = pathname.includes('/user/preferences')
+  
+  return isItemEndpoint || isUserPreferencesEndpoint
 }
 
 // Helper function to check if cache is expired (30 minutes)
@@ -220,7 +251,8 @@ function invalidateRelatedCache(pathname: string): void {
         // Invalidate cache for the same resource type
         if (pathname.includes('grocery_list') && requestUrl.pathname.includes('grocery_list') ||
             pathname.includes('todo_list') && requestUrl.pathname.includes('todo_list') ||
-            pathname.includes('noise_tracking') && requestUrl.pathname.includes('noise_tracking')) {
+            pathname.includes('noise_tracking') && requestUrl.pathname.includes('noise_tracking') ||
+            pathname.includes('/user/preferences') && requestUrl.pathname.includes('/user/preferences')) {
           cache.delete(request)
         }
       })
