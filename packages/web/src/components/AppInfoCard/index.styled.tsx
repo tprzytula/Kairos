@@ -1,7 +1,15 @@
 import { styled } from '@mui/material/styles'
-import { Card } from '@mui/material'
+import { Box, Card } from '@mui/material'
 
-export const AppInfoCardContainer = styled(Card)(({ theme }) => ({
+export const AppInfoCardContainer = styled(Box)({
+  padding: '0.5rem 0 0.5rem 0',
+  width: '100%',
+  maxWidth: 'none',
+  alignSelf: 'stretch',
+  boxSizing: 'border-box'
+})
+
+export const AppInfoCardContent = styled(Card)({
   borderRadius: '16px',
   boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
   border: 'none',
@@ -10,12 +18,11 @@ export const AppInfoCardContainer = styled(Card)(({ theme }) => ({
   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   position: 'relative',
   overflow: 'hidden',
-  width: '100%',
-  maxWidth: 'none',
-  marginTop: '0.75rem',
-  marginBottom: '0.5rem',
-  alignSelf: 'stretch',
-  boxSizing: 'border-box',
+  padding: '1.25rem',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  cursor: 'pointer',
   '&:before': {
     content: '""',
     position: 'absolute',
@@ -24,26 +31,15 @@ export const AppInfoCardContainer = styled(Card)(({ theme }) => ({
     right: 0,
     height: '3px',
     background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-    opacity: 0.8,
+    opacity: 0,
     transition: 'opacity 0.3s ease',
   },
   '&:hover': {
     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-    transform: 'translateY(-2px) scale(1.005)',
+    transform: 'translateY(-2px) scale(1.01)',
     '&:before': {
       opacity: 1,
     },
-  },
-}))
-
-export const AppInfoCardContent = styled('div')({
-  padding: '1.2rem 1.25rem',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: '1rem',
-  '@media (max-width: 480px)': {
-    padding: '1.25rem 1.25rem 1.4rem 1.25rem',
   },
 })
 
