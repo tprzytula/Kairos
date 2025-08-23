@@ -157,7 +157,7 @@ const HomeContent = () => {
             ) : (
               <GroceryStats>
                 {groceryStats.totalItems > 0 ? (
-                  <GroceryImagesGrid>
+                  <GroceryImagesGrid itemCount={groceryStats.displayItems.length}>
                     {groceryStats.displayItems.map((item) => (
                       <GroceryImageItem
                         key={item.id}

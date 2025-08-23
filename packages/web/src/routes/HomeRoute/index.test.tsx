@@ -136,6 +136,90 @@ describe('Given the HomeRoute component', () => {
     })
   })
 
+  describe('Grocery grid layout behavior', () => {
+    it('should display 3 grocery items when 3 items provided', async () => {
+      const mockGroceryList = [
+        { id: '1', name: 'Item 1', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+        { id: '2', name: 'Item 2', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+        { id: '3', name: 'Item 3', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+      ]
+
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByTitle('Item 1 (1 unit(s))')).toBeVisible()
+        expect(screen.getByTitle('Item 2 (1 unit(s))')).toBeVisible()
+        expect(screen.getByTitle('Item 3 (1 unit(s))')).toBeVisible()
+        
+        const itemCount = screen.getByText('3')
+        expect(itemCount).toBeVisible()
+      })
+    })
+
+    it('should display 7 grocery items when 7 items provided', async () => {
+      const mockGroceryList = [
+        { id: '1', name: 'Item 1', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+        { id: '2', name: 'Item 2', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+        { id: '3', name: 'Item 3', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+        { id: '4', name: 'Item 4', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+        { id: '5', name: 'Item 5', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+        { id: '6', name: 'Item 6', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+        { id: '7', name: 'Item 7', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+      ]
+
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByTitle('Item 1 (1 unit(s))')).toBeVisible()
+        expect(screen.getByTitle('Item 2 (1 unit(s))')).toBeVisible()
+        expect(screen.getByTitle('Item 3 (1 unit(s))')).toBeVisible()
+        expect(screen.getByTitle('Item 4 (1 unit(s))')).toBeVisible()
+        expect(screen.getByTitle('Item 5 (1 unit(s))')).toBeVisible()
+        expect(screen.getByTitle('Item 6 (1 unit(s))')).toBeVisible()
+        expect(screen.getByTitle('Item 7 (1 unit(s))')).toBeVisible()
+        
+        const itemCount = screen.getByText('7')
+        expect(itemCount).toBeVisible()
+      })
+    })
+
+    it('should display maximum 9 items plus overflow indicator when more than 10 items', async () => {
+      const mockGroceryList = Array.from({ length: 15 }, (_, index) => ({
+        id: `${index + 1}`,
+        name: `Item ${index + 1}`,
+        quantity: 1,
+        unit: GroceryItemUnit.UNIT,
+        imagePath: 'https://hostname.com/image.png',
+        toBeRemoved: false,
+      }))
+
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByTitle('Item 1 (1 unit(s))')).toBeVisible()
+        expect(screen.getByTitle('Item 9 (1 unit(s))')).toBeVisible()
+        expect(screen.queryByTitle('Item 10 (1 unit(s))')).not.toBeInTheDocument()
+        
+        expect(screen.getByText('+6')).toBeVisible()
+        
+        const itemCount = screen.getByText('15')
+        expect(itemCount).toBeVisible()
+      })
+    })
+  })
+
   it('should display top three pending to-do items sorted by due date', async () => {
     const now = Date.now()
     const mockToDoList = [

@@ -338,16 +338,19 @@ export const QuickItem = styled('div')(({ theme }) => ({
   },
 }))
 
-export const GroceryImagesGrid = styled('div')({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(5, 1fr)',
-  gridTemplateRows: 'repeat(2, 1fr)',
-  gap: '0.75rem',
-  maxWidth: '100%',
-  alignItems: 'center',
-  justifyItems: 'center',
-  marginTop: '0rem',
-  marginBottom: '0rem',
+export const GroceryImagesGrid = styled('div')<{ itemCount: number }>(({ itemCount }) => {
+  const rowCount = Math.ceil(itemCount / 5)
+  return {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(5, 1fr)',
+    gridTemplateRows: `repeat(${rowCount}, 1fr)`,
+    gap: '0.75rem',
+    maxWidth: '100%',
+    alignItems: 'center',
+    justifyItems: 'center',
+    marginTop: '0rem',
+    marginBottom: '0rem',
+  }
 })
 
 export const GroceryImageItem = styled('div')(({ theme }) => ({
