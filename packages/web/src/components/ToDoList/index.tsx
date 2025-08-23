@@ -4,13 +4,14 @@ import { useToDoListContext } from '../../providers/ToDoListProvider';
 import { useProjectContext } from '../../providers/ProjectProvider';
 import ToDoItem from '../ToDoItem';
 import ToDoItemPlaceholder from '../ToDoItemPlaceholder';
-import { Container, EmptyListMessage } from './index.styled';
+import { Container, EmptyListContainer, EmptyStateText } from './index.styled';
 import SwipeableList from '../SwipeableList';
 import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
 import { updateToDoItems } from '../../api/toDoList';
 import { showAlert } from '../../utils/alert';
 import { Route } from '../../enums/route';
+import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
 
 const PlaceholderComponent = () => (
   <Container>
@@ -22,7 +23,11 @@ const PlaceholderComponent = () => (
 
 const EmptyListComponent = () => (
   <Container>
-    <EmptyListMessage>No items in your to do list</EmptyListMessage>
+    <EmptyListContainer>
+      <ChecklistOutlinedIcon aria-label="Empty to-do list" />
+      <EmptyStateText>No pending to-do items found</EmptyStateText>
+      <EmptyStateText>Tap the + button to add your first task</EmptyStateText>
+    </EmptyListContainer>
   </Container>
 )
 

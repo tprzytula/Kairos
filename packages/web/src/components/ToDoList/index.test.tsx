@@ -78,7 +78,7 @@ describe('Given the ToDoList component', () => {
   })
 
   describe('When the to do list is empty', () => {
-    it('should render the empty list message', () => {
+    it('should render the empty list icon and helpful text', () => {
       jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue({
         toDoList: [],
         isLoading: false,
@@ -89,7 +89,52 @@ describe('Given the ToDoList component', () => {
 
       renderWithTheme(<ToDoList />)
 
-      expect(screen.getByText('No items in your to do list')).toBeVisible()
+      expect(screen.getByLabelText('Empty to-do list')).toBeVisible()
+      expect(screen.getByText('No pending to-do items found')).toBeVisible()
+      expect(screen.getByText('Tap the + button to add your first task')).toBeVisible()
+    })
+
+    describe('Empty state layout behavior', () => {
+      it('should center empty state vertically within available space', () => {
+        jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue({
+          toDoList: [],
+          isLoading: false,
+          refetchToDoList: jest.fn(),
+          removeFromToDoList: jest.fn(),
+          updateToDoItemFields: jest.fn(),
+        })
+
+        renderWithTheme(<ToDoList />)
+
+        const emptyStateElement = screen.getByText('No pending to-do items found').parentElement
+        expect(emptyStateElement).toBeInTheDocument()
+        
+        const computedStyle = window.getComputedStyle(emptyStateElement as Element)
+        expect(computedStyle.display).toBe('flex')
+        expect(computedStyle.flexDirection).toBe('column')
+        expect(computedStyle.justifyContent).toBe('center')
+        expect(computedStyle.alignItems).toBe('center')
+        expect(computedStyle.flex).toBe('1 1 0%')
+      })
+
+      it('should maintain proper spacing and opacity in empty state', () => {
+        jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue({
+          toDoList: [],
+          isLoading: false,
+          refetchToDoList: jest.fn(),
+          removeFromToDoList: jest.fn(),
+          updateToDoItemFields: jest.fn(),
+        })
+
+        renderWithTheme(<ToDoList />)
+
+        const emptyStateElement = screen.getByText('No pending to-do items found').parentElement
+        const computedStyle = window.getComputedStyle(emptyStateElement as Element)
+        
+        expect(computedStyle.gap).toBe('12px')
+        expect(computedStyle.opacity).toBe('0.6')
+        expect(computedStyle.minHeight).toBe('300px')
+      })
     })
   })
 
