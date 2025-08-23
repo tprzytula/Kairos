@@ -179,25 +179,19 @@ const NoiseTrackingList = ({
     }
   }, [isLoading, noiseTrackingItems.length, expandedGroups.size, setExpandedGroups]);
 
-  // Sync areAllExpanded with actual expanded state
+  // Apply expand/collapse all when areAllExpanded changes from parent
   useEffect(() => {
     if (groupedItems.length > 0) {
       const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date));
-      const allExpanded = allGroupLabels.every(label => expandedGroups.has(label));
-      if (allExpanded !== areAllExpanded) {
-        setAreAllExpanded(allExpanded);
-      }
-    }
-  }, [expandedGroups, groupedItems, areAllExpanded, setAreAllExpanded]);
-
-  // Apply expand/collapse all when areAllExpanded changes
-  useEffect(() => {
-    if (groupedItems.length > 0) {
-      const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date));
-      if (areAllExpanded) {
-        setExpandedGroups(new Set(allGroupLabels));
-      } else {
-        setExpandedGroups(new Set());
+      const currentlyAllExpanded = allGroupLabels.every(label => expandedGroups.has(label));
+      
+      // Only update if the desired state differs from current state
+      if (areAllExpanded !== currentlyAllExpanded) {
+        if (areAllExpanded) {
+          setExpandedGroups(new Set(allGroupLabels));
+        } else {
+          setExpandedGroups(new Set());
+        }
       }
     }
   }, [areAllExpanded, groupedItems, setExpandedGroups]);
