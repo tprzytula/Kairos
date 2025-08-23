@@ -199,9 +199,9 @@ const HomeContent = () => {
                 ))}
               </NoiseStats>
             ) : (
-              <NoiseStats>
+              <>
                 {totalNoiseItems > 0 ? (
-                  <>
+                  <NoiseStats>
                     <NoiseStatBlock>
                       <NoiseStatCount>{todayCount}</NoiseStatCount>
                       <NoiseStatLabel>Today</NoiseStatLabel>
@@ -214,11 +214,11 @@ const HomeContent = () => {
                       <NoiseStatCount>{last30DaysCount}</NoiseStatCount>
                       <NoiseStatLabel>Last 30 days</NoiseStatLabel>
                     </NoiseStatBlock>
-                  </>
+                  </NoiseStats>
                 ) : (
                   <EmptyState>No noise recordings found</EmptyState>
                 )}
-              </NoiseStats>
+              </>
             )}
           </SectionContent>
         </SectionCard>

@@ -136,6 +136,51 @@ describe('Given the HomeRoute component', () => {
     })
   })
 
+  describe('Noise recordings layout behavior', () => {
+    it('should not render grid layout when no noise recordings exist', async () => {
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        const emptyNoiseText = screen.getByText('No noise recordings found')
+        expect(emptyNoiseText).toBeVisible()
+        
+        const noiseStatsGrids = document.querySelectorAll('.css-1u2p3w7')
+        expect(noiseStatsGrids).toHaveLength(0)
+      })
+    })
+
+    it('should render grid layout when noise recordings exist', async () => {
+      const now = new Date()
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      
+      const mockNoiseList = [
+        { timestamp: today.getTime() + 2 * 60 * 60 * 1000 }
+      ]
+
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('Today')).toBeVisible()
+        expect(screen.getByText('Last 7 days')).toBeVisible() 
+        expect(screen.getByText('Last 30 days')).toBeVisible()
+        
+        expect(screen.queryByText('No noise recordings found')).not.toBeInTheDocument()
+      })
+    })
+  })
+
   describe('Grocery grid layout behavior', () => {
     it('should display 3 grocery items when 3 items provided', async () => {
       const mockGroceryList = [
