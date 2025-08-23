@@ -70,11 +70,11 @@ const NoiseTrackingContent = () => {
       />
       <Container>
         <ActionButtonsBar
-          expandCollapseButton={viewMode === 'grouped' ? {
+          expandCollapseButton={{
             isExpanded: areAllExpanded,
             onToggle: toggleAllGroups,
-            disabled: noiseTrackingItems.length === 0,
-          } : undefined}
+            disabled: viewMode !== 'grouped' || noiseTrackingItems.length === 0,
+          }}
           viewToggleButton={{
             children: viewMode === 'grouped' ? <ViewModuleIcon /> : <ViewListIcon />,
             onClick: toggleViewMode,
