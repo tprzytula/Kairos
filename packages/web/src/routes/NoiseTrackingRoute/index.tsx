@@ -47,14 +47,13 @@ const NoiseTrackingContent = () => {
   }
 
   useEffect(() => {
-    if (!isLoading && noiseTrackingItems.length > 0 && expandedGroups.size === 0) {
+    if (!isLoading && noiseTrackingItems.length > 0 && expandedGroups.size === 0 && !hasInitializedRef.current) {
       const groupedItems = groupByDate(noiseTrackingItems)
-      const itemsToExpand = hasInitializedRef.current ? groupedItems : groupedItems.slice(0, 2)
-      const expanded = itemsToExpand.map(({ date }) => getDateLabel(date))
+      const expanded = groupedItems.slice(0, 2).map(({ date }) => getDateLabel(date))
       setExpandedGroups(new Set(expanded))
       hasInitializedRef.current = true
     }
-  }, [isLoading, noiseTrackingItems.length, expandedGroups.size])
+  }, [isLoading, noiseTrackingItems.length])
   
   const calculateNoiseCounts = () => {
     const now = new Date()
