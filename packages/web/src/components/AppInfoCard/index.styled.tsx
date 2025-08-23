@@ -37,15 +37,21 @@ export const AppInfoCardContainer = styled(Card)(({ theme }) => ({
 }))
 
 export const AppInfoCardContent = styled('div')({
-  padding: '0.9rem 1.25rem',
+  padding: '1.2rem 1.25rem',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: '0.75rem',
+  gap: '1rem',
+})
+
+export const BrandingSection = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.15rem',
 })
 
 export const AppBranding = styled('div')(({ theme }) => ({
-  fontSize: '1.1rem',
+  fontSize: '1.2rem',
   fontWeight: '700',
   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
   WebkitBackgroundClip: 'text',
@@ -53,8 +59,45 @@ export const AppBranding = styled('div')(({ theme }) => ({
   backgroundClip: 'text',
   letterSpacing: '0.5px',
   transition: 'all 0.3s ease',
+  lineHeight: '1.2',
   '@media (max-width: 480px)': {
-    fontSize: '1rem',
+    fontSize: '1.1rem',
+  },
+}))
+
+export const ProjectName = styled('div')(({ theme }) => ({
+  fontSize: '0.8rem',
+  fontWeight: '500',
+  color: theme.palette.text.secondary,
+  letterSpacing: '0.2px',
+  lineHeight: '1.2',
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: '0.4rem',
+  transition: 'all 0.3s ease',
+  '& .project-indicator': {
+    fontSize: '0.7rem',
+    fontWeight: '600',
+    opacity: 0.6,
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    lineHeight: '1',
+    alignSelf: 'baseline',
+  },
+  '& .project-name': {
+    fontWeight: '600',
+    color: theme.palette.text.primary,
+    opacity: 0.85,
+    lineHeight: '1.2',
+    alignSelf: 'baseline',
+    display: 'inline-flex',
+    alignItems: 'baseline',
+  },
+  '@media (max-width: 480px)': {
+    fontSize: '0.75rem',
+    '& .project-indicator': {
+      fontSize: '0.65rem',
+    },
   },
 }))
 
@@ -63,13 +106,10 @@ export const VersionText = styled('div')(({ theme }) => ({
   fontWeight: '600',
   color: theme.palette.text.secondary,
   letterSpacing: '0.5px',
-  opacity: 0.85,
-  background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.08) 100%)',
-  padding: '0.3rem 0.7rem',
-  borderRadius: '10px',
-  border: '1px solid rgba(102, 126, 234, 0.15)',
+  opacity: 0.7,
   transition: 'all 0.3s ease',
   minWidth: 'fit-content',
+  fontFamily: 'monospace',
   '@media (max-width: 480px)': {
     fontSize: '0.7rem',
   },

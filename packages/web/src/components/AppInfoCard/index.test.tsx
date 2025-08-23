@@ -8,7 +8,13 @@ jest.mock('../../hooks/useVersion', () => ({
   useVersion: jest.fn()
 }))
 
+// Mock the useProjectContext hook
+jest.mock('../../providers/ProjectProvider', () => ({
+  useProjectContext: jest.fn()
+}))
+
 const mockUseVersion = require('../../hooks/useVersion').useVersion
+const mockUseProjectContext = require('../../providers/ProjectProvider').useProjectContext
 
 const theme = createTheme()
 
@@ -23,16 +29,100 @@ const renderWithTheme = (component: React.ReactElement) => {
 describe('AppInfoCard', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    
+    // Default mock for version hook
+    mockUseVersion.mockReturnValue({
+      version: 'v2025.01.08.1400',
+      isLoading: false,
+      error: null
+    })
+    
+    // Default mock for project context
+    mockUseProjectContext.mockReturnValue({
+      currentProject: {
+        id: 'project-1',
+        name: 'Test Project',
+        isPersonal: false
+      },
+      projects: [],
+      isLoading: false,
+      createProject: jest.fn(),
+      joinProject: jest.fn(),
+      switchProject: jest.fn(),
+      fetchProjects: jest.fn(),
+      getProjectInviteInfo: jest.fn()
+    })
+  })
+
+  describe('project display', () => {
+    it('should display project name when current project is available', () => {
+      mockUseProjectContext.mockReturnValue({
+        currentProject: {
+          id: 'project-1',
+          name: 'My Awesome Project',
+          isPersonal: false
+        },
+        projects: [],
+        isLoading: false,
+        createProject: jest.fn(),
+        joinProject: jest.fn(),
+        switchProject: jest.fn(),
+        fetchProjects: jest.fn(),
+        getProjectInviteInfo: jest.fn()
+      })
+
+      renderWithTheme(<AppInfoCard />)
+
+      expect(screen.getByText('Kairos')).toBeInTheDocument()
+      expect(screen.getByText('Project:')).toBeInTheDocument()
+      expect(screen.getByText('My Awesome Project')).toBeInTheDocument()
+    })
+
+    it('should display personal project with label', () => {
+      mockUseProjectContext.mockReturnValue({
+        currentProject: {
+          id: 'project-1',
+          name: 'Personal Tasks',
+          isPersonal: true
+        },
+        projects: [],
+        isLoading: false,
+        createProject: jest.fn(),
+        joinProject: jest.fn(),
+        switchProject: jest.fn(),
+        fetchProjects: jest.fn(),
+        getProjectInviteInfo: jest.fn()
+      })
+
+      renderWithTheme(<AppInfoCard />)
+
+      expect(screen.getByText('Kairos')).toBeInTheDocument()
+      expect(screen.getByText('Project:')).toBeInTheDocument()
+      expect(screen.getByText('Personal Tasks (Personal)')).toBeInTheDocument()
+    })
+
+    it('should display loading when no current project', () => {
+      mockUseProjectContext.mockReturnValue({
+        currentProject: null,
+        projects: [],
+        isLoading: true,
+        createProject: jest.fn(),
+        joinProject: jest.fn(),
+        switchProject: jest.fn(),
+        fetchProjects: jest.fn(),
+        getProjectInviteInfo: jest.fn()
+      })
+
+      renderWithTheme(<AppInfoCard />)
+
+      expect(screen.getByText('Kairos')).toBeInTheDocument()
+      expect(screen.getByText('Project:')).toBeInTheDocument()
+      expect(screen.getByText('Loading...')).toBeInTheDocument()
+    })
   })
 
   describe('version display', () => {
     it('should display version when available', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.01.08.1400',
-        isLoading: false,
-        error: null
-      })
-
       renderWithTheme(<AppInfoCard />)
 
       expect(screen.getByText('Kairos')).toBeInTheDocument()
@@ -94,30 +184,20 @@ describe('AppInfoCard', () => {
 
   describe('layout and styling', () => {
     it('should render with proper structure', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.01.08.1400',
-        isLoading: false,
-        error: null
-      })
-
       const { container } = renderWithTheme(<AppInfoCard />)
 
       // Check that the MUI Card component is rendered
       const cardElement = container.querySelector('.MuiCard-root')
       expect(cardElement).toBeInTheDocument()
 
-      // Check that both Kairos and version are present
+      // Check that Kairos, project label, project name and version are present
       expect(screen.getByText('Kairos')).toBeInTheDocument()
+      expect(screen.getByText('Project:')).toBeInTheDocument()
+      expect(screen.getByText('Test Project')).toBeInTheDocument()
       expect(screen.getByText('v2025.01.08.1400')).toBeInTheDocument()
     })
 
     it('should have Kairos branding element', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.01.08.1400',
-        isLoading: false,
-        error: null
-      })
-
       renderWithTheme(<AppInfoCard />)
 
       const kairosElement = screen.getByText('Kairos')
@@ -128,12 +208,6 @@ describe('AppInfoCard', () => {
     })
 
     it('should have version text element', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.01.08.1400',
-        isLoading: false,
-        error: null
-      })
-
       renderWithTheme(<AppInfoCard />)
 
       const versionElement = screen.getByText('v2025.01.08.1400')
@@ -142,23 +216,35 @@ describe('AppInfoCard', () => {
       // Verify it's a styled div element
       expect(versionElement.tagName).toBe('DIV')
     })
+
+
+
+    it('should have project name element', () => {
+      renderWithTheme(<AppInfoCard />)
+
+      const projectElement = screen.getByText('Test Project')
+      expect(projectElement).toBeInTheDocument()
+      
+      // Verify it's a span element within the styled div
+      expect(projectElement.tagName).toBe('SPAN')
+    })
+
+
   })
 
   describe('accessibility', () => {
     it('should be accessible with proper ARIA labels', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.01.08.1400',
-        isLoading: false,
-        error: null
-      })
-
       renderWithTheme(<AppInfoCard />)
 
       // The card should be accessible
       const kairosText = screen.getByText('Kairos')
+      const projectLabelText = screen.getByText('Project:')
+      const projectText = screen.getByText('Test Project')
       const versionText = screen.getByText('v2025.01.08.1400')
       
       expect(kairosText).toBeInTheDocument()
+      expect(projectLabelText).toBeInTheDocument()
+      expect(projectText).toBeInTheDocument()
       expect(versionText).toBeInTheDocument()
     })
   })
@@ -174,6 +260,8 @@ describe('AppInfoCard', () => {
       renderWithTheme(<AppInfoCard />)
 
       expect(screen.getByText('Kairos')).toBeInTheDocument()
+      expect(screen.getByText('Project:')).toBeInTheDocument()
+      expect(screen.getByText('Test Project')).toBeInTheDocument()
       expect(screen.getByText('...')).toBeInTheDocument()
     })
 
@@ -187,6 +275,8 @@ describe('AppInfoCard', () => {
       renderWithTheme(<AppInfoCard />)
 
       expect(screen.getByText('Kairos')).toBeInTheDocument()
+      expect(screen.getByText('Project:')).toBeInTheDocument()
+      expect(screen.getByText('Test Project')).toBeInTheDocument()
       expect(screen.getByText('...')).toBeInTheDocument()
     })
 
@@ -202,21 +292,46 @@ describe('AppInfoCard', () => {
       renderWithTheme(<AppInfoCard />)
 
       expect(screen.getByText('Kairos')).toBeInTheDocument()
+      expect(screen.getByText('Test Project')).toBeInTheDocument()
       expect(screen.getByText(longVersion)).toBeInTheDocument()
     })
-  })
 
-  describe('integration with useVersion hook', () => {
-    it('should call useVersion hook on render', () => {
-      mockUseVersion.mockReturnValue({
-        version: 'v2025.01.08.1400',
+    it('should handle very long project names', () => {
+      mockUseProjectContext.mockReturnValue({
+        currentProject: {
+          id: 'project-1',
+          name: 'Very Long Project Name That Might Break Layout and Cause Issues',
+          isPersonal: false
+        },
+        projects: [],
         isLoading: false,
-        error: null
+        createProject: jest.fn(),
+        joinProject: jest.fn(),
+        switchProject: jest.fn(),
+        fetchProjects: jest.fn(),
+        getProjectInviteInfo: jest.fn()
       })
 
       renderWithTheme(<AppInfoCard />)
 
+      expect(screen.getByText('Kairos')).toBeInTheDocument()
+      expect(screen.getByText('Project:')).toBeInTheDocument()
+      expect(screen.getByText('Very Long Project Name That Might Break Layout and Cause Issues')).toBeInTheDocument()
+      expect(screen.getByText('v2025.01.08.1400')).toBeInTheDocument()
+    })
+  })
+
+  describe('integration with hooks', () => {
+    it('should call useVersion hook on render', () => {
+      renderWithTheme(<AppInfoCard />)
+
       expect(mockUseVersion).toHaveBeenCalledTimes(1)
+    })
+
+    it('should call useProjectContext hook on render', () => {
+      renderWithTheme(<AppInfoCard />)
+
+      expect(mockUseProjectContext).toHaveBeenCalledTimes(1)
     })
 
     it('should re-render when version changes', () => {

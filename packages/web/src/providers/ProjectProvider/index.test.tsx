@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen, waitFor, act } from '@testing-library/react'
-import { ProjectProvider, useProjectContext } from './index'
+import { ProjectProvider, useProjectContext } from './ProjectProvider'
 import { retrieveUserProjects, createProject, joinProject, getProjectInviteInfo } from '../../api/projects'
 
 const mockUseAuth = jest.fn()
