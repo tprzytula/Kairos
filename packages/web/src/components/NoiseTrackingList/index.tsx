@@ -177,21 +177,18 @@ const NoiseTrackingList = ({
       const defaultExpanded = groupedItems.slice(0, 2).map(({ date }) => getDateLabel(date));
       setExpandedGroups(new Set(defaultExpanded));
     }
-  }, [isLoading, noiseTrackingItems.length, expandedGroups.size, setExpandedGroups]);
+  }, [isLoading, noiseTrackingItems.length, expandedGroups.size, setExpandedGroups, groupedItems]);
 
   // Apply expand/collapse all when areAllExpanded changes from parent
   useEffect(() => {
     if (groupedItems.length > 0) {
       const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date));
-      const currentlyAllExpanded = allGroupLabels.every(label => expandedGroups.has(label));
       
-      // Only update if the desired state differs from current state
-      if (areAllExpanded !== currentlyAllExpanded) {
-        if (areAllExpanded) {
-          setExpandedGroups(new Set(allGroupLabels));
-        } else {
-          setExpandedGroups(new Set());
-        }
+      // Always apply the button state, regardless of current state
+      if (areAllExpanded) {
+        setExpandedGroups(new Set(allGroupLabels));
+      } else {
+        setExpandedGroups(new Set());
       }
     }
   }, [areAllExpanded, groupedItems, setExpandedGroups]);
