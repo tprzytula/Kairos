@@ -15,7 +15,7 @@ const NoiseTrackingContent = () => {
   // View mode state: 'grouped' or 'simple'
   const [viewMode, setViewMode] = useState<'grouped' | 'simple'>('grouped')
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
-  const [areAllExpanded, setAreAllExpanded] = useState<boolean>(false)
+  const [areAllExpanded, setAreAllExpanded] = useState<boolean>(true) // Start as true since first 2 groups expand by default
   
   const calculateNoiseCounts = () => {
     const now = new Date()
