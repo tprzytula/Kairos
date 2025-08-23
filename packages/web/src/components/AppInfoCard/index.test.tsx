@@ -74,7 +74,6 @@ describe('AppInfoCard', () => {
       renderWithTheme(<AppInfoCard />)
 
       expect(screen.getByText('Kairos')).toBeInTheDocument()
-      expect(screen.getByText('Project:')).toBeInTheDocument()
       expect(screen.getByText('My Awesome Project')).toBeInTheDocument()
     })
 
@@ -97,7 +96,6 @@ describe('AppInfoCard', () => {
       renderWithTheme(<AppInfoCard />)
 
       expect(screen.getByText('Kairos')).toBeInTheDocument()
-      expect(screen.getByText('Project:')).toBeInTheDocument()
       expect(screen.getByText('Personal Tasks (Personal)')).toBeInTheDocument()
     })
 
@@ -116,7 +114,6 @@ describe('AppInfoCard', () => {
       renderWithTheme(<AppInfoCard />)
 
       expect(screen.getByText('Kairos')).toBeInTheDocument()
-      expect(screen.getByText('Project:')).toBeInTheDocument()
       expect(screen.getByText('Loading...')).toBeInTheDocument()
     })
   })
@@ -190,9 +187,8 @@ describe('AppInfoCard', () => {
       const cardElement = container.querySelector('.MuiCard-root')
       expect(cardElement).toBeInTheDocument()
 
-      // Check that Kairos, project label, project name and version are present
+      // Check that Kairos, project name and version are present
       expect(screen.getByText('Kairos')).toBeInTheDocument()
-      expect(screen.getByText('Project:')).toBeInTheDocument()
       expect(screen.getByText('Test Project')).toBeInTheDocument()
       expect(screen.getByText('v2025.01.08.1400')).toBeInTheDocument()
     })
@@ -225,8 +221,8 @@ describe('AppInfoCard', () => {
       const projectElement = screen.getByText('Test Project')
       expect(projectElement).toBeInTheDocument()
       
-      // Verify it's a span element within the styled div
-      expect(projectElement.tagName).toBe('SPAN')
+      // Verify it's a styled div element
+      expect(projectElement.tagName).toBe('DIV')
     })
 
 
@@ -238,12 +234,10 @@ describe('AppInfoCard', () => {
 
       // The card should be accessible
       const kairosText = screen.getByText('Kairos')
-      const projectLabelText = screen.getByText('Project:')
       const projectText = screen.getByText('Test Project')
       const versionText = screen.getByText('v2025.01.08.1400')
       
       expect(kairosText).toBeInTheDocument()
-      expect(projectLabelText).toBeInTheDocument()
       expect(projectText).toBeInTheDocument()
       expect(versionText).toBeInTheDocument()
     })
@@ -260,7 +254,7 @@ describe('AppInfoCard', () => {
       renderWithTheme(<AppInfoCard />)
 
       expect(screen.getByText('Kairos')).toBeInTheDocument()
-      expect(screen.getByText('Project:')).toBeInTheDocument()
+
       expect(screen.getByText('Test Project')).toBeInTheDocument()
       expect(screen.getByText('...')).toBeInTheDocument()
     })
@@ -275,7 +269,7 @@ describe('AppInfoCard', () => {
       renderWithTheme(<AppInfoCard />)
 
       expect(screen.getByText('Kairos')).toBeInTheDocument()
-      expect(screen.getByText('Project:')).toBeInTheDocument()
+
       expect(screen.getByText('Test Project')).toBeInTheDocument()
       expect(screen.getByText('...')).toBeInTheDocument()
     })
@@ -315,7 +309,7 @@ describe('AppInfoCard', () => {
       renderWithTheme(<AppInfoCard />)
 
       expect(screen.getByText('Kairos')).toBeInTheDocument()
-      expect(screen.getByText('Project:')).toBeInTheDocument()
+
       expect(screen.getByText('Very Long Project Name That Might Break Layout and Cause Issues')).toBeInTheDocument()
       expect(screen.getByText('v2025.01.08.1400')).toBeInTheDocument()
     })

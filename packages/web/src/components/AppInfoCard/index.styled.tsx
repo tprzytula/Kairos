@@ -47,7 +47,8 @@ export const AppInfoCardContent = styled('div')({
 export const BrandingSection = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.15rem',
+  gap: '0.2rem',
+  alignItems: 'flex-start',
 })
 
 export const AppBranding = styled('div')(({ theme }) => ({
@@ -66,51 +67,26 @@ export const AppBranding = styled('div')(({ theme }) => ({
 }))
 
 export const ProjectName = styled('div')(({ theme }) => ({
-  fontSize: '0.8rem',
-  fontWeight: '500',
-  color: theme.palette.text.secondary,
-  letterSpacing: '0.2px',
+  fontSize: '1rem',
+  fontWeight: '600',
+  color: theme.palette.text.primary,
   lineHeight: '1.2',
-  display: 'flex',
-  alignItems: 'baseline',
-  gap: '0.4rem',
+  textAlign: 'right',
   transition: 'all 0.3s ease',
-  '& .project-indicator': {
-    fontSize: '0.7rem',
-    fontWeight: '600',
-    opacity: 0.6,
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    lineHeight: '1',
-    alignSelf: 'baseline',
-  },
-  '& .project-name': {
-    fontWeight: '600',
-    color: theme.palette.text.primary,
-    opacity: 0.85,
-    lineHeight: '1.2',
-    alignSelf: 'baseline',
-    display: 'inline-flex',
-    alignItems: 'baseline',
-  },
   '@media (max-width: 480px)': {
-    fontSize: '0.75rem',
-    '& .project-indicator': {
-      fontSize: '0.65rem',
-    },
+    fontSize: '0.9rem',
   },
 }))
 
 export const VersionText = styled('div')(({ theme }) => ({
-  fontSize: '0.75rem',
-  fontWeight: '600',
+  fontSize: '0.72rem',
+  fontWeight: '500',
   color: theme.palette.text.secondary,
-  letterSpacing: '0.5px',
-  opacity: 0.7,
+  letterSpacing: '0.4px',
+  opacity: 0.65,
   transition: 'all 0.3s ease',
-  minWidth: 'fit-content',
   fontFamily: 'monospace',
   '@media (max-width: 480px)': {
-    fontSize: '0.7rem',
+    fontSize: '0.68rem',
   },
 }))

@@ -20,15 +20,12 @@ const AppInfoCard: React.FC = () => {
       <AppInfoCardContent>
         <BrandingSection>
           <AppBranding>Kairos</AppBranding>
-          <ProjectName>
-            <span className="project-indicator">Project:</span>
-            <span className="project-name">
-              {currentProject ? currentProject.name : 'Loading...'}
-              {currentProject?.isPersonal && ' (Personal)'}
-            </span>
-          </ProjectName>
+          <VersionText>{displayVersion}</VersionText>
         </BrandingSection>
-        <VersionText>{displayVersion}</VersionText>
+        <ProjectName>
+          {currentProject ? currentProject.name : 'Loading...'}
+          {currentProject?.isPersonal && ' (Personal)'}
+        </ProjectName>
       </AppInfoCardContent>
     </AppInfoCardContainer>
   )
