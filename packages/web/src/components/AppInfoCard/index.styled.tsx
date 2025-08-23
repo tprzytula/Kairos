@@ -42,6 +42,9 @@ export const AppInfoCardContent = styled('div')({
   alignItems: 'center',
   justifyContent: 'space-between',
   gap: '1rem',
+  '@media (max-width: 480px)': {
+    padding: '1.25rem 1.25rem 1.4rem 1.25rem',
+  },
 })
 
 export const BrandingSection = styled('div')({
@@ -49,6 +52,9 @@ export const BrandingSection = styled('div')({
   flexDirection: 'column',
   gap: '0.2rem',
   alignItems: 'flex-start',
+  '@media (max-width: 480px)': {
+    gap: '0.25rem',
+  },
 })
 
 export const AppBranding = styled('div')(({ theme }) => ({
