@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNoiseTrackingContext } from '../../providers/NoiseTrackingProvider';
-import { Container, ScrollableList, EmptyState, EmptyStateText, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, ViewToggleContainer, ViewToggleButton, SimpleListContainer, SimpleListItem } from './index.styled';
+import { Container, ScrollableList, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, ViewToggleContainer, ViewToggleButton, SimpleListContainer, SimpleListItem } from './index.styled';
+import EmptyState from '../EmptyState';
 import NoiseTrackingItem from '../NoiseTrackingItem';
 import NoiseTrackingItemPlaceholder from '../NoiseTrackingItemPlaceholder';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -202,11 +203,11 @@ const NoiseTrackingList = () => {
   if (noiseTrackingItems.length === 0) {
     return (
       <Container>
-        <EmptyState>
-          <VolumeUpIcon sx={{ fontSize: 48, opacity: 0.3 }} />
-          <EmptyStateText>No noise events recorded yet</EmptyStateText>
-          <EmptyStateText>Tap the + button to add your first entry</EmptyStateText>
-        </EmptyState>
+        <EmptyState 
+          icon={<VolumeUpIcon aria-label="No noise events" />}
+          title="No noise events recorded yet"
+          subtitle="Tap the + button to add your first entry"
+        />
       </Container>
     );
   }

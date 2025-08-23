@@ -4,7 +4,8 @@ import { useToDoListContext } from '../../providers/ToDoListProvider';
 import { useProjectContext } from '../../providers/ProjectProvider';
 import ToDoItem from '../ToDoItem';
 import ToDoItemPlaceholder from '../ToDoItemPlaceholder';
-import { Container, EmptyListContainer, EmptyStateText } from './index.styled';
+import { Container } from './index.styled';
+import EmptyState from '../EmptyState';
 import SwipeableList from '../SwipeableList';
 import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
@@ -23,11 +24,11 @@ const PlaceholderComponent = () => (
 
 const EmptyListComponent = () => (
   <Container>
-    <EmptyListContainer>
-      <ChecklistOutlinedIcon aria-label="Empty to-do list" />
-      <EmptyStateText>No pending to-do items found</EmptyStateText>
-      <EmptyStateText>Tap the + button to add your first task</EmptyStateText>
-    </EmptyListContainer>
+    <EmptyState 
+      icon={<ChecklistOutlinedIcon aria-label="Empty to-do list" />}
+      title="No pending to-do items found"
+      subtitle="Tap the + button to add your first task"
+    />
   </Container>
 )
 

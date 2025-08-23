@@ -42,23 +42,7 @@ export const ScrollableList = styled('div')({
   },
 })
 
-export const EmptyState = styled('div')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flex: 1,
-  minHeight: '300px',
-  gap: '12px',
-  opacity: 0.6,
-}))
 
-export const EmptyStateText = styled(Typography)(({ theme }) => ({
-  fontSize: '16px',
-  fontWeight: 400,
-  color: theme.palette.text.secondary,
-  textAlign: 'center',
-}))
 
 
 
