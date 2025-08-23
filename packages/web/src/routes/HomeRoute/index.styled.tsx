@@ -21,9 +21,14 @@ export const SectionCard = styled(Card)(({ theme }) => ({
   border: 'none',
   background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%)',
   backdropFilter: 'blur(10px)',
+  WebkitBackdropFilter: 'blur(10px)', // Safari support
   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   position: 'relative',
   overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '120px', // Ensure consistent minimum height
+  height: 'auto', // Allow natural height expansion
   '&:before': {
     content: '""',
     position: 'absolute',
@@ -37,7 +42,7 @@ export const SectionCard = styled(Card)(({ theme }) => ({
   },
   '&:hover': {
     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-    transform: 'translateY(-2px) scale(1.02)',
+    transform: 'translateY(-2px)', // Remove scale for Safari compatibility
     '&:before': {
       opacity: 1,
     },
@@ -79,6 +84,9 @@ export const SectionHeader = styled('div')(({ theme }) => ({
 
 export const SectionContent = styled(CardContent)({
   padding: '1.25rem',
+  flex: 1, // Ensure content expands to fill available space
+  display: 'flex',
+  flexDirection: 'column',
   '&:last-child': {
     paddingBottom: '1.25rem',
   },
@@ -218,6 +226,14 @@ export const EmptyState = styled(Typography)(({ theme }) => ({
   fontStyle: 'italic',
   textAlign: 'center',
   padding: '0.75rem 0.5rem',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minHeight: '48px', // Ensure consistent minimum height
+  flex: 1, // Allow to expand in flex container
+  // Safari-specific alignment fixes
+  WebkitAlignItems: 'center',
+  WebkitJustifyContent: 'center',
 }))
 
 export const NoiseItem = styled('li')(({ theme }) => ({
@@ -265,7 +281,11 @@ export const TimeElapsed = styled('span')(({ theme }) => ({
 export const GroceryStats = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0rem',
+  flex: 1, // Allow to expand within parent
+  minHeight: '0', // Prevent flex shrinking issues in Safari
+  gap: '0.5rem', // Add some gap for better spacing
+  justifyContent: 'flex-start',
+  alignItems: 'stretch',
 })
 
 export const ProgressSection = styled('div')({
@@ -340,16 +360,23 @@ export const QuickItem = styled('div')(({ theme }) => ({
 
 export const GroceryImagesGrid = styled('div')<{ itemCount: number }>(({ itemCount }) => {
   const rowCount = Math.ceil(itemCount / 5)
+  const gridHeight = Math.max(1, rowCount) * 48 + (Math.max(0, rowCount - 1) * 12) // Calculate explicit height
+  
   return {
     display: 'grid',
     gridTemplateColumns: 'repeat(5, 1fr)',
-    gridTemplateRows: `repeat(${rowCount}, 1fr)`,
+    gridTemplateRows: `repeat(${rowCount}, 48px)`, // Explicit row height for Safari
     gap: '0.75rem',
     maxWidth: '100%',
+    minHeight: `${gridHeight}px`, // Explicit min-height for Safari consistency
+    height: 'auto',
     alignItems: 'center',
     justifyItems: 'center',
     marginTop: '0rem',
     marginBottom: '0rem',
+    // Safari-specific grid fixes
+    WebkitAlignItems: 'center',
+    WebkitJustifyItems: 'center',
   }
 })
 
@@ -357,6 +384,8 @@ export const GroceryImageItem = styled('div')(({ theme }) => ({
   position: 'relative',
   width: '48px',
   height: '48px',
+  minWidth: '48px', // Prevent shrinking in Safari
+  minHeight: '48px', // Prevent shrinking in Safari
   borderRadius: '8px',
   backgroundColor: theme.palette.custom?.surfaces?.secondary || '#f5f5f5',
   border: '1px solid rgba(0, 0, 0, 0.08)',
@@ -372,6 +401,10 @@ export const GroceryImageItem = styled('div')(({ theme }) => ({
   overflow: 'hidden',
   cursor: 'pointer',
   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+  // Safari-specific flex fixes
+  WebkitAlignItems: 'center',
+  WebkitJustifyContent: 'center',
+  flexShrink: 0, // Prevent flex shrinking
   '&:hover': {
     transform: 'scale(1.05)',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
