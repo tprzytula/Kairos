@@ -13,10 +13,7 @@ import { Route } from '../../enums/route';
 import SwipeableList from '../SwipeableList';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { useGroceryCategories } from '../../hooks/useGroceryCategories';
-import { useState } from 'react';
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
-import { Box, IconButton } from '@mui/material';
+
 
 const PlaceholderComponent = () => (
   <Container>
@@ -44,13 +41,6 @@ export const GroceryList = ({ allExpanded: allExpandedProp, expandKey: expandKey
   const { groceryList, isLoading, removeGroceryItem, viewMode } = useGroceryListContext();
   const navigate = useNavigate()
   const { categorizedGroups, isUncategorized } = useGroceryCategories(groceryList, viewMode)
-
-  const [allExpanded, setAllExpanded] = useState<boolean>(true)
-  const [expandKey, setExpandKey] = useState<number>(0)
-  const toggleAll = useCallback(() => {
-    setAllExpanded((v) => !v)
-    setExpandKey((k) => k + 1)
-  }, [])
 
   const handleDelete = useCallback((id: string) => {
     removeGroceryItem(id)
@@ -88,18 +78,11 @@ export const GroceryList = ({ allExpanded: allExpandedProp, expandKey: expandKey
     )
   }
 
-  const effectiveAllExpanded = allExpandedProp ?? allExpanded
-  const effectiveExpandKey = expandKeyProp ?? expandKey
+  const effectiveAllExpanded = allExpandedProp ?? true
+  const effectiveExpandKey = expandKeyProp ?? 0
 
   return (
     <Container>
-      {allExpandedProp === undefined && (
-        <Box display="flex" justifyContent="flex-end" pb={1} pr={0.5}>
-          <IconButton aria-label={allExpanded ? 'Collapse all' : 'Expand all'} onClick={toggleAll} size="small">
-            {allExpanded ? <UnfoldLessIcon /> : <UnfoldMoreIcon />}
-          </IconButton>
-        </Box>
-      )}
       {categorizedGroups?.map((group) => (
         <GroceryCategorySection
           key={group.category}
