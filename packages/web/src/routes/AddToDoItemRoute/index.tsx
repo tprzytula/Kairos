@@ -5,6 +5,7 @@ import { addTodoItem } from '../../api/toDoList'
 import { validateFields } from './utils'
 import { useNavigate } from 'react-router'
 import { useAppState } from '../../providers/AppStateProvider'
+import { useProjectContext } from '../../providers/ProjectProvider'
 import { useCallback } from 'react'
 import { AlertColor } from '@mui/material'
 import { Route } from '../../enums/route'
@@ -41,6 +42,7 @@ const FIELDS: Array<IFormField> = [
 
 export const AddToDoItemContent = () => {
   const { dispatch } = useAppState()
+  const { currentProject } = useProjectContext()
   const navigate = useNavigate()
   const { toDoList } = useToDoListContext()
 
@@ -49,6 +51,11 @@ export const AddToDoItemContent = () => {
   }, [dispatch])
 
   const onSubmit = useCallback(async (fields: Array<IFormField>) => {
+    if (!currentProject) {
+      createAlert('No project selected', 'error')
+      return
+    }
+
     try {
       const [name, description, dueDate] = validateFields(fields)
 
@@ -58,7 +65,7 @@ export const AddToDoItemContent = () => {
         name: name.value,
         description: description.value,
         dueDate: utcTimestamp,
-      })
+      }, currentProject.id)
 
       createAlert(`${name.value} has been added to your to do list`, 'success')
       navigate(Route.ToDoList)
@@ -66,7 +73,7 @@ export const AddToDoItemContent = () => {
       console.error(error)
       createAlert('Error creating to do item', 'error')
     }
-  }, [createAlert, navigate])
+  }, [createAlert, navigate, currentProject])
 
   // Format current date parts with consistent lengths
   const today = new Date()

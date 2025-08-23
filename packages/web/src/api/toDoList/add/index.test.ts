@@ -12,7 +12,7 @@ const EXAMPLE_RESPONSE: ITodoItem = {
 }
 
 describe('Given the addTodoItem function', () => {
-  it('should make the correct request to the API', async () => {
+  it('should make the correct request to the API with legacy project when no project ID provided', async () => {
     fetchMock.mockResponse(JSON.stringify(EXAMPLE_RESPONSE))
 
     await addTodoItem({
@@ -27,6 +27,27 @@ describe('Given the addTodoItem function', () => {
         body: JSON.stringify({ name: 'Groceries', description: 'Buy groceries for the week', isDone: false }),
         headers: {
           'X-Project-ID': 'legacy-shared-project',
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+  })
+
+  it('should make the correct request to the API with provided project ID', async () => {
+    fetchMock.mockResponse(JSON.stringify(EXAMPLE_RESPONSE))
+
+    await addTodoItem({
+      name: 'Groceries',
+      description: 'Buy groceries for the week',
+    }, 'test-project-id')
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/todo_list/items',
+      {
+        method: 'PUT',
+        body: JSON.stringify({ name: 'Groceries', description: 'Buy groceries for the week', isDone: false }),
+        headers: {
+          'X-Project-ID': 'test-project-id',
           'Content-Type': 'application/json',
         },
       }

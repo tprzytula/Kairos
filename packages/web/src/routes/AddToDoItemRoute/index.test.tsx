@@ -9,6 +9,7 @@ import { addTodoItem } from '../../api/toDoList'
 import { FormFieldType } from '../../components/AddItemForm/enums'
 import * as ReactRouter from 'react-router'
 import { useToDoListContext } from '../../providers/ToDoListProvider'
+import { useProjectContext } from '../../providers/ProjectProvider'
 
 jest.mock('react-router', () => ({  
   ...jest.requireActual('react-router'),
@@ -18,17 +19,37 @@ jest.mock('react-router', () => ({
 jest.mock('../../api/toDoList');
 jest.mock('../../components/AddItemForm');
 jest.mock('../../providers/ToDoListProvider');
+jest.mock('../../providers/ProjectProvider');
 jest.mock('../../components/ModernPageHeader', () => ({ title }: any) => <div>{title}</div>);
 jest.mock('@mui/icons-material/Checklist', () => () => <div>ChecklistIcon</div>)
 
 describe('Given the AddToDoItemContent component', () => {
+  const mockProject = {
+    id: 'test-project-id',
+    name: 'Test Project',
+    isPersonal: false
+  };
+
   beforeEach(() => {
+    jest.clearAllMocks();
+
     (useToDoListContext as jest.Mock).mockReturnValue({
       toDoList: [],
       isLoading: false,
       refetchToDoList: jest.fn(),
       removeFromToDoList: jest.fn(),
       updateToDoItemFields: jest.fn(),
+    });
+
+    (useProjectContext as jest.Mock).mockReturnValue({
+      projects: [mockProject],
+      currentProject: mockProject,
+      isLoading: false,
+      createProject: jest.fn(),
+      joinProject: jest.fn(),
+      switchProject: jest.fn(),
+      fetchProjects: jest.fn(),
+      getProjectInviteInfo: jest.fn(),
     });
   })
 
@@ -80,7 +101,7 @@ describe('Given the AddToDoItemContent component', () => {
         name: 'Test',
         description: 'Test',
         dueDate: 1609459200000
-      })  
+      }, 'test-project-id')  
     })
 
     describe('And the createToDoItem call succeeds', () => {
