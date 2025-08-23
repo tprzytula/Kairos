@@ -210,4 +210,32 @@ data "aws_iam_policy_document" "lambda_policies" {
       ]
     }
   }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.user_preferences == local.permissions.read_only ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadOnlyUserPreferences"
+      actions = local.database_read_only_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_user_preferences_arn,
+        "${var.dynamodb_user_preferences_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.user_preferences == local.permissions.read_write ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadWriteUserPreferences"
+      actions = local.database_read_write_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_user_preferences_arn,
+        "${var.dynamodb_user_preferences_arn}/index/*",
+      ]
+    }
+  }
 }

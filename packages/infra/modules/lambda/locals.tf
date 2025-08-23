@@ -164,6 +164,22 @@ locals {
         project_members = "read-only"
       }
     }
-  }
+  },
+    "get_user_preferences" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          user_preferences = "read-only"
+        }
+      }
+    },
+    "update_user_preferences" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          user_preferences = "read-write"
+        }
+      }
+    }
   }
 }

@@ -21,6 +21,7 @@ variable "lambda_functions" {
         migrations             = optional(string, "none")
         projects               = optional(string, "none")
         project_members        = optional(string, "none")
+        user_preferences       = optional(string, "none")
       })
     })
   }))
@@ -55,5 +56,9 @@ variable "dynamodb_projects_arn" {
 }
 
 variable "dynamodb_project_members_arn" {
+  type = string
+}
+
+variable "dynamodb_user_preferences_arn" {
   type = string
 }
