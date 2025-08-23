@@ -46,7 +46,7 @@ describe('Given the GroceryList component', () => {
   })
 
   describe('When the grocery list is empty', () => {
-    it('should render the empty list icon', () => {
+    it('should render the empty list icon and helpful text', () => {
       jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
         groceryList: [],
         isLoading: false,
@@ -61,6 +61,57 @@ describe('Given the GroceryList component', () => {
       renderComponent()
 
       expect(screen.getByLabelText('Empty grocery list')).toBeVisible()
+      expect(screen.getByText('No grocery items found')).toBeVisible()
+      expect(screen.getByText('Tap the + button to add your first item')).toBeVisible()
+    })
+
+    describe('Empty state layout behavior', () => {
+      it('should center empty state vertically within available space', () => {
+        jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
+          groceryList: [],
+          isLoading: false,
+          viewMode: GroceryViewMode.CATEGORIZED,
+          refetchGroceryList: jest.fn(),
+          removeGroceryItem: jest.fn(),
+          updateGroceryItem: jest.fn(),
+          updateGroceryItemFields: jest.fn(),
+          setViewMode: jest.fn(),
+        })
+
+        renderComponent()
+
+        const emptyStateElement = screen.getByText('No grocery items found').parentElement
+        expect(emptyStateElement).toBeInTheDocument()
+        
+        const computedStyle = window.getComputedStyle(emptyStateElement as Element)
+        expect(computedStyle.display).toBe('flex')
+        expect(computedStyle.flexDirection).toBe('column')
+        expect(computedStyle.justifyContent).toBe('center')
+        expect(computedStyle.alignItems).toBe('center')
+        expect(computedStyle.flex).toBe('1 1 0%')
+      })
+
+      it('should maintain proper spacing and opacity in empty state', () => {
+        jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
+          groceryList: [],
+          isLoading: false,
+          viewMode: GroceryViewMode.CATEGORIZED,
+          refetchGroceryList: jest.fn(),
+          removeGroceryItem: jest.fn(),
+          updateGroceryItem: jest.fn(),
+          updateGroceryItemFields: jest.fn(),
+          setViewMode: jest.fn(),
+        })
+
+        renderComponent()
+
+        const emptyStateElement = screen.getByText('No grocery items found').parentElement
+        const computedStyle = window.getComputedStyle(emptyStateElement as Element)
+        
+        expect(computedStyle.gap).toBe('12px')
+        expect(computedStyle.opacity).toBe('0.6')
+        expect(computedStyle.minHeight).toBe('300px')
+      })
     })
   })
 

@@ -6,7 +6,7 @@ import GroceryItem from '../GroceryItem';
 import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
 import GroceryCategorySection from '../GroceryCategorySection';
 import { GroceryViewMode } from '../../enums/groceryCategory'
-import { Container, EmptyListContainer } from './index.styled';
+import { Container, EmptyListContainer, EmptyStateText } from './index.styled';
 import { ActionName } from '../../providers/AppStateProvider/enums';
 import { Route } from '../../enums/route';
 import SwipeableList from '../SwipeableList';
@@ -28,6 +28,8 @@ const PlaceholderComponent = () => (
 const EmptyListComponent = () => (
   <EmptyListContainer>
     <ShoppingCartOutlinedIcon aria-label="Empty grocery list" />
+    <EmptyStateText>No grocery items found</EmptyStateText>
+    <EmptyStateText>Tap the + button to add your first item</EmptyStateText>
   </EmptyListContainer>
 )
 
