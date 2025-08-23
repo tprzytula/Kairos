@@ -169,7 +169,7 @@ const NoiseTrackingList = ({
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
   
   // Track previous areAllExpanded to detect button clicks
-  const prevAreAllExpandedRef = useRef(areAllExpanded);
+  const prevAreAllExpandedRef = useRef<boolean | null>(null);
   
   // Get the first two date groups to expand by default
   const groupedItems = groupByDate(noiseTrackingItems);
@@ -182,7 +182,7 @@ const NoiseTrackingList = ({
     }
   }, [isLoading, noiseTrackingItems.length, expandedGroups.size, setExpandedGroups, groupedItems]);
 
-  // Apply expand/collapse all ONLY when areAllExpanded actually changes (button clicked)
+  // Apply expand/collapse all when areAllExpanded changes (button clicked) or on initial render
   useEffect(() => {
     if (groupedItems.length > 0 && prevAreAllExpandedRef.current !== areAllExpanded) {
       const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date));
@@ -192,10 +192,10 @@ const NoiseTrackingList = ({
       } else {
         setExpandedGroups(new Set());
       }
-      
-      // Update the ref to track this change
-      prevAreAllExpandedRef.current = areAllExpanded;
     }
+    
+    // Always update the ref to track the current state
+    prevAreAllExpandedRef.current = areAllExpanded;
   }, [areAllExpanded, groupedItems, setExpandedGroups]);
 
   const toggleGroup = (date: string) => {
