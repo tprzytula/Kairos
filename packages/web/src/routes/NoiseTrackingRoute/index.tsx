@@ -7,14 +7,54 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import ViewModuleIcon from '@mui/icons-material/ViewModule'
 import ViewListIcon from '@mui/icons-material/ViewList'
 import { Container, ScrollableContainer } from './index.styled'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 
 const NoiseTrackingContent = () => {
-  const { noiseTrackingItems } = useNoiseTrackingContext()
+  const { noiseTrackingItems, isLoading } = useNoiseTrackingContext()
   
-  // View mode state: 'grouped' or 'simple'
   const [viewMode, setViewMode] = useState<'grouped' | 'simple'>('grouped')
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
+  const [shouldExpandAll, setShouldExpandAll] = useState(true)
+  const hasInitializedRef = useRef(false)
+
+  const groupByDate = (items: any[]) => {
+    const grouped = items.reduce((acc, item) => {
+      const date = new Date(item.timestamp).toDateString()
+      if (!acc[date]) acc[date] = []
+      acc[date].push(item)
+      return acc
+    }, {} as Record<string, any[]>)
+
+    return Object.entries(grouped)
+      .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime())
+      .map(([date, items]) => ({ date, items }))
+  }
+
+  const getDateLabel = (dateString: string) => {
+    const date = new Date(dateString)
+    const today = new Date()
+    const yesterday = new Date(today)
+    yesterday.setDate(yesterday.getDate() - 1)
+
+    if (dateString === today.toDateString()) return 'Today'
+    if (dateString === yesterday.toDateString()) return 'Yesterday'
+
+    const dayName = date.toLocaleDateString('en-GB', { weekday: 'long' })
+    const dateOnly = date.toLocaleDateString('en-GB', { 
+      year: 'numeric', month: 'long', day: 'numeric'
+    })
+    return `${dateOnly} • ${dayName}`
+  }
+
+  useEffect(() => {
+    if (!isLoading && noiseTrackingItems.length > 0 && expandedGroups.size === 0) {
+      const groupedItems = groupByDate(noiseTrackingItems)
+      const itemsToExpand = hasInitializedRef.current ? groupedItems : groupedItems.slice(0, 2)
+      const expanded = itemsToExpand.map(({ date }) => getDateLabel(date))
+      setExpandedGroups(new Set(expanded))
+      hasInitializedRef.current = true
+    }
+  }, [isLoading, noiseTrackingItems.length, expandedGroups.size])
   
   const calculateNoiseCounts = () => {
     const now = new Date()
@@ -43,41 +83,14 @@ const NoiseTrackingContent = () => {
   }
   
   const toggleAllGroups = useCallback(() => {
-    // Look at current state of all groups and flip them all
     if (noiseTrackingItems.length === 0) return
     
-    const groupedItems = noiseTrackingItems.reduce((groups, item) => {
-      const date = new Date(item.timestamp).toDateString()
-      if (!groups.has(date)) groups.add(date)
-      return groups
-    }, new Set<string>())
+    const groupedItems = groupByDate(noiseTrackingItems)
+    const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date))
     
-    const allGroupLabels = Array.from(groupedItems).map(date => {
-      const dateObj = new Date(date)
-      const today = new Date()
-      const yesterday = new Date(today)
-      yesterday.setDate(yesterday.getDate() - 1)
-      
-      if (date === today.toDateString()) return 'Today'
-      if (date === yesterday.toDateString()) return 'Yesterday'
-      
-      const dayName = dateObj.toLocaleDateString('en-GB', { weekday: 'long' })
-      const dateOnly = dateObj.toLocaleDateString('en-GB', { 
-        year: 'numeric', month: 'long', day: 'numeric'
-      })
-      return `${dateOnly} • ${dayName}`
-    })
-    
-    // Check if majority are expanded - if so, collapse all, otherwise expand all
-    const expandedCount = allGroupLabels.filter(label => expandedGroups.has(label)).length
-    const shouldExpandAll = expandedCount < allGroupLabels.length / 2
-    
-    if (shouldExpandAll) {
-      setExpandedGroups(new Set(allGroupLabels))
-    } else {
-      setExpandedGroups(new Set())
-    }
-  }, [noiseTrackingItems, expandedGroups])
+    setExpandedGroups(shouldExpandAll ? new Set(allGroupLabels) : new Set())
+    setShouldExpandAll(!shouldExpandAll)
+  }, [noiseTrackingItems, shouldExpandAll])
 
   const toggleViewMode = useCallback(() => {
     setViewMode(prev => prev === 'grouped' ? 'simple' : 'grouped')
@@ -103,7 +116,7 @@ const NoiseTrackingContent = () => {
       <Container>
         <ActionButtonsBar
           expandCollapseButton={{
-            isExpanded: expandedGroups.size > 0,
+            isExpanded: !shouldExpandAll,
             onToggle: toggleAllGroups,
             disabled: viewMode !== 'grouped' || noiseTrackingItems.length === 0,
           }}

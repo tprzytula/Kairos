@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React from 'react';
 import { useNoiseTrackingContext } from '../../providers/NoiseTrackingProvider';
 import { Container, ScrollableList, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, SimpleListContainer, SimpleListItem } from './index.styled';
 import EmptyState from '../EmptyState';
@@ -163,17 +163,7 @@ const NoiseTrackingList = ({
   setExpandedGroups
 }: NoiseTrackingListProps) => {
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
-  
-  // Get the first two date groups to expand by default
   const groupedItems = groupByDate(noiseTrackingItems);
-  
-  // Update expanded groups when data loads (only once)
-  useEffect(() => {
-    if (!isLoading && noiseTrackingItems.length > 0 && expandedGroups.size === 0) {
-      const defaultExpanded = groupedItems.slice(0, 2).map(({ date }) => getDateLabel(date));
-      setExpandedGroups(new Set(defaultExpanded));
-    }
-  }, [isLoading, noiseTrackingItems.length, expandedGroups.size, setExpandedGroups, groupedItems]);
 
   const toggleGroup = (date: string) => {
     const newExpanded = new Set(expandedGroups);
