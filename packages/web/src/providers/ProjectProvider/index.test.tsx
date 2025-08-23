@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen, waitFor, act } from '@testing-library/react'
 import { ProjectProvider, useProjectContext } from './ProjectProvider'
 import { retrieveUserProjects, createProject, joinProject, getProjectInviteInfo } from '../../api/projects'
+import { getUserPreferences, updateUserPreferences } from '../../api/userPreferences'
 
 const mockUseAuth = jest.fn()
 
@@ -16,10 +17,17 @@ jest.mock('../../api/projects', () => ({
   getProjectInviteInfo: jest.fn(),
 }))
 
+jest.mock('../../api/userPreferences', () => ({
+  getUserPreferences: jest.fn(),
+  updateUserPreferences: jest.fn(),
+}))
+
 const mockRetrieveUserProjects = retrieveUserProjects as jest.MockedFunction<typeof retrieveUserProjects>
 const mockCreateProject = createProject as jest.MockedFunction<typeof createProject>
 const mockJoinProject = joinProject as jest.MockedFunction<typeof joinProject>
 const mockGetProjectInviteInfo = getProjectInviteInfo as jest.MockedFunction<typeof getProjectInviteInfo>
+const mockGetUserPreferences = getUserPreferences as jest.MockedFunction<typeof getUserPreferences>
+const mockUpdateUserPreferences = updateUserPreferences as jest.MockedFunction<typeof updateUserPreferences>
 
 const TestComponent = () => {
   const context = useProjectContext()
@@ -43,7 +51,6 @@ const renderWithProvider = () => {
 describe('ProjectProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    localStorage.clear()
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       user: { 
@@ -76,6 +83,11 @@ describe('ProjectProvider', () => {
     ]
 
     mockRetrieveUserProjects.mockResolvedValue(mockProjects)
+    mockGetUserPreferences.mockResolvedValue({
+      userId: 'test-user-id',
+      lastUpdated: 1234567890
+      // No currentProjectId - should fall back to personal project
+    })
 
     renderWithProvider()
 
@@ -86,6 +98,11 @@ describe('ProjectProvider', () => {
     })
 
     expect(mockRetrieveUserProjects).toHaveBeenCalledTimes(1)
+    expect(mockGetUserPreferences).toHaveBeenCalledWith('test-access-token')
+    expect(mockUpdateUserPreferences).toHaveBeenCalledWith(
+      { currentProjectId: 'personal-project' },
+      'test-access-token'
+    )
   })
 
   it('should select personal project as default', async () => {
@@ -111,16 +128,30 @@ describe('ProjectProvider', () => {
     ]
 
     mockRetrieveUserProjects.mockResolvedValue(mockProjects)
+    mockGetUserPreferences.mockResolvedValue({
+      userId: 'test-user-id',
+      lastUpdated: 1234567890
+      // No currentProjectId - should fall back to personal project
+    })
 
     renderWithProvider()
 
     await waitFor(() => {
       expect(screen.getByTestId('current-project')).toHaveTextContent('Personal Project')
     })
+    
+    expect(mockUpdateUserPreferences).toHaveBeenCalledWith(
+      { currentProjectId: 'personal-project' },
+      'test-access-token'
+    )
   })
 
   it('should handle API errors gracefully', async () => {
     mockRetrieveUserProjects.mockRejectedValue(new Error('API Error'))
+    mockGetUserPreferences.mockResolvedValue({
+      userId: 'test-user-id',
+      lastUpdated: 1234567890
+    })
 
     renderWithProvider()
 
@@ -131,8 +162,7 @@ describe('ProjectProvider', () => {
     })
   })
 
-  it('should restore last selected project from localStorage', async () => {
-    localStorage.setItem('selected-project-id', 'shared-project')
+  it('should restore last selected project from user preferences API', async () => {
 
     const mockProjects = [
       {
@@ -156,12 +186,19 @@ describe('ProjectProvider', () => {
     ]
 
     mockRetrieveUserProjects.mockResolvedValue(mockProjects)
+    mockGetUserPreferences.mockResolvedValue({
+      userId: 'test-user-id',
+      currentProjectId: 'shared-project',
+      lastUpdated: 1234567890
+    })
 
     renderWithProvider()
 
     await waitFor(() => {
       expect(screen.getByTestId('current-project')).toHaveTextContent('Shared Project')
     })
+    
+    expect(mockGetUserPreferences).toHaveBeenCalledWith('test-access-token')
   })
 
   it('should not fetch projects when unauthenticated', () => {

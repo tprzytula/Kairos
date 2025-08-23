@@ -3,8 +3,7 @@ import { useAuth } from 'react-oidc-context'
 import { IProjectProviderProps } from './types'
 import { IProject, IProjectContext, ICreateProjectRequest, IJoinProjectRequest } from '../../types/project'
 import { retrieveUserProjects, createProject as createProjectAPI, joinProject as joinProjectAPI, getProjectInviteInfo } from '../../api/projects'
-
-const PROJECT_STORAGE_KEY = 'selected-project-id'
+import { getUserPreferences, updateUserPreferences } from '../../api/userPreferences'
 
 export const initialState: IProjectContext = {
   projects: [],
@@ -12,7 +11,7 @@ export const initialState: IProjectContext = {
   isLoading: false,
   createProject: async () => ({} as IProject),
   joinProject: async () => {},
-  switchProject: () => {},
+  switchProject: async () => {},
   fetchProjects: async () => {},
   getProjectInviteInfo: async () => ({} as any),
 }
@@ -34,26 +33,27 @@ export const ProjectProvider = ({ children }: IProjectProviderProps) => {
     
     try {
       setIsLoading(true)
-      const userProjects = await retrieveUserProjects(auth.user.access_token)
+      const [userProjects, userPreferences] = await Promise.all([
+        retrieveUserProjects(auth.user.access_token),
+        getUserPreferences(auth.user.access_token)
+      ])
       setProjects(userProjects)
 
-      const savedProjectId = localStorage.getItem(PROJECT_STORAGE_KEY)
-      
-      if (savedProjectId) {
-        const savedProject = userProjects.find(p => p.id === savedProjectId)
+      if (userPreferences.currentProjectId) {
+        const savedProject = userProjects.find((p: IProject) => p.id === userPreferences.currentProjectId)
         if (savedProject) {
           setCurrentProject(savedProject)
           return
         }
       }
 
-      const personalProject = userProjects.find(p => p.isPersonal)
+      const personalProject = userProjects.find((p: IProject) => p.isPersonal)
       if (personalProject) {
         setCurrentProject(personalProject)
-        localStorage.setItem(PROJECT_STORAGE_KEY, personalProject.id)
+        await updateUserPreferences({ currentProjectId: personalProject.id }, auth.user.access_token)
       } else if (userProjects.length > 0) {
         setCurrentProject(userProjects[0])
-        localStorage.setItem(PROJECT_STORAGE_KEY, userProjects[0].id)
+        await updateUserPreferences({ currentProjectId: userProjects[0].id }, auth.user.access_token)
       }
     } catch (error) {
       console.error('Failed to fetch projects:', error)
@@ -92,14 +92,17 @@ export const ProjectProvider = ({ children }: IProjectProviderProps) => {
     }
   }, [auth.user?.access_token, fetchProjects])
 
-  const switchProject = useCallback((projectId: string) => {
+  const switchProject = useCallback(async (projectId: string) => {
     const project = projects.find(p => p.id === projectId)
-    if (project) {
-
+    if (project && auth.user?.access_token) {
       setCurrentProject(project)
-      localStorage.setItem(PROJECT_STORAGE_KEY, projectId)
+      try {
+        await updateUserPreferences({ currentProjectId: projectId }, auth.user.access_token)
+      } catch (error) {
+        console.error('Failed to update user preferences:', error)
+      }
     }
-  }, [projects])
+  }, [projects, auth.user?.access_token])
 
   const getProjectInviteInfoHandler = useCallback(async (inviteCode: string) => {
     if (!auth.user?.access_token) {
@@ -120,7 +123,6 @@ export const ProjectProvider = ({ children }: IProjectProviderProps) => {
     } else {
       setProjects([])
       setCurrentProject(null)
-      localStorage.removeItem(PROJECT_STORAGE_KEY)
     }
   }, [auth.isAuthenticated, auth.user?.access_token, fetchProjects])
 

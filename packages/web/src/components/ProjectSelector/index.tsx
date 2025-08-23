@@ -8,7 +8,9 @@ export const ProjectSelector = memo(({ onProjectSelect }: IProjectSelectorProps)
 
   const handleProjectChange = useCallback((event: any) => {
     const projectId = event.target.value as string
-    switchProject(projectId)
+    switchProject(projectId).catch(error => {
+      console.error('Failed to switch project:', error)
+    })
     if (onProjectSelect) {
       onProjectSelect(projectId)
     }

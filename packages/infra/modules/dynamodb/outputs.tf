@@ -25,3 +25,7 @@ output "projects_arn" {
 output "project_members_arn" {
   value = aws_dynamodb_table.project_members.arn
 }
+
+output "user_preferences_arn" {
+  value = aws_dynamodb_table.user_preferences.arn
+}

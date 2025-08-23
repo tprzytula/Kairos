@@ -35,7 +35,9 @@ const UserMenu: React.FC = () => {
   }
 
   const handleProjectSwitch = (projectId: string) => {
-    switchProject(projectId)
+    switchProject(projectId).catch(error => {
+      console.error('Failed to switch project:', error)
+    })
     closeDropdown()
   }
 

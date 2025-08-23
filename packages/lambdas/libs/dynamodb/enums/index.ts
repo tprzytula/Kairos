@@ -6,6 +6,7 @@ export enum DynamoDBTable {
   MIGRATIONS = "Migrations",
   PROJECTS = "Projects",
   PROJECT_MEMBERS = "ProjectMembers",
+  USER_PREFERENCES = "UserPreferences",
 }
 
 export enum DynamoDBIndex {

@@ -43,7 +43,7 @@ export interface IProjectContext {
   isLoading: boolean
   createProject: (request: ICreateProjectRequest) => Promise<IProject>
   joinProject: (request: IJoinProjectRequest) => Promise<void>
-  switchProject: (projectId: string) => void
+  switchProject: (projectId: string) => Promise<void>
   fetchProjects: () => Promise<void>
   getProjectInviteInfo: (inviteCode: string) => Promise<IProjectInviteInfo>
 }
