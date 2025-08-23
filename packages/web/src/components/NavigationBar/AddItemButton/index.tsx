@@ -7,6 +7,7 @@ import { IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { addNoiseTrackingItem } from '../../../api/noiseTracking';
 import { useNoiseTrackingContext } from '../../../providers/NoiseTrackingProvider';
+import { useProjectContext } from '../../../providers/ProjectProvider';
 import { useThrottle } from '../../../hooks/useThrottle';
 
 const PrimaryActionButton = styled(IconButton)(({ theme }) => ({
@@ -89,6 +90,7 @@ const RouteToAddItemMapping: IRouteToAddItemMapping = {
 
 const AddItemButton = () => {
     const { refetchNoiseTrackingItems } = useNoiseTrackingContext();
+    const { currentProject } = useProjectContext();
     const location = useLocation();
     const navigate = useNavigate();
     const addItemRoute = useMemo<Route | undefined>(() => {
@@ -108,13 +110,13 @@ const AddItemButton = () => {
 
         if (location.pathname === Route.NoiseTracking) {
             try {
-                await addNoiseTrackingItem();
+                await addNoiseTrackingItem(currentProject?.id);
                 refetchNoiseTrackingItems();
             } catch (error) {
                 console.error('Failed to add noise tracking item:', error);
             }
         }
-    }, [navigate, addItemRoute, location.pathname, refetchNoiseTrackingItems]);
+    }, [navigate, addItemRoute, location.pathname, refetchNoiseTrackingItems, currentProject?.id]);
 
     const handleClick = useThrottle(onClick, 1000);
 
