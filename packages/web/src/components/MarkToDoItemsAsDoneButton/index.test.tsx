@@ -2,15 +2,38 @@ import { render, screen, act } from "@testing-library/react"
 import MarkToDoItemsAsDoneButton from "."
 import * as AppState from '../../providers/AppStateProvider'
 import * as ToDoListProvider from '../../providers/ToDoListProvider'
+import * as ProjectProvider from '../../providers/ProjectProvider'
 import * as ToDoListAPI from '../../api/toDoList'
 import { showAlert } from "../../utils/alert"
 
 jest.mock('../../providers/AppStateProvider')
 jest.mock('../../providers/ToDoListProvider')
+jest.mock('../../providers/ProjectProvider')
 jest.mock('../../api/toDoList')
 jest.mock('../../utils/alert')
 
 describe('Given the MarkToDoItemsAsDoneButton component', () => {
+    beforeEach(() => {
+        jest.spyOn(ProjectProvider, 'useProjectContext').mockReturnValue({
+            currentProject: { 
+                id: 'test-project-id', 
+                name: 'Test Project',
+                ownerId: 'test-owner-id',
+                isPersonal: false,
+                maxMembers: 10,
+                inviteCode: 'test-invite-code',
+                createdAt: '2023-01-01T00:00:00Z'
+            },
+            projects: [],
+            createProject: jest.fn(),
+            joinProject: jest.fn(),
+            switchProject: jest.fn(),
+            fetchProjects: jest.fn(),
+            getProjectInviteInfo: jest.fn(),
+            isLoading: false,
+        })
+    })
+
     describe('When the to-do list is empty', () => {
         it('should show empty list status', () => {
             mockUseAppState({ selectedTodoItems: new Set() })
@@ -83,7 +106,7 @@ describe('Given the MarkToDoItemsAsDoneButton component', () => {
                     screen.getByText('Mark To Do Items As Done').click()
                 })
 
-                expect(ToDoListAPI.updateToDoItems).toHaveBeenCalledWith(ids.map(id => ({ id, isDone: true })))
+                expect(ToDoListAPI.updateToDoItems).toHaveBeenCalledWith(ids.map(id => ({ id, isDone: true })), 'test-project-id')
             })
 
             describe('And the API call fails', () => {

@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useToDoListContext } from '../../providers/ToDoListProvider';
+import { useProjectContext } from '../../providers/ProjectProvider';
 import ToDoItem from '../ToDoItem';
 import ToDoItemPlaceholder from '../ToDoItemPlaceholder';
 import { Container, EmptyListMessage } from './index.styled';
@@ -28,6 +29,7 @@ const EmptyListComponent = () => (
 export const ToDoList = () => {
   const { dispatch } = useAppState();
   const { toDoList, isLoading, removeFromToDoList } = useToDoListContext();
+  const { currentProject } = useProjectContext();
   const navigate = useNavigate();
   const visibleToDoItems = useMemo(() => toDoList.filter(({ isDone }) => !isDone), [toDoList]);
 
@@ -40,7 +42,7 @@ export const ToDoList = () => {
 
   const markToDoItemAsDone = useCallback(async (id: string) => {
     try {
-      await updateToDoItems([{ id, isDone: true }]);
+      await updateToDoItems([{ id, isDone: true }], currentProject!.id);
       clearSelectedTodoItems(id)
       removeFromToDoList(id)
     } catch (error) {
@@ -50,7 +52,7 @@ export const ToDoList = () => {
         severity: "error",
       }, dispatch)
     }
-  }, [dispatch]);
+  }, [currentProject, dispatch, clearSelectedTodoItems, removeFromToDoList]);
 
   const handleEdit = useCallback((id: string) => {
     navigate(Route.EditToDoItem.replace(':id', id))

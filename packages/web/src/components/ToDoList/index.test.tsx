@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import { BrowserRouter } from 'react-router'
 import ToDoList from "."
 import * as ToDoListProvider from '../../providers/ToDoListProvider'
+import * as ProjectProvider from '../../providers/ProjectProvider'
 import * as ReactRouter from 'react-router'
 import { IState } from "../../providers/ToDoListProvider/types"
 import { ThemeProvider, createTheme } from '@mui/material/styles'
@@ -12,11 +13,31 @@ jest.mock('react-router', () => ({
   useNavigate: jest.fn(),
 }))
 
+jest.mock('../../providers/ProjectProvider')
+
 describe('Given the ToDoList component', () => {
   const mockNavigate = jest.fn()
 
   beforeEach(() => {
     jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate)
+    jest.spyOn(ProjectProvider, 'useProjectContext').mockReturnValue({
+      currentProject: { 
+        id: 'test-project-id', 
+        name: 'Test Project',
+        ownerId: 'test-owner-id',
+        isPersonal: false,
+        maxMembers: 10,
+        inviteCode: 'test-invite-code',
+        createdAt: '2023-01-01T00:00:00Z'
+      },
+      projects: [],
+      createProject: jest.fn(),
+      joinProject: jest.fn(),
+      switchProject: jest.fn(),
+      fetchProjects: jest.fn(),
+      getProjectInviteInfo: jest.fn(),
+      isLoading: false,
+    })
     mockNavigate.mockClear()
   })
   it('should render only the not completed items', () => {

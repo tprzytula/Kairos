@@ -3,12 +3,14 @@ import { useCallback, useMemo } from "react";
 import { showAlert } from "../../utils/alert";
 import { ActionName } from "../../providers/AppStateProvider/enums";
 import { useToDoListContext } from "../../providers/ToDoListProvider";
+import { useProjectContext } from "../../providers/ProjectProvider";
 import { updateToDoItems } from "../../api/toDoList";
 import { DoneButton, DoneButtonContainer, StatusText } from "./index.styled";
 
 export const MarkToDoItemsAsDoneButton = () => {
   const { state: { selectedTodoItems }, dispatch } = useAppState();
-  const { toDoList, refetchToDoList } = useToDoListContext()
+  const { toDoList, refetchToDoList } = useToDoListContext();
+  const { currentProject } = useProjectContext();
 
   const statusText = useMemo(() => {
     const totalItems = toDoList.length;
@@ -34,7 +36,7 @@ export const MarkToDoItemsAsDoneButton = () => {
 
   const markToDoItemsAsDone = useCallback(async () => {
     try {
-      await updateToDoItems(Array.from(selectedTodoItems).map(id => ({ id, isDone: true })));
+      await updateToDoItems(Array.from(selectedTodoItems).map(id => ({ id, isDone: true })), currentProject!.id);
       clearSelectedTodoItems(selectedTodoItems)
       refetchToDoList()
     } catch (error) {
@@ -44,7 +46,7 @@ export const MarkToDoItemsAsDoneButton = () => {
         severity: "error",
       }, dispatch)
     }
-  }, [selectedTodoItems, dispatch, refetchToDoList]);
+  }, [selectedTodoItems, currentProject, dispatch, refetchToDoList, clearSelectedTodoItems]);
 
   return (
     <DoneButtonContainer>

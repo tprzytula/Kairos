@@ -58,9 +58,14 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: "#/components/schemas/todoItem"
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/todoItemUpdate"
+              required:
+                - items
         required: true
       x-amazon-apigateway-request-validator: Validate body
       x-amazon-apigateway-integration:
@@ -250,6 +255,17 @@ components:
           type: number
         isDone:
           type: boolean
+    todoItemUpdate:
+      title: Todo Item Update
+      type: object
+      properties:
+        id:
+          type: string
+        isDone:
+          type: boolean
+      required:
+        - id
+        - isDone
   securitySchemes:
     CognitoAuthorizer:
       type: apiKey
