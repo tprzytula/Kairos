@@ -1,0 +1,191 @@
+# Kairos Project Cursor Rules
+
+## Project Structure & Architecture
+
+This is a full-stack application with:
+- **Web Frontend**: React with TypeScript, styled-components
+- **Backend**: AWS Lambda functions with TypeScript
+- **Infrastructure**: Terraform (AWS)
+- **API Contracts**: OpenAPI 3.0 specifications
+
+## React Component Structure (MANDATORY)
+
+### Component Organization
+- Every React component must be in its own directory
+- Directory name = Component name (PascalCase)
+- Required files in each component directory:
+  - `index.tsx` - The React component
+  - `index.test.tsx` - Unit tests (BDD style)
+  - `index.styled.tsx` - Styled components
+  - `types.ts` - TypeScript interfaces/types
+
+### Example Structure:
+```
+components/
+  UserProfile/
+    index.tsx
+    index.test.tsx
+    index.styled.tsx
+    types.ts
+```
+
+## Infrastructure & Deployment Rules (CRITICAL)
+
+### Terraform
+- **NEVER EVER run `terraform plan` when making infrastructure changes**
+- GitHub Actions handle all infrastructure provisioning automatically
+- Infrastructure changes are deployed when code is pushed to master
+- Only modify `.tf` files, never run terraform commands locally
+
+### Git Workflow
+- **NEVER EVER push code directly to master without explicit approval**
+- Create commits for each completed change with descriptive messages
+- Use conventional commit format: `feat:`, `fix:`, `refactor:`, etc.
+- Always request approval before merging to master
+
+## Testing Standards (MANDATORY)
+
+### Unit Testing Approach
+- Follow BDD (Behavior-Driven Development) style in all unit tests
+- Structure tests with `describe`, `it`, `given`, `when`, `then` patterns
+- Write tests IMMEDIATELY when making web changes
+- Run tests after each change - do not accumulate failing tests
+- Aim for high test coverage, especially for critical business logic
+
+### Test Examples:
+```typescript
+describe('UserProfile component', () => {
+  it('should display user name when user data is provided', () => {
+    // Given
+    const userData = { name: 'John Doe', email: 'john@example.com' };
+    
+    // When
+    render(<UserProfile user={userData} />);
+    
+    // Then
+    expect(screen.getByText('John Doe')).toBeInTheDocument();
+  });
+});
+```
+
+## TypeScript Standards (CRITICAL)
+
+### Type Safety
+- **NEVER EVER use `as` type assertions in source code**
+- Type assertions (`as`) are completely forbidden in logic code
+- If using `as` in unit tests, prefer type guards or proper typing
+- If types don't satisfy requirements, fix the type definitions, don't bypass with `as`
+- Use strict TypeScript configuration
+- Define explicit return types for all functions
+- Use `unknown` instead of `any`
+
+### Type Organization
+- Keep types close to their usage
+- Use `types.ts` files for component-specific types
+- Use shared types from `packages/lambdas/libs/types/`
+- Export types from index files for easy importing
+
+## API Development (MANDATORY)
+
+### OpenAPI Contract First
+- **ALWAYS follow the API contracts in the OpenAPI documents** (`packages/infra/modules/api_gateway/openapi/`)
+- When writing Lambda functions, strictly adhere to request/response schemas
+- When writing web API clients, match the exact contract specifications
+- **If changes are needed to API behavior, update the OpenAPI contract FIRST**
+- Validate request/response payloads against schemas
+
+### API Standards
+- Use consistent error response formats
+- Include proper HTTP status codes
+- Implement request validation using OpenAPI schemas
+- Follow RESTful principles
+- Include `X-Project-ID` header for multi-tenant operations
+
+## Code Quality Standards
+
+### General Principles
+- Write self-documenting code with clear variable/function names
+- Use descriptive commit messages following conventional commits
+- Implement proper error handling and logging
+- Follow single responsibility principle
+- Keep functions small and focused
+
+### Performance
+- Implement proper loading states in React components
+- Use React.memo() for expensive components
+- Implement proper error boundaries
+- Optimize Lambda cold starts by minimizing dependencies
+
+### Security
+- Never commit sensitive data (API keys, secrets)
+- Validate all inputs on both client and server side
+- Use proper authentication/authorization patterns
+- Follow AWS security best practices
+
+## Lambda Development
+
+### Structure
+- Each Lambda in its own directory under `packages/lambdas/sources/`
+- Include comprehensive unit tests for all Lambda handlers
+- Use shared libraries from `packages/lambdas/libs/`
+- Follow consistent error handling patterns
+
+### Database Operations
+- Use the DynamoDB client from shared libs
+- Implement proper error handling for database operations
+- Follow data isolation patterns using Project ID
+- Use transactions for multi-item operations
+
+## Web Development
+
+### React Best Practices
+- Use functional components with hooks
+- Implement proper loading/error states
+- Use custom hooks for shared logic
+- Follow accessibility guidelines
+- Implement responsive design patterns
+
+### State Management
+- Use appropriate state management for component complexity
+- Prefer local state when possible
+- Use context for shared state across components
+- Implement proper cleanup in useEffect hooks
+
+## Development Workflow
+
+### Before Making Changes
+1. Understand the existing patterns in the codebase
+2. Check relevant OpenAPI contracts
+3. Plan the change with tests in mind
+4. Create focused, single-responsibility changes
+
+### While Developing
+1. Write tests immediately after implementing each feature
+2. Run tests frequently to catch issues early
+3. Follow existing code patterns and conventions
+4. Update types as needed (never use `as`)
+
+### Before Committing
+1. Ensure all tests pass
+2. Verify code follows project standards
+3. Check that OpenAPI contracts are updated if needed
+4. Create descriptive commit message
+5. Request approval before pushing to master
+
+## File Naming Conventions
+
+- React components: `index.tsx` in PascalCase directories
+- Lambda functions: snake_case directory names
+- Test files: `*.test.tsx` or `*.test.ts`
+- Type files: `types.ts`
+- Styled components: `index.styled.tsx`
+
+## Error Handling
+
+- Always handle potential errors gracefully
+- Provide meaningful error messages to users
+- Log errors appropriately for debugging
+- Use proper HTTP status codes in API responses
+- Implement retry logic where appropriate
+
+Remember: These rules ensure code quality, maintainability, and team consistency. Following them prevents technical debt and reduces debugging time.
