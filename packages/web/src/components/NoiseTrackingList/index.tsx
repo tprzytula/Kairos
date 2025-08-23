@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNoiseTrackingContext } from '../../providers/NoiseTrackingProvider';
 import { Container, ScrollableList, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, SimpleListContainer, SimpleListItem } from './index.styled';
 import EmptyState from '../EmptyState';
@@ -168,6 +168,9 @@ const NoiseTrackingList = ({
 }: NoiseTrackingListProps) => {
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
   
+  // Track previous areAllExpanded to detect button clicks
+  const prevAreAllExpandedRef = useRef(areAllExpanded);
+  
   // Get the first two date groups to expand by default
   const groupedItems = groupByDate(noiseTrackingItems);
   
@@ -179,17 +182,19 @@ const NoiseTrackingList = ({
     }
   }, [isLoading, noiseTrackingItems.length, expandedGroups.size, setExpandedGroups, groupedItems]);
 
-  // Apply expand/collapse all when areAllExpanded changes from parent
+  // Apply expand/collapse all ONLY when areAllExpanded actually changes (button clicked)
   useEffect(() => {
-    if (groupedItems.length > 0) {
+    if (groupedItems.length > 0 && prevAreAllExpandedRef.current !== areAllExpanded) {
       const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date));
       
-      // Always apply the button state, regardless of current state
       if (areAllExpanded) {
         setExpandedGroups(new Set(allGroupLabels));
       } else {
         setExpandedGroups(new Set());
       }
+      
+      // Update the ref to track this change
+      prevAreAllExpandedRef.current = areAllExpanded;
     }
   }, [areAllExpanded, groupedItems, setExpandedGroups]);
 
