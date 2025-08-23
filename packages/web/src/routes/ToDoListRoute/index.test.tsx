@@ -117,16 +117,49 @@ describe('Given the ToDoListRoute component', () => {
     expect(headerContainer).toBeInTheDocument()
   })
 
-  it('should render the MarkToDoItemsAsDoneButton component', async () => {
+  it('should render the ActionButtonsBar with correct status text when no items selected', async () => {
     await act(async () => {
       renderComponent()
     })
 
-    // The MarkToDoItemsAsDoneButton should be present (we can't easily test its text 
-    // since it's dependent on state, but we can verify the component structure)
+    // The ActionButtonsBar should show status text when no items are selected
     await waitFor(() => {
-      const container = screen.getByText('To-Do List').closest('div')
-      expect(container).toBeInTheDocument()
+      expect(screen.getByText('Your to-do list is empty')).toBeInTheDocument()
+    })
+  })
+
+  it('should render the ActionButtonsBar with enabled button when items are selected', async () => {
+    // Mock state with selected items
+    jest.mocked(useAppState).mockReturnValue({
+      state: {
+        ...initialState,
+        selectedTodoItems: new Set(['1', '2'])
+      },
+      dispatch: jest.fn(),
+    })
+
+    const mockTodoItems = [
+      { id: '1', name: 'Task 1', isDone: false, description: '', dueDate: undefined },
+      { id: '2', name: 'Task 2', isDone: false, description: '', dueDate: undefined },
+    ]
+
+    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
+
+    await act(async () => {
+      render(
+        <ThemeProvider theme={theme}>
+          <AppStateProvider>
+            <BrowserRouter>
+              <ToDoListRoute />
+            </BrowserRouter>
+          </AppStateProvider>
+        </ThemeProvider>
+      )
+    })
+
+    // The ActionButtonsBar should show the action button when items are selected
+    await waitFor(() => {
+      expect(screen.getByText('Mark To Do Items As Done')).toBeInTheDocument()
     })
   })
 
