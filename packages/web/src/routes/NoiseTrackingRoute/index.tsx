@@ -15,7 +15,6 @@ const NoiseTrackingContent = () => {
   // View mode state: 'grouped' or 'simple'
   const [viewMode, setViewMode] = useState<'grouped' | 'simple'>('grouped')
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
-  const [areAllExpanded, setAreAllExpanded] = useState<boolean>(true) // Start as true since first 2 groups expand by default
   
   const calculateNoiseCounts = () => {
     const now = new Date()
@@ -44,8 +43,41 @@ const NoiseTrackingContent = () => {
   }
   
   const toggleAllGroups = useCallback(() => {
-    setAreAllExpanded(prev => !prev)
-  }, [])
+    // Look at current state of all groups and flip them all
+    if (noiseTrackingItems.length === 0) return
+    
+    const groupedItems = noiseTrackingItems.reduce((groups, item) => {
+      const date = new Date(item.timestamp).toDateString()
+      if (!groups.has(date)) groups.add(date)
+      return groups
+    }, new Set<string>())
+    
+    const allGroupLabels = Array.from(groupedItems).map(date => {
+      const dateObj = new Date(date)
+      const today = new Date()
+      const yesterday = new Date(today)
+      yesterday.setDate(yesterday.getDate() - 1)
+      
+      if (date === today.toDateString()) return 'Today'
+      if (date === yesterday.toDateString()) return 'Yesterday'
+      
+      const dayName = dateObj.toLocaleDateString('en-GB', { weekday: 'long' })
+      const dateOnly = dateObj.toLocaleDateString('en-GB', { 
+        year: 'numeric', month: 'long', day: 'numeric'
+      })
+      return `${dateOnly} • ${dayName}`
+    })
+    
+    // Check if majority are expanded - if so, collapse all, otherwise expand all
+    const expandedCount = allGroupLabels.filter(label => expandedGroups.has(label)).length
+    const shouldExpandAll = expandedCount < allGroupLabels.length / 2
+    
+    if (shouldExpandAll) {
+      setExpandedGroups(new Set(allGroupLabels))
+    } else {
+      setExpandedGroups(new Set())
+    }
+  }, [noiseTrackingItems, expandedGroups])
 
   const toggleViewMode = useCallback(() => {
     setViewMode(prev => prev === 'grouped' ? 'simple' : 'grouped')
@@ -71,7 +103,7 @@ const NoiseTrackingContent = () => {
       <Container>
         <ActionButtonsBar
           expandCollapseButton={{
-            isExpanded: areAllExpanded,
+            isExpanded: expandedGroups.size > 0,
             onToggle: toggleAllGroups,
             disabled: viewMode !== 'grouped' || noiseTrackingItems.length === 0,
           }}
@@ -85,8 +117,6 @@ const NoiseTrackingContent = () => {
             viewMode={viewMode}
             expandedGroups={expandedGroups}
             setExpandedGroups={setExpandedGroups}
-            areAllExpanded={areAllExpanded}
-            setAreAllExpanded={setAreAllExpanded}
           />
         </ScrollableContainer>
       </Container>

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useNoiseTrackingContext } from '../../providers/NoiseTrackingProvider';
 import { Container, ScrollableList, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, SimpleListContainer, SimpleListItem } from './index.styled';
 import EmptyState from '../EmptyState';
@@ -120,8 +120,6 @@ interface NoiseTrackingListProps {
   viewMode: ViewMode
   expandedGroups: Set<string>
   setExpandedGroups: (groups: Set<string>) => void
-  areAllExpanded: boolean
-  setAreAllExpanded: (expanded: boolean) => void
 }
 
 const PlaceholderComponent = () => (
@@ -162,14 +160,9 @@ const formatTimestampForSimpleView = (timestamp: number) => {
 const NoiseTrackingList = ({ 
   viewMode, 
   expandedGroups, 
-  setExpandedGroups,
-  areAllExpanded,
-  setAreAllExpanded 
+  setExpandedGroups
 }: NoiseTrackingListProps) => {
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
-  
-  // Track previous areAllExpanded to detect button clicks
-  const prevAreAllExpandedRef = useRef<boolean | null>(null);
   
   // Get the first two date groups to expand by default
   const groupedItems = groupByDate(noiseTrackingItems);
@@ -181,22 +174,6 @@ const NoiseTrackingList = ({
       setExpandedGroups(new Set(defaultExpanded));
     }
   }, [isLoading, noiseTrackingItems.length, expandedGroups.size, setExpandedGroups, groupedItems]);
-
-  // Apply expand/collapse all when areAllExpanded changes (button clicked) or on initial render
-  useEffect(() => {
-    if (groupedItems.length > 0 && prevAreAllExpandedRef.current !== areAllExpanded) {
-      const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date));
-      
-      if (areAllExpanded) {
-        setExpandedGroups(new Set(allGroupLabels));
-      } else {
-        setExpandedGroups(new Set());
-      }
-    }
-    
-    // Always update the ref to track the current state
-    prevAreAllExpandedRef.current = areAllExpanded;
-  }, [areAllExpanded, groupedItems, setExpandedGroups]);
 
   const toggleGroup = (date: string) => {
     const newExpanded = new Set(expandedGroups);
