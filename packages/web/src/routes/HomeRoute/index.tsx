@@ -84,7 +84,7 @@ import {
   DueDateText
 } from './index.styled'
 
-const HomeContent = () => {
+const HomeDataContent = () => {
   const { groceryList, isLoading: isGroceryLoading } = useGroceryListContext()
   const { toDoList, isLoading: isToDoLoading } = useToDoListContext()
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
@@ -140,9 +140,6 @@ const HomeContent = () => {
   const totalNoiseItems = noiseTrackingItems.length
   
   return (
-    <StandardLayout>
-      <AppInfoCard />
-      <DashboardHeader />
       <Container>
         <SectionCard>
           <SectionContent>
@@ -281,22 +278,29 @@ const HomeContent = () => {
           </SectionCard>
         </FullWidthSection>
       </Container>
+  )
+}
+
+const HomeContent = () => {
+  const { currentProject } = useProjectContext()
+  
+  return (
+    <StandardLayout>
+      <AppInfoCard />
+      <DashboardHeader />
+      <GroceryListProvider key={`grocery-${currentProject?.id || 'no-project'}`}>
+        <ToDoListProvider key={`todo-${currentProject?.id || 'no-project'}`}>
+          <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>
+            <HomeDataContent />
+          </NoiseTrackingProvider>
+        </ToDoListProvider>
+      </GroceryListProvider>
     </StandardLayout>
   )
 }
 
 export const HomeRoute = () => {
-  const { currentProject } = useProjectContext()
-  
-  return (
-    <GroceryListProvider key={`grocery-${currentProject?.id || 'no-project'}`}>
-      <ToDoListProvider key={`todo-${currentProject?.id || 'no-project'}`}>
-        <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>
-          <HomeContent />
-        </NoiseTrackingProvider>
-      </ToDoListProvider>
-    </GroceryListProvider>
-  )
+  return <HomeContent />
 }
 
 export default HomeRoute 
