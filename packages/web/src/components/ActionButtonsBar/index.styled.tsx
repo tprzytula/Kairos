@@ -3,15 +3,15 @@ import { Button } from '@mui/material'
 
 export const Container = styled('div')({
   display: 'flex',
-  justifyContent: 'space-between',
   alignItems: 'center',
   minHeight: '40px',
+  gap: '8px',
 })
 
 export const LeftSection = styled('div')({
   display: 'flex',
   alignItems: 'center',
-  minWidth: '48px',
+  flexShrink: 0,
 })
 
 export const CenterSection = styled('div')({
@@ -19,15 +19,13 @@ export const CenterSection = styled('div')({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '100%',
   minHeight: '2em',
 })
 
 export const RightSection = styled('div')({
   display: 'flex',
   alignItems: 'center',
-  minWidth: '48px',
-  justifyContent: 'flex-end',
+  flexShrink: 0,
 })
 
 export const ActionButton = styled(Button)({
