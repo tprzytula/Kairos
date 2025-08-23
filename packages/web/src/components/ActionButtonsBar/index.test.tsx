@@ -197,19 +197,21 @@ describe('ActionButtonsBar component', () => {
   })
 
   describe('when no props are provided', () => {
-    it('should render empty sections', () => {
+    it('should render only the container with no sections', () => {
       const props: IActionButtonsBarProps = {}
 
       const { container } = renderWithTheme(props)
 
-      expect(container.firstChild).toBeInTheDocument()
+      const containerElement = container.firstChild as HTMLElement
+      expect(containerElement).toBeInTheDocument()
+      expect(containerElement.children).toHaveLength(0)
       expect(screen.queryByLabelText(/expand|collapse/i)).not.toBeInTheDocument()
       expect(screen.queryByRole('button')).not.toBeInTheDocument()
     })
   })
 
   describe('when only some sections are provided', () => {
-    it('should render only the provided sections', () => {
+    it('should render only the provided sections and exclude others', () => {
       const props: IActionButtonsBarProps = {
         actionButton: {
           isEnabled: false,
@@ -219,11 +221,40 @@ describe('ActionButtonsBar component', () => {
         },
       }
 
-      renderWithTheme(props)
+      const { container } = renderWithTheme(props)
 
+      // Should render only the center section
+      const containerElement = container.firstChild as HTMLElement
+      expect(containerElement).toBeInTheDocument()
+      expect(containerElement.children).toHaveLength(1)
+      
       expect(screen.getByText('No items selected')).toBeInTheDocument()
       expect(screen.queryByLabelText(/expand|collapse/i)).not.toBeInTheDocument()
       expect(screen.queryByLabelText('Toggle view mode')).not.toBeInTheDocument()
+    })
+
+    it('should render multiple sections when multiple props are provided', () => {
+      const props: IActionButtonsBarProps = {
+        expandCollapseButton: {
+          isExpanded: false,
+          onToggle: jest.fn(),
+        },
+        viewToggleButton: {
+          children: <span>Toggle</span>,
+          onClick: jest.fn(),
+        },
+      }
+
+      const { container } = renderWithTheme(props)
+
+      // Should render left and right sections but not center
+      const containerElement = container.firstChild as HTMLElement
+      expect(containerElement).toBeInTheDocument()
+      expect(containerElement.children).toHaveLength(2)
+      
+      expect(screen.getByLabelText('Expand all')).toBeInTheDocument()
+      expect(screen.getByLabelText('Toggle view mode')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /action/i })).not.toBeInTheDocument()
     })
   })
 })

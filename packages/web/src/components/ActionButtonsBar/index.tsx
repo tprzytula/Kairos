@@ -11,8 +11,8 @@ export const ActionButtonsBar = ({
 }: IActionButtonsBarProps) => {
   return (
     <Container>
-      <LeftSection>
-        {expandCollapseButton && (
+      {expandCollapseButton && (
+        <LeftSection>
           <Tooltip title={expandCollapseButton.isExpanded ? 'Collapse all' : 'Expand all'}>
             <IconButton
               aria-label={expandCollapseButton.isExpanded ? 'Collapse all' : 'Expand all'}
@@ -23,12 +23,12 @@ export const ActionButtonsBar = ({
               {expandCollapseButton.isExpanded ? <UnfoldLessIcon /> : <UnfoldMoreIcon />}
             </IconButton>
           </Tooltip>
-        )}
-      </LeftSection>
+        </LeftSection>
+      )}
       
-      <CenterSection>
-        {actionButton && (
-          actionButton.isEnabled ? (
+      {actionButton && (
+        <CenterSection>
+          {actionButton.isEnabled ? (
             <ActionButton
               variant="contained"
               color="primary"
@@ -42,12 +42,12 @@ export const ActionButtonsBar = ({
             <StatusText>
               {actionButton.statusText}
             </StatusText>
-          )
-        )}
-      </CenterSection>
+          )}
+        </CenterSection>
+      )}
       
-      <RightSection>
-        {viewToggleButton && (
+      {viewToggleButton && (
+        <RightSection>
           <IconButton
             onClick={viewToggleButton.onClick}
             size="large"
@@ -56,8 +56,8 @@ export const ActionButtonsBar = ({
           >
             {viewToggleButton.children}
           </IconButton>
-        )}
-      </RightSection>
+        </RightSection>
+      )}
     </Container>
   )
 }
