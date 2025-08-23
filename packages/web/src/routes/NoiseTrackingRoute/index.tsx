@@ -61,8 +61,6 @@ const NoiseTrackingContent = () => {
     { value: last30DaysCount, label: 'Last 30 days' }
   ]
 
-  const hasGroupedItems = viewMode === 'grouped' && noiseTrackingItems.length > 0
-  
   return (
     <StandardLayout>
       <ModernPageHeader
@@ -72,9 +70,10 @@ const NoiseTrackingContent = () => {
       />
       <Container>
         <ActionButtonsBar
-          expandCollapseButton={hasGroupedItems ? {
+          expandCollapseButton={viewMode === 'grouped' ? {
             isExpanded: areAllExpanded,
             onToggle: toggleAllGroups,
+            disabled: noiseTrackingItems.length === 0,
           } : undefined}
           viewToggleButton={{
             children: viewMode === 'grouped' ? <ViewModuleIcon /> : <ViewListIcon />,
