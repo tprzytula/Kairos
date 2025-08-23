@@ -44,7 +44,7 @@ export const ActionButton = styled(Button)({
   fontSize: '0.75em',
   padding: '0.5em 1em',
   boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
-  textTransform: 'none',
+  textTransform: 'capitalize',
   letterSpacing: '0.01em',
   boxSizing: 'border-box',
 })
@@ -70,4 +70,5 @@ export const StatusText = styled('div')({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
+  textTransform: 'capitalize',
 })
