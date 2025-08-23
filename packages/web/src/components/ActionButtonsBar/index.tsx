@@ -26,7 +26,7 @@ export const ActionButtonsBar = ({
         </LeftSection>
       )}
       
-      {actionButton && (
+      {actionButton ? (
         <CenterSection>
           {actionButton.isEnabled ? (
             <ActionButton
@@ -44,6 +44,9 @@ export const ActionButtonsBar = ({
             </StatusText>
           )}
         </CenterSection>
+      ) : (
+        // Spacer to push right section to the right when no center section
+        viewToggleButton && <div style={{ flex: 1 }} />
       )}
       
       {viewToggleButton && (

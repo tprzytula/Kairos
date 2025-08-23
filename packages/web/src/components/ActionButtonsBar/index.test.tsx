@@ -247,10 +247,10 @@ describe('ActionButtonsBar component', () => {
 
       const { container } = renderWithTheme(props)
 
-      // Should render left and right sections but not center
+      // Should render left and right sections with spacer but not center
       const containerElement = container.firstChild as HTMLElement
       expect(containerElement).toBeInTheDocument()
-      expect(containerElement.children).toHaveLength(2)
+      expect(containerElement.children).toHaveLength(3) // left + spacer + right
       
       expect(screen.getByLabelText('Expand all')).toBeInTheDocument()
       expect(screen.getByLabelText('Toggle view mode')).toBeInTheDocument()
