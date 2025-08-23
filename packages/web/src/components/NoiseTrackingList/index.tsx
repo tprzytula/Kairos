@@ -1,15 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNoiseTrackingContext } from '../../providers/NoiseTrackingProvider';
-import { Container, ScrollableList, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, ViewToggleContainer, ViewToggleButton, SimpleListContainer, SimpleListItem } from './index.styled';
+import { Container, ScrollableList, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, SimpleListContainer, SimpleListItem } from './index.styled';
 import EmptyState from '../EmptyState';
 import NoiseTrackingItem from '../NoiseTrackingItem';
 import NoiseTrackingItemPlaceholder from '../NoiseTrackingItemPlaceholder';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ViewListIcon from '@mui/icons-material/ViewList';
-import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
 const groupByDate = (items: { timestamp: number }[]) => {
   // Filter items to only include those between 7am and midnight (7-23) 
@@ -118,6 +114,16 @@ const getMiniTimelineData = (hourlyDistribution: number[], maxCount: number) => 
 
 
 
+type ViewMode = 'grouped' | 'simple'
+
+interface NoiseTrackingListProps {
+  viewMode: ViewMode
+  expandedGroups: Set<string>
+  setExpandedGroups: (groups: Set<string>) => void
+  areAllExpanded: boolean
+  setAreAllExpanded: (expanded: boolean) => void
+}
+
 const PlaceholderComponent = () => (
   <Container>
     <ScrollableList data-testid="noise-tracking-placeholders">
@@ -153,16 +159,17 @@ const formatTimestampForSimpleView = (timestamp: number) => {
   }
 };
 
-const NoiseTrackingList = () => {
+const NoiseTrackingList = ({ 
+  viewMode, 
+  expandedGroups, 
+  setExpandedGroups,
+  areAllExpanded,
+  setAreAllExpanded 
+}: NoiseTrackingListProps) => {
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
-  
-  // View mode state: 'grouped' or 'simple'
-  const [viewMode, setViewMode] = useState<'grouped' | 'simple'>('grouped');
   
   // Get the first two date groups to expand by default
   const groupedItems = groupByDate(noiseTrackingItems);
-  
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   
   // Update expanded groups when data loads (only once)
   useEffect(() => {
@@ -170,7 +177,30 @@ const NoiseTrackingList = () => {
       const defaultExpanded = groupedItems.slice(0, 2).map(({ date }) => getDateLabel(date));
       setExpandedGroups(new Set(defaultExpanded));
     }
-  }, [isLoading, noiseTrackingItems.length]);
+  }, [isLoading, noiseTrackingItems.length, expandedGroups.size, setExpandedGroups]);
+
+  // Sync areAllExpanded with actual expanded state
+  useEffect(() => {
+    if (groupedItems.length > 0) {
+      const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date));
+      const allExpanded = allGroupLabels.every(label => expandedGroups.has(label));
+      if (allExpanded !== areAllExpanded) {
+        setAreAllExpanded(allExpanded);
+      }
+    }
+  }, [expandedGroups, groupedItems, areAllExpanded, setAreAllExpanded]);
+
+  // Apply expand/collapse all when areAllExpanded changes
+  useEffect(() => {
+    if (groupedItems.length > 0) {
+      const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date));
+      if (areAllExpanded) {
+        setExpandedGroups(new Set(allGroupLabels));
+      } else {
+        setExpandedGroups(new Set());
+      }
+    }
+  }, [areAllExpanded, groupedItems, setExpandedGroups]);
 
   const toggleGroup = (date: string) => {
     const newExpanded = new Set(expandedGroups);
@@ -180,20 +210,6 @@ const NoiseTrackingList = () => {
       newExpanded.add(date);
     }
     setExpandedGroups(newExpanded);
-  };
-
-  const expandAllGroups = () => {
-    const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date));
-    setExpandedGroups(new Set(allGroupLabels));
-  };
-
-  const collapseAllGroups = () => {
-    setExpandedGroups(new Set());
-  };
-
-  const areAllGroupsExpanded = () => {
-    const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date));
-    return allGroupLabels.length > 0 && allGroupLabels.every(label => expandedGroups.has(label));
   };
 
   if (isLoading) {
@@ -224,37 +240,6 @@ const NoiseTrackingList = () => {
 
   return (
     <Container>
-      <ViewToggleContainer>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {viewMode === 'grouped' && groupedItems.length > 0 && (
-            <ViewToggleButton
-              isActive={false}
-              onClick={areAllGroupsExpanded() ? collapseAllGroups : expandAllGroups}
-            >
-              {areAllGroupsExpanded() ? (
-                <UnfoldLessIcon fontSize="small" />
-              ) : (
-                <UnfoldMoreIcon fontSize="small" />
-              )}
-            </ViewToggleButton>
-          )}
-        </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <ViewToggleButton
-            isActive={viewMode === 'grouped'}
-            onClick={() => setViewMode('grouped')}
-          >
-            <ViewModuleIcon fontSize="small" />
-          </ViewToggleButton>
-          <ViewToggleButton
-            isActive={viewMode === 'simple'}
-            onClick={() => setViewMode('simple')}
-          >
-            <ViewListIcon fontSize="small" />
-          </ViewToggleButton>
-        </div>
-      </ViewToggleContainer>
-
       {viewMode === 'simple' ? (
         <SimpleListContainer>
           {filteredSortedItems.map(({ timestamp }) => (

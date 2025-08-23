@@ -1,12 +1,21 @@
 import StandardLayout from '../../layout/standardLayout'
 import { NoiseTrackingProvider, useNoiseTrackingContext } from '../../providers/NoiseTrackingProvider'
 import NoiseTrackingList from '../../components/NoiseTrackingList'
+import ActionButtonsBar from '../../components/ActionButtonsBar'
 import ModernPageHeader from '../../components/ModernPageHeader'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
+import ViewModuleIcon from '@mui/icons-material/ViewModule'
+import ViewListIcon from '@mui/icons-material/ViewList'
 import { Container, ScrollableContainer } from './index.styled'
+import { useState, useCallback } from 'react'
 
 const NoiseTrackingContent = () => {
   const { noiseTrackingItems } = useNoiseTrackingContext()
+  
+  // View mode state: 'grouped' or 'simple'
+  const [viewMode, setViewMode] = useState<'grouped' | 'simple'>('grouped')
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
+  const [areAllExpanded, setAreAllExpanded] = useState<boolean>(false)
   
   const calculateNoiseCounts = () => {
     const now = new Date()
@@ -34,6 +43,14 @@ const NoiseTrackingContent = () => {
     return { todayCount, last7DaysCount, last30DaysCount }
   }
   
+  const toggleAllGroups = useCallback(() => {
+    setAreAllExpanded(prev => !prev)
+  }, [])
+
+  const toggleViewMode = useCallback(() => {
+    setViewMode(prev => prev === 'grouped' ? 'simple' : 'grouped')
+  }, [])
+  
   const { todayCount, last7DaysCount, last30DaysCount } = calculateNoiseCounts()
   const totalItems = noiseTrackingItems.length
   
@@ -43,6 +60,8 @@ const NoiseTrackingContent = () => {
     { value: last7DaysCount, label: 'Last 7 days' },
     { value: last30DaysCount, label: 'Last 30 days' }
   ]
+
+  const hasGroupedItems = viewMode === 'grouped' && noiseTrackingItems.length > 0
   
   return (
     <StandardLayout>
@@ -52,8 +71,24 @@ const NoiseTrackingContent = () => {
         stats={stats}
       />
       <Container>
+        <ActionButtonsBar
+          expandCollapseButton={hasGroupedItems ? {
+            isExpanded: areAllExpanded,
+            onToggle: toggleAllGroups,
+          } : undefined}
+          viewToggleButton={{
+            children: viewMode === 'grouped' ? <ViewModuleIcon /> : <ViewListIcon />,
+            onClick: toggleViewMode,
+          }}
+        />
         <ScrollableContainer>
-          <NoiseTrackingList />
+          <NoiseTrackingList 
+            viewMode={viewMode}
+            expandedGroups={expandedGroups}
+            setExpandedGroups={setExpandedGroups}
+            areAllExpanded={areAllExpanded}
+            setAreAllExpanded={setAreAllExpanded}
+          />
         </ScrollableContainer>
       </Container>
     </StandardLayout>
