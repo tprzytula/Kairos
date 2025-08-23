@@ -166,17 +166,13 @@ const NoiseTrackingList = ({
   const groupedItems = groupByDate(noiseTrackingItems);
 
   const toggleGroup = (date: string) => {
-    console.log('Individual toggle called for:', date);
     const newExpanded = new Set(expandedGroups);
     if (newExpanded.has(date)) {
       newExpanded.delete(date);
-      console.log('Removing', date, 'from expanded groups');
     } else {
       newExpanded.add(date);
-      console.log('Adding', date, 'to expanded groups');
     }
     setExpandedGroups(newExpanded);
-    console.log('New expanded groups:', Array.from(newExpanded));
   };
 
   if (isLoading) {
