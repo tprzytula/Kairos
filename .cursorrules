@@ -45,6 +45,12 @@ components/
 
 ## Testing Standards (MANDATORY)
 
+### ⚠️ CRITICAL TESTING RULE ⚠️
+**EVERY COMMIT MUST HAVE PASSING TESTS - NO EXCEPTIONS**
+- Run `cd packages/web && npm test` AND `cd packages/lambdas && npm test` before EVERY commit
+- Never push code to master with failing tests
+- This rule prevents breaking the build and maintains code quality
+
 ### Unit Testing Approach
 - Follow BDD (Behavior-Driven Development) style in all unit tests
 - Structure tests with `describe`, `it`, `given`, `when`, `then` patterns
@@ -165,12 +171,23 @@ describe('UserProfile component', () => {
 3. Follow existing code patterns and conventions
 4. Update types as needed (never use `as`)
 
-### Before Committing
-1. Ensure all tests pass
+### Before Committing (CRITICAL - NEVER SKIP)
+1. **RUN ALL UNIT TESTS** - MANDATORY for every commit
+   - Web tests: `cd packages/web && npm test`
+   - Lambda tests: `cd packages/lambdas && npm test`
+   - **ALL TESTS MUST PASS** - Do not commit with failing tests
+   - Fix any test failures before proceeding
 2. Verify code follows project standards
 3. Check that OpenAPI contracts are updated if needed
 4. Create descriptive commit message
 5. Request approval before pushing to master
+
+### Test-Driven Development Workflow (MANDATORY)
+- **NEVER commit code without running tests first**
+- If tests fail, fix them immediately - don't accumulate technical debt
+- Every code change must be verified with passing tests
+- Use `npm test -- --testPathPatterns="specific-test"` to run targeted tests during development
+- Run full test suite before final commit
 
 ## File Naming Conventions
 

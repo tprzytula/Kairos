@@ -33,7 +33,7 @@ const mockProjectContext = {
   isLoading: false,
   createProject: jest.fn(),
   joinProject: jest.fn(),
-  switchProject: jest.fn(),
+  switchProject: jest.fn().mockResolvedValue(undefined),
   fetchProjects: jest.fn(),
   getProjectInviteInfo: jest.fn()
 }
