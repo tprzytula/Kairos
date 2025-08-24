@@ -18,6 +18,7 @@ import HomeNoiseItem from './components/HomeNoiseItem'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 import { formatTimeElapsed, formatTimestamp } from './utils'
 
@@ -61,6 +62,46 @@ const getDueDateClass = (dueDate?: number): string => {
   if (diffDays <= 3) return 'soon'
   return ''
 }
+
+const formatNoiseTimestamp = (timestamp: number) => {
+  const date = new Date(timestamp)
+  const today = new Date()
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  
+  // Reset time to start of day for accurate comparison
+  today.setHours(0, 0, 0, 0)
+  yesterday.setHours(0, 0, 0, 0)
+  const dateOnly = new Date(date)
+  dateOnly.setHours(0, 0, 0, 0)
+  
+  if (dateOnly.getTime() === today.getTime()) {
+    return {
+      date: 'Today',
+      time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
+  } else if (dateOnly.getTime() === yesterday.getTime()) {
+    return {
+      date: 'Yesterday',
+      time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
+  } else {
+    return {
+      date: date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }),
+      time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
+  }
+}
+
+const getNoiseViewTitle = (view: 'overview' | 'today' | 'last7days' | 'last30days'): string => {
+  switch (view) {
+    case 'today': return 'Today\'s Recordings'
+    case 'last7days': return 'Last 7 Days'
+    case 'last30days': return 'Last 30 Days'
+    default: return 'Recordings'
+  }
+}
+
 import {
   Container,
   FullWidthSection,
@@ -79,6 +120,14 @@ import {
   NoiseStatBlock,
   NoiseStatLabel,
   NoiseStatCount,
+  NoiseDetailHeader,
+  NoiseDetailTitle,
+  NoiseBackButton,
+  NoiseDetailList,
+  NoiseDetailItem,
+  NoiseDetailDate,
+  NoiseDetailTime,
+  NoiseDetailEmpty,
   CompactItemList,
   CompactItemText,
   CompactItemContent,
@@ -96,6 +145,7 @@ const HomeDataContent = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [anchorPosition, setAnchorPosition] = useState<{ top: number; left: number; arrowOffset?: number } | undefined>(undefined)
   const [isToDoItemsExpanded, setIsToDoItemsExpanded] = useState(false)
+  const [noiseView, setNoiseView] = useState<'overview' | 'today' | 'last7days' | 'last30days'>('overview')
 
   const handleGroceryItemClick = (item: IGroceryItem, event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -138,6 +188,39 @@ const HomeDataContent = () => {
 
   const handleToggleToDoItems = () => {
     setIsToDoItemsExpanded(!isToDoItemsExpanded)
+  }
+
+  const handleNoiseViewChange = (view: 'overview' | 'today' | 'last7days' | 'last30days') => {
+    setNoiseView(view)
+  }
+
+  const getFilteredNoiseItems = () => {
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    
+    switch (noiseView) {
+      case 'today':
+        return noiseTrackingItems.filter(item => {
+          const itemDate = new Date(item.timestamp)
+          return itemDate >= today
+        })
+      case 'last7days':
+        const sevenDaysAgo = new Date(today)
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+        return noiseTrackingItems.filter(item => {
+          const itemDate = new Date(item.timestamp)
+          return itemDate >= sevenDaysAgo
+        })
+      case 'last30days':
+        const thirtyDaysAgo = new Date(today)
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+        return noiseTrackingItems.filter(item => {
+          const itemDate = new Date(item.timestamp)
+          return itemDate >= thirtyDaysAgo
+        })
+      default:
+        return []
+    }
   }
   
   const unpurchasedItems = groceryList.filter(item => !purchasedItems.has(item.id))
@@ -250,23 +333,60 @@ const HomeDataContent = () => {
               </NoiseStats>
             ) : (
               <>
-                {totalNoiseItems > 0 ? (
-                  <NoiseStats>
-                    <NoiseStatBlock>
-                      <NoiseStatCount>{todayCount}</NoiseStatCount>
-                      <NoiseStatLabel>Today</NoiseStatLabel>
-                    </NoiseStatBlock>
-                    <NoiseStatBlock>
-                      <NoiseStatCount>{last7DaysCount}</NoiseStatCount>
-                      <NoiseStatLabel>Last 7 days</NoiseStatLabel>
-                    </NoiseStatBlock>
-                    <NoiseStatBlock>
-                      <NoiseStatCount>{last30DaysCount}</NoiseStatCount>
-                      <NoiseStatLabel>Last 30 days</NoiseStatLabel>
-                    </NoiseStatBlock>
-                  </NoiseStats>
+                {noiseView === 'overview' ? (
+                  // Stats Overview
+                  totalNoiseItems > 0 ? (
+                    <NoiseStats>
+                      <NoiseStatBlock onClick={() => handleNoiseViewChange('today')}>
+                        <NoiseStatCount>{todayCount}</NoiseStatCount>
+                        <NoiseStatLabel>Today</NoiseStatLabel>
+                      </NoiseStatBlock>
+                      <NoiseStatBlock onClick={() => handleNoiseViewChange('last7days')}>
+                        <NoiseStatCount>{last7DaysCount}</NoiseStatCount>
+                        <NoiseStatLabel>Last 7 days</NoiseStatLabel>
+                      </NoiseStatBlock>
+                      <NoiseStatBlock onClick={() => handleNoiseViewChange('last30days')}>
+                        <NoiseStatCount>{last30DaysCount}</NoiseStatCount>
+                        <NoiseStatLabel>Last 30 days</NoiseStatLabel>
+                      </NoiseStatBlock>
+                    </NoiseStats>
+                  ) : (
+                    <EmptyState>No noise recordings found</EmptyState>
+                  )
                 ) : (
-                  <EmptyState>No noise recordings found</EmptyState>
+                  // Detail View
+                  <div>
+                    <NoiseDetailHeader>
+                      <NoiseDetailTitle>{getNoiseViewTitle(noiseView)}</NoiseDetailTitle>
+                      <NoiseBackButton onClick={() => handleNoiseViewChange('overview')}>
+                        <ArrowBackIcon fontSize="small" />
+                        Back
+                      </NoiseBackButton>
+                    </NoiseDetailHeader>
+                    
+                    {(() => {
+                      const filteredItems = getFilteredNoiseItems()
+                      const sortedItems = filteredItems.sort((a, b) => b.timestamp - a.timestamp)
+                      
+                      return sortedItems.length > 0 ? (
+                        <NoiseDetailList>
+                          {sortedItems.map((item, index) => {
+                            const { date, time } = formatNoiseTimestamp(item.timestamp)
+                            return (
+                              <NoiseDetailItem key={`${item.timestamp}-${index}`}>
+                                <NoiseDetailDate>{date}</NoiseDetailDate>
+                                <NoiseDetailTime>{time}</NoiseDetailTime>
+                              </NoiseDetailItem>
+                            )
+                          })}
+                        </NoiseDetailList>
+                      ) : (
+                        <NoiseDetailEmpty>
+                          No recordings found for {getNoiseViewTitle(noiseView).toLowerCase()}
+                        </NoiseDetailEmpty>
+                      )
+                    })()}
+                  </div>
                 )}
               </>
             )}

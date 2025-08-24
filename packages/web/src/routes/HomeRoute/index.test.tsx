@@ -628,6 +628,123 @@ describe('Given the HomeRoute component', () => {
       })
     })
   })
+
+  describe('noise recordings sub-page navigation', () => {
+    it('should navigate to noise detail views when clicking on stat blocks', async () => {
+      const now = new Date()
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      
+      const mockNoiseList = [
+        { timestamp: today.getTime() + 2 * 60 * 60 * 1000 }, // Today at 2pm
+        { timestamp: today.getTime() + 4 * 60 * 60 * 1000 }, // Today at 4pm  
+      ]
+
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      // Should show overview initially
+      await waitFor(() => {
+        expect(screen.getByText('Today')).toBeVisible()
+        expect(screen.getByText('Last 7 days')).toBeVisible()
+        expect(screen.getByText('Last 30 days')).toBeVisible()
+        // Verify counts are displayed (multiple 2s will exist for different stats)
+        const countElements = screen.getAllByText('2')
+        expect(countElements.length).toBeGreaterThan(0)
+      })
+
+      // Click on "Today" stat block
+      const todayBlock = screen.getByText('Today').closest('div')
+      expect(todayBlock).not.toBeNull()
+      
+      await act(async () => {
+        fireEvent.click(todayBlock!)
+      })
+
+      // Should show today's detail view
+      await waitFor(() => {
+        expect(screen.getByText('Today\'s Recordings')).toBeVisible()
+        expect(screen.getByText('Back')).toBeVisible()
+        expect(screen.queryByText('Last 7 days')).not.toBeInTheDocument()
+        expect(screen.queryByText('Last 30 days')).not.toBeInTheDocument()
+      })
+
+      // Should show today's recordings
+      await waitFor(() => {
+        const todayTexts = screen.getAllByText('Today')
+        expect(todayTexts.length).toBeGreaterThan(1) // Header + recordings
+      })
+    })
+
+    it('should navigate back from detail view to overview', async () => {
+      const now = new Date()
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      
+      const mockNoiseList = [
+        { timestamp: today.getTime() + 2 * 60 * 60 * 1000 },
+      ]
+
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      // Navigate to detail view
+      const todayBlock = screen.getByText('Today').closest('div')
+      await act(async () => {
+        fireEvent.click(todayBlock!)
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('Today\'s Recordings')).toBeVisible()
+      })
+
+      // Click back button
+      const backButton = screen.getByText('Back')
+      await act(async () => {
+        fireEvent.click(backButton)
+      })
+
+      // Should be back to overview
+      await waitFor(() => {
+        expect(screen.getByText('Today')).toBeVisible()
+        expect(screen.getByText('Last 7 days')).toBeVisible()
+        expect(screen.getByText('Last 30 days')).toBeVisible()
+        expect(screen.queryByText('Today\'s Recordings')).not.toBeInTheDocument()
+        expect(screen.queryByText('Back')).not.toBeInTheDocument()
+      })
+    })
+
+    it('should show empty state in detail view when no recordings match filter', async () => {
+      const now = new Date()
+      const weekAgo = new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000) // 8 days ago
+      
+      const mockNoiseList = [
+        { timestamp: weekAgo.getTime() }, // Outside of 7 days range
+      ]
+
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      // Click on "Last 7 days" (should have 0 items)
+      const last7DaysBlock = screen.getByText('Last 7 days').closest('div')
+      await act(async () => {
+        fireEvent.click(last7DaysBlock!)
+      })
+
+      // Should show empty state
+      await waitFor(() => {
+        expect(screen.getByText('Last 7 Days')).toBeVisible()
+        expect(screen.getByText('No recordings found for last 7 days')).toBeVisible()
+      })
+    })
+  })
 })
 
 const renderComponent = () => {
