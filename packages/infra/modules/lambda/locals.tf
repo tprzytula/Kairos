@@ -181,9 +181,11 @@ locals {
           migrations             = "read-write"
           grocery_items_defaults = "read-write"
           projects               = "read-write"
+          project_members        = "read-write"
           grocery_list           = "read-write"
           todo_list              = "read-write"
           noise_tracking         = "read-write"
+          user_preferences       = "read-write"
           push_subscriptions     = "none"
         }
         sns = {
