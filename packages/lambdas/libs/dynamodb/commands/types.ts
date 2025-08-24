@@ -5,6 +5,7 @@ import { IGroceryItem } from "../types/groceryList";
 import { INoiseTracking } from "../types/noiseTracking";
 import { ITodoItem } from "../types/todoList";
 import { IProject, IProjectMember } from "../types/projects";
+import { IPushSubscription } from "../types/pushSubscriptions";
 
 export type TableResponseMap = {
     [DynamoDBTable.GROCERY_LIST]: IGroceryItem;
@@ -14,4 +15,5 @@ export type TableResponseMap = {
     [DynamoDBTable.MIGRATIONS]: { [key: string]: string | number | boolean | undefined; };
     [DynamoDBTable.PROJECTS]: IProject;
     [DynamoDBTable.PROJECT_MEMBERS]: IProjectMember;
+    [DynamoDBTable.PUSH_SUBSCRIPTIONS]: IPushSubscription;
 };

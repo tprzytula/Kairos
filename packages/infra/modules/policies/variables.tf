@@ -62,3 +62,11 @@ variable "dynamodb_project_members_arn" {
 variable "dynamodb_user_preferences_arn" {
   type = string
 }
+
+variable "dynamodb_push_subscriptions_arn" {
+  type = string
+}
+
+variable "sns_todo_notifications_arn" {
+  type = string
+}

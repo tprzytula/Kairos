@@ -7,6 +7,10 @@ locals {
       permissions = {
         database = {
           grocery_list = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     }
@@ -16,6 +20,10 @@ locals {
         database = {
           grocery_list = "read-write"
           grocery_items_defaults = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     }
@@ -24,6 +32,10 @@ locals {
       permissions = {
         database = {
           grocery_list = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     }
@@ -32,6 +44,10 @@ locals {
       permissions = {
         database = {
           grocery_list = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     }
@@ -40,6 +56,10 @@ locals {
       permissions = {
         database = {
           noise_tracking = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     }
@@ -48,6 +68,10 @@ locals {
       permissions = {
         database = {
           noise_tracking = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     }
@@ -56,6 +80,10 @@ locals {
       permissions = {
         database = {
           noise_tracking = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     },
@@ -64,14 +92,24 @@ locals {
       permissions = {
         database = {
           grocery_items_defaults = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     },
     "add_todo_item" = {
-      environment_variables = {}
+      environment_variables = {
+        TODO_NOTIFICATIONS_TOPIC_ARN = var.todo_notifications_topic_arn
+      }
       permissions = {
         database = {
           todo_list = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "publish"
         }
       }
     },
@@ -80,6 +118,10 @@ locals {
       permissions = {
         database = {
           todo_list = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     },
@@ -88,6 +130,10 @@ locals {
       permissions = {
         database = {
           todo_list = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     },
@@ -96,6 +142,10 @@ locals {
       permissions = {
         database = {
           todo_list = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     },
@@ -104,6 +154,10 @@ locals {
       permissions = {
         database = {
           todo_list = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     },
@@ -112,6 +166,10 @@ locals {
       permissions = {
         database = {
           grocery_list = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     },
@@ -126,6 +184,10 @@ locals {
           grocery_list           = "read-write"
           todo_list              = "read-write"
           noise_tracking         = "read-write"
+          push_subscriptions     = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     },
@@ -162,6 +224,10 @@ locals {
       database = {
         projects = "read-only"
         project_members = "read-only"
+        push_subscriptions = "none"
+      }
+      sns = {
+        todo_notifications = "none"
       }
     }
   },
@@ -170,6 +236,10 @@ locals {
       permissions = {
         database = {
           user_preferences = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     },
@@ -178,6 +248,45 @@ locals {
       permissions = {
         database = {
           user_preferences = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "send_todo_notifications" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          project_members = "read-only"
+          projects = "read-only"
+          push_subscriptions = "read-only"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "save_push_subscription" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          push_subscriptions = "read-write"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "delete_push_subscription" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          push_subscriptions = "read-write"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     }

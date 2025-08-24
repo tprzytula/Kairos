@@ -317,4 +317,97 @@ const handleVisibilityMessage = (event: ExtendableMessageEvent) => {
 
 self.addEventListener('message', handleVisibilityMessage)
 
+self.addEventListener('push', (event) => {
+  console.log('[SW] Push notification received:', event)
+  
+  if (!event.data) {
+    console.log('[SW] Push notification received but no data')
+    return
+  }
+
+  try {
+    const data = event.data.json()
+    console.log('[SW] Push notification data:', data)
+    
+    const options = {
+      body: data.body || 'New notification from Kairos',
+      icon: '/icon-192.png',
+      badge: '/icon-72.png',
+      data: data.data || {},
+      requireInteraction: false,
+      silent: false,
+      tag: data.data?.type || 'kairos-notification',
+      timestamp: Date.now(),
+      actions: [
+        {
+          action: 'open',
+          title: 'Open App',
+          icon: '/icon-72.png'
+        }
+      ]
+    }
+    
+    event.waitUntil(
+      self.registration.showNotification(data.title || 'Kairos', options)
+    )
+  } catch (error) {
+    console.error('[SW] Error processing push notification:', error)
+    
+    event.waitUntil(
+      self.registration.showNotification('Kairos', {
+        body: 'You have a new notification',
+        icon: '/icon-192.png',
+        badge: '/icon-72.png',
+        tag: 'kairos-fallback'
+      })
+    )
+  }
+})
+
+self.addEventListener('notificationclick', (event) => {
+  console.log('[SW] Notification click received:', event)
+  
+  event.notification.close()
+  
+  const notificationData = event.notification.data || {}
+  const action = event.action
+  
+  let urlToOpen = '/'
+  
+  if (notificationData.projectId) {
+    urlToOpen = `/?project=${notificationData.projectId}`
+  }
+  
+  if (notificationData.type === 'todo_added' && notificationData.todoId) {
+    urlToOpen = `${urlToOpen}#todo-${notificationData.todoId}`
+  }
+  
+  console.log('[SW] Opening URL:', urlToOpen)
+  
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList: readonly Client[]) => {
+      for (const client of clientList) {
+        if (client.url === self.registration.scope + urlToOpen.slice(1) && 'focus' in client) {
+          return (client as WindowClient).focus()
+        }
+      }
+      
+      for (const client of clientList) {
+        if (client.url.startsWith(self.registration.scope) && 'navigate' in client) {
+          (client as WindowClient).navigate(urlToOpen)
+          return (client as WindowClient).focus()
+        }
+      }
+      
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(urlToOpen)
+      }
+    })
+  )
+})
+
+self.addEventListener('notificationclose', (event) => {
+  console.log('[SW] Notification closed:', event.notification.tag)
+})
+
 export {}

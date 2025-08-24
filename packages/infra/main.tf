@@ -11,7 +11,8 @@ module "dynamodb" {
 module "lambda" {
   source = "./modules/lambda"
 
-  random_name = module.random.random_name
+  random_name                   = module.random.random_name
+  todo_notifications_topic_arn = module.sns.todo_notifications_topic_arn
 }
 
 module "api_gateway" {
@@ -28,6 +29,14 @@ module "s3" {
   random_name = module.random.random_name
 }
 
+module "sns" {
+  source = "./modules/sns"
+
+  random_name                      = module.random.random_name
+  notification_lambda_arn          = module.lambda.lambda_functions["send_todo_notifications"].invoke_arn
+  notification_lambda_function_name = module.lambda.lambda_functions["send_todo_notifications"].function_name
+}
+
 module "policies" {
   source = "./modules/policies"
 
@@ -41,6 +50,8 @@ module "policies" {
   dynamodb_projects_arn               = module.dynamodb.projects_arn
   dynamodb_project_members_arn        = module.dynamodb.project_members_arn
   dynamodb_user_preferences_arn       = module.dynamodb.user_preferences_arn
+  dynamodb_push_subscriptions_arn     = module.dynamodb.push_subscriptions_arn
+  sns_todo_notifications_arn          = module.sns.todo_notifications_topic_arn
   s3_kairos_web_arn                   = module.s3.kairos_web_arn
   s3_kairos_lambdas_arn               = module.s3.kairos_lambdas_arn
 }

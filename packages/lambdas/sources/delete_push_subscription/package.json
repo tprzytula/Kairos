@@ -1,0 +1,10 @@
+{
+  "name": "@kairos-lambdas/delete_push_subscription",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "@kairos-lambdas-libs/dynamodb": "^1.0.0",
+    "@kairos-lambdas-libs/response": "^1.0.0",
+    "@kairos-lambdas-libs/middleware": "^1.0.0"
+  }
+}

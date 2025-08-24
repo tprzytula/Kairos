@@ -1,0 +1,181 @@
+openapi: 3.0.3
+info:
+  title: Kairos Push Subscriptions API
+  version: 1.0.0
+paths:
+  /push-subscriptions:
+    post:
+      operationId: savePushSubscription
+      summary: Save a push notification subscription
+      security:
+        - CognitoUserPool: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavePushSubscriptionRequest'
+            example:
+              endpoint: "https://fcm.googleapis.com/fcm/send/example-endpoint"
+              keys:
+                p256dh: "BNbN3yWjlBSTiZE"
+                auth: "k8JV6sjdbajsbdj"
+      responses:
+        '201':
+          description: Push subscription saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavePushSubscriptionResponse'
+              example:
+                success: true
+        '400':
+          description: Bad request - invalid request body or missing fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: "Missing required subscription fields"
+                  type: "BAD_REQUEST"
+        '401':
+          description: Unauthorized - user authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: "User authentication required"
+                  type: "UNAUTHORIZED"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: "Failed to save push subscription"
+                  type: "INTERNAL_SERVER_ERROR"
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SavePushSubscriptionFunction.Arn}/invocations"
+    delete:
+      operationId: deletePushSubscription
+      summary: Delete a push notification subscription
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: endpoint
+          in: query
+          required: true
+          schema:
+            type: string
+          description: URL-encoded push subscription endpoint
+          example: "https%3A//fcm.googleapis.com/fcm/send/example-endpoint"
+      responses:
+        '200':
+          description: Push subscription deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletePushSubscriptionResponse'
+              example:
+                success: true
+        '400':
+          description: Bad request - missing endpoint parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: "Missing endpoint parameter"
+                  type: "BAD_REQUEST"
+        '401':
+          description: Unauthorized - user authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: "User authentication required"
+                  type: "UNAUTHORIZED"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: "Failed to delete push subscription"
+                  type: "INTERNAL_SERVER_ERROR"
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeletePushSubscriptionFunction.Arn}/invocations"
+
+components:
+  schemas:
+    SavePushSubscriptionRequest:
+      type: object
+      required:
+        - endpoint
+        - keys
+      properties:
+        endpoint:
+          type: string
+          description: Push subscription endpoint URL
+          example: "https://fcm.googleapis.com/fcm/send/example-endpoint"
+        keys:
+          type: object
+          required:
+            - p256dh
+            - auth
+          properties:
+            p256dh:
+              type: string
+              description: P256DH key for push encryption
+              example: "BNbN3yWjlBSTiZE"
+            auth:
+              type: string
+              description: Auth key for push encryption
+              example: "k8JV6sjdbajsbdj"
+
+    SavePushSubscriptionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+
+    DeletePushSubscriptionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Human-readable error message
+            type:
+              type: string
+              description: Error type identifier
+
+  securitySchemes:
+    CognitoUserPool:
+      type: apiKey
+      name: Authorization
+      in: header

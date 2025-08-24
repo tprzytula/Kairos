@@ -5,7 +5,7 @@ import NoiseTrackingList from './index'
 jest.mock('../../providers/NoiseTrackingProvider')
 
 const MOCK_ITEMS = [
-  { id: '1', timestamp: new Date('2025-08-23T14:58:00').getTime() },
+  { id: '1', timestamp: new Date().setHours(14, 58, 0, 0) },
   { id: '2', timestamp: new Date('2027-04-25T10:46:00').getTime() },
 ]
 

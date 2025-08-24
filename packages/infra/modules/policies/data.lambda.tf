@@ -238,4 +238,45 @@ data "aws_iam_policy_document" "lambda_policies" {
       ]
     }
   }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.push_subscriptions == local.permissions.read_only ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadOnlyPushSubscriptions"
+      actions = local.database_read_only_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_push_subscriptions_arn,
+        "${var.dynamodb_push_subscriptions_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.push_subscriptions == local.permissions.read_write ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadWritePushSubscriptions"
+      actions = local.database_read_write_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_push_subscriptions_arn,
+        "${var.dynamodb_push_subscriptions_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.sns.todo_notifications == local.permissions.publish ? [each.key] : []
+
+    content {
+      sid     = "SNSPublishTodoNotifications"
+      actions = ["sns:Publish"]
+      effect  = "Allow"
+      resources = [
+        var.sns_todo_notifications_arn
+      ]
+    }
+  }
 }
