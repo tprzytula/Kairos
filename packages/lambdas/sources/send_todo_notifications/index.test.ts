@@ -1,11 +1,4 @@
 import { jest } from "@jest/globals";
-
-const mockSendNotification = jest.fn();
-jest.mock('web-push', () => ({
-  setVapidDetails: jest.fn(),
-  sendNotification: mockSendNotification
-}));
-
 import { handler } from "./index";
 import { query, getItem } from "@kairos-lambdas-libs/dynamodb";
 
@@ -31,8 +24,6 @@ describe('send_todo_notifications Lambda', () => {
     jest.clearAllMocks();
     mockQuery.mockClear();
     mockGetItem.mockClear();
-    mockSendNotification.mockClear();
-    mockSendNotification.mockResolvedValue({ statusCode: 200 });
   });
 
   describe('when processing a todo notification message', () => {

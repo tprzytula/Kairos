@@ -16,8 +16,7 @@
     "@aws-sdk/client-dynamodb": "^3.0.0",
     "@aws-sdk/lib-dynamodb": "^3.0.0",
     "esbuild": "^0.25.2",
-    "lerna": "^8.2.1",
-    "web-push": "^3.6.7"
+    "lerna": "^8.2.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
