@@ -197,6 +197,10 @@ locals {
         database = {
           projects = "read-only"
           project_members = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     },
@@ -206,6 +210,10 @@ locals {
         database = {
           projects = "read-write"
           project_members = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     },
@@ -215,6 +223,10 @@ locals {
         database = {
           projects = "read-only"
           project_members = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
         }
       }
     },
