@@ -22,6 +22,10 @@ variable "lambda_functions" {
         projects               = optional(string, "none")
         project_members        = optional(string, "none")
         user_preferences       = optional(string, "none")
+        push_subscriptions     = optional(string, "none")
+      })
+      sns = object({
+        todo_notifications = optional(string, "none")
       })
     })
   }))
