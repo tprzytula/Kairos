@@ -22,6 +22,11 @@ jest.mock('../../providers/ToDoListProvider');
 jest.mock('../../providers/ProjectProvider');
 jest.mock('../../components/ModernPageHeader', () => ({ title }: any) => <div>{title}</div>);
 jest.mock('@mui/icons-material/Checklist', () => () => <div>ChecklistIcon</div>)
+jest.mock('react-oidc-context', () => ({
+  useAuth: jest.fn(() => ({
+    user: { access_token: 'test-access-token' }
+  }))
+}))
 
 describe('Given the AddToDoItemContent component', () => {
   const mockProject = {
@@ -101,7 +106,7 @@ describe('Given the AddToDoItemContent component', () => {
         name: 'Test',
         description: 'Test',
         dueDate: 1609459200000
-      }, 'test-project-id')  
+      }, 'test-project-id', 'test-access-token')  
     })
 
     describe('And the createToDoItem call succeeds', () => {

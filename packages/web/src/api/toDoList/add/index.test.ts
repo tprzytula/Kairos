@@ -39,7 +39,7 @@ describe('Given the addTodoItem function', () => {
     await addTodoItem({
       name: 'Groceries',
       description: 'Buy groceries for the week',
-    }, 'test-project-id')
+    }, 'test-project-id', 'test-access-token')
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/todo_list/items',
@@ -49,6 +49,7 @@ describe('Given the addTodoItem function', () => {
         headers: {
           'X-Project-ID': 'test-project-id',
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer test-access-token',
         },
       }
     )

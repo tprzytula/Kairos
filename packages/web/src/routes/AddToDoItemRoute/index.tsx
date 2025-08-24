@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { useCallback } from 'react'
+import { useAuth } from 'react-oidc-context'
 import { AlertColor } from '@mui/material'
 import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
@@ -45,6 +46,7 @@ export const AddToDoItemContent = () => {
   const { currentProject } = useProjectContext()
   const navigate = useNavigate()
   const { toDoList } = useToDoListContext()
+  const { user } = useAuth()
 
   const createAlert = useCallback((description: string, severity: AlertColor) => {
     showAlert({ description, severity }, dispatch)
@@ -65,7 +67,7 @@ export const AddToDoItemContent = () => {
         name: name.value,
         description: description.value,
         dueDate: utcTimestamp,
-      }, currentProject.id)
+      }, currentProject.id, user?.access_token)
 
       createAlert(`${name.value} has been added to your to do list`, 'success')
       navigate(Route.ToDoList)
