@@ -62,7 +62,7 @@ paths:
       x-amazon-apigateway-integration:
         type: aws_proxy
         httpMethod: POST
-        uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SavePushSubscriptionFunction.Arn}/invocations"
+        uri: ${lambda_functions["save_push_subscription"].invoke_arn}
     delete:
       operationId: deletePushSubscription
       summary: Delete a push notification subscription
@@ -118,7 +118,7 @@ paths:
       x-amazon-apigateway-integration:
         type: aws_proxy
         httpMethod: POST
-        uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeletePushSubscriptionFunction.Arn}/invocations"
+        uri: ${lambda_functions["delete_push_subscription"].invoke_arn}
 
 components:
   schemas:
