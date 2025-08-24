@@ -1,6 +1,7 @@
 import { SNSEvent, Handler } from "aws-lambda";
 import { createResponse } from "@kairos-lambdas-libs/response";
 import { DynamoDBTable, DynamoDBIndex, query, getItem } from "@kairos-lambdas-libs/dynamodb";
+import * as webPush from "web-push";
 import { 
   TodoNotificationMessage, 
   PushSubscription, 
@@ -108,8 +109,35 @@ const sendWebPushNotification = async (
   payload: WebPushPayload
 ): Promise<void> => {
   try {
+    const vapidPublicKey = process.env.VAPID_PUBLIC_KEY || 'BEl62iUYgUivxIkv69yViEuiBIa40HI-4MuU9wSZVAQ';
+    const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY || 'your-vapid-private-key';
+    
+    webPush.setVapidDetails(
+      'mailto:your-email@domain.com',
+      vapidPublicKey,
+      vapidPrivateKey
+    );
+
+    const pushSubscription = {
+      endpoint: subscription.endpoint,
+      keys: {
+        p256dh: subscription.keys.p256dh,
+        auth: subscription.keys.auth,
+      },
+    };
+
     console.log(`Sending notification to ${subscription.endpoint}`, payload);
+    
+    const result = await webPush.sendNotification(
+      pushSubscription,
+      JSON.stringify(payload)
+    );
+    
+    console.log('Push notification sent successfully:', result);
   } catch (error) {
     console.error("Failed to send web push notification:", error);
+    if (error.statusCode === 410) {
+      console.log(`Subscription ${subscription.endpoint} is no longer valid`);
+    }
   }
 };

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Push Notification Test</title>
+</head>
+<body>
+    <h1>Push Notification Debug Test</h1>
+    <button onclick="testPush()">Test Push Notification</button>
+    <div id="output"></div>
+    
+    <script>
+        async function testPush() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<h3>Testing Push Notifications...</h3>';
+            
+            try {
+                // Check browser support
+                if (!('serviceWorker' in navigator)) {
+                    throw new Error('Service Worker not supported');
+                }
+                if (!('PushManager' in window)) {
+                    throw new Error('Push Manager not supported');
+                }
+                if (!('Notification' in window)) {
+                    throw new Error('Notification API not supported');
+                }
+                output.innerHTML += '<p>✅ Browser supports push notifications</p>';
+                
+                // Check permission
+                const permission = Notification.permission;
+                output.innerHTML += `<p>🔒 Notification permission: <strong>${permission}</strong></p>`;
+                
+                if (permission === 'denied') {
+                    throw new Error('Notifications are blocked. Please enable in browser settings.');
+                }
+                
+                // Register service worker
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                await navigator.serviceWorker.ready;
+                output.innerHTML += '<p>✅ Service Worker registered and ready</p>';
+                
+                // Check existing subscription
+                const existingSubscription = await registration.pushManager.getSubscription();
+                if (existingSubscription) {
+                    output.innerHTML += '<p>✅ Push subscription exists</p>';
+                    output.innerHTML += `<p><strong>Endpoint:</strong> ${existingSubscription.endpoint}</p>`;
+                    
+                    // Test notification manually
+                    if (permission === 'granted') {
+                        new Notification('Test Notification', {
+                            body: 'This is a test notification from your PWA',
+                            icon: '/icons/icon-192x192.png',
+                            badge: '/icons/icon-192x192.png'
+                        });
+                        output.innerHTML += '<p>🔔 Test notification sent!</p>';
+                    }
+                } else {
+                    output.innerHTML += '<p>❌ No push subscription found</p>';
+                }
+                
+            } catch (error) {
+                output.innerHTML += `<p>❌ Error: ${error.message}</p>`;
+                console.error('Push test error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
