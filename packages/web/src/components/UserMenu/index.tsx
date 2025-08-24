@@ -7,6 +7,7 @@ import * as Styled from './index.styled'
 import { getPostLogoutRedirectUri, oidcConfig } from '../../config/oidc'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import CreateProjectDialog from '../CreateProjectDialog'
+import PushNotificationSettings from '../PushNotificationSettings'
 
 const UserMenu: React.FC = () => {
   const auth = useAuth()
@@ -130,6 +131,10 @@ const UserMenu: React.FC = () => {
               <Styled.UserName>{userName}</Styled.UserName>
               {userEmail && <Styled.UserEmail>{userEmail}</Styled.UserEmail>}
             </Styled.UserInfo>
+            
+            <Divider sx={{ my: 1 }} />
+            
+            <PushNotificationSettings />
             
             {currentProject && (
               <>
