@@ -95,6 +95,7 @@ const HomeDataContent = () => {
   const [selectedGroceryItem, setSelectedGroceryItem] = useState<IGroceryItem | null>(null)
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [anchorPosition, setAnchorPosition] = useState<{ top: number; left: number; arrowOffset?: number } | undefined>(undefined)
+  const [isToDoItemsExpanded, setIsToDoItemsExpanded] = useState(false)
 
   const handleGroceryItemClick = (item: IGroceryItem, event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -134,6 +135,10 @@ const HomeDataContent = () => {
     setSelectedGroceryItem(null)
     setAnchorPosition(undefined)
   }
+
+  const handleToggleToDoItems = () => {
+    setIsToDoItemsExpanded(!isToDoItemsExpanded)
+  }
   
   const unpurchasedItems = groceryList.filter(item => !purchasedItems.has(item.id))
   const groceryStats = {
@@ -152,7 +157,7 @@ const HomeDataContent = () => {
     return a.dueDate - b.dueDate
   })
   
-  const topThreeToDoItems = sortedToDoItems.slice(0, 3)
+  const displayedToDoItems = isToDoItemsExpanded ? sortedToDoItems : sortedToDoItems.slice(0, 3)
   const hasMoreToDoItems = pendingToDoItems.length > 3
   
   const calculateNoiseCounts = () => {
@@ -286,8 +291,8 @@ const HomeDataContent = () => {
               </CompactItemList>
             ) : (
               <CompactItemList>
-                {topThreeToDoItems.length > 0 ? (
-                  topThreeToDoItems.map((item) => {
+                {displayedToDoItems.length > 0 ? (
+                  displayedToDoItems.map((item) => {
                     const dueDateText = formatDueDateRelative(item.dueDate)
                     const dueDateClass = getDueDateClass(item.dueDate)
                     
@@ -315,8 +320,11 @@ const HomeDataContent = () => {
                   <EmptyState>No pending to-do items found</EmptyState>
                 )}
                 {hasMoreToDoItems && (
-                  <MoreItemsIndicator>
-                    +{pendingToDoItems.length - 3} more items
+                  <MoreItemsIndicator onClick={handleToggleToDoItems}>
+                    {isToDoItemsExpanded 
+                      ? 'Show less'
+                      : `+${pendingToDoItems.length - 3} more items`
+                    }
                   </MoreItemsIndicator>
                 )}
               </CompactItemList>

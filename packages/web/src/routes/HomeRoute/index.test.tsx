@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
@@ -289,6 +289,72 @@ describe('Given the HomeRoute component', () => {
       expect(screen.getByText('+1 more items')).toBeVisible() // Task 1 is not shown
       expect(screen.queryByText('Task 1')).not.toBeInTheDocument() // Task 1 due later not shown
       expect(screen.queryByText('Completed Task')).not.toBeInTheDocument()
+    })
+  })
+
+  it('should expand and collapse to-do items when clicking more items indicator', async () => {
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const twoDaysLater = new Date()
+    twoDaysLater.setDate(twoDaysLater.getDate() + 2)
+    const threeDaysLater = new Date()
+    threeDaysLater.setDate(threeDaysLater.getDate() + 3)
+    const fourDaysLater = new Date()
+    fourDaysLater.setDate(fourDaysLater.getDate() + 4)
+
+    const mockToDoList = [
+      { id: '1', name: 'Task 1', isDone: false, dueDate: fourDaysLater.getTime() },
+      { id: '2', name: 'Task 2', isDone: false, dueDate: twoDaysLater.getTime() },
+      { id: '3', name: 'Task 3', isDone: false, dueDate: tomorrow.getTime() },
+      { id: '4', name: 'Task 4', isDone: false, dueDate: threeDaysLater.getTime() },
+      { id: '5', name: 'Completed Task', isDone: true }
+    ]
+
+    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockToDoList)
+
+    await act(async () => {
+      renderComponent()
+    })
+
+    // Initially should show only first 3 items
+    await waitFor(() => {
+      expect(screen.getByText('Task 3')).toBeVisible()
+      expect(screen.getByText('Task 2')).toBeVisible() 
+      expect(screen.getByText('Task 4')).toBeVisible()
+      expect(screen.queryByText('Task 1')).not.toBeInTheDocument()
+      expect(screen.getByText('+1 more items')).toBeVisible()
+    })
+
+    // Click expand
+    const moreItemsButton = screen.getByText('+1 more items')
+    await act(async () => {
+      fireEvent.click(moreItemsButton)
+    })
+
+    // Should now show all items and "Show less"
+    await waitFor(() => {
+      expect(screen.getByText('Task 3')).toBeVisible()
+      expect(screen.getByText('Task 2')).toBeVisible()
+      expect(screen.getByText('Task 4')).toBeVisible()
+      expect(screen.getByText('Task 1')).toBeVisible() // Now visible
+      expect(screen.getByText('Show less')).toBeVisible()
+      expect(screen.queryByText('+1 more items')).not.toBeInTheDocument()
+    })
+
+    // Click collapse
+    const showLessButton = screen.getByText('Show less')
+    await act(async () => {
+      fireEvent.click(showLessButton)
+    })
+
+    // Should be back to original state
+    await waitFor(() => {
+      expect(screen.getByText('Task 3')).toBeVisible()
+      expect(screen.getByText('Task 2')).toBeVisible()
+      expect(screen.getByText('Task 4')).toBeVisible()
+      expect(screen.queryByText('Task 1')).not.toBeInTheDocument()
+      expect(screen.getByText('+1 more items')).toBeVisible()
+      expect(screen.queryByText('Show less')).not.toBeInTheDocument()
     })
   })
 

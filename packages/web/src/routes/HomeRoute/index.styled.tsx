@@ -446,10 +446,16 @@ export const MoreItemsIndicator = styled('div')(({ theme }) => ({
   marginTop: '0.25rem',
   cursor: 'pointer',
   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+  userSelect: 'none',
   '&:hover': {
-    backgroundColor: 'rgba(102, 126, 234, 0.12)',
+    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%)',
     borderColor: 'rgba(102, 126, 234, 0.25)',
+    color: theme.palette.text.primary,
     transform: 'translateY(-1px)',
+  },
+  '&:active': {
+    transform: 'translateY(0px)',
+    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%)',
   },
 }))
 
