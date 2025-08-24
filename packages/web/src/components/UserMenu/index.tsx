@@ -7,6 +7,7 @@ import * as Styled from './index.styled'
 import { getPostLogoutRedirectUri, oidcConfig } from '../../config/oidc'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import CreateProjectDialog from '../CreateProjectDialog'
+import JoinProjectDialog from '../JoinProjectDialog'
 import ProjectSettingsSubpage from './ProjectSettingsSubpage'
 import NotificationSettingsSubpage from './NotificationSettingsSubpage'
 
@@ -19,6 +20,7 @@ const UserMenu: React.FC = () => {
   const [currentView, setCurrentView] = useState<SubpageView>('main')
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 })
   const [showCreateDialog, setShowCreateDialog] = useState(false)
+  const [showJoinDialog, setShowJoinDialog] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const handleLogout = () => {
@@ -53,8 +55,7 @@ const UserMenu: React.FC = () => {
   }
 
   const handleJoinProject = () => {
-    // TODO: Open join project dialog
-    console.log('Join project clicked')
+    setShowJoinDialog(true)
     closeDropdown()
   }
 
@@ -200,6 +201,15 @@ const UserMenu: React.FC = () => {
         onSuccess={() => {
           // Project will automatically be selected by ProjectProvider
           setShowCreateDialog(false)
+        }}
+      />
+      
+      <JoinProjectDialog
+        open={showJoinDialog}
+        onClose={() => setShowJoinDialog(false)}
+        onSuccess={() => {
+          // Projects will automatically be refreshed by ProjectProvider
+          setShowJoinDialog(false)
         }}
       />
     </>
