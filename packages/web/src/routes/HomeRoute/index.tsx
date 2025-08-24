@@ -19,6 +19,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 
 import { formatTimeElapsed, formatTimestamp } from './utils'
 
@@ -130,10 +131,20 @@ import {
   NoiseDetailEmpty,
   CompactItemList,
   CompactItemText,
+  CompactItemHeader,
   CompactItemContent,
   CompactItemMeta,
   CompactDescription,
-  DueDateText
+  DueDateText,
+  ExpandedToDoContent,
+  ExpandedDescription,
+  ExpandedMetadata,
+  MetadataRow,
+  MetadataIcon,
+  MetadataContent,
+  MetadataLabel,
+  MetadataValue,
+  DueDateChip
 } from './index.styled'
 
 const HomeDataContent = () => {
@@ -146,6 +157,7 @@ const HomeDataContent = () => {
   const [anchorPosition, setAnchorPosition] = useState<{ top: number; left: number; arrowOffset?: number } | undefined>(undefined)
   const [isToDoItemsExpanded, setIsToDoItemsExpanded] = useState(false)
   const [noiseView, setNoiseView] = useState<'overview' | 'today' | 'last7days' | 'last30days'>('overview')
+  const [expandedToDoItems, setExpandedToDoItems] = useState<Set<string>>(new Set())
 
   const handleGroceryItemClick = (item: IGroceryItem, event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -192,6 +204,16 @@ const HomeDataContent = () => {
 
   const handleNoiseViewChange = (view: 'overview' | 'today' | 'last7days' | 'last30days') => {
     setNoiseView(view)
+  }
+
+  const handleToDoItemToggle = (itemId: string) => {
+    const newExpandedItems = new Set(expandedToDoItems)
+    if (newExpandedItems.has(itemId)) {
+      newExpandedItems.delete(itemId)
+    } else {
+      newExpandedItems.add(itemId)
+    }
+    setExpandedToDoItems(newExpandedItems)
   }
 
   const getFilteredNoiseItems = () => {
@@ -415,23 +437,66 @@ const HomeDataContent = () => {
                   displayedToDoItems.map((item) => {
                     const dueDateText = formatDueDateRelative(item.dueDate)
                     const dueDateClass = getDueDateClass(item.dueDate)
+                    const isExpanded = expandedToDoItems.has(item.id)
                     
                     return (
-                      <CompactItemText key={item.id}>
-                        <CompactItemContent>
-                          {item.name}
-                          {item.description && (
-                            <CompactDescription>
-                              {item.description}
-                            </CompactDescription>
+                      <CompactItemText key={item.id} onClick={() => handleToDoItemToggle(item.id)} $isExpanded={isExpanded}>
+                        <CompactItemHeader>
+                          <CompactItemContent>
+                            {item.name}
+                            {!isExpanded && item.description && (
+                              <CompactDescription>
+                                {item.description.length > 50 
+                                  ? `${item.description.substring(0, 50)}...` 
+                                  : item.description}
+                              </CompactDescription>
+                            )}
+                          </CompactItemContent>
+                          {dueDateText && (
+                            <CompactItemMeta>
+                              <DueDateText className={dueDateClass}>
+                                {dueDateText}
+                              </DueDateText>
+                            </CompactItemMeta>
                           )}
-                        </CompactItemContent>
-                        {dueDateText && (
-                          <CompactItemMeta>
-                            <DueDateText className={dueDateClass}>
-                              {dueDateText}
-                            </DueDateText>
-                          </CompactItemMeta>
+                        </CompactItemHeader>
+                        {isExpanded && (
+                          <ExpandedToDoContent>
+                            {item.description && (
+                              <ExpandedDescription>
+                                {item.description}
+                              </ExpandedDescription>
+                            )}
+                            {item.dueDate && (
+                              <ExpandedMetadata>
+                                <MetadataRow>
+                                  <MetadataIcon>
+                                    <CalendarTodayIcon />
+                                  </MetadataIcon>
+                                  <MetadataContent>
+                                    <MetadataLabel>Due Date</MetadataLabel>
+                                    <MetadataValue>
+                                      <DueDateChip 
+                                        $isOverdue={dueDateClass === 'overdue'}
+                                        $isToday={dueDateClass === 'today'}
+                                        $isSoon={dueDateClass === 'soon'}
+                                      >
+                                        <CalendarTodayIcon />
+                                        {new Date(item.dueDate).toLocaleDateString([], {
+                                          weekday: 'short',
+                                          month: 'short', 
+                                          day: 'numeric'
+                                        })} at {new Date(item.dueDate).toLocaleTimeString([], {
+                                          hour: '2-digit',
+                                          minute: '2-digit'
+                                        })}
+                                      </DueDateChip>
+                                    </MetadataValue>
+                                  </MetadataContent>
+                                </MetadataRow>
+                              </ExpandedMetadata>
+                            )}
+                          </ExpandedToDoContent>
                         )}
                       </CompactItemText>
                     )

@@ -745,6 +745,130 @@ describe('Given the HomeRoute component', () => {
       })
     })
   })
+
+  describe('todo item expansion', () => {
+    it('should expand todo item on click and show detailed information', async () => {
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      tomorrow.setHours(14, 30, 0, 0) // 2:30 PM tomorrow
+      
+      const todoItem = {
+        id: 'test-todo-1',
+        name: 'Test Todo Item',
+        description: 'This is a longer description that provides more details about the task that needs to be completed.',
+        isDone: false,
+        dueDate: tomorrow.getTime()
+      }
+
+      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([todoItem])
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      // Should show todo item initially
+      await waitFor(() => {
+        expect(screen.getByText('Test Todo Item')).toBeVisible()
+      })
+
+      // Click on the todo item to expand it
+      const todoElement = screen.getByText('Test Todo Item').closest('li')
+      expect(todoElement).not.toBeNull()
+      
+      await act(async () => {
+        fireEvent.click(todoElement!)
+      })
+
+      // Should show expanded content with full description
+      await waitFor(() => {
+        expect(screen.getByText('This is a longer description that provides more details about the task that needs to be completed.')).toBeVisible()
+        expect(screen.getByText('Due Date')).toBeVisible()
+      })
+    })
+
+    it('should collapse todo item on second click', async () => {
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      tomorrow.setHours(14, 30, 0, 0) // 2:30 PM tomorrow
+      
+      const todoItem = {
+        id: 'test-todo-2',
+        name: 'Test Todo Item 2',
+        description: 'Another test description.',
+        isDone: false,
+        dueDate: tomorrow.getTime()
+      }
+
+      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([todoItem])
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      const todoElement = screen.getByText('Test Todo Item 2').closest('li')
+      
+      // Click to expand
+      await act(async () => {
+        fireEvent.click(todoElement!)
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('Due Date')).toBeVisible()
+      })
+
+      // Click again to collapse
+      await act(async () => {
+        fireEvent.click(todoElement!)
+      })
+
+      await waitFor(() => {
+        expect(screen.queryByText('Due Date')).not.toBeInTheDocument()
+      })
+    })
+
+    it('should handle todo items without descriptions', async () => {
+      const todoItem = {
+        id: 'test-todo-3',
+        name: 'Simple Todo',
+        description: undefined,
+        isDone: false,
+        dueDate: undefined
+      }
+
+      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([todoItem])
+      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      const todoElement = screen.getByText('Simple Todo').closest('li')
+      
+      await act(async () => {
+        fireEvent.click(todoElement!)
+      })
+
+      // Should show expanded state but no additional content since there's no description or due date
+      await waitFor(() => {
+        expect(screen.queryByText('Due Date')).not.toBeInTheDocument() // No due date
+        expect(screen.getByText('Simple Todo')).toBeVisible() // Main title still visible
+      })
+
+      // Verify we can collapse it again
+      await act(async () => {
+        fireEvent.click(todoElement!)
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('Simple Todo')).toBeVisible() // Still visible in collapsed state
+      })
+    })
+  })
 })
 
 const renderComponent = () => {
