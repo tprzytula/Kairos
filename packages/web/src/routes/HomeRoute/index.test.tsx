@@ -358,6 +358,48 @@ describe('Given the HomeRoute component', () => {
     })
   })
 
+  it('should allow switching between grocery items without closing popup', async () => {
+    const mockGroceryList = [
+      { id: '1', name: 'Apple', quantity: 5, unit: GroceryItemUnit.UNIT, imagePath: '/apple.png' },
+      { id: '2', name: 'Banana', quantity: 3, unit: GroceryItemUnit.UNIT, imagePath: '/banana.png' },
+    ]
+
+    jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
+
+    await act(async () => {
+      renderComponent()
+    })
+
+    // Click first grocery item
+    const firstIcon = screen.getByTitle('Apple (5 unit(s))')
+    await act(async () => {
+      fireEvent.click(firstIcon)
+    })
+
+    // Should show first item popup
+    await waitFor(() => {
+      expect(document.body.querySelector('[role="tooltip"]')).toBeInTheDocument()
+      expect(screen.getByText('Apple')).toBeVisible()
+      expect(screen.getByText('5 unit(s)')).toBeVisible()
+    })
+
+    // Click second grocery item directly (without closing first)
+    const secondIcon = screen.getByTitle('Banana (3 unit(s))')
+    await act(async () => {
+      fireEvent.click(secondIcon)
+    })
+
+    // Should now show second item popup (switched directly)
+    await waitFor(() => {
+      expect(document.body.querySelector('[role="tooltip"]')).toBeInTheDocument()
+      expect(screen.getByText('Banana')).toBeVisible()
+      expect(screen.getByText('3 unit(s)')).toBeVisible()
+      // First item should no longer be visible
+      expect(screen.queryByText('Apple')).not.toBeInTheDocument()
+      expect(screen.queryByText('5 unit(s)')).not.toBeInTheDocument()
+    })
+  })
+
   it('should display to-do items with descriptions', async () => {
     const mockToDoList = [
       { id: '1', name: 'Buy groceries', description: 'Milk and bread', isDone: false },

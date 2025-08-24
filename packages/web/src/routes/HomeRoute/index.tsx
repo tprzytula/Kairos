@@ -98,6 +98,8 @@ const HomeDataContent = () => {
   const [isToDoItemsExpanded, setIsToDoItemsExpanded] = useState(false)
 
   const handleGroceryItemClick = (item: IGroceryItem, event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation() // Prevent event bubbling to overlay
+    
     const rect = event.currentTarget.getBoundingClientRect()
     const bubbleMaxWidth = 240 // Max width from styled component
     const bubbleMinWidth = 180 // Min width from styled component

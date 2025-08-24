@@ -22,9 +22,16 @@ const GroceryItemPreviewPopup: React.FC<IGroceryItemPreviewPopupProps> = ({
     left: anchorPosition.left,
   }
 
+  const handleOverlayClick = (event: React.MouseEvent) => {
+    // Only close if clicking on the overlay itself, not on grocery items
+    if (event.target === event.currentTarget) {
+      onClose()
+    }
+  }
+
   return createPortal(
     <>
-      <BubbleOverlay onClick={onClose} />
+      <BubbleOverlay onClick={handleOverlayClick} />
       <BubbleContainer
         style={bubbleStyle}
         $arrowOffset={anchorPosition.arrowOffset}
