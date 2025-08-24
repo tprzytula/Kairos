@@ -270,7 +270,10 @@ locals {
       }
     },
     "send_todo_notifications" = {
-      environment_variables = {}
+      environment_variables = {
+        VAPID_PUBLIC_KEY  = var.vapid_public_key
+        VAPID_PRIVATE_KEY = var.vapid_private_key
+      }
       permissions = {
         database = {
           project_members = "read-only"

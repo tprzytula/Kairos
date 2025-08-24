@@ -1,12 +1,10 @@
-variable "google_client_id" {
-  description = "Google OAuth client ID"
+variable "vapid_public_key" {
+  description = "VAPID public key for push notifications"
   type        = string
-  default     = ""
 }
 
-variable "google_client_secret" {
-  description = "Google OAuth client secret"
+variable "vapid_private_key" {
+  description = "VAPID private key for push notifications"
   type        = string
-  default     = ""
   sensitive   = true
 }

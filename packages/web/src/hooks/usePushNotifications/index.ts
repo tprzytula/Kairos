@@ -13,7 +13,7 @@ export interface UsePushNotificationsReturn {
   unsubscribe: () => Promise<void>;
 }
 
-const VAPID_PUBLIC_KEY = process.env.REACT_APP_VAPID_PUBLIC_KEY || 'BEl62iUYgUivxIkv69yViEuiBIa40HI-4MuU9wSZVAQ';
+const VAPID_PUBLIC_KEY = 'BCPjD3j2_b41zTtj0dbPWE62-TZvmVhV0zjSM1e5Yw9CJ_amHbF_i3OynLfGigFYSrSUZ27yaSPDct_3kayMaOY';
 
 export const usePushNotifications = (): UsePushNotificationsReturn => {
   const { user } = useAuth();
