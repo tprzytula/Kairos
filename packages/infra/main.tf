@@ -33,7 +33,7 @@ module "sns" {
   source = "./modules/sns"
 
   random_name                      = module.random.random_name
-  notification_lambda_arn          = module.lambda.lambda_functions["send_todo_notifications"].invoke_arn
+  notification_lambda_arn          = module.lambda.lambda_functions["send_todo_notifications"].function_arn
   notification_lambda_function_name = module.lambda.lambda_functions["send_todo_notifications"].function_name
 }
 
