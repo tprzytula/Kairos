@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "push_subscriptions" {
-  name           = format("push_subscriptions_%s", var.random_name)
+  name           = "PushSubscriptions"
   billing_mode   = "PAY_PER_REQUEST"
   hash_key       = "userId"
   range_key      = "endpoint"
@@ -12,6 +12,12 @@ resource "aws_dynamodb_table" "push_subscriptions" {
   attribute {
     name = "endpoint"
     type = "S"
+  }
+
+  global_secondary_index {
+    name            = "UserPushSubscriptionsIndex"
+    hash_key        = "userId"
+    projection_type = "ALL"
   }
 
   tags = {
