@@ -31,7 +31,7 @@ export const AppInfoCardContent = styled(Card)({
     right: 0,
     height: '3px',
     background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-    opacity: 0,
+    opacity: 1,
     transition: 'opacity 0.3s ease',
   },
   '&:hover': {
