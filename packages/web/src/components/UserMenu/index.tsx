@@ -2,17 +2,21 @@ import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useAuth } from 'react-oidc-context'
 import { Divider, ListItemIcon, ListItemText } from '@mui/material'
-import { Add as AddIcon, Group as GroupIcon, FolderOpen as ProjectIcon } from '@mui/icons-material'
+import { Settings as SettingsIcon, Notifications as NotificationsIcon } from '@mui/icons-material'
 import * as Styled from './index.styled'
 import { getPostLogoutRedirectUri, oidcConfig } from '../../config/oidc'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import CreateProjectDialog from '../CreateProjectDialog'
-import PushNotificationSettings from '../PushNotificationSettings'
+import ProjectSettingsSubpage from './ProjectSettingsSubpage'
+import NotificationSettingsSubpage from './NotificationSettingsSubpage'
+
+type SubpageView = 'main' | 'projects' | 'notifications'
 
 const UserMenu: React.FC = () => {
   const auth = useAuth()
-  const { projects, currentProject, switchProject } = useProjectContext()
+  const { switchProject } = useProjectContext()
   const [isOpen, setIsOpen] = useState(false)
+  const [currentView, setCurrentView] = useState<SubpageView>('main')
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 })
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -33,6 +37,7 @@ const UserMenu: React.FC = () => {
 
   const closeDropdown = () => {
     setIsOpen(false)
+    setCurrentView('main')
   }
 
   const handleProjectSwitch = (projectId: string) => {
@@ -51,6 +56,18 @@ const UserMenu: React.FC = () => {
     // TODO: Open join project dialog
     console.log('Join project clicked')
     closeDropdown()
+  }
+
+  const handleShowProjectSettings = () => {
+    setCurrentView('projects')
+  }
+
+  const handleShowNotificationSettings = () => {
+    setCurrentView('notifications')
+  }
+
+  const handleBackToMain = () => {
+    setCurrentView('main')
   }
 
   useEffect(() => {
@@ -127,74 +144,51 @@ const UserMenu: React.FC = () => {
             top: dropdownPosition.top,
             right: dropdownPosition.right,
           }}>
-            <Styled.UserInfo>
-              <Styled.UserName>{userName}</Styled.UserName>
-              {userEmail && <Styled.UserEmail>{userEmail}</Styled.UserEmail>}
-            </Styled.UserInfo>
-            
-            <Divider sx={{ my: 1 }} />
-            
-            <PushNotificationSettings />
-            
-            {currentProject && (
+            {currentView === 'main' && (
               <>
-                <Styled.SectionTitle>Current Project</Styled.SectionTitle>
-                <Styled.CurrentProject>
+                <Styled.UserInfo>
+                  <Styled.UserName>{userName}</Styled.UserName>
+                  {userEmail && <Styled.UserEmail>{userEmail}</Styled.UserEmail>}
+                </Styled.UserInfo>
+                
+                <Divider sx={{ my: 1 }} />
+                
+                <Styled.MainMenuItem onClick={handleShowProjectSettings}>
                   <ListItemIcon>
-                    <ProjectIcon fontSize="small" />
+                    <SettingsIcon fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary={currentProject.name}
-                    secondary={currentProject.isPersonal ? 'Personal' : 'Shared'}
-                  />
-                </Styled.CurrentProject>
+                  <ListItemText primary="Project Settings" />
+                </Styled.MainMenuItem>
+                
+                <Styled.MainMenuItem onClick={handleShowNotificationSettings}>
+                  <ListItemIcon>
+                    <NotificationsIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="Notification Settings" />
+                </Styled.MainMenuItem>
+
+                <Divider sx={{ my: 1 }} />
+                
+                <Styled.LogoutButton onClick={handleLogout}>
+                  Sign Out
+                </Styled.LogoutButton>
               </>
             )}
 
-            {projects.length > 1 && (
-              <>
-                <Styled.SectionTitle>Switch Project</Styled.SectionTitle>
-                {projects
-                  .filter(project => project.id !== currentProject?.id)
-                  .map(project => (
-                    <Styled.ProjectMenuItem 
-                      key={project.id}
-                      onClick={() => handleProjectSwitch(project.id)}
-                    >
-                      <ListItemIcon>
-                        <ProjectIcon fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText 
-                        primary={project.name}
-                        secondary={project.isPersonal ? 'Personal' : 'Shared'}
-                      />
-                    </Styled.ProjectMenuItem>
-                  ))
-                }
-              </>
+            {currentView === 'projects' && (
+              <ProjectSettingsSubpage
+                onBack={handleBackToMain}
+                onCreateProject={handleCreateProject}
+                onJoinProject={handleJoinProject}
+                onProjectSwitch={handleProjectSwitch}
+              />
             )}
 
-            <Divider sx={{ my: 1 }} />
-            
-            <Styled.ProjectMenuItem onClick={handleCreateProject}>
-              <ListItemIcon>
-                <AddIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText primary="Create Project" />
-            </Styled.ProjectMenuItem>
-            
-            <Styled.ProjectMenuItem onClick={handleJoinProject}>
-              <ListItemIcon>
-                <GroupIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText primary="Join Project" />
-            </Styled.ProjectMenuItem>
-
-            <Divider sx={{ my: 1 }} />
-            
-            <Styled.LogoutButton onClick={handleLogout}>
-              Sign Out
-            </Styled.LogoutButton>
+            {currentView === 'notifications' && (
+              <NotificationSettingsSubpage
+                onBack={handleBackToMain}
+              />
+            )}
           </Styled.UserDropdown>
         </>,
         document.body

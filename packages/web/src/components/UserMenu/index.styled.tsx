@@ -157,3 +157,65 @@ export const ProjectMenuItem = styled(Box)({
     color: '#6b7280',
   },
 })
+
+export const MainMenuItem = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '12px 8px',
+  borderRadius: '8px',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  marginBottom: '4px',
+  
+  '&:hover': {
+    background: '#f9fafb',
+  },
+  
+  '& .MuiListItemIcon-root': {
+    minWidth: '36px',
+    color: '#667eea',
+  },
+  
+  '& .MuiListItemText-primary': {
+    fontSize: '14px',
+    fontWeight: 500,
+    color: '#374151',
+  },
+})
+
+export const SubpageHeader = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  marginBottom: '8px',
+  gap: '12px',
+})
+
+export const BackButton = styled(Button)({
+  minWidth: '36px',
+  width: '36px',
+  height: '36px',
+  padding: '6px',
+  borderRadius: '50%',
+  background: '#f9fafb',
+  border: 'none',
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  transition: 'all 0.2s ease',
+  
+  '&:hover': {
+    background: '#f3f4f6',
+  },
+  
+  '& .MuiSvgIcon-root': {
+    fontSize: '18px',
+    color: '#6b7280',
+  },
+})
+
+export const SubpageTitle = styled(Typography)({
+  fontSize: '16px',
+  fontWeight: 600,
+  color: '#1f2937',
+})
