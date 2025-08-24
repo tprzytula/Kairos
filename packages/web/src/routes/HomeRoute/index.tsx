@@ -1,11 +1,14 @@
+import React, { useState } from 'react'
 import { useGroceryListContext, GroceryListProvider } from '../../providers/GroceryListProvider'
 import { useToDoListContext, ToDoListProvider } from '../../providers/ToDoListProvider'
 import { useNoiseTrackingContext, NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
+import { IGroceryItem } from '../../providers/AppStateProvider/types'
 import StandardLayout from '../../layout/standardLayout'
 import AppInfoCard from '../../components/AppInfoCard'
 import DashboardHeader from '../../components/DashboardHeader'
+import GroceryItemPreviewPopup from '../../components/GroceryItemPreviewPopup'
 import HomeGroceryItemPlaceholder from './components/HomeGroceryItemPlaceholder'
 import HomeToDoItemPlaceholder from './components/HomeToDoItemPlaceholder'
 import HomeNoiseItemPlaceholder from './components/HomeNoiseItemPlaceholder'
@@ -89,6 +92,48 @@ const HomeDataContent = () => {
   const { toDoList, isLoading: isToDoLoading } = useToDoListContext()
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
   const { state: { purchasedItems } } = useAppState()
+  const [selectedGroceryItem, setSelectedGroceryItem] = useState<IGroceryItem | null>(null)
+  const [isPopupOpen, setIsPopupOpen] = useState(false)
+  const [anchorPosition, setAnchorPosition] = useState<{ top: number; left: number; arrowOffset?: number } | undefined>(undefined)
+
+  const handleGroceryItemClick = (item: IGroceryItem, event: React.MouseEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    const bubbleMaxWidth = 240 // Max width from styled component
+    const bubbleMinWidth = 180 // Min width from styled component
+    // Use max width for safe positioning calculation
+    const bubbleWidth = bubbleMaxWidth
+    const viewportWidth = window.innerWidth
+    const padding = 16 // Minimum padding from edge
+    
+    // Calculate ideal center position (center of clicked icon)
+    const idealCenterX = rect.left + rect.width / 2 + window.scrollX
+    
+    // Calculate bounds for bubble center position (accounting for bubble being centered via transform)
+    const minCenterX = window.scrollX + padding + bubbleWidth / 2
+    const maxCenterX = window.scrollX + viewportWidth - padding - bubbleWidth / 2
+    
+    // Clamp bubble center position within safe viewport bounds
+    const adjustedCenterX = Math.max(minCenterX, Math.min(maxCenterX, idealCenterX))
+    
+    // Calculate arrow offset (how far the arrow should move from bubble center to point to icon center)
+    const arrowOffset = idealCenterX - adjustedCenterX
+    
+    const position = {
+      top: rect.bottom + window.scrollY + 8,
+      left: adjustedCenterX, // This will be the center point, styled component will translate -50%
+      arrowOffset: arrowOffset,
+    }
+    
+    setSelectedGroceryItem(item)
+    setAnchorPosition(position)
+    setIsPopupOpen(true)
+  }
+
+  const handlePopupClose = () => {
+    setIsPopupOpen(false)
+    setSelectedGroceryItem(null)
+    setAnchorPosition(undefined)
+  }
   
   const unpurchasedItems = groceryList.filter(item => !purchasedItems.has(item.id))
   const groceryStats = {
@@ -140,6 +185,7 @@ const HomeDataContent = () => {
   const totalNoiseItems = noiseTrackingItems.length
   
   return (
+    <>
       <Container>
         <SectionCard>
           <SectionContent>
@@ -163,6 +209,7 @@ const HomeDataContent = () => {
                           backgroundImage: item.imagePath ? `url(${item.imagePath})` : 'none'
                         }}
                         title={`${item.name} (${item.quantity} ${item.unit})`}
+                        onClick={(event) => handleGroceryItemClick(item, event)}
                       >
                         {!item.imagePath && item.name.charAt(0).toUpperCase()}
                       </GroceryImageItem>
@@ -278,6 +325,14 @@ const HomeDataContent = () => {
           </SectionCard>
         </FullWidthSection>
       </Container>
+      
+      <GroceryItemPreviewPopup
+        open={isPopupOpen}
+        onClose={handlePopupClose}
+        item={selectedGroceryItem}
+        anchorPosition={anchorPosition}
+      />
+    </>
   )
 }
 
