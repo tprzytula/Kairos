@@ -61,7 +61,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
         projectId,
         todoItem: { id, name, description },
         authorId: userId,
-        authorName: user?.name || user?.email || "Someone"
+        authorName: user?.given_name || user?.name || user?.email || "Someone"
       });
     } catch (error) {
       console.error("Failed to send notification:", error);

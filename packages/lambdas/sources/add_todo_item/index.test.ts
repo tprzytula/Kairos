@@ -111,7 +111,7 @@ describe('Given the add_todo_item lambda handler', () => {
                             description: EXAMPLE_TODO_ITEM.description
                         },
                         authorId: 'test-user-id',
-                        authorName: 'test-user@example.com'
+                        authorName: 'John'
                     }),
                     Subject: `New todo item added: ${EXAMPLE_TODO_ITEM.name}`
                 });
@@ -141,6 +141,37 @@ describe('Given the add_todo_item lambda handler', () => {
                 expect(mockConsoleError).toHaveBeenCalledWith('Failed to send notification:', expect.any(Error));
                 
                 mockConsoleError.mockRestore();
+            });
+
+            it('should fallback to email when given_name is not available', async () => {
+                jest.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
+                jest.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
+                jest.mocked(putItem).mockResolvedValue({
+                    $metadata: {
+                        httpStatusCode: 201,
+                    },
+                });
+
+                const result = await runHandler({ 
+                    body: JSON.stringify(EXAMPLE_TODO_ITEM)
+                }, true, true, { useEmailOnly: true });
+
+                expect(result.statusCode).toBe(201);
+
+                expect(mockSNSPublish).toHaveBeenCalledWith({
+                    TopicArn: 'arn:aws:sns:us-east-1:123456789012:test-topic',
+                    Message: JSON.stringify({
+                        projectId: 'test-project',
+                        todoItem: {
+                            id: EXAMPLE_ID,
+                            name: EXAMPLE_TODO_ITEM.name,
+                            description: EXAMPLE_TODO_ITEM.description
+                        },
+                        authorId: 'test-user-id',
+                        authorName: 'test-user@example.com'
+                    }),
+                    Subject: `New todo item added: ${EXAMPLE_TODO_ITEM.name}`
+                });
             });
         });
 
@@ -173,7 +204,8 @@ interface IAPIGatewayProxyEvent {
 const runHandler = async (
     { body }: IAPIGatewayProxyEvent,
     includeProjectId: boolean = false,
-    includeUserInfo: boolean = false
+    includeUserInfo: boolean = false,
+    options: { useEmailOnly?: boolean } = {}
 ) => {
     const event = { body } as any;
     if (includeProjectId) {
@@ -184,6 +216,7 @@ const runHandler = async (
             authorizer: {
                 claims: {
                     sub: "test-user-id",
+                    ...(options.useEmailOnly ? {} : { given_name: "John" }),
                     email: "test-user@example.com"
                 }
             }
