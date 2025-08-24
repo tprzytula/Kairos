@@ -230,19 +230,19 @@ locals {
         }
       }
     },
-      "get_project_invite_info" = {
-    environment_variables = {}
-    permissions = {
-      database = {
-        projects = "read-only"
-        project_members = "read-only"
-        push_subscriptions = "none"
+    "get_project_invite_info" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          projects = "read-only"
+          project_members = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
       }
-      sns = {
-        todo_notifications = "none"
-      }
-    }
-  },
+    },
     "get_user_preferences" = {
       environment_variables = {}
       permissions = {
