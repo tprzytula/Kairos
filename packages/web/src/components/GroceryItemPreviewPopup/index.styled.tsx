@@ -42,18 +42,6 @@ export const BubbleContainer = styled('div')<{ $arrowOffset?: number }>(({ theme
   }
 }))
 
-export const BubbleOverlay = styled('div')(() => ({
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  zIndex: 9998,
-  background: 'transparent',
-}))
-
-
-
 export const ItemDetails = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',

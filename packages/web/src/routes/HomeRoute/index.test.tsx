@@ -398,6 +398,18 @@ describe('Given the HomeRoute component', () => {
       expect(screen.queryByText('Apple')).not.toBeInTheDocument()
       expect(screen.queryByText('5 unit(s)')).not.toBeInTheDocument()
     })
+    
+    // Should be able to close by clicking the bubble itself
+    const bubble = document.body.querySelector('[role="tooltip"]') as HTMLElement
+    await act(async () => {
+      fireEvent.click(bubble)
+    })
+
+    await waitFor(() => {
+      expect(document.body.querySelector('[role="tooltip"]')).not.toBeInTheDocument()
+      expect(screen.queryByText('Banana')).not.toBeInTheDocument()
+      expect(screen.queryByText('3 unit(s)')).not.toBeInTheDocument()
+    })
   })
 
   it('should display to-do items with descriptions', async () => {

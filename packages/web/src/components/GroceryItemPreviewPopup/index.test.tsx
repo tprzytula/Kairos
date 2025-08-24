@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, fireEvent, cleanup } from '@testing-library/react'
+import { act, render, screen, fireEvent, cleanup } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import theme from '../../theme'
 import GroceryItemPreviewPopup from './index'
@@ -216,6 +216,140 @@ describe('GroceryItemPreviewPopup component', () => {
 
       const tooltip = screen.getByRole('tooltip')
       expect(tooltip).toHaveAttribute('aria-label', 'Milk - 2 l')
+    })
+  })
+
+  describe('document click handling', () => {
+    beforeEach(() => {
+      jest.clearAllMocks()
+    })
+
+    it('should close when clicking outside of bubble and grocery items', async () => {
+      jest.useFakeTimers()
+      
+      renderWithTheme(
+        <GroceryItemPreviewPopup
+          open={true}
+          onClose={mockOnClose}
+          item={mockGroceryItem}
+          anchorPosition={mockAnchorPosition}
+        />
+      )
+
+      // Fast forward the timeout for document listener
+      act(() => {
+        jest.advanceTimersByTime(50)
+      })
+
+      // Click somewhere on the document (outside bubble and grocery items)
+      act(() => {
+        fireEvent.click(document.body)
+      })
+
+      expect(mockOnClose).toHaveBeenCalledTimes(1)
+      
+      jest.useRealTimers()
+    })
+
+    it('should not close when clicking on the bubble itself via document listener', async () => {
+      jest.useFakeTimers()
+      
+      renderWithTheme(
+        <GroceryItemPreviewPopup
+          open={true}
+          onClose={mockOnClose}
+          item={mockGroceryItem}
+          anchorPosition={mockAnchorPosition}
+        />
+      )
+
+      // Fast forward the timeout for document listener
+      act(() => {
+        jest.advanceTimersByTime(50)
+      })
+
+      const bubble = document.body.querySelector('[role="tooltip"]') as HTMLElement
+      
+      // Click on the bubble itself - this should trigger the onClick handler but not the document listener
+      act(() => {
+        fireEvent.click(bubble)
+      })
+
+      // Should close via the onClick handler (1 call)
+      expect(mockOnClose).toHaveBeenCalledTimes(1)
+      
+      jest.useRealTimers()
+    })
+
+    it('should not close when clicking on grocery items', async () => {
+      jest.useFakeTimers()
+      
+      // Create a mock grocery item in the DOM
+      const groceryItem = document.createElement('div')
+      groceryItem.setAttribute('title', 'Banana (3 pieces)')
+      document.body.appendChild(groceryItem)
+      
+      renderWithTheme(
+        <GroceryItemPreviewPopup
+          open={true}
+          onClose={mockOnClose}
+          item={mockGroceryItem}
+          anchorPosition={mockAnchorPosition}
+        />
+      )
+
+      // Fast forward the timeout for document listener
+      act(() => {
+        jest.advanceTimersByTime(50)
+      })
+
+      // Click on the grocery item
+      act(() => {
+        fireEvent.click(groceryItem)
+      })
+
+      // Should not close
+      expect(mockOnClose).not.toHaveBeenCalled()
+      
+      // Clean up
+      document.body.removeChild(groceryItem)
+      jest.useRealTimers()
+    })
+
+    it('should close when clicking on other UI elements like buttons', async () => {
+      jest.useFakeTimers()
+      
+      // Create a mock button like "+X more items"
+      const button = document.createElement('div')
+      button.textContent = '+2 more items'
+      button.setAttribute('role', 'button')
+      document.body.appendChild(button)
+      
+      renderWithTheme(
+        <GroceryItemPreviewPopup
+          open={true}
+          onClose={mockOnClose}
+          item={mockGroceryItem}
+          anchorPosition={mockAnchorPosition}
+        />
+      )
+
+      // Fast forward the timeout for document listener
+      act(() => {
+        jest.advanceTimersByTime(50)
+      })
+
+      // Click on the button
+      act(() => {
+        fireEvent.click(button)
+      })
+
+      // Should close
+      expect(mockOnClose).toHaveBeenCalledTimes(1)
+      
+      // Clean up
+      document.body.removeChild(button)
+      jest.useRealTimers()
     })
   })
 })
