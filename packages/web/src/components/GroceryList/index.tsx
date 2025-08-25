@@ -4,8 +4,8 @@ import { useAppState } from '../../providers/AppStateProvider';
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import GroceryItem from '../GroceryItem';
 import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
-import GroceryCategorySection from '../GroceryCategorySection';
-import { GroceryViewMode } from '../../enums/groceryCategory'
+import CollapsibleSection from '../CollapsibleSection';
+import { GroceryViewMode, GroceryCategory } from '../../enums/groceryCategory'
 import { Container } from './index.styled';
 import EmptyState from '../EmptyState';
 import { ActionName } from '../../providers/AppStateProvider/enums';
@@ -13,7 +13,19 @@ import { Route } from '../../enums/route';
 import SwipeableList from '../SwipeableList';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { useGroceryCategories } from '../../hooks/useGroceryCategories';
+import { SectionIcon } from '../CollapsibleSection/types';
 
+const CATEGORY_ICON_MAP: Record<GroceryCategory, SectionIcon> = {
+  [GroceryCategory.PRODUCE]: { emoji: '🥬', backgroundColor: '#ecfdf5', foregroundColor: '#047857' },
+  [GroceryCategory.DAIRY]: { emoji: '🧀', backgroundColor: '#fff7ed', foregroundColor: '#9a3412' },
+  [GroceryCategory.MEAT]: { emoji: '🥩', backgroundColor: '#fef2f2', foregroundColor: '#991b1b' },
+  [GroceryCategory.FROZEN]: { emoji: '🧊', backgroundColor: '#eff6ff', foregroundColor: '#1d4ed8' },
+  [GroceryCategory.BAKERY]: { emoji: '🥖', backgroundColor: '#fffbeb', foregroundColor: '#92400e' },
+  [GroceryCategory.PANTRY]: { emoji: '🫘', backgroundColor: '#faf5ff', foregroundColor: '#7e22ce' },
+  [GroceryCategory.BEVERAGES]: { emoji: '🧃', backgroundColor: '#f0f9ff', foregroundColor: '#0c4a6e' },
+  [GroceryCategory.HOUSEHOLD]: { emoji: '🧻', backgroundColor: '#f8fafc', foregroundColor: '#0f172a' },
+  [GroceryCategory.OTHER]: { emoji: '🧺', backgroundColor: '#f4f4f5', foregroundColor: '#374151' },
+}
 
 const PlaceholderComponent = () => (
   <Container>
@@ -84,16 +96,23 @@ export const GroceryList = ({ allExpanded: allExpandedProp, expandKey: expandKey
   return (
     <Container>
       {categorizedGroups?.map((group) => (
-        <GroceryCategorySection
+        <CollapsibleSection
           key={group.category}
-          category={group.category}
-          categoryLabel={group.label}
+          title={group.label}
+          icon={CATEGORY_ICON_MAP[group.category]}
           items={group.items}
-          onDelete={handleDelete}
-          onEdit={handleEdit}
+          variant="large"
           expandTo={effectiveAllExpanded}
           expandKey={effectiveExpandKey}
-        />
+        >
+          <SwipeableList
+            component={GroceryItem}
+            list={group.items}
+            onSwipeAction={handleDelete}
+            onEditAction={handleEdit}
+            threshold={0.3}
+          />
+        </CollapsibleSection>
       ))}
     </Container>
   );
