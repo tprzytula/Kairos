@@ -4,18 +4,24 @@ import ToDoList from '../../components/ToDoList'
 import ActionButtonsBar from '../../components/ActionButtonsBar'
 import ModernPageHeader from '../../components/ModernPageHeader'
 import ChecklistIcon from '@mui/icons-material/Checklist'
+import ViewModuleIcon from '@mui/icons-material/ViewModule'
+import ViewListIcon from '@mui/icons-material/ViewList'
 import { Container, ScrollableContainer } from './index.styled'
 import { useAppState } from '../../providers/AppStateProvider'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { showAlert } from '../../utils/alert'
 import { ActionName } from '../../providers/AppStateProvider/enums'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { updateToDoItems } from '../../api/toDoList'
+import { ToDoViewMode } from '../../enums/todoViewMode'
 
 const ToDoListContent = () => {
   const { toDoList, refetchToDoList } = useToDoListContext()
   const { state: { selectedTodoItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
+  const [allExpanded, setAllExpanded] = useState(true)
+  const [expandKey, setExpandKey] = useState(0)
+  const [viewMode, setViewMode] = useState<ToDoViewMode>(ToDoViewMode.GROUPED)
   
   const pendingItems = toDoList.filter(item => !item.isDone)
   const completedItems = toDoList.filter(item => item.isDone)
@@ -61,6 +67,15 @@ const ToDoListContent = () => {
       }, dispatch)
     }
   }, [selectedTodoItems, currentProject, dispatch, refetchToDoList, clearSelectedTodoItems])
+
+  const toggleAll = useCallback(() => {
+    setAllExpanded(!allExpanded)
+    setExpandKey(prev => prev + 1) // Force re-render of sections
+  }, [allExpanded])
+
+  const toggleViewMode = useCallback(() => {
+    setViewMode(prev => prev === ToDoViewMode.GROUPED ? ToDoViewMode.SIMPLE : ToDoViewMode.GROUPED)
+  }, [])
   
   return (
     <StandardLayout>
@@ -71,15 +86,24 @@ const ToDoListContent = () => {
       />
       <Container>
         <ActionButtonsBar
+          expandCollapseButton={{
+            isExpanded: allExpanded,
+            onToggle: toggleAll,
+            disabled: pendingItems.length === 0,
+          }}
           actionButton={{
             isEnabled: selectedTodoItems.size > 0,
             onClick: markToDoItemsAsDone,
             children: "Mark To Do Items As Done",
             statusText: statusText,
           }}
+          viewToggleButton={{
+            children: viewMode === ToDoViewMode.GROUPED ? <ViewModuleIcon /> : <ViewListIcon />,
+            onClick: toggleViewMode,
+          }}
         />
         <ScrollableContainer>
-          <ToDoList />
+          <ToDoList allExpanded={allExpanded} expandKey={expandKey} viewMode={viewMode} />
         </ScrollableContainer>
       </Container>
     </StandardLayout>

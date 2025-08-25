@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
@@ -174,6 +174,62 @@ describe('Given the ToDoListRoute component', () => {
       expect(container).toBeInTheDocument()
     })
   })
+
+  it('should render the expand/collapse button when there are pending items', async () => {
+    const mockTodoItems = [
+      { id: '1', name: 'Task 1', isDone: false, description: '', dueDate: undefined },
+      { id: '2', name: 'Task 2', isDone: false, description: '', dueDate: undefined },
+    ]
+
+    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
+
+    await act(async () => {
+      renderComponent()
+    })
+
+    // The expand/collapse button should be rendered and enabled when there are pending items
+    await waitFor(() => {
+      expect(screen.getByLabelText('Collapse all')).toBeInTheDocument() // Default is expanded
+    })
+  })
+
+  it('should disable the expand/collapse button when no pending items', async () => {
+    const mockTodoItems = [
+      { id: '1', name: 'Task 1', isDone: true, description: '', dueDate: undefined },
+      { id: '2', name: 'Task 2', isDone: true, description: '', dueDate: undefined },
+    ]
+
+    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
+
+    await act(async () => {
+      renderComponent()
+    })
+
+    // The expand/collapse button should be disabled when no pending items
+    await waitFor(() => {
+      const expandButton = screen.getByLabelText('Collapse all')
+      expect(expandButton).toBeDisabled()
+    })
+  })
+
+  it('should render the view toggle button', async () => {
+    const mockTodoItems = [
+      { id: '1', name: 'Task 1', isDone: false, description: '', dueDate: undefined },
+    ]
+
+    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
+
+    await act(async () => {
+      renderComponent()
+    })
+
+    // The view toggle button should be rendered
+    await waitFor(() => {
+      expect(screen.getByLabelText('Toggle view mode')).toBeInTheDocument()
+    })
+  })
+
+
 })
 
 const renderComponent = () => {

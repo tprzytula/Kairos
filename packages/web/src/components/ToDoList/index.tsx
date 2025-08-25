@@ -4,6 +4,7 @@ import { useToDoListContext } from '../../providers/ToDoListProvider';
 import { useProjectContext } from '../../providers/ProjectProvider';
 import ToDoItem from '../ToDoItem';
 import ToDoItemPlaceholder from '../ToDoItemPlaceholder';
+import ToDoTimeSection from '../ToDoTimeSection';
 import { Container } from './index.styled';
 import EmptyState from '../EmptyState';
 import SwipeableList from '../SwipeableList';
@@ -13,6 +14,8 @@ import { updateToDoItems } from '../../api/toDoList';
 import { showAlert } from '../../utils/alert';
 import { Route } from '../../enums/route';
 import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
+import { groupTodosByTime } from './utils/timeGrouping';
+import { ToDoViewMode } from '../../enums/todoViewMode';
 
 const PlaceholderComponent = () => (
   <Container>
@@ -32,12 +35,24 @@ const EmptyListComponent = () => (
   </Container>
 )
 
-export const ToDoList = () => {
+export const ToDoList = ({ 
+  allExpanded, 
+  expandKey, 
+  viewMode = ToDoViewMode.GROUPED 
+}: { 
+  allExpanded?: boolean; 
+  expandKey?: string | number; 
+  viewMode?: ToDoViewMode;
+}) => {
   const { dispatch } = useAppState();
   const { toDoList, isLoading, removeFromToDoList } = useToDoListContext();
   const { currentProject } = useProjectContext();
   const navigate = useNavigate();
   const visibleToDoItems = useMemo(() => toDoList.filter(({ isDone }) => !isDone), [toDoList]);
+  
+  const groupedToDoItems = useMemo(() => {
+    return groupTodosByTime(visibleToDoItems);
+  }, [visibleToDoItems]);
 
   const clearSelectedTodoItems = useCallback((id: string) => {
     dispatch({ 
@@ -72,15 +87,36 @@ export const ToDoList = () => {
     return <EmptyListComponent />
   }
 
+  if (viewMode === ToDoViewMode.SIMPLE) {
+    return (
+      <Container>
+        <ToDoTimeSection
+          group="all"
+          groupLabel="All Tasks"
+          items={visibleToDoItems}
+          onSwipeAction={markToDoItemAsDone}
+          onEditAction={handleEdit}
+          expandTo={allExpanded}
+          expandKey={expandKey}
+        />
+      </Container>
+    );
+  }
+
   return (
     <Container>
-      <SwipeableList
-        component={ToDoItem}
-        list={visibleToDoItems}
-        onSwipeAction={markToDoItemAsDone}
-        onEditAction={handleEdit}
-        threshold={0.3}
-      />
+      {groupedToDoItems.map(({ group, groupLabel, items }) => (
+        <ToDoTimeSection
+          key={group}
+          group={group}
+          groupLabel={groupLabel}
+          items={items}
+          onSwipeAction={markToDoItemAsDone}
+          onEditAction={handleEdit}
+          expandTo={allExpanded}
+          expandKey={expandKey}
+        />
+      ))}
     </Container>
   );
 };
