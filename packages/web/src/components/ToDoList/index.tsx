@@ -4,7 +4,7 @@ import { useToDoListContext } from '../../providers/ToDoListProvider';
 import { useProjectContext } from '../../providers/ProjectProvider';
 import ToDoItem from '../ToDoItem';
 import ToDoItemPlaceholder from '../ToDoItemPlaceholder';
-import ToDoTimeSection from '../ToDoTimeSection';
+import CollapsibleSection from '../CollapsibleSection';
 import { Container } from './index.styled';
 import EmptyState from '../EmptyState';
 import SwipeableList from '../SwipeableList';
@@ -14,8 +14,25 @@ import { updateToDoItems } from '../../api/toDoList';
 import { showAlert } from '../../utils/alert';
 import { Route } from '../../enums/route';
 import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
-import { groupTodosByTime } from './utils/timeGrouping';
+import { groupTodosByTime, TimeGroup, TIME_GROUP_META } from './utils/timeGrouping';
 import { ToDoViewMode } from '../../enums/todoViewMode';
+import { SectionIcon } from '../CollapsibleSection/types';
+
+const TIME_GROUP_ICON_MAP: Record<TimeGroup, SectionIcon> = {
+  [TimeGroup.OVERDUE]: { emoji: '⚠️', backgroundColor: '#fef2f2', foregroundColor: '#dc2626' },
+  [TimeGroup.TODAY]: { emoji: '📅', backgroundColor: '#ecfdf5', foregroundColor: '#059669' },
+  [TimeGroup.TOMORROW]: { emoji: '📌', backgroundColor: '#eff6ff', foregroundColor: '#2563eb' },
+  [TimeGroup.THIS_WEEK]: { emoji: '📆', backgroundColor: '#fefce8', foregroundColor: '#ca8a04' },
+  [TimeGroup.NEXT_WEEK]: { emoji: '🗓️', backgroundColor: '#f0f9ff', foregroundColor: '#0284c7' },
+  [TimeGroup.LATER]: { emoji: '⏳', backgroundColor: '#f8fafc', foregroundColor: '#64748b' },
+  [TimeGroup.NO_DUE_DATE]: { emoji: '📝', backgroundColor: '#f5f5f5', foregroundColor: '#6b7280' },
+}
+
+const ALL_TASKS_ICON: SectionIcon = {
+  emoji: '✅',
+  backgroundColor: '#f0f9ff',
+  foregroundColor: '#0284c7'
+}
 
 const PlaceholderComponent = () => (
   <Container>
@@ -90,15 +107,22 @@ export const ToDoList = ({
   if (viewMode === ToDoViewMode.SIMPLE) {
     return (
       <Container>
-        <ToDoTimeSection
-          group="all"
-          groupLabel="All Tasks"
+        <CollapsibleSection
+          title="All Tasks"
+          icon={ALL_TASKS_ICON}
           items={visibleToDoItems}
-          onSwipeAction={markToDoItemAsDone}
-          onEditAction={handleEdit}
+          variant="small"
           expandTo={allExpanded}
           expandKey={expandKey}
-        />
+        >
+          <SwipeableList
+            component={ToDoItem}
+            list={visibleToDoItems}
+            onSwipeAction={markToDoItemAsDone}
+            onEditAction={handleEdit}
+            threshold={0.3}
+          />
+        </CollapsibleSection>
       </Container>
     );
   }
@@ -106,16 +130,23 @@ export const ToDoList = ({
   return (
     <Container>
       {groupedToDoItems.map(({ group, groupLabel, items }) => (
-        <ToDoTimeSection
+        <CollapsibleSection
           key={group}
-          group={group}
-          groupLabel={groupLabel}
+          title={groupLabel}
+          icon={TIME_GROUP_ICON_MAP[group]}
           items={items}
-          onSwipeAction={markToDoItemAsDone}
-          onEditAction={handleEdit}
+          variant="small"
           expandTo={allExpanded}
           expandKey={expandKey}
-        />
+        >
+          <SwipeableList
+            component={ToDoItem}
+            list={items}
+            onSwipeAction={markToDoItemAsDone}
+            onEditAction={handleEdit}
+            threshold={0.3}
+          />
+        </CollapsibleSection>
       ))}
     </Container>
   );
