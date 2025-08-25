@@ -1,4 +1,4 @@
-import { UserManagerSettings } from 'oidc-client-ts'
+import { UserManagerSettings, WebStorageStateStore } from 'oidc-client-ts'
 
 const getRedirectUri = (): string => {
   const origin = window.location.origin
@@ -34,4 +34,13 @@ export const oidcConfig: UserManagerSettings = {
   revokeTokensOnSignout: false,
   
   silent_redirect_uri: `${window.location.origin}/silent-callback`,
+  
+  silentRequestTimeoutInSeconds: 10,
+  
+  accessTokenExpiringNotificationTimeInSeconds: 300,
+  
+  monitorSession: true,
+  checkSessionIntervalInSeconds: 2,
+  
+  userStore: typeof window !== 'undefined' ? new WebStorageStateStore({ store: window.localStorage }) : undefined,
 }

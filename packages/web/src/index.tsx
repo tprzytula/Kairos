@@ -12,6 +12,18 @@ import { BrowserRouter } from 'react-router'
 import AuthProvider from './providers/AuthProvider'
 import { ProjectProvider } from './providers/ProjectProvider'
 
+const requestPersistentStorage = async (): Promise<void> => {
+  if (navigator.storage && navigator.storage.persist) {
+    try {
+      await navigator.storage.persist()
+    } catch (error) {
+      console.warn('Failed to request persistent storage:', error)
+    }
+  }
+}
+
+requestPersistentStorage()
+
 const container = document.getElementById('app')
 
 if (container) {
