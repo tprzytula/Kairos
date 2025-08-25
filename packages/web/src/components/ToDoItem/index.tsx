@@ -36,7 +36,14 @@ const ToDoItem = memo(({ id, name, description, dueDate }: ITodoItemProps) => {
 
   const formattedDueDate = useMemo(() => {
     if (dueDate) {
-      return new Date(dueDate).toLocaleDateString()
+      const date = new Date(dueDate)
+      const dayName = date.toLocaleDateString('en-US', { weekday: 'short' })
+      const dateString = date.toLocaleDateString('en-GB', { 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric' 
+      })
+      return `${dayName}, ${dateString}`
     }
   }, [dueDate])
 

@@ -14,7 +14,7 @@ export const HeaderCard = styled(Card)(({ theme }) => ({
   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   position: 'relative',
   overflow: 'hidden',
-  margin: '0.75rem 0 0.5rem 0',
+  marginTop: '0.75rem',
   width: '100%',
   '&:before': {
     content: '""',

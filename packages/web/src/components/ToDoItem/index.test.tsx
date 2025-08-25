@@ -13,7 +13,7 @@ describe("Given the ToDoItem component", () => {
     
     expect(screen.getByText(EXAMPLE_TO_DO_ITEM_PROPS.name)).toBeVisible();
     expect(screen.getByText(EXAMPLE_TO_DO_ITEM_PROPS.description)).toBeVisible();
-    expect(screen.getByText('4/30/2025')).toBeVisible();
+    expect(screen.getByText('Wed, 30 Apr 2025')).toBeVisible();
   });
 
   describe("When the user clicks the item", () => {

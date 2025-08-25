@@ -26,10 +26,19 @@ const ToDoListContent = () => {
   const pendingItems = toDoList.filter(item => !item.isDone)
   const completedItems = toDoList.filter(item => item.isDone)
   
+  // Format current date parts with consistent lengths
+  const today = new Date()
+  const currentDay = today.toLocaleDateString('en-US', { weekday: 'short' }) // Thu
+  const dayNumber = today.toLocaleDateString('en-US', { day: 'numeric' })   // 21
+  const monthName = today.toLocaleDateString('en-US', { month: 'short' })   // Aug
+  const yearNumber = today.toLocaleDateString('en-US', { year: 'numeric' }) // 2025
+
   const stats = [
-    { value: toDoList.length, label: 'Total Items' },
     { value: pendingItems.length, label: 'Pending' },
-    { value: completedItems.length, label: 'Completed' }
+    { value: currentDay, label: 'Today' },
+    { value: dayNumber, label: 'Day' },
+    { value: monthName, label: 'Month' },
+    { value: yearNumber, label: 'Year' }
   ]
 
   const statusText = useMemo(() => {

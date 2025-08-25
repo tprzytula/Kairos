@@ -2,16 +2,16 @@ import styled from '@emotion/styled'
 import { Box, Chip, Typography } from '@mui/material'
 
 export const TimeWrapper = styled(Box)({
-  marginBottom: 6,
+  marginBottom: 2,
 })
 
-export const TimeHeader = styled(Box)(({ theme }) => ({
+export const TimeHeader = styled(Box)({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  padding: '8px 10px',
+  padding: '6px 8px',
   background: '#ffffff',
-  borderRadius: 12,
+  borderRadius: 8,
   boxShadow: '0 2px 6px rgba(102, 126, 234, 0.05)',
   border: '1px solid rgba(102,126,234,0.12)',
   backgroundClip: 'padding-box, border-box',
@@ -20,23 +20,23 @@ export const TimeHeader = styled(Box)(({ theme }) => ({
   cursor: 'pointer',
   transition: 'all 200ms ease-in-out',
   '&:hover': {
-    transform: 'translateY(-0.5px)',
-    boxShadow: '0 6px 14px rgba(102, 126, 234, 0.12)',
+    transform: 'translateY(-0.25px)',
+    boxShadow: '0 4px 10px rgba(102, 126, 234, 0.08)',
   },
-}))
+})
 
 export const TimeTitle = styled(Typography)({
-  fontWeight: 600,
+  fontWeight: 500,
   color: '#111827',
-  fontSize: '0.9rem',
+  fontSize: '0.8rem',
   letterSpacing: '-0.01em',
 })
 
 export const ItemCountChip = styled(Chip)({
-  height: 16,
+  height: 14,
   borderRadius: 999,
-  fontSize: 9,
-  paddingInline: 2,
+  fontSize: 8,
+  paddingInline: 1,
   backgroundColor: '#eef2ff',
   color: '#4f46e5',
   fontWeight: 700,
@@ -44,21 +44,21 @@ export const ItemCountChip = styled(Chip)({
 })
 
 export const TimeContent = styled(Box)({
-  paddingTop: 2,
+  paddingTop: 1,
 })
 
 export const TimeIconCircle = styled(Box, {
   shouldForwardProp: (prop) => !['bg', 'fg'].includes(prop),
 })<{ bg?: string; fg?: string }>(({ bg = '#eef2ff', fg = '#4f46e5' }) => ({
-  width: 22,
-  height: 22,
+  width: 18,
+  height: 18,
   borderRadius: '50%',
   backgroundColor: bg,
   color: fg,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: 12,
+  fontSize: 10,
   fontWeight: 700,
   boxShadow: 'inset 0 -2px 6px rgba(0,0,0,0.04)',
 }))

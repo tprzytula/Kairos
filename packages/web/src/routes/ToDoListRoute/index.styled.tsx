@@ -12,5 +12,5 @@ export const ScrollableContainer = styled('div')({
   flex: 1,
   minHeight: 0,
   overflowY: 'auto',
-  paddingBottom: '1rem',
+  paddingBottom: '0.5rem',
 })

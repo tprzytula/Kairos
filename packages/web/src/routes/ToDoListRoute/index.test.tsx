@@ -5,19 +5,48 @@ import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
 import ToDoListRoute from '.'
 import { useAppState } from '../../providers/AppStateProvider'
+import { useProjectContext } from '../../providers/ProjectProvider'
 import * as ToDoAPI from '../../api/toDoList'
+import { IProject } from '../../types/project'
 
 jest.mock('../../providers/AppStateProvider', () => ({
   ...jest.requireActual('../../providers/AppStateProvider'),
   useAppState: jest.fn(),
 }))
 
+jest.mock('../../providers/ProjectProvider', () => ({
+  ...jest.requireActual('../../providers/ProjectProvider'),
+  useProjectContext: jest.fn(),
+}))
+
 jest.mock('../../api/toDoList')
+
+const MOCK_PROJECT: IProject = {
+  id: 'test-project-id',
+  name: 'Test Project',
+  isPersonal: true,
+  ownerId: 'test-user-id',
+  maxMembers: 10,
+  inviteCode: 'test-invite-code',
+  createdAt: new Date().toISOString()
+}
 
 describe('Given the ToDoListRoute component', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
+    
+    // Mock ProjectProvider
+    jest.mocked(useProjectContext).mockReturnValue({
+      projects: [MOCK_PROJECT],
+      currentProject: MOCK_PROJECT,
+      isLoading: false,
+      createProject: jest.fn(),
+      joinProject: jest.fn(),
+      switchProject: jest.fn(),
+      fetchProjects: jest.fn(),
+      getProjectInviteInfo: jest.fn(),
+    })
   })
 
   it('should have the correct title', async () => {
@@ -36,10 +65,12 @@ describe('Given the ToDoListRoute component', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getAllByText('0')).toHaveLength(3) // Should have 3 stats showing 0
-      expect(screen.getByText('Total Items')).toBeInTheDocument()
+      expect(screen.getByText('0')).toBeInTheDocument() // Only Pending should show 0
       expect(screen.getByText('Pending')).toBeInTheDocument()
-      expect(screen.getByText('Completed')).toBeInTheDocument()
+      expect(screen.getByText('Today')).toBeInTheDocument()
+      expect(screen.getByText('Day')).toBeInTheDocument()
+      expect(screen.getByText('Month')).toBeInTheDocument()
+      expect(screen.getByText('Year')).toBeInTheDocument()
     })
   })
 
@@ -59,14 +90,17 @@ describe('Given the ToDoListRoute component', () => {
     })
 
     await waitFor(() => {
-      // Check if we can find the stats (the exact positioning might vary)
-      const statsElements = screen.getAllByText(/^[0-9]+$/)
-      expect(statsElements).toHaveLength(3) // Should have 3 stats numbers
-      
-      expect(screen.getByText('Total Items')).toBeInTheDocument()
+      // Wait for the data to load by checking the pending stat specifically
+      const pendingStatElements = screen.getAllByText('3')
+      expect(pendingStatElements.length).toBeGreaterThan(0) // Should find the pending count
       expect(screen.getByText('Pending')).toBeInTheDocument()
-      expect(screen.getByText('Completed')).toBeInTheDocument()
     })
+    
+    // Then verify all date stats are present
+    expect(screen.getByText('Today')).toBeInTheDocument()
+    expect(screen.getByText('Day')).toBeInTheDocument()
+    expect(screen.getByText('Month')).toBeInTheDocument()
+    expect(screen.getByText('Year')).toBeInTheDocument()
   })
 
   it('should display correct stats with only pending items', async () => {
@@ -82,10 +116,17 @@ describe('Given the ToDoListRoute component', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText('Total Items')).toBeInTheDocument()
+      // Wait for the data to load by checking the pending stat specifically
+      const pendingStatElements = screen.getAllByText('2')
+      expect(pendingStatElements.length).toBeGreaterThan(0) // Should find the pending count
       expect(screen.getByText('Pending')).toBeInTheDocument()
-      expect(screen.getByText('Completed')).toBeInTheDocument()
     })
+    
+    // Then verify all date stats are present
+    expect(screen.getByText('Today')).toBeInTheDocument()
+    expect(screen.getByText('Day')).toBeInTheDocument()
+    expect(screen.getByText('Month')).toBeInTheDocument()
+    expect(screen.getByText('Year')).toBeInTheDocument()
   })
 
   it('should display correct stats with only completed items', async () => {
@@ -101,9 +142,12 @@ describe('Given the ToDoListRoute component', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText('Total Items')).toBeInTheDocument()
+      expect(screen.getByText('0')).toBeInTheDocument() // 0 pending items (all completed)
       expect(screen.getByText('Pending')).toBeInTheDocument()
-      expect(screen.getByText('Completed')).toBeInTheDocument()
+      expect(screen.getByText('Today')).toBeInTheDocument()
+      expect(screen.getByText('Day')).toBeInTheDocument()
+      expect(screen.getByText('Month')).toBeInTheDocument()
+      expect(screen.getByText('Year')).toBeInTheDocument()
     })
   })
 
