@@ -28,7 +28,11 @@ const NoiseTrackingList = ({
   if (viewMode === ViewMode.Simple) {
     return (
       <Container>
-        <SimpleView noiseTrackingItems={noiseTrackingItems} />
+        <SimpleView 
+          noiseTrackingItems={noiseTrackingItems}
+          allExpanded={allExpanded}
+          expandKey={expandKey}
+        />
       </Container>
     );
   }

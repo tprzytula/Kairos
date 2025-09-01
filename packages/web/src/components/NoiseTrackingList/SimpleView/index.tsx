@@ -1,7 +1,14 @@
 import NoiseTrackingItem from '../../NoiseTrackingItem';
+import CollapsibleSection from '../../CollapsibleSection';
 import SwipeableList from '../../SwipeableList';
 import { Container } from './index.styled';
 import { ISimpleViewProps } from './types';
+
+const ALL_RECORDINGS_ICON = {
+  emoji: '🔊',
+  backgroundColor: '#f0f9ff',
+  foregroundColor: '#0284c7'
+};
 
 const transformNoiseItems = (items: { timestamp: number }[]) => {
   return items.map(item => ({
@@ -11,7 +18,9 @@ const transformNoiseItems = (items: { timestamp: number }[]) => {
 };
 
 const SimpleView = ({ 
-  noiseTrackingItems
+  noiseTrackingItems,
+  allExpanded,
+  expandKey
 }: ISimpleViewProps) => {
   const filteredSortedItems = noiseTrackingItems
     .filter(item => {
@@ -22,11 +31,19 @@ const SimpleView = ({
 
   return (
     <Container>
-      <SwipeableList
-        component={NoiseTrackingItem}
-        list={transformNoiseItems(filteredSortedItems)}
-        threshold={0.3}
-      />
+      <CollapsibleSection
+        title="All Recordings"
+        icon={ALL_RECORDINGS_ICON}
+        items={filteredSortedItems}
+        expandTo={allExpanded}
+        expandKey={expandKey}
+      >
+        <SwipeableList
+          component={NoiseTrackingItem}
+          list={transformNoiseItems(filteredSortedItems)}
+          threshold={0.3}
+        />
+      </CollapsibleSection>
     </Container>
   );
 };

@@ -5,7 +5,7 @@ export const Container = styled(Card)(({ theme }) => ({
   display: 'flex',
   borderRadius: '16px',
   minHeight: '70px',
-  margin: '4px 0',
+  margin: '2px 0',
   width: '100%',
   justifyContent: 'space-between',
   alignItems: 'center',

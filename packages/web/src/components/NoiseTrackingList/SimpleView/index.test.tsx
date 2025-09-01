@@ -15,6 +15,26 @@ const mockNoiseTrackingItems = [
 
 describe('Given the SimpleView component', () => {
   describe('When rendering with noise tracking items', () => {
+    it('should display the "All Recordings" section header', () => {
+      render(
+        <SimpleView
+          noiseTrackingItems={mockNoiseTrackingItems}
+        />
+      );
+
+      expect(screen.getByText('All Recordings')).toBeInTheDocument();
+    });
+
+    it('should display the speaker emoji icon', () => {
+      render(
+        <SimpleView
+          noiseTrackingItems={mockNoiseTrackingItems}
+        />
+      );
+
+      expect(screen.getByText('🔊')).toBeInTheDocument();
+    });
+
     it('should display the noise tracking items in a swipeable list', () => {
       render(
         <SimpleView
@@ -60,6 +80,21 @@ describe('Given the SimpleView component', () => {
     });
   });
 
+  describe('When rendering with expand/collapse props', () => {
+    it('should pass expand props to CollapsibleSection', () => {
+      render(
+        <SimpleView
+          noiseTrackingItems={mockNoiseTrackingItems}
+          allExpanded={true}
+          expandKey="test-key"
+        />
+      );
+
+      expect(screen.getByText('All Recordings')).toBeInTheDocument();
+      expect(screen.getByText('🔊')).toBeInTheDocument();
+    });
+  });
+
   describe('When rendering with empty noise tracking list', () => {
     it('should render without errors', () => {
       const { container } = render(
@@ -71,19 +106,21 @@ describe('Given the SimpleView component', () => {
       expect(container.firstChild).toBeInTheDocument();
     });
 
-    it('should not display any noise tracking items', () => {
+    it('should not display the section header when list is empty', () => {
       render(
         <SimpleView
           noiseTrackingItems={[]}
         />
       );
 
+      // CollapsibleSection returns null when items array is empty
+      expect(screen.queryByText('All Recordings')).not.toBeInTheDocument();
       expect(screen.queryByText(/\d{2}:\d{2}/)).not.toBeInTheDocument();
     });
   });
 
   describe('When rendering with items only outside 7am-11pm range', () => {
-    it('should not display any items', () => {
+    it('should not display any items or section header', () => {
       const nightItems = [
         { timestamp: new Date().setHours(2, 30, 0, 0) },
         { timestamp: new Date().setHours(5, 15, 0, 0) },
@@ -95,6 +132,8 @@ describe('Given the SimpleView component', () => {
         />
       );
 
+      // Should not show section header since filtered items array is empty
+      expect(screen.queryByText('All Recordings')).not.toBeInTheDocument();
       expect(screen.queryByText(/\d{2}:\d{2}/)).not.toBeInTheDocument();
     });
   });
