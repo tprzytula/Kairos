@@ -7,53 +7,16 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import ViewModuleIcon from '@mui/icons-material/ViewModule'
 import ViewListIcon from '@mui/icons-material/ViewList'
 import { Container, ScrollableContainer } from './index.styled'
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback } from 'react'
 
 const NoiseTrackingContent = () => {
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext()
   
   const [viewMode, setViewMode] = useState<'grouped' | 'simple'>('grouped')
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
-  const [shouldExpandAll, setShouldExpandAll] = useState(true)
-  const hasInitializedRef = useRef(false)
+  const [allExpanded, setAllExpanded] = useState<boolean>(true)
+  const [expandKey, setExpandKey] = useState<number>(0)
 
-  const groupByDate = (items: any[]) => {
-    const grouped = items.reduce((acc, item) => {
-      const date = new Date(item.timestamp).toDateString()
-      if (!acc[date]) acc[date] = []
-      acc[date].push(item)
-      return acc
-    }, {} as Record<string, any[]>)
 
-    return Object.entries(grouped)
-      .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime())
-      .map(([date, items]) => ({ date, items }))
-  }
-
-  const getDateLabel = (dateString: string) => {
-    const date = new Date(dateString)
-    const today = new Date()
-    const yesterday = new Date(today)
-    yesterday.setDate(yesterday.getDate() - 1)
-
-    if (dateString === today.toDateString()) return 'Today'
-    if (dateString === yesterday.toDateString()) return 'Yesterday'
-
-    const dayName = date.toLocaleDateString('en-GB', { weekday: 'long' })
-    const dateOnly = date.toLocaleDateString('en-GB', { 
-      year: 'numeric', month: 'long', day: 'numeric'
-    })
-    return `${dateOnly} • ${dayName}`
-  }
-
-  useEffect(() => {
-    if (!isLoading && noiseTrackingItems.length > 0 && expandedGroups.size === 0 && !hasInitializedRef.current) {
-      const groupedItems = groupByDate(noiseTrackingItems)
-      const expanded = groupedItems.slice(0, 2).map(({ date }) => getDateLabel(date))
-      setExpandedGroups(new Set(expanded))
-      hasInitializedRef.current = true
-    }
-  }, [isLoading, noiseTrackingItems.length])
   
   const calculateNoiseCounts = () => {
     const now = new Date()
@@ -81,15 +44,10 @@ const NoiseTrackingContent = () => {
     return { todayCount, last7DaysCount, last30DaysCount }
   }
   
-  const toggleAllGroups = useCallback(() => {
-    if (noiseTrackingItems.length === 0) return
-    
-    const groupedItems = groupByDate(noiseTrackingItems)
-    const allGroupLabels = groupedItems.map(({ date }) => getDateLabel(date))
-    
-    setExpandedGroups(shouldExpandAll ? new Set(allGroupLabels) : new Set())
-    setShouldExpandAll(!shouldExpandAll)
-  }, [noiseTrackingItems, shouldExpandAll])
+  const toggleAll = useCallback(() => {
+    setAllExpanded(!allExpanded)
+    setExpandKey(prev => prev + 1) // Force re-render of sections
+  }, [allExpanded])
 
   const toggleViewMode = useCallback(() => {
     setViewMode(prev => prev === 'grouped' ? 'simple' : 'grouped')
@@ -115,8 +73,8 @@ const NoiseTrackingContent = () => {
       <Container>
         <ActionButtonsBar
           expandCollapseButton={{
-            isExpanded: !shouldExpandAll,
-            onToggle: toggleAllGroups,
+            isExpanded: allExpanded,
+            onToggle: toggleAll,
             disabled: viewMode !== 'grouped' || noiseTrackingItems.length === 0,
           }}
           viewToggleButton={{
@@ -127,8 +85,8 @@ const NoiseTrackingContent = () => {
         <ScrollableContainer>
           <NoiseTrackingList 
             viewMode={viewMode}
-            expandedGroups={expandedGroups}
-            setExpandedGroups={setExpandedGroups}
+            allExpanded={allExpanded}
+            expandKey={expandKey}
           />
         </ScrollableContainer>
       </Container>

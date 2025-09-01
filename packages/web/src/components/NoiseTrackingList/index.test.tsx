@@ -32,8 +32,8 @@ describe('Given the NoiseTrackingList component', () => {
 
     render(<NoiseTrackingList 
       viewMode="grouped"
-      expandedGroups={new Set()}
-      setExpandedGroups={jest.fn()}
+      allExpanded={true}
+      expandKey={0}
     />)
     
     expect(screen.getByTestId('noise-tracking-placeholders')).toBeVisible()
@@ -48,8 +48,8 @@ describe('Given the NoiseTrackingList component', () => {
 
     render(<NoiseTrackingList 
       viewMode="grouped"
-      expandedGroups={new Set()}
-      setExpandedGroups={jest.fn()}
+      allExpanded={true}
+      expandKey={0}
     />)
 
     expect(screen.getByText('No noise events recorded yet')).toBeInTheDocument()
@@ -58,8 +58,8 @@ describe('Given the NoiseTrackingList component', () => {
   it('should render noise items in grouped view', () => {
     render(<NoiseTrackingList 
       viewMode="grouped"
-      expandedGroups={new Set()}
-      setExpandedGroups={jest.fn()}
+      allExpanded={true}
+      expandKey={0}
     />)
 
     expect(screen.getByText('Today')).toBeInTheDocument()
@@ -69,8 +69,8 @@ describe('Given the NoiseTrackingList component', () => {
   it('should render noise items in simple view with timestamps', () => {
     render(<NoiseTrackingList 
       viewMode="simple"
-      expandedGroups={new Set()}
-      setExpandedGroups={jest.fn()}
+      allExpanded={true}
+      expandKey={0}
     />)
 
     expect(screen.getByText('Today, 14:58')).toBeInTheDocument()

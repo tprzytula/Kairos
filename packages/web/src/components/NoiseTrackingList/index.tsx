@@ -152,8 +152,8 @@ type ViewMode = 'grouped' | 'simple'
 
 interface NoiseTrackingListProps {
   viewMode: ViewMode
-  expandedGroups: Set<string>
-  setExpandedGroups: (groups: Set<string>) => void
+  allExpanded?: boolean
+  expandKey?: string | number
 }
 
 const PlaceholderComponent = () => (
@@ -200,21 +200,11 @@ const formatTimestampForSimpleView = (timestamp: number) => {
 
 const NoiseTrackingList = ({ 
   viewMode, 
-  expandedGroups, 
-  setExpandedGroups
+  allExpanded, 
+  expandKey
 }: NoiseTrackingListProps) => {
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
   const groupedItems = groupByDate(noiseTrackingItems);
-
-  const handleToggleGroup = (dateLabel: string) => {
-    const newExpanded = new Set(expandedGroups);
-    if (newExpanded.has(dateLabel)) {
-      newExpanded.delete(dateLabel);
-    } else {
-      newExpanded.add(dateLabel);
-    }
-    setExpandedGroups(newExpanded);
-  };
 
   if (isLoading) {
     return <PlaceholderComponent />
@@ -256,7 +246,6 @@ const NoiseTrackingList = ({
         <>
           {groupedItems.map(({ date, items }) => {
             const dateLabel = getDateLabel(date);
-            const isExpanded = expandedGroups.has(dateLabel);
             
             return (
               <CollapsibleSection
@@ -264,8 +253,8 @@ const NoiseTrackingList = ({
                 title={dateLabel}
                 icon={getDateIcon(dateLabel)}
                 items={items}
-                isExpanded={isExpanded}
-                onToggleExpanded={() => handleToggleGroup(dateLabel)}
+                expandTo={allExpanded}
+                expandKey={expandKey}
                 headerRightContent={<MiniTimelineComponent items={items} />}
               >
                 {items.map(({ timestamp }) => (
