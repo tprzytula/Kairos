@@ -3,9 +3,9 @@ import ProtectedRoute from '../ProtectedRoute';
 import AlertContainer from '../AlertContainer';
 import PWAUpdateNotification from '../PWAUpdateNotification';
 import ConnectivityNotification from '../ConnectivityNotification';
-import { IProtectedAppRouteProps } from './types';
+import { IProtectedContentProps } from './types';
 
-const ProtectedAppRoute = ({ children }: IProtectedAppRouteProps) => {
+const ProtectedContent = ({ children }: IProtectedContentProps) => {
   return (
     <Content>
       <ProtectedRoute>{children}</ProtectedRoute>
@@ -16,4 +16,4 @@ const ProtectedAppRoute = ({ children }: IProtectedAppRouteProps) => {
   );
 };
 
-export default ProtectedAppRoute;
+export default ProtectedContent;

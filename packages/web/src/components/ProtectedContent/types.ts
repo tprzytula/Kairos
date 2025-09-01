@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
 
-export interface IProtectedAppRouteProps {
+export interface IProtectedContentProps {
   children: ReactElement;
 };

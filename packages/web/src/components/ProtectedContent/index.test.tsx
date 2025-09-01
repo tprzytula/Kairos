@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../../theme';
-import ProtectedAppRoute from '.';
+import ProtectedContent from '.';
 
 const mockIsAuthenticated = jest.fn();
 const mockSigninRedirect = jest.fn();
@@ -45,7 +45,7 @@ const renderWithProviders = (component: React.ReactElement) => {
   );
 };
 
-describe('Given the ProtectedAppRoute component', () => {
+describe('Given the ProtectedContent component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -57,9 +57,9 @@ describe('Given the ProtectedAppRoute component', () => {
 
     it('should render the child component', () => {
       renderWithProviders(
-        <ProtectedAppRoute>
+        <ProtectedContent>
           <TestComponent />
-        </ProtectedAppRoute>
+        </ProtectedContent>
       );
 
       expect(screen.getByText('Test Route Content')).toBeInTheDocument();
@@ -67,9 +67,9 @@ describe('Given the ProtectedAppRoute component', () => {
 
     it('should render AlertContainer', () => {
       renderWithProviders(
-        <ProtectedAppRoute>
+        <ProtectedContent>
           <TestComponent />
-        </ProtectedAppRoute>
+        </ProtectedContent>
       );
 
       // AlertContainer component should be present (though it may be empty)
@@ -79,9 +79,9 @@ describe('Given the ProtectedAppRoute component', () => {
 
     it('should wrap content in Content styled component', () => {
       const { container } = renderWithProviders(
-        <ProtectedAppRoute>
+        <ProtectedContent>
           <TestComponent />
-        </ProtectedAppRoute>
+        </ProtectedContent>
       );
 
       // Content component should be the wrapper
@@ -96,9 +96,9 @@ describe('Given the ProtectedAppRoute component', () => {
 
     it('should not render the child component', () => {
       renderWithProviders(
-        <ProtectedAppRoute>
+        <ProtectedContent>
           <TestComponent />
-        </ProtectedAppRoute>
+        </ProtectedContent>
       );
 
       expect(screen.queryByText('Test Route Content')).not.toBeInTheDocument();
@@ -106,9 +106,9 @@ describe('Given the ProtectedAppRoute component', () => {
 
     it('should still render notification components', () => {
       const { container } = renderWithProviders(
-        <ProtectedAppRoute>
+        <ProtectedContent>
           <TestComponent />
-        </ProtectedAppRoute>
+        </ProtectedContent>
       );
 
       // The Content wrapper should still be present
@@ -125,9 +125,9 @@ describe('Given the ProtectedAppRoute component', () => {
       const CustomChild = () => <button>Custom Button</button>;
 
       renderWithProviders(
-        <ProtectedAppRoute>
+        <ProtectedContent>
           <CustomChild />
-        </ProtectedAppRoute>
+        </ProtectedContent>
       );
 
       expect(screen.getByText('Custom Button')).toBeInTheDocument();

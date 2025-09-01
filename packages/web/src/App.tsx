@@ -11,7 +11,7 @@ import EditToDoItemRoute from './routes/EditToDoItemRoute'
 import HomeRoute from './routes/HomeRoute'
 import AuthCallback from './components/AuthCallback'
 import SilentCallback from './components/SilentCallback'
-import ProtectedAppRoute from './components/ProtectedAppRoute'
+import ProtectedContent from './components/ProtectedContent'
 
 export const App = () => {
   return (
@@ -21,46 +21,46 @@ export const App = () => {
         <Route path={RouteEnum.AuthCallback} element={<AuthCallback />} />
         <Route path={RouteEnum.SilentCallback} element={<SilentCallback />} />
         
-        {/* App routes - wrapped in ProtectedAppRoute for consistent layout */}
+        {/* App routes - wrapped in ProtectedContent for consistent layout */}
         <Route path={RouteEnum.Home} element={
-          <ProtectedAppRoute>
+          <ProtectedContent>
             <HomeRoute />
-          </ProtectedAppRoute>
+          </ProtectedContent>
         } />
         <Route path={RouteEnum.GroceryList} element={
-          <ProtectedAppRoute>
+          <ProtectedContent>
             <GroceryListRoute />
-          </ProtectedAppRoute>
+          </ProtectedContent>
         } />
         <Route path={RouteEnum.AddGroceryItem} element={
-          <ProtectedAppRoute>
+          <ProtectedContent>
             <AddGroceryItemRoute />
-          </ProtectedAppRoute>
+          </ProtectedContent>
         } />
         <Route path={RouteEnum.EditGroceryItem} element={
-          <ProtectedAppRoute>
+          <ProtectedContent>
             <EditGroceryItemRoute />
-          </ProtectedAppRoute>
+          </ProtectedContent>
         } />
         <Route path={RouteEnum.NoiseTracking} element={
-          <ProtectedAppRoute>
+          <ProtectedContent>
             <NoiseTrackingRoute />
-          </ProtectedAppRoute>
+          </ProtectedContent>
         } />
         <Route path={RouteEnum.ToDoList} element={
-          <ProtectedAppRoute>
+          <ProtectedContent>
             <ToDoListRoute />
-          </ProtectedAppRoute>
+          </ProtectedContent>
         } />
         <Route path={RouteEnum.AddToDoItem} element={
-          <ProtectedAppRoute>
+          <ProtectedContent>
             <AddToDoItemRoute />
-          </ProtectedAppRoute>
+          </ProtectedContent>
         } />
         <Route path={RouteEnum.EditToDoItem} element={
-          <ProtectedAppRoute>
+          <ProtectedContent>
             <EditToDoItemRoute />
-          </ProtectedAppRoute>
+          </ProtectedContent>
         } />
       </Routes>
     </ApplicationContainer>
