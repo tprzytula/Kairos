@@ -8,5 +8,5 @@ export interface ICategorizedGroceryGroup {
 }
 
 export interface IUseGroceryCategoriesResult {
-  categorizedGroups: ICategorizedGroceryGroup[] | null
+  categorizedGroups: ICategorizedGroceryGroup[]
 }

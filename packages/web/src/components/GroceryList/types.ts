@@ -1,5 +1,10 @@
 import { GroceryItem } from "../../providers/AppStateProvider/types";
 
-export interface IGroceryListProps {
+export interface IGroceryListComponentProps {
     groceryList: Array<GroceryItem>
+}
+
+export interface IGroceryListProps {
+    allExpanded?: boolean
+    expandKey?: number
 }

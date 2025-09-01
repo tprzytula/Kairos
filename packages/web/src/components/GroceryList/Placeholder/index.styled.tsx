@@ -7,4 +7,9 @@ export const Container = styled('div')({
   flex: 1,
   margin: 0,
   padding: 0
-})
+});
+
+export const PlaceholdersWrapper = styled('div')({
+  display: 'flex',
+  flexDirection: 'column'
+});

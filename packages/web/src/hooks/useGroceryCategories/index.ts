@@ -10,7 +10,7 @@ export const useGroceryCategories = (
 ): IUseGroceryCategoriesResult => {
   const categorizedGroups = useMemo(() => {
     if (viewMode === GroceryViewMode.UNCATEGORIZED) {
-      return null
+      return []
     }
 
     const itemsByCategory = new Map<GroceryCategory, IGroceryItem[]>()

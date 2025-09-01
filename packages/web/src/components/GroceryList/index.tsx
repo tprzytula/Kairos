@@ -2,63 +2,23 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { useAppState } from '../../providers/AppStateProvider';
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
-import GroceryItem from '../GroceryItem';
-import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
-import CollapsibleSection from '../CollapsibleSection';
-import CollapsibleSectionPlaceholder from '../CollapsibleSectionPlaceholder';
-import { GroceryViewMode, GroceryCategory } from '../../enums/groceryCategory'
-import { Container } from './index.styled';
-import EmptyState from '../EmptyState';
+import { GroceryViewMode } from '../../enums/groceryCategory'
 import { ActionName } from '../../providers/AppStateProvider/enums';
 import { Route } from '../../enums/route';
-import SwipeableList from '../SwipeableList';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { useGroceryCategories } from '../../hooks/useGroceryCategories';
-import { SectionIcon } from '../CollapsibleSection/types';
+import UncategorizedView from './UncategorizedView';
+import CategorizedView from './CategorizedView';
+import Placeholder from './Placeholder';
+import EmptyGroceryList from './EmptyGroceryList';
+import { IGroceryListProps } from './types';
 
-const CATEGORY_ICON_MAP: Record<GroceryCategory, SectionIcon> = {
-  [GroceryCategory.PRODUCE]: { emoji: '🥬', backgroundColor: '#ecfdf5', foregroundColor: '#047857' },
-  [GroceryCategory.DAIRY]: { emoji: '🧀', backgroundColor: '#fff7ed', foregroundColor: '#9a3412' },
-  [GroceryCategory.MEAT]: { emoji: '🥩', backgroundColor: '#fef2f2', foregroundColor: '#991b1b' },
-  [GroceryCategory.FROZEN]: { emoji: '🧊', backgroundColor: '#eff6ff', foregroundColor: '#1d4ed8' },
-  [GroceryCategory.BAKERY]: { emoji: '🥖', backgroundColor: '#fffbeb', foregroundColor: '#92400e' },
-  [GroceryCategory.PANTRY]: { emoji: '🫘', backgroundColor: '#faf5ff', foregroundColor: '#7e22ce' },
-  [GroceryCategory.BEVERAGES]: { emoji: '🧃', backgroundColor: '#f0f9ff', foregroundColor: '#0c4a6e' },
-  [GroceryCategory.HOUSEHOLD]: { emoji: '🧻', backgroundColor: '#f8fafc', foregroundColor: '#0f172a' },
-  [GroceryCategory.OTHER]: { emoji: '🧺', backgroundColor: '#f4f4f5', foregroundColor: '#374151' },
-}
-
-const PlaceholderComponent = () => (
-  <Container>
-    <div data-testid="grocery-placeholders">
-      {Array.from({ length: 5 }).map((_, groupIndex) => (
-        <CollapsibleSectionPlaceholder key={groupIndex}>
-          {Array.from({ length: 2 + groupIndex }).map((_, itemIndex) => (
-            <GroceryItemPlaceholder key={itemIndex} />
-          ))}
-        </CollapsibleSectionPlaceholder>
-      ))}
-    </div>
-  </Container>
-)
-
-const EmptyListComponent = () => (
-  <EmptyState 
-    icon={<ShoppingCartOutlinedIcon aria-label="Empty grocery list" />}
-    title="No grocery items found"
-    subtitle="Tap the + button to add your first item"
-  />
-)
-
-type GroceryListProps = {
-  allExpanded?: boolean
-  expandKey?: number
-}
-
-export const GroceryList = ({ allExpanded: allExpandedProp, expandKey: expandKeyProp }: GroceryListProps = {}) => {
+export const GroceryList = ({
+  allExpanded = true,
+  expandKey = 0
+}: IGroceryListProps = {}) => {
+  const navigate = useNavigate()
   const { dispatch } = useAppState()
   const { groceryList, isLoading, removeGroceryItem, viewMode } = useGroceryListContext();
-  const navigate = useNavigate()
   const { categorizedGroups } = useGroceryCategories(groceryList, viewMode)
 
   const handleDelete = useCallback((id: string) => {
@@ -76,51 +36,31 @@ export const GroceryList = ({ allExpanded: allExpandedProp, expandKey: expandKey
   }, [navigate])
 
   if (isLoading) {
-    return <PlaceholderComponent />
+    return <Placeholder />
   }
 
   if (groceryList.length === 0) {
-    return <EmptyListComponent />
+    return <EmptyGroceryList />
   }
 
   if (viewMode === GroceryViewMode.UNCATEGORIZED) {
     return (
-      <Container>
-        <SwipeableList
-          component={GroceryItem}
-          list={groceryList}
-          onSwipeAction={handleDelete}
-          onEditAction={handleEdit}
-          threshold={0.3}
-        />
-      </Container>
+      <UncategorizedView
+        groceryList={groceryList}
+        onDelete={handleDelete}
+        onEdit={handleEdit}
+      />
     )
   }
 
-  const effectiveAllExpanded = allExpandedProp ?? true
-  const effectiveExpandKey = expandKeyProp ?? 0
-
   return (
-    <Container>
-      {categorizedGroups?.map((group) => (
-        <CollapsibleSection
-          key={group.category}
-          title={group.label}
-          icon={CATEGORY_ICON_MAP[group.category]}
-          items={group.items}
-          expandTo={effectiveAllExpanded}
-          expandKey={effectiveExpandKey}
-        >
-          <SwipeableList
-            component={GroceryItem}
-            list={group.items}
-            onSwipeAction={handleDelete}
-            onEditAction={handleEdit}
-            threshold={0.3}
-          />
-        </CollapsibleSection>
-      ))}
-    </Container>
+    <CategorizedView
+      categorizedGroups={categorizedGroups}
+      allExpanded={allExpanded}
+      expandKey={expandKey}
+      onDelete={handleDelete}
+      onEdit={handleEdit}
+    />
   );
 };
 

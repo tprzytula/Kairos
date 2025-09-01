@@ -45,6 +45,20 @@ describe('Given the GroceryList component', () => {
     expect(mockNavigate).toHaveBeenCalledTimes(0)
   })
 
+  describe('When the viewMode is UNCATEGORIZED', () => {
+    it('should render uncategorized view', () => {
+      jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
+        ...EXAMPLE_GROCERY_LIST_CONTEXT,
+        viewMode: GroceryViewMode.UNCATEGORIZED,
+      })
+  
+      renderComponent()
+  
+      expect(screen.getByText('Milk')).toBeVisible()
+      expect(screen.getByText('Bread')).toBeVisible()
+    })
+  });
+
   describe('When the grocery list is empty', () => {
     it('should render the empty list icon and helpful text', () => {
       jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({

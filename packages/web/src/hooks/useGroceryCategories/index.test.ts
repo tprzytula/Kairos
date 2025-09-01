@@ -31,12 +31,12 @@ const mockGroceryList = [
 ]
 
 describe('useGroceryCategories', () => {
-  it('should return null for categorizedGroups when view mode is uncategorized', () => {
+  it('should return empty array for categorizedGroups when view mode is uncategorized', () => {
     const { result } = renderHook(() =>
       useGroceryCategories(mockGroceryList, GroceryViewMode.UNCATEGORIZED)
     )
 
-    expect(result.current.categorizedGroups).toBeNull()
+    expect(result.current.categorizedGroups).toEqual([])
   })
 
   it('should return categorized groups when view mode is categorized', () => {
@@ -45,7 +45,7 @@ describe('useGroceryCategories', () => {
     )
 
     expect(result.current.categorizedGroups).toBeDefined()
-    expect(result.current.categorizedGroups?.length).toBeGreaterThan(0)
+    expect(result.current.categorizedGroups.length).toBeGreaterThan(0)
   })
 
   it('should return alphabetical view when view mode is alphabetical', () => {
@@ -54,9 +54,9 @@ describe('useGroceryCategories', () => {
     )
 
     expect(result.current.categorizedGroups).toBeDefined()
-    expect(result.current.categorizedGroups?.length).toBe(1)
-    expect(result.current.categorizedGroups?.[0].label).toBe('All Items (A-Z)')
-    expect(result.current.categorizedGroups?.[0].items).toHaveLength(mockGroceryList.length)
+    expect(result.current.categorizedGroups.length).toBe(1)
+    expect(result.current.categorizedGroups[0].label).toBe('All Items (A-Z)')
+    expect(result.current.categorizedGroups[0].items).toHaveLength(mockGroceryList.length)
   })
 
   it('should categorize items correctly based on name matching', () => {
@@ -67,17 +67,17 @@ describe('useGroceryCategories', () => {
     const groups = result.current.categorizedGroups
     expect(groups).toBeDefined()
     
-    const produceGroup = groups?.find(group => group.category === GroceryCategory.PRODUCE)
+    const produceGroup = groups.find(group => group.category === GroceryCategory.PRODUCE)
     expect(produceGroup).toBeDefined()
-    expect(produceGroup?.items.some(item => item.name === 'Apple')).toBe(true)
+    expect(produceGroup!.items.some(item => item.name === 'Apple')).toBe(true)
 
-    const dairyGroup = groups?.find(group => group.category === GroceryCategory.DAIRY)
+    const dairyGroup = groups.find(group => group.category === GroceryCategory.DAIRY)
     expect(dairyGroup).toBeDefined()
-    expect(dairyGroup?.items.some(item => item.name === 'Milk')).toBe(true)
+    expect(dairyGroup!.items.some(item => item.name === 'Milk')).toBe(true)
 
-    const bakeryGroup = groups?.find(group => group.category === GroceryCategory.BAKERY)
+    const bakeryGroup = groups.find(group => group.category === GroceryCategory.BAKERY)
     expect(bakeryGroup).toBeDefined()
-    expect(bakeryGroup?.items.some(item => item.name === 'Bread')).toBe(true)
+    expect(bakeryGroup!.items.some(item => item.name === 'Bread')).toBe(true)
   })
 
   it('should return empty array when grocery list is empty', () => {
