@@ -1,5 +1,9 @@
+export interface INoiseTrackingItem {
+  timestamp: number;
+}
+
 export interface ISimpleViewProps {
-  noiseTrackingItems: { timestamp: number }[];
+  noiseTrackingItems: INoiseTrackingItem[];
   allExpanded?: boolean;
   expandKey?: string | number;
 };

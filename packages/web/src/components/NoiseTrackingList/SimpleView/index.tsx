@@ -2,7 +2,7 @@ import NoiseTrackingItem from '../../NoiseTrackingItem';
 import CollapsibleSection from '../../CollapsibleSection';
 import SwipeableList from '../../SwipeableList';
 import { Container } from './index.styled';
-import { ISimpleViewProps } from './types';
+import { ISimpleViewProps, INoiseTrackingItem } from './types';
 
 const ALL_RECORDINGS_ICON = {
   emoji: '🔊',
@@ -23,11 +23,11 @@ const SimpleView = ({
   expandKey
 }: ISimpleViewProps) => {
   const filteredSortedItems = noiseTrackingItems
-    .filter(item => {
-      const hour = new Date(item.timestamp).getHours();
+    .filter(({ timestamp }: INoiseTrackingItem) => {
+      const hour = new Date(timestamp).getHours();
       return hour >= 7 && hour <= 23;
     })
-    .sort((a, b) => b.timestamp - a.timestamp);
+    .sort((a: INoiseTrackingItem, b: INoiseTrackingItem) => b.timestamp - a.timestamp);
 
   return (
     <Container>
