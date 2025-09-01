@@ -220,7 +220,8 @@ describe('Given the ToDoList component', () => {
 
       renderWithTheme(<ToDoList />)
 
-      expect(screen.getAllByLabelText('To do item placeholder')).toHaveLength(20)
+      expect(screen.getByTestId('todo-placeholders')).toBeInTheDocument()
+      expect(screen.getAllByLabelText('To do item placeholder')).toHaveLength(18)
     })
   })
 })

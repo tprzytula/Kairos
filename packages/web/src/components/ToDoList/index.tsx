@@ -37,11 +37,15 @@ const ALL_TASKS_ICON: SectionIcon = {
 
 const PlaceholderComponent = () => (
   <Container>
-    <CollapsibleSectionPlaceholder>
-      {Array.from({ length: 20 }).map((_, index) => (
-        <ToDoItemPlaceholder key={index} />
+    <div data-testid="todo-placeholders">
+      {Array.from({ length: 4 }).map((_, groupIndex) => (
+        <CollapsibleSectionPlaceholder key={groupIndex}>
+          {Array.from({ length: 3 + groupIndex }).map((_, itemIndex) => (
+            <ToDoItemPlaceholder key={itemIndex} />
+          ))}
+        </CollapsibleSectionPlaceholder>
       ))}
-    </CollapsibleSectionPlaceholder>
+    </div>
   </Container>
 )
 
