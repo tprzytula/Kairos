@@ -46,7 +46,7 @@ const isFromToday = (timestamp: number) => {
     today.getFullYear() === itemDate.getFullYear();
 }
 
-const NoiseTrackingItem = ({ timestamp }: { timestamp: number }) => {
+const NoiseTrackingItem = ({ timestamp, id }: { timestamp: number; id?: string }) => {
   const { refetchNoiseTrackingItems } = useNoiseTrackingContext();
 
   const handleDeleteNoiseTrackingItem = () => {

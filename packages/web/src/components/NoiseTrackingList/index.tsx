@@ -7,8 +7,17 @@ import NoiseTrackingItem from '../NoiseTrackingItem';
 import NoiseTrackingItemPlaceholder from '../NoiseTrackingItemPlaceholder';
 import CollapsibleSection from '../CollapsibleSection';
 import CollapsibleSectionPlaceholder from '../CollapsibleSectionPlaceholder';
+import SwipeableList from '../SwipeableList';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { SectionIcon } from '../CollapsibleSection/types';
+
+// Transform noise tracking items to include id property for SwipeableList
+const transformNoiseItems = (items: { timestamp: number }[]) => {
+  return items.map(item => ({
+    ...item,
+    id: item.timestamp.toString()
+  }));
+};
 
 const getDayStats = (items: { timestamp: number }[]) => {
   if (items.length === 0) return { peakHour: 0, hourlyDistribution: [], maxCount: 0 };
@@ -235,13 +244,11 @@ const NoiseTrackingList = ({
   return (
     <Container>
       {viewMode === 'simple' ? (
-        <SimpleListContainer>
-          {filteredSortedItems.map(({ timestamp }) => (
-            <SimpleListItem key={timestamp}>
-              {formatTimestampForSimpleView(timestamp)}
-            </SimpleListItem>
-          ))}
-        </SimpleListContainer>
+        <SwipeableList
+          component={NoiseTrackingItem}
+          list={transformNoiseItems(filteredSortedItems)}
+          threshold={0.3}
+        />
       ) : (
         <>
           {groupedItems.map(({ date, items }) => {
@@ -257,9 +264,11 @@ const NoiseTrackingList = ({
                 expandKey={expandKey}
                 headerRightContent={<MiniTimelineComponent items={items} />}
               >
-                {items.map(({ timestamp }) => (
-                  <NoiseTrackingItem key={timestamp} timestamp={timestamp} />
-                ))}
+                <SwipeableList
+                  component={NoiseTrackingItem}
+                  list={transformNoiseItems(items)}
+                  threshold={0.3}
+                />
               </CollapsibleSection>
             );
           })}
