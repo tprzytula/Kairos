@@ -4,6 +4,7 @@ import { useToDoListContext } from '../../providers/ToDoListProvider';
 import { useProjectContext } from '../../providers/ProjectProvider';
 import ToDoItem from '../ToDoItem';
 import ToDoItemPlaceholder from '../ToDoItemPlaceholder';
+import SectionPlaceholder from '../SectionPlaceholder';
 import CollapsibleSection from '../CollapsibleSection';
 import { Container } from './index.styled';
 import EmptyState from '../EmptyState';
@@ -36,6 +37,7 @@ const ALL_TASKS_ICON: SectionIcon = {
 
 const PlaceholderComponent = () => (
   <Container>
+    <SectionPlaceholder />
     {Array.from({ length: 20 }).map((_, index) => (
       <ToDoItemPlaceholder key={index} />
     ))}

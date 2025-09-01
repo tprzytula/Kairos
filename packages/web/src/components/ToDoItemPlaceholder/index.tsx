@@ -3,6 +3,8 @@ import {
   Content,
   NamePlaceholder,
   DescriptionPlaceholder,
+  DescriptionLine,
+  DescriptionLineShort,
   DueDatePlaceholder,
   ActionArea,
 } from './index.styled';
@@ -12,7 +14,10 @@ const ToDoItemPlaceholder = () => (
     <ActionArea>
       <Content>
         <NamePlaceholder />
-        <DescriptionPlaceholder />
+        <DescriptionPlaceholder>
+          <DescriptionLine />
+          <DescriptionLineShort />
+        </DescriptionPlaceholder>
         <DueDatePlaceholder />
       </Content>
     </ActionArea>
