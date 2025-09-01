@@ -37,7 +37,7 @@ const ALL_TASKS_ICON: SectionIcon = {
 
 const PlaceholderComponent = () => (
   <Container>
-    <div data-testid="todo-placeholders">
+    <div aria-label="Loading to-do items">
       {Array.from({ length: 4 }).map((_, groupIndex) => (
         <CollapsibleSectionPlaceholder key={groupIndex}>
           {Array.from({ length: 3 + groupIndex }).map((_, itemIndex) => (

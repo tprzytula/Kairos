@@ -36,7 +36,7 @@ describe('Given the NoiseTrackingList component', () => {
       expandKey={0}
     />)
     
-    expect(screen.getByTestId('noise-tracking-placeholders')).toBeVisible()
+    expect(screen.getByLabelText('Loading noise tracking items')).toBeVisible()
   })
 
   it('should render empty state when no items', () => {

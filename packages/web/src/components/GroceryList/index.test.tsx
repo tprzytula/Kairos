@@ -144,7 +144,7 @@ describe('Given the GroceryList component', () => {
 
       renderComponent()
 
-      expect(screen.getByTestId('grocery-placeholders')).toBeInTheDocument()
+      expect(screen.getByLabelText('Loading grocery items')).toBeInTheDocument()
       expect(screen.getAllByLabelText('Grocery item placeholder')).toHaveLength(20)
     })
   })

@@ -6,7 +6,7 @@ import { IPlaceholderProps } from './types';
 const Placeholder = ({ numberOfGroups = 5 }: IPlaceholderProps) => {
   return (
     <Container>
-      <PlaceholdersWrapper data-testid="grocery-placeholders">
+      <PlaceholdersWrapper aria-label="Loading grocery items">
         {Array.from({ length: numberOfGroups }).map((_, groupIndex) => (
           <CollapsibleSectionPlaceholder key={groupIndex}>
             {Array.from({ length: 2 + groupIndex }).map((_, itemIndex) => (

@@ -6,7 +6,7 @@ describe('Given the Placeholder component', () => {
     it('should display the grocery placeholders container', () => {
       render(<Placeholder />);
 
-      expect(screen.getByTestId('grocery-placeholders')).toBeInTheDocument();
+      expect(screen.getByLabelText('Loading grocery items')).toBeInTheDocument();
     });
 
     it('should render the default number of placeholder groups', () => {
@@ -33,7 +33,7 @@ describe('Given the Placeholder component', () => {
     it('should still display the placeholders container', () => {
       render(<Placeholder numberOfGroups={2} />);
 
-      expect(screen.getByTestId('grocery-placeholders')).toBeInTheDocument();
+      expect(screen.getByLabelText('Loading grocery items')).toBeInTheDocument();
     });
   });
 
@@ -41,7 +41,7 @@ describe('Given the Placeholder component', () => {
     it('should render without errors', () => {
       render(<Placeholder numberOfGroups={0} />);
 
-      expect(screen.getByTestId('grocery-placeholders')).toBeInTheDocument();
+      expect(screen.getByLabelText('Loading grocery items')).toBeInTheDocument();
       expect(screen.queryAllByLabelText('Grocery item placeholder')).toHaveLength(0);
     });
   });

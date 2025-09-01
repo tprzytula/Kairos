@@ -100,7 +100,7 @@ const MiniTimelineComponent: React.FC<MiniTimelineComponentProps> = ({ items }) 
           key={index} 
           height={bar.height}
           color={bar.hasData ? undefined : 'rgba(0, 0, 0, 0.1)'}
-          data-testid="timeline-bar"
+          aria-label="Timeline bar"
         />
       ))}
     </MiniTimeline>
@@ -163,7 +163,7 @@ interface NoiseTrackingListProps {
 
 const PlaceholderComponent = () => (
   <Container>
-    <div data-testid="noise-tracking-placeholders">
+    <div aria-label="Loading noise tracking items">
       {Array.from({ length: 3 }).map((_, groupIndex) => (
         <CollapsibleSectionPlaceholder 
           key={groupIndex}
