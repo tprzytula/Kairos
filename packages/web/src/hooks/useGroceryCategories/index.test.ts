@@ -37,7 +37,6 @@ describe('useGroceryCategories', () => {
     )
 
     expect(result.current.categorizedGroups).toBeNull()
-    expect(result.current.isUncategorized).toBe(true)
   })
 
   it('should return categorized groups when view mode is categorized', () => {
@@ -46,7 +45,6 @@ describe('useGroceryCategories', () => {
     )
 
     expect(result.current.categorizedGroups).toBeDefined()
-    expect(result.current.isUncategorized).toBe(false)
     expect(result.current.categorizedGroups?.length).toBeGreaterThan(0)
   })
 
@@ -88,6 +86,5 @@ describe('useGroceryCategories', () => {
     )
 
     expect(result.current.categorizedGroups).toEqual([])
-    expect(result.current.isUncategorized).toBe(false)
   })
 })

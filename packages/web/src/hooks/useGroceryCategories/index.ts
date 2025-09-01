@@ -45,8 +45,7 @@ export const useGroceryCategories = (
   }, [groceryList, viewMode])
 
   return {
-    categorizedGroups,
-    isUncategorized: viewMode === GroceryViewMode.UNCATEGORIZED
+    categorizedGroups
   }
 }
 

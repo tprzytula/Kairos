@@ -9,5 +9,4 @@ export interface ICategorizedGroceryGroup {
 
 export interface IUseGroceryCategoriesResult {
   categorizedGroups: ICategorizedGroceryGroup[] | null
-  isUncategorized: boolean
 }

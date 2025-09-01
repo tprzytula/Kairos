@@ -59,7 +59,7 @@ export const GroceryList = ({ allExpanded: allExpandedProp, expandKey: expandKey
   const { dispatch } = useAppState()
   const { groceryList, isLoading, removeGroceryItem, viewMode } = useGroceryListContext();
   const navigate = useNavigate()
-  const { categorizedGroups, isUncategorized } = useGroceryCategories(groceryList, viewMode)
+  const { categorizedGroups } = useGroceryCategories(groceryList, viewMode)
 
   const handleDelete = useCallback((id: string) => {
     removeGroceryItem(id)
