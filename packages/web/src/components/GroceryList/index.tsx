@@ -5,6 +5,7 @@ import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import GroceryItem from '../GroceryItem';
 import GroceryItemPlaceholder from '../GroceryItemPlaceholder';
 import CollapsibleSection from '../CollapsibleSection';
+import CollapsibleSectionPlaceholder from '../CollapsibleSectionPlaceholder';
 import { GroceryViewMode, GroceryCategory } from '../../enums/groceryCategory'
 import { Container } from './index.styled';
 import EmptyState from '../EmptyState';
@@ -29,9 +30,15 @@ const CATEGORY_ICON_MAP: Record<GroceryCategory, SectionIcon> = {
 
 const PlaceholderComponent = () => (
   <Container>
-    {Array.from({ length: 20 }).map((_, index) => (
-      <GroceryItemPlaceholder key={index} />
-    ))}
+    <div data-testid="grocery-placeholders">
+      {Array.from({ length: 5 }).map((_, groupIndex) => (
+        <CollapsibleSectionPlaceholder key={groupIndex}>
+          {Array.from({ length: 2 + groupIndex }).map((_, itemIndex) => (
+            <GroceryItemPlaceholder key={itemIndex} />
+          ))}
+        </CollapsibleSectionPlaceholder>
+      ))}
+    </div>
   </Container>
 )
 
