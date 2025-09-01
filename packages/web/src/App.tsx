@@ -1,20 +1,17 @@
 import { Routes, Route } from 'react-router'
-import { ApplicationContainer, Content } from './App.styled'
+import { ApplicationContainer } from './App.styled'
 import GroceryListRoute from './routes/GroceryListRoute'
 import AddGroceryItemRoute from './routes/AddGroceryItemRoute'
 import EditGroceryItemRoute from './routes/EditGroceryItemRoute'
-import AlertContainer from './components/AlertContainer'
-import PWAUpdateNotification from './components/PWAUpdateNotification'
-import ConnectivityNotification from './components/ConnectivityNotification'
 import { Route as RouteEnum } from './enums/route'
 import NoiseTrackingRoute from './routes/NoiseTrackingRoute'
 import ToDoListRoute from './routes/ToDoListRoute'
 import AddToDoItemRoute from './routes/AddToDoItemRoute'
 import EditToDoItemRoute from './routes/EditToDoItemRoute'
 import HomeRoute from './routes/HomeRoute'
-import ProtectedRoute from './components/ProtectedRoute'
 import AuthCallback from './components/AuthCallback'
 import SilentCallback from './components/SilentCallback'
+import ProtectedAppRoute from './components/ProtectedAppRoute'
 
 export const App = () => {
   return (
@@ -24,70 +21,46 @@ export const App = () => {
         <Route path={RouteEnum.AuthCallback} element={<AuthCallback />} />
         <Route path={RouteEnum.SilentCallback} element={<SilentCallback />} />
         
-        {/* App routes - wrapped in Content for proper layout */}
+        {/* App routes - wrapped in ProtectedAppRoute for consistent layout */}
         <Route path={RouteEnum.Home} element={
-          <Content>
-            <ProtectedRoute><HomeRoute /></ProtectedRoute>
-            <AlertContainer />
-            <PWAUpdateNotification />
-            <ConnectivityNotification />
-          </Content>
+          <ProtectedAppRoute>
+            <HomeRoute />
+          </ProtectedAppRoute>
         } />
         <Route path={RouteEnum.GroceryList} element={
-          <Content>
-            <ProtectedRoute><GroceryListRoute /></ProtectedRoute>
-            <AlertContainer />
-            <PWAUpdateNotification />
-            <ConnectivityNotification />
-          </Content>
+          <ProtectedAppRoute>
+            <GroceryListRoute />
+          </ProtectedAppRoute>
         } />
         <Route path={RouteEnum.AddGroceryItem} element={
-          <Content>
-            <ProtectedRoute><AddGroceryItemRoute /></ProtectedRoute>
-            <AlertContainer />
-            <PWAUpdateNotification />
-            <ConnectivityNotification />
-          </Content>
+          <ProtectedAppRoute>
+            <AddGroceryItemRoute />
+          </ProtectedAppRoute>
         } />
         <Route path={RouteEnum.EditGroceryItem} element={
-          <Content>
-            <ProtectedRoute><EditGroceryItemRoute /></ProtectedRoute>
-            <AlertContainer />
-            <PWAUpdateNotification />
-            <ConnectivityNotification />
-          </Content>
+          <ProtectedAppRoute>
+            <EditGroceryItemRoute />
+          </ProtectedAppRoute>
         } />
         <Route path={RouteEnum.NoiseTracking} element={
-          <Content>
-            <ProtectedRoute><NoiseTrackingRoute /></ProtectedRoute>
-            <AlertContainer />
-            <PWAUpdateNotification />
-            <ConnectivityNotification />
-          </Content>
+          <ProtectedAppRoute>
+            <NoiseTrackingRoute />
+          </ProtectedAppRoute>
         } />
         <Route path={RouteEnum.ToDoList} element={
-          <Content>
-            <ProtectedRoute><ToDoListRoute /></ProtectedRoute>
-            <AlertContainer />
-            <PWAUpdateNotification />
-            <ConnectivityNotification />
-          </Content>
+          <ProtectedAppRoute>
+            <ToDoListRoute />
+          </ProtectedAppRoute>
         } />
         <Route path={RouteEnum.AddToDoItem} element={
-          <Content>
-            <ProtectedRoute><AddToDoItemRoute /></ProtectedRoute>
-            <AlertContainer />
-            <PWAUpdateNotification />
-            <ConnectivityNotification />
-          </Content>
+          <ProtectedAppRoute>
+            <AddToDoItemRoute />
+          </ProtectedAppRoute>
         } />
         <Route path={RouteEnum.EditToDoItem} element={
-          <Content>
-            <ProtectedRoute><EditToDoItemRoute /></ProtectedRoute>
-            <AlertContainer />
-            <PWAUpdateNotification />
-            <ConnectivityNotification />
-          </Content>
+          <ProtectedAppRoute>
+            <EditToDoItemRoute />
+          </ProtectedAppRoute>
         } />
       </Routes>
     </ApplicationContainer>
