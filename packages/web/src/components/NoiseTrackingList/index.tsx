@@ -1,11 +1,102 @@
 import React from 'react';
 import { useNoiseTrackingContext } from '../../providers/NoiseTrackingProvider';
-import { Container, ScrollableList, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, SimpleListContainer, SimpleListItem, DateGroupPlaceholder, DateHeaderPlaceholder, DateHeaderContentPlaceholder, DateLabelPlaceholder, ItemCountPlaceholder, StatsContainerPlaceholder, MiniTimelinePlaceholder, TimelineBarPlaceholder, ExpandIconPlaceholder } from './index.styled';
+import { Container, SimpleListContainer, SimpleListItem, MiniTimeline, TimelineBar } from './index.styled';
+import { MiniTimelinePlaceholder, TimelineBarPlaceholder } from '../CollapsibleSectionPlaceholder/index.styled';
 import EmptyState from '../EmptyState';
 import NoiseTrackingItem from '../NoiseTrackingItem';
 import NoiseTrackingItemPlaceholder from '../NoiseTrackingItemPlaceholder';
+import CollapsibleSection from '../CollapsibleSection';
+import CollapsibleSectionPlaceholder from '../CollapsibleSectionPlaceholder';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { SectionIcon } from '../CollapsibleSection/types';
+
+const getDayStats = (items: { timestamp: number }[]) => {
+  if (items.length === 0) return { peakHour: 0, hourlyDistribution: [], maxCount: 0 };
+  
+  const filteredItems = items.filter(item => {
+    const hour = new Date(item.timestamp).getHours();
+    return hour >= 7 && hour <= 23;
+  });
+  
+  if (filteredItems.length === 0) return { peakHour: 0, hourlyDistribution: [], maxCount: 0 };
+  
+  const hourCounts = new Map<number, number>();
+  filteredItems.forEach(item => {
+    const hour = new Date(item.timestamp).getHours();
+    hourCounts.set(hour, (hourCounts.get(hour) || 0) + 1);
+  });
+  
+  let peakHour = 7;
+  let maxCount = 0;
+  hourCounts.forEach((count, hour) => {
+    if (count > maxCount) {
+      maxCount = count;
+      peakHour = hour;
+    }
+  });
+  
+  const hourlyDistribution = Array.from({ length: 9 }, (_, period) => {
+    if (period === 8) {
+      return hourCounts.get(23) || 0;
+    } else {
+      const startHour = 7 + (period * 2);
+      const endHour = startHour + 1;
+      return (hourCounts.get(startHour) || 0) + (hourCounts.get(endHour) || 0);
+    }
+  });
+  
+  return { peakHour, hourlyDistribution, maxCount };
+};
+
+const getMiniTimelineData = (hourlyDistribution: number[], maxCount: number) => {
+  const maxHeight = 12;
+  return hourlyDistribution.map(count => ({
+    height: maxCount > 0 ? Math.max(2, (count / maxCount) * maxHeight) : 2,
+    hasData: count > 0
+  }));
+};
+
+const MiniTimelinePlaceholderComponent: React.FC = () => (
+  <MiniTimelinePlaceholder>
+    {Array.from({ length: 9 }).map((_, index) => (
+      <TimelineBarPlaceholder key={index} />
+    ))}
+  </MiniTimelinePlaceholder>
+);
+
+const DATE_ICON_MAP: Record<string, SectionIcon> = {
+  'Today': { emoji: '📅', backgroundColor: '#ecfdf5', foregroundColor: '#059669' },
+  'Yesterday': { emoji: '📆', backgroundColor: '#eff6ff', foregroundColor: '#2563eb' },
+  'default': { emoji: '🗓️', backgroundColor: '#f8fafc', foregroundColor: '#64748b' },
+}
+
+const getDateIcon = (dateLabel: string): SectionIcon => {
+  return DATE_ICON_MAP[dateLabel] || DATE_ICON_MAP.default
+}
+
+interface MiniTimelineComponentProps {
+  items: { timestamp: number }[]
+}
+
+const MiniTimelineComponent: React.FC<MiniTimelineComponentProps> = ({ items }) => {
+  if (items.length === 0) return null;
+  
+  const { hourlyDistribution, maxCount } = getDayStats(items);
+  const timelineData = getMiniTimelineData(hourlyDistribution, maxCount);
+  
+  return (
+    <MiniTimeline>
+      {timelineData.map((bar, index) => (
+        <TimelineBar 
+          key={index} 
+          height={bar.height}
+          color={bar.hasData ? undefined : 'rgba(0, 0, 0, 0.1)'}
+          data-testid="timeline-bar"
+        />
+      ))}
+    </MiniTimeline>
+  );
+};
 
 const groupByDate = (items: { timestamp: number }[]) => {
   // Filter items to only include those between 7am and midnight (7-23) 
@@ -53,64 +144,7 @@ const getDateLabel = (dateString: string) => {
   }
 };
 
-const getDayStats = (items: { timestamp: number }[]) => {
-  if (items.length === 0) return { peakHour: 0, hourlyDistribution: [], maxCount: 0 };
-  
-  // Filter items to only include those between 7am and midnight (7-23)
-  const filteredItems = items.filter(item => {
-    const hour = new Date(item.timestamp).getHours();
-    return hour >= 7 && hour <= 23;
-  });
-  
-  if (filteredItems.length === 0) return { peakHour: 0, hourlyDistribution: [], maxCount: 0 };
-  
-  // Group by hour (only 7am to 11pm)
-  const hourCounts = new Map<number, number>();
-  filteredItems.forEach(item => {
-    const hour = new Date(item.timestamp).getHours();
-    hourCounts.set(hour, (hourCounts.get(hour) || 0) + 1);
-  });
-  
-  // Find peak hour
-  let peakHour = 7;
-  let maxCount = 0;
-  hourCounts.forEach((count, hour) => {
-    if (count > maxCount) {
-      maxCount = count;
-      peakHour = hour;
-    }
-  });
-  
-  // Create 9-period distribution for mini timeline covering 7am-11pm (17 hours in ~2-hour blocks)
-  // 7-8, 9-10, 11-12, 13-14, 15-16, 17-18, 19-20, 21-22, 23
-  const hourlyDistribution = Array.from({ length: 9 }, (_, period) => {
-    if (period === 8) {
-      // Last period only covers hour 23
-      return hourCounts.get(23) || 0;
-    } else {
-      const startHour = 7 + (period * 2);
-      const endHour = startHour + 1;
-      return (hourCounts.get(startHour) || 0) + (hourCounts.get(endHour) || 0);
-    }
-  });
-  
-  return { peakHour, hourlyDistribution, maxCount };
-};
 
-const formatPeakTime = (hour: number) => {
-  if (hour === 0) return '12am';
-  if (hour < 12) return `${hour}am`;
-  if (hour === 12) return '12pm';
-  return `${hour - 12}pm`;
-};
-
-const getMiniTimelineData = (hourlyDistribution: number[], maxCount: number) => {
-  const maxHeight = 12;
-  return hourlyDistribution.map(count => ({
-    height: maxCount > 0 ? Math.max(2, (count / maxCount) * maxHeight) : 2,
-    hasData: count > 0
-  }));
-};
 
 
 
@@ -124,29 +158,19 @@ interface NoiseTrackingListProps {
 
 const PlaceholderComponent = () => (
   <Container>
-    <ScrollableList data-testid="noise-tracking-placeholders">
+    <div data-testid="noise-tracking-placeholders">
       {Array.from({ length: 3 }).map((_, groupIndex) => (
-        <DateGroupPlaceholder key={groupIndex}>
-          <DateHeaderPlaceholder>
-            <DateHeaderContentPlaceholder>
-              <DateLabelPlaceholder />
-              <ItemCountPlaceholder />
-            </DateHeaderContentPlaceholder>
-            <StatsContainerPlaceholder>
-              <MiniTimelinePlaceholder>
-                {Array.from({ length: 9 }).map((_, barIndex) => (
-                  <TimelineBarPlaceholder key={barIndex} />
-                ))}
-              </MiniTimelinePlaceholder>
-              <ExpandIconPlaceholder />
-            </StatsContainerPlaceholder>
-          </DateHeaderPlaceholder>
+        <CollapsibleSectionPlaceholder 
+          key={groupIndex}
+          variant="small"
+          headerRightContent={<MiniTimelinePlaceholderComponent />}
+        >
           {Array.from({ length: 2 + groupIndex }).map((_, itemIndex) => (
             <NoiseTrackingItemPlaceholder key={itemIndex} />
           ))}
-        </DateGroupPlaceholder>
+        </CollapsibleSectionPlaceholder>
       ))}
-    </ScrollableList>
+    </div>
   </Container>
 )
 
@@ -183,12 +207,12 @@ const NoiseTrackingList = ({
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
   const groupedItems = groupByDate(noiseTrackingItems);
 
-  const toggleGroup = (date: string) => {
+  const handleToggleGroup = (dateLabel: string) => {
     const newExpanded = new Set(expandedGroups);
-    if (newExpanded.has(date)) {
-      newExpanded.delete(date);
+    if (newExpanded.has(dateLabel)) {
+      newExpanded.delete(dateLabel);
     } else {
-      newExpanded.add(date);
+      newExpanded.add(dateLabel);
     }
     setExpandedGroups(newExpanded);
   };
@@ -230,48 +254,29 @@ const NoiseTrackingList = ({
           ))}
         </SimpleListContainer>
       ) : (
-        <ScrollableList>
-
+        <>
           {groupedItems.map(({ date, items }) => {
             const dateLabel = getDateLabel(date);
             const isExpanded = expandedGroups.has(dateLabel);
-            const { peakHour, hourlyDistribution, maxCount } = getDayStats(items);
-            const timelineData = getMiniTimelineData(hourlyDistribution, maxCount);
             
             return (
-              <DateGroup key={date}>
-                <DateHeader onClick={() => toggleGroup(dateLabel)}>
-                  <DateHeaderContent>
-                    {dateLabel}
-                    <ItemCount>({items.length})</ItemCount>
-                  </DateHeaderContent>
-                  <StatsContainer>
-                    {items.length >= 1 && (
-                      <MiniTimeline>
-                        {timelineData.map((bar, index) => (
-                          <TimelineBar 
-                            key={index} 
-                            height={bar.height}
-                            color={bar.hasData ? undefined : 'rgba(0, 0, 0, 0.1)'}
-                            data-testid="timeline-bar"
-                          />
-                        ))}
-                      </MiniTimeline>
-                    )}
-                    <ExpandIcon isExpanded={isExpanded}>
-                      <ExpandMoreIcon fontSize="small" />
-                    </ExpandIcon>
-                  </StatsContainer>
-                </DateHeader>
-                <CollapsibleContent isExpanded={isExpanded}>
-                  {items.map(({ timestamp }) => (
-                    <NoiseTrackingItem key={timestamp} timestamp={timestamp} />
-                  ))}
-                </CollapsibleContent>
-              </DateGroup>
+              <CollapsibleSection
+                key={date}
+                title={dateLabel}
+                icon={getDateIcon(dateLabel)}
+                items={items}
+                variant="small"
+                isExpanded={isExpanded}
+                onToggleExpanded={() => handleToggleGroup(dateLabel)}
+                headerRightContent={<MiniTimelineComponent items={items} />}
+              >
+                {items.map(({ timestamp }) => (
+                  <NoiseTrackingItem key={timestamp} timestamp={timestamp} />
+                ))}
+              </CollapsibleSection>
             );
           })}
-        </ScrollableList>
+        </>
       )}
     </Container>
   );

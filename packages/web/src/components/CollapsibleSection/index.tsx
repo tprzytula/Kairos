@@ -22,6 +22,7 @@ export const CollapsibleSection = <T,>({
   onToggleExpanded,
   expandTo,
   expandKey,
+  headerRightContent,
 }: ICollapsibleSectionProps<T>) => {
   const [internalExpanded, setInternalExpanded] = useState(true)
   
@@ -63,6 +64,7 @@ export const CollapsibleSection = <T,>({
         </Box>
         <Box display="flex" alignItems="center" gap={0.75}>
           <ItemCountChip sectionVariant={variant} label={items.length} size="small" />
+          {headerRightContent}
           <IconButton size="small" aria-label={isExpanded ? 'Collapse' : 'Expand'} onClick={handleToggleExpanded}>
             <ChevronBox expanded={isExpanded}>
               <ExpandMoreIcon />

@@ -18,4 +18,5 @@ export interface ICollapsibleSectionProps<T = any> {
   onToggleExpanded?: () => void
   expandTo?: boolean | null
   expandKey?: string | number
+  headerRightContent?: ReactNode
 }
