@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNoiseTrackingContext } from '../../providers/NoiseTrackingProvider';
-import { Container, ScrollableList, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, SimpleListContainer, SimpleListItem } from './index.styled';
+import { Container, ScrollableList, DateGroup, DateHeader, DateHeaderContent, ItemCount, StatsContainer, PeakTime, MiniTimeline, TimelineBar, ExpandIcon, CollapsibleContent, SimpleListContainer, SimpleListItem, DateGroupPlaceholder, DateHeaderPlaceholder, DateHeaderContentPlaceholder, DateLabelPlaceholder, ItemCountPlaceholder, StatsContainerPlaceholder, MiniTimelinePlaceholder, TimelineBarPlaceholder, ExpandIconPlaceholder } from './index.styled';
 import EmptyState from '../EmptyState';
 import NoiseTrackingItem from '../NoiseTrackingItem';
 import NoiseTrackingItemPlaceholder from '../NoiseTrackingItemPlaceholder';
@@ -125,8 +125,26 @@ interface NoiseTrackingListProps {
 const PlaceholderComponent = () => (
   <Container>
     <ScrollableList data-testid="noise-tracking-placeholders">
-      {Array.from({ length: 8 }).map((_, index) => (
-        <NoiseTrackingItemPlaceholder key={index} />
+      {Array.from({ length: 3 }).map((_, groupIndex) => (
+        <DateGroupPlaceholder key={groupIndex}>
+          <DateHeaderPlaceholder>
+            <DateHeaderContentPlaceholder>
+              <DateLabelPlaceholder />
+              <ItemCountPlaceholder />
+            </DateHeaderContentPlaceholder>
+            <StatsContainerPlaceholder>
+              <MiniTimelinePlaceholder>
+                {Array.from({ length: 9 }).map((_, barIndex) => (
+                  <TimelineBarPlaceholder key={barIndex} />
+                ))}
+              </MiniTimelinePlaceholder>
+              <ExpandIconPlaceholder />
+            </StatsContainerPlaceholder>
+          </DateHeaderPlaceholder>
+          {Array.from({ length: 2 + groupIndex }).map((_, itemIndex) => (
+            <NoiseTrackingItemPlaceholder key={itemIndex} />
+          ))}
+        </DateGroupPlaceholder>
       ))}
     </ScrollableList>
   </Container>

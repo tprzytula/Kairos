@@ -15,7 +15,7 @@ const shimmer = `
 export const Container = styled(Card)(({ theme }) => ({
   display: 'flex',
   borderRadius: '16px',
-  minHeight: '70px',
+  minHeight: '81px',
   margin: '4px 0',
   width: '100%',
   justifyContent: 'space-between',
@@ -46,16 +46,20 @@ export const TimeContainer = styled('div')({
 })
 
 export const TimeIcon = styled('div')(({ theme }) => ({
-  width: '8px',
-  height: '8px',
-  borderRadius: '50%',
+  width: '16px',
+  height: '16px',
+  borderRadius: '4px',
   backgroundColor: theme.palette.custom?.surfaces?.secondary || '#f1f5f9',
   flexShrink: 0,
+  background: `linear-gradient(90deg, ${theme.palette.custom?.surfaces?.secondary || '#f1f5f9'} 0%, ${theme.palette.custom?.surfaces?.hover || '#f8fafc'} 50%, ${theme.palette.custom?.surfaces?.secondary || '#f1f5f9'} 100%)`,
+  backgroundSize: '200px 100%',
+  animation: 'shimmer 1.5s infinite linear',
+  [shimmer]: '',
 }))
 
 export const AbsoluteTime = styled('div')(({ theme }) => ({
-  height: '20px',
-  width: '160px',
+  height: '16px',
+  width: '140px',
   borderRadius: '4px',
   background: `linear-gradient(90deg, ${theme.palette.custom?.surfaces?.secondary || '#f1f5f9'} 0%, ${theme.palette.custom?.surfaces?.hover || '#f8fafc'} 50%, ${theme.palette.custom?.surfaces?.secondary || '#f1f5f9'} 100%)`,
   backgroundSize: '200px 100%',
@@ -64,8 +68,8 @@ export const AbsoluteTime = styled('div')(({ theme }) => ({
 }))
 
 export const RelativeTime = styled('div')(({ theme }) => ({
-  height: '14px',
-  width: '80px',
+  height: '13px',
+  width: '60px',
   borderRadius: '4px',
   marginTop: '2px',
   background: `linear-gradient(90deg, ${theme.palette.custom?.surfaces?.secondary || '#f1f5f9'} 0%, ${theme.palette.custom?.surfaces?.hover || '#f8fafc'} 50%, ${theme.palette.custom?.surfaces?.secondary || '#f1f5f9'} 100%)`,
