@@ -186,7 +186,7 @@ const NoiseTrackingList = ({
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
   const groupedItems = groupByDate(noiseTrackingItems);
 
-  if (!isLoading) {
+  if (isLoading) {
     return <PlaceholderComponent />
   }
 
