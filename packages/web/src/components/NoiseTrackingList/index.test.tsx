@@ -1,6 +1,7 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import * as NoiseTrackingProvider from '../../providers/NoiseTrackingProvider'
 import NoiseTrackingList from './index'
+import { ViewMode } from './types'
 
 jest.mock('../../providers/NoiseTrackingProvider')
 
@@ -31,7 +32,7 @@ describe('Given the NoiseTrackingList component', () => {
     })
 
     render(<NoiseTrackingList 
-      viewMode="grouped"
+      viewMode={ViewMode.Grouped}
       allExpanded={true}
       expandKey={0}
     />)
@@ -47,7 +48,7 @@ describe('Given the NoiseTrackingList component', () => {
     })
 
     render(<NoiseTrackingList 
-      viewMode="grouped"
+      viewMode={ViewMode.Grouped}
       allExpanded={true}
       expandKey={0}
     />)
@@ -57,7 +58,7 @@ describe('Given the NoiseTrackingList component', () => {
 
   it('should render noise items in grouped view', () => {
     render(<NoiseTrackingList 
-      viewMode="grouped"
+      viewMode={ViewMode.Grouped}
       allExpanded={true}
       expandKey={0}
     />)
@@ -68,7 +69,7 @@ describe('Given the NoiseTrackingList component', () => {
 
   it('should render noise items in simple view with NoiseTrackingItem components', () => {
     render(<NoiseTrackingList 
-      viewMode="simple"
+      viewMode={ViewMode.Simple}
       allExpanded={true}
       expandKey={0}
     />)

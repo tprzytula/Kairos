@@ -1,5 +1,10 @@
-import { GroceryItem } from "../../providers/AppStateProvider/types";
-
-export interface IGroceryListProps {
-    groceryList: Array<GroceryItem>
+export enum ViewMode {
+  Grouped = 'grouped',
+  Simple = 'simple'
 }
+
+export interface INoiseTrackingListProps {
+  viewMode: ViewMode;
+  allExpanded?: boolean;
+  expandKey?: string | number;
+};

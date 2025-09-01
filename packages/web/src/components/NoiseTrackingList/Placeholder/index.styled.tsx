@@ -10,3 +10,8 @@ export const Container = styled('div')({
   minHeight: 0,
   boxSizing: 'border-box'
 });
+
+export const PlaceholdersWrapper = styled('div')({
+  display: 'flex',
+  flexDirection: 'column'
+});

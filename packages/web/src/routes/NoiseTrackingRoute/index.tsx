@@ -8,15 +8,13 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule'
 import ViewListIcon from '@mui/icons-material/ViewList'
 import { Container, ScrollableContainer } from './index.styled'
 import { useState, useCallback } from 'react'
+import { ViewMode } from '../../components/NoiseTrackingList/types'
 
 const NoiseTrackingContent = () => {
-  const { noiseTrackingItems, isLoading } = useNoiseTrackingContext()
-  
-  const [viewMode, setViewMode] = useState<'grouped' | 'simple'>('grouped')
+  const { noiseTrackingItems } = useNoiseTrackingContext()
+  const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.Grouped)
   const [allExpanded, setAllExpanded] = useState<boolean>(true)
   const [expandKey, setExpandKey] = useState<number>(0)
-
-
   
   const calculateNoiseCounts = () => {
     const now = new Date()
@@ -50,7 +48,7 @@ const NoiseTrackingContent = () => {
   }, [allExpanded])
 
   const toggleViewMode = useCallback(() => {
-    setViewMode(prev => prev === 'grouped' ? 'simple' : 'grouped')
+    setViewMode(prev => prev === ViewMode.Grouped ? ViewMode.Simple : ViewMode.Grouped)
   }, [])
   
   const { todayCount, last7DaysCount, last30DaysCount } = calculateNoiseCounts()
@@ -75,10 +73,10 @@ const NoiseTrackingContent = () => {
           expandCollapseButton={{
             isExpanded: allExpanded,
             onToggle: toggleAll,
-            disabled: viewMode !== 'grouped' || noiseTrackingItems.length === 0,
+            disabled: viewMode !== ViewMode.Grouped || noiseTrackingItems.length === 0,
           }}
           viewToggleButton={{
-            children: viewMode === 'grouped' ? <ViewModuleIcon /> : <ViewListIcon />,
+            children: viewMode === ViewMode.Grouped ? <ViewModuleIcon /> : <ViewListIcon />,
             onClick: toggleViewMode,
           }}
         />

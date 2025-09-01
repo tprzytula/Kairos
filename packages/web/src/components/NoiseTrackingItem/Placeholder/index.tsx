@@ -2,7 +2,7 @@ import { Container, Content, TimeContainer, TimeIcon, AbsoluteTime, RelativeTime
 
 const NoiseTrackingItemPlaceholder = () => {
   return (
-    <Container>
+    <Container aria-label="Noise tracking item placeholder">
       <Content>
         <TimeContainer>
           <TimeIcon />
