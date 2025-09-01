@@ -4,8 +4,8 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeUpOutlinedIcon from '@mui/icons-material/VolumeUpOutlined';
-import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined';
-import FactCheckIcon from '@mui/icons-material/FactCheck';
+import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
+import ChecklistIcon from '@mui/icons-material/Checklist';
 import NavigationButton from './NavigationButton';
 import { Route } from '../../enums/route';
 import { Container, Divider, ItemsContainer } from './index.styled';
@@ -33,8 +33,8 @@ const NavigationBar = () => {
           route={Route.NoiseTracking}
         />
         <NavigationButton
-          SelectedIcon={FactCheckIcon}
-          UnselectedIcon={FactCheckOutlinedIcon}
+          SelectedIcon={ChecklistIcon}
+          UnselectedIcon={ChecklistOutlinedIcon}
           route={Route.ToDoList}
         />
       </ItemsContainer>
