@@ -62,13 +62,12 @@ describe('CollapsibleSection', () => {
     })
   })
 
-  it('should render small variant with different styling', () => {
+  it('should render component with consistent styling', () => {
     const { container } = render(
       <CollapsibleSection
         title="Test Section"
         icon={mockIcon}
         items={mockItems}
-        variant="small"
       >
         <div>Content</div>
       </CollapsibleSection>

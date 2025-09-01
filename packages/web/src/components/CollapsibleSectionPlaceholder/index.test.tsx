@@ -11,14 +11,8 @@ const MiniTimelineComponent = () => (
 );
 
 describe('Given the CollapsibleSectionPlaceholder component', () => {
-  it('should render with large variant by default', () => {
+  it('should render default placeholder', () => {
     const { container } = render(<CollapsibleSectionPlaceholder />);
-    
-    expect(container.firstChild).toBeInTheDocument();
-  });
-
-  it('should render with small variant when specified', () => {
-    const { container } = render(<CollapsibleSectionPlaceholder variant="small" />);
     
     expect(container.firstChild).toBeInTheDocument();
   });

@@ -6,14 +6,11 @@ export interface SectionIcon {
   foregroundColor: string
 }
 
-export type SectionVariant = 'large' | 'small'
-
 export interface ICollapsibleSectionProps<T = any> {
   title: string
   icon: SectionIcon
   items: T[]
   children: ReactNode
-  variant?: SectionVariant
   isExpanded?: boolean
   onToggleExpanded?: () => void
   expandTo?: boolean | null

@@ -162,7 +162,6 @@ const PlaceholderComponent = () => (
       {Array.from({ length: 3 }).map((_, groupIndex) => (
         <CollapsibleSectionPlaceholder 
           key={groupIndex}
-          variant="small"
           headerRightContent={<MiniTimelinePlaceholderComponent />}
         >
           {Array.from({ length: 2 + groupIndex }).map((_, itemIndex) => (
@@ -265,7 +264,6 @@ const NoiseTrackingList = ({
                 title={dateLabel}
                 icon={getDateIcon(dateLabel)}
                 items={items}
-                variant="small"
                 isExpanded={isExpanded}
                 onToggleExpanded={() => handleToggleGroup(dateLabel)}
                 headerRightContent={<MiniTimelineComponent items={items} />}

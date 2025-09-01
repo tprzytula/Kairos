@@ -101,7 +101,6 @@ export const GroceryList = ({ allExpanded: allExpandedProp, expandKey: expandKey
           title={group.label}
           icon={CATEGORY_ICON_MAP[group.category]}
           items={group.items}
-          variant="large"
           expandTo={effectiveAllExpanded}
           expandKey={effectiveExpandKey}
         >

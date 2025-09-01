@@ -17,7 +17,6 @@ export const CollapsibleSection = <T,>({
   icon,
   items,
   children,
-  variant = 'large',
   isExpanded: controlledExpanded,
   onToggleExpanded,
   expandTo,
@@ -50,20 +49,19 @@ export const CollapsibleSection = <T,>({
   }
 
   return (
-    <SectionWrapper sectionVariant={variant}>
-      <SectionHeader sectionVariant={variant} onClick={handleToggleExpanded}>
+    <SectionWrapper>
+      <SectionHeader onClick={handleToggleExpanded}>
         <Box display="flex" alignItems="center" gap={1.25}>
           <SectionIconCircle
-            sectionVariant={variant}
             bg={icon.backgroundColor}
             fg={icon.foregroundColor}
           >
             {icon.emoji}
           </SectionIconCircle>
-          <SectionTitle sectionVariant={variant}>{title}</SectionTitle>
+          <SectionTitle>{title}</SectionTitle>
         </Box>
         <Box display="flex" alignItems="center" gap={0.75}>
-          <ItemCountChip sectionVariant={variant} label={items.length} size="small" />
+          <ItemCountChip label={items.length} size="small" />
           {headerRightContent}
           <IconButton size="small" aria-label={isExpanded ? 'Collapse' : 'Expand'} onClick={handleToggleExpanded}>
             <ChevronBox expanded={isExpanded}>
@@ -74,7 +72,7 @@ export const CollapsibleSection = <T,>({
       </SectionHeader>
 
       <Collapse in={isExpanded} timeout={120}>
-        <SectionContent sectionVariant={variant}>
+        <SectionContent>
           {children}
         </SectionContent>
       </Collapse>

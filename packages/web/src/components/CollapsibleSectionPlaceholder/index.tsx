@@ -9,29 +9,26 @@ import {
   SectionCountPlaceholder,
   ChevronPlaceholder,
 } from './index.styled';
-import { SectionVariant } from '../CollapsibleSection/types';
 
 interface CollapsibleSectionPlaceholderProps {
-  variant?: SectionVariant;
   headerRightContent?: ReactNode;
   children?: ReactNode;
 }
 
 const CollapsibleSectionPlaceholder = ({ 
-  variant = 'large', 
   headerRightContent,
   children
 }: CollapsibleSectionPlaceholderProps) => (
-  <SectionWrapper sectionVariant={variant}>
-    <SectionHeaderPlaceholder sectionVariant={variant}>
+  <SectionWrapper>
+    <SectionHeaderPlaceholder>
       <SectionLeftContainer>
-        <SectionIconPlaceholder sectionVariant={variant} />
-        <SectionTitlePlaceholder sectionVariant={variant} />
+        <SectionIconPlaceholder />
+        <SectionTitlePlaceholder />
       </SectionLeftContainer>
       <SectionRightContainer>
-        <SectionCountPlaceholder sectionVariant={variant} />
+        <SectionCountPlaceholder />
         {headerRightContent}
-        <ChevronPlaceholder sectionVariant={variant} />
+        <ChevronPlaceholder />
       </SectionRightContainer>
     </SectionHeaderPlaceholder>
     {children}

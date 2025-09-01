@@ -37,7 +37,7 @@ const ALL_TASKS_ICON: SectionIcon = {
 
 const PlaceholderComponent = () => (
   <Container>
-    <CollapsibleSectionPlaceholder variant="small">
+    <CollapsibleSectionPlaceholder>
       {Array.from({ length: 20 }).map((_, index) => (
         <ToDoItemPlaceholder key={index} />
       ))}
@@ -114,7 +114,6 @@ export const ToDoList = ({
           title="All Tasks"
           icon={ALL_TASKS_ICON}
           items={visibleToDoItems}
-          variant="small"
           expandTo={allExpanded}
           expandKey={expandKey}
         >
@@ -138,7 +137,6 @@ export const ToDoList = ({
           title={groupLabel}
           icon={TIME_GROUP_ICON_MAP[group]}
           items={items}
-          variant="small"
           expandTo={allExpanded}
           expandKey={expandKey}
         >
