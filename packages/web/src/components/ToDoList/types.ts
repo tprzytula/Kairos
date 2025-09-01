@@ -1,5 +1,7 @@
-import { GroceryItem } from "../../providers/AppStateProvider/types";
+import { ToDoViewMode } from '../../enums/todoViewMode';
 
-export interface IGroceryListProps {
-    groceryList: Array<GroceryItem>
-}
+export interface IToDoListProps {
+  allExpanded?: boolean;
+  expandKey?: string | number;
+  viewMode?: ToDoViewMode;
+};
