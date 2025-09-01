@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { useToDoListContext } from '../../providers/ToDoListProvider';
 import { useProjectContext } from '../../providers/ProjectProvider';
 import ToDoItem from '../ToDoItem';
-import ToDoItemPlaceholder from '../ToDoItemPlaceholder';
+import ToDoItemPlaceholder from '../ToDoItem/Placeholder';
 import CollapsibleSectionPlaceholder from '../CollapsibleSectionPlaceholder';
 import CollapsibleSection from '../CollapsibleSection';
 import { Container } from './index.styled';

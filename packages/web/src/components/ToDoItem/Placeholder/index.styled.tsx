@@ -1,7 +1,7 @@
 import { styled } from "@mui/system";
-import { Name, Description, DueDate, Container as BaseContainer, ActionArea, Content as BaseContent } from "../ToDoItem/index.styled";
+import { Name, Description, DueDate, Container as BaseContainer, ActionArea, Content as BaseContent } from "../index.styled";
 
-export { ActionArea } from '../ToDoItem/index.styled'
+export { ActionArea } from '../index.styled'
 
 export const Container = styled(BaseContainer)(({
   minHeight: '160px',

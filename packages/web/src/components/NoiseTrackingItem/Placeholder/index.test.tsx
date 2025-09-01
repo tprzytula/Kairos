@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import { ThemeProvider } from '@mui/material/styles'
-import theme from '../../theme'
+import theme from '../../../theme'
 import NoiseTrackingItemPlaceholder from "."
 
 const renderWithTheme = (component: React.ReactElement) => {

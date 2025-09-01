@@ -1,4 +1,4 @@
-import GroceryItemPlaceholder from '../../GroceryItemPlaceholder';
+import GroceryItemPlaceholder from '../../GroceryItem/Placeholder';
 import CollapsibleSectionPlaceholder from '../../CollapsibleSectionPlaceholder';
 import { Container, PlaceholdersWrapper } from './index.styled';
 import { IPlaceholderProps } from './types';

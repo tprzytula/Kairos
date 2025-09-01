@@ -1,7 +1,7 @@
 import { styled } from "@mui/system";
-import { Media, Name, QuantityText, UnitText, QuantityDisplay } from "../GroceryItem/index.styled";
+import { Media, Name, QuantityText, UnitText, QuantityDisplay } from "../index.styled";
 
-export { ActionArea, Container, Content, ActionContainer } from '../GroceryItem/index.styled'
+export { ActionArea, Container, Content, ActionContainer } from '../index.styled'
 
 const shimmerStyles = {
   background: 'linear-gradient(90deg, #f1f5f9 25%, #e5e7eb 50%, #f1f5f9 75%)',

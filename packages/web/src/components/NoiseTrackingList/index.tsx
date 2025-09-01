@@ -4,7 +4,7 @@ import { Container, SimpleListContainer, SimpleListItem, MiniTimeline, TimelineB
 import { MiniTimelinePlaceholder, TimelineBarPlaceholder } from '../CollapsibleSectionPlaceholder/index.styled';
 import EmptyState from '../EmptyState';
 import NoiseTrackingItem from '../NoiseTrackingItem';
-import NoiseTrackingItemPlaceholder from '../NoiseTrackingItemPlaceholder';
+import NoiseTrackingItemPlaceholder from '../NoiseTrackingItem/Placeholder';
 import CollapsibleSection from '../CollapsibleSection';
 import CollapsibleSectionPlaceholder from '../CollapsibleSectionPlaceholder';
 import SwipeableList from '../SwipeableList';
