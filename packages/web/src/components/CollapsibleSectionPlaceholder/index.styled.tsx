@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 const shimmerStyles = {
   background: 'linear-gradient(90deg, #f1f5f9 25%, #e5e7eb 50%, #f1f5f9 75%)',
   backgroundSize: '200% 100%',
-  animation: 'shimmer 1.5s infinite',
+  animation: 'shimmer 1.5s infinite linear',
   '@keyframes shimmer': {
     '0%': {
       backgroundPosition: '200% 0',

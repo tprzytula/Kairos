@@ -153,10 +153,6 @@ const getDateLabel = (dateString: string) => {
   }
 };
 
-
-
-
-
 type ViewMode = 'grouped' | 'simple'
 
 interface NoiseTrackingListProps {
@@ -182,31 +178,6 @@ const PlaceholderComponent = () => (
   </Container>
 )
 
-const formatTimestampForSimpleView = (timestamp: number) => {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  
-  const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  
-  if (dateOnly.getTime() === today.getTime()) {
-    return `Today, ${date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`;
-  } else if (dateOnly.getTime() === yesterday.getTime()) {
-    return `Yesterday, ${date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`;
-  } else {
-    return date.toLocaleString('en-GB', { 
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
-};
-
 const NoiseTrackingList = ({ 
   viewMode, 
   allExpanded, 
@@ -215,7 +186,7 @@ const NoiseTrackingList = ({
   const { noiseTrackingItems, isLoading } = useNoiseTrackingContext();
   const groupedItems = groupByDate(noiseTrackingItems);
 
-  if (isLoading) {
+  if (!isLoading) {
     return <PlaceholderComponent />
   }
 
@@ -230,8 +201,6 @@ const NoiseTrackingList = ({
       </Container>
     );
   }
-
-
 
   // Filter items for simple view to only show 7am to midnight
   const filteredSortedItems = noiseTrackingItems
