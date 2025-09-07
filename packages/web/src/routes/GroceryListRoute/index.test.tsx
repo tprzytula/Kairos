@@ -1,8 +1,8 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
-import { BrowserRouter } from 'react-router'
+import { BrowserRouter, useNavigate } from 'react-router'
 import GroceryListRoute from '.'
 import * as API from '../../api/groceryList'
 import { GroceryItemUnit } from '../../enums/groceryItem'
@@ -23,7 +23,7 @@ jest.mock('../../providers/ProjectProvider', () => ({
 jest.mock('../../api/groceryList')
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(() => jest.fn()),
+  useNavigate: jest.fn(),
 }))
 
 // Mock the useAuth hook for ProjectProvider
@@ -37,6 +37,8 @@ jest.mock('react-oidc-context', () => ({
 }))
 
 const mockUseProjectContext = useProjectContext as jest.MockedFunction<typeof useProjectContext>
+const mockNavigate = jest.fn()
+const mockUseNavigate = useNavigate as jest.MockedFunction<typeof useNavigate>
 
 const MOCK_PROJECT: IProject = {
   id: 'test-project-id',
@@ -60,6 +62,9 @@ describe('Given the GroceryListRoute component', () => {
       switchProject: jest.fn(),
       getProjectInviteInfo: jest.fn(),
     })
+    
+    mockNavigate.mockClear()
+    mockUseNavigate.mockReturnValue(mockNavigate)
   })
 
   afterEach(() => {
@@ -101,6 +106,29 @@ describe('Given the GroceryListRoute component', () => {
       expect(screen.getByText('Milk')).toBeVisible()
       expect(screen.getByText('Bread')).toBeVisible()
     })
+  })
+
+  it('should render back to shops action button', async () => {
+    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
+
+    await act(async () => {
+      renderComponent()
+    })
+
+    expect(screen.getByLabelText('Navigate back to shops list')).toBeVisible()
+  })
+
+  it('should navigate to shops when back to shops button is clicked', async () => {
+    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
+
+    await act(async () => {
+      renderComponent()
+    })
+
+    const backButton = screen.getByLabelText('Navigate back to shops list')
+    fireEvent.click(backButton)
+
+    expect(mockNavigate).toHaveBeenCalledWith('/shops')
   })
 
   describe('When the fetch fails', () => {

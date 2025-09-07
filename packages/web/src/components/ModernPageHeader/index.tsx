@@ -1,4 +1,5 @@
 import React from 'react'
+import { IconButton, Tooltip } from '@mui/material'
 import { 
   HeaderWrapper,
   HeaderCard, 
@@ -19,23 +20,43 @@ export interface ModernPageHeaderProps {
     label: string
     wide?: boolean
   }>
+  actionButton?: {
+    icon: React.ReactNode
+    onClick: () => void
+    tooltip: string
+    ariaLabel: string
+  }
 }
 
 const ModernPageHeader: React.FC<ModernPageHeaderProps> = ({
   title,
   icon,
-  stats
+  stats,
+  actionButton
 }) => {
   return (
     <HeaderWrapper>
       <HeaderCard>
         <HeaderContent>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1 }}>
             <HeaderIcon>
               {icon}
             </HeaderIcon>
             <HeaderTitle>{title}</HeaderTitle>
           </div>
+          
+          {actionButton && (
+            <Tooltip title={actionButton.tooltip}>
+              <IconButton
+                onClick={actionButton.onClick}
+                aria-label={actionButton.ariaLabel}
+                size="medium"
+                style={{ marginLeft: 'auto' }}
+              >
+                {actionButton.icon}
+              </IconButton>
+            </Tooltip>
+          )}
           
           {stats && stats.length > 0 && (
             <HeaderStats>

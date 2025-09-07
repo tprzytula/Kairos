@@ -1,9 +1,10 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { createTheme } from '@mui/material/styles'
 import ModernPageHeader from './index'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import ChecklistIcon from '@mui/icons-material/Checklist'
+import StorefrontIcon from '@mui/icons-material/Storefront'
 
 const theme = createTheme()
 
@@ -152,6 +153,89 @@ describe('ModernPageHeader', () => {
       expect(screen.getByText('Total')).toBeInTheDocument()
       expect(screen.getByText('5')).toBeInTheDocument()
       expect(screen.getByText('Remaining')).toBeInTheDocument()
+    })
+  })
+
+  describe('action button', () => {
+    it('should render action button when provided', () => {
+      const mockOnClick = jest.fn()
+      
+      renderWithTheme(
+        <ModernPageHeader
+          title="Grocery List"
+          icon={<ShoppingCartIcon />}
+          actionButton={{
+            icon: <StorefrontIcon />,
+            onClick: mockOnClick,
+            tooltip: "Back to Shops",
+            ariaLabel: "Navigate back to shops list"
+          }}
+        />
+      )
+
+      expect(screen.getByLabelText('Navigate back to shops list')).toBeInTheDocument()
+      expect(screen.getByTestId('StorefrontIcon')).toBeInTheDocument()
+    })
+
+    it('should call onClick when action button is clicked', () => {
+      const mockOnClick = jest.fn()
+      
+      renderWithTheme(
+        <ModernPageHeader
+          title="Grocery List"
+          icon={<ShoppingCartIcon />}
+          actionButton={{
+            icon: <StorefrontIcon />,
+            onClick: mockOnClick,
+            tooltip: "Back to Shops",
+            ariaLabel: "Navigate back to shops list"
+          }}
+        />
+      )
+
+      const actionButton = screen.getByLabelText('Navigate back to shops list')
+      fireEvent.click(actionButton)
+      
+      expect(mockOnClick).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not render action button when not provided', () => {
+      renderWithTheme(
+        <ModernPageHeader
+          title="Grocery List"
+          icon={<ShoppingCartIcon />}
+        />
+      )
+
+      expect(screen.queryByLabelText('Navigate back to shops list')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('StorefrontIcon')).not.toBeInTheDocument()
+    })
+
+    it('should render action button alongside stats', () => {
+      const mockOnClick = jest.fn()
+      const mockStats = [
+        { value: 10, label: 'Total Items' },
+        { value: 3, label: 'Remaining' }
+      ]
+      
+      renderWithTheme(
+        <ModernPageHeader
+          title="Grocery List"
+          icon={<ShoppingCartIcon />}
+          stats={mockStats}
+          actionButton={{
+            icon: <StorefrontIcon />,
+            onClick: mockOnClick,
+            tooltip: "Back to Shops",
+            ariaLabel: "Navigate back to shops list"
+          }}
+        />
+      )
+
+      expect(screen.getByText('10')).toBeInTheDocument()
+      expect(screen.getByText('Total Items')).toBeInTheDocument()
+      expect(screen.getByLabelText('Navigate back to shops list')).toBeInTheDocument()
+      expect(screen.getByTestId('StorefrontIcon')).toBeInTheDocument()
     })
   })
 })

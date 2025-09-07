@@ -9,22 +9,29 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule'
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha'
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess'
+import StorefrontIcon from '@mui/icons-material/Storefront'
 import { Container, ScrollableContainer } from './index.styled'
 import { useState, useCallback, useMemo } from 'react'
-import { useParams } from 'react-router'
+import { useParams, useNavigate } from 'react-router'
 import { removeGroceryItems } from '../../api/groceryList'
 import { showAlert } from '../../utils/alert'
 import { ActionName } from '../../providers/AppStateProvider/enums'
 import { GroceryViewMode } from '../../enums/groceryCategory'
 import { ShopProvider, useShopContext } from '../../providers/ShopProvider'
+import { Route } from '../../enums/route'
 
 const GroceryListContent = () => {
   const { shopId } = useParams<{ shopId: string }>()
   const { shops } = useShopContext()
   const { groceryList, viewMode, setViewMode, refetchGroceryList } = useGroceryListContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
+  const navigate = useNavigate()
   
   const currentShop = shops.find(shop => shop.id === shopId)
+  
+  const handleBackToShops = useCallback(() => {
+    navigate(Route.Shops)
+  }, [navigate])
   
   const unpurchasedItems = groceryList.filter(item => !purchasedItems.has(item.id))
   const purchasedCount = groceryList.length - unpurchasedItems.length
@@ -93,6 +100,12 @@ const GroceryListContent = () => {
         title={currentShop ? currentShop.name : "Grocery List"}
         icon={<ShoppingCartIcon />}
         stats={stats}
+        actionButton={{
+          icon: <StorefrontIcon />,
+          onClick: handleBackToShops,
+          tooltip: "Back to Shops",
+          ariaLabel: "Navigate back to shops list"
+        }}
       />
       <Container>
         <ActionButtonsBar
