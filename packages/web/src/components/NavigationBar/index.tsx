@@ -10,8 +10,26 @@ import NavigationButton from './NavigationButton';
 import { Route } from '../../enums/route';
 import { Container, Divider, ItemsContainer } from './index.styled';
 import AddItemButton from './AddItemButton';
+import { useShopContext } from '../../providers/ShopProvider';
+import { useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router';
+import { StyledNavigationButton } from './NavigationButton/index.styled';
 
 const NavigationBar = () => {
+  const { currentShop } = useShopContext();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleShoppingCartClick = useCallback(() => {
+    if (currentShop) {
+      navigate(Route.GroceryList.replace(':shopId', currentShop.id));
+    } else {
+      navigate(Route.Shops);
+    }
+  }, [currentShop, navigate]);
+
+  const isShoppingCartSelected = location.pathname.startsWith('/groceries') || location.pathname === '/shops';
+
   return (
     <Container elevation={0}>
       <Divider />
@@ -21,11 +39,13 @@ const NavigationBar = () => {
           UnselectedIcon={HomeOutlinedIcon}
           route={Route.Home}
         />
-        <NavigationButton
-          SelectedIcon={ShoppingCartIcon}
-          UnselectedIcon={ShoppingCartOutlinedIcon}
-          route={Route.GroceryList}
-        />
+        <StyledNavigationButton onClick={handleShoppingCartClick} isSelected={isShoppingCartSelected}>
+          {isShoppingCartSelected ? (
+            <ShoppingCartIcon fontSize="large" />
+          ) : (
+            <ShoppingCartOutlinedIcon fontSize="large" />
+          )}
+        </StyledNavigationButton>
         <AddItemButton />
         <NavigationButton
           SelectedIcon={VolumeUpIcon}
