@@ -95,9 +95,16 @@ const AddItemButton = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const addItemRoute = useMemo<Route | undefined>(() => {
-        const path = location.pathname as Route;
-
-        return RouteToAddItemMapping[path];
+        const path = location.pathname;
+        
+        // Check for grocery list pattern /groceries/:shopId
+        if (path.match(/^\/groceries\/[^\/]+$/)) {
+            return RouteToAddItemMapping[Route.GroceryList];
+        }
+        
+        // Check for exact matches
+        const exactRoute = path as Route;
+        return RouteToAddItemMapping[exactRoute];
     }, [location.pathname]);
 
     const isOnHomePage = useMemo(() => {
@@ -109,6 +116,10 @@ const AddItemButton = () => {
             if (location.pathname === Route.Shops) {
                 // Special case: navigate to shops with add mode parameter
                 navigate(`${Route.Shops}?mode=add`);
+            } else if (location.pathname.match(/^\/groceries\/[^\/]+$/)) {
+                // Special case: grocery list - extract shopId and navigate to add item
+                const shopId = location.pathname.split('/')[2];
+                navigate(Route.AddGroceryItem.replace(':shopId', shopId));
             } else {
                 navigate(addItemRoute);
             }
