@@ -38,10 +38,12 @@ components/
 - Only modify `.tf` files, never run terraform commands locally
 
 ### Git Workflow
+- **NEVER EVER commit or push code without EXPLICIT user permission**
 - **NEVER EVER push code directly to master without explicit approval**
 - Create commits for each completed change with descriptive messages
 - Use conventional commit format: `feat:`, `fix:`, `refactor:`, etc.
-- Always request approval before merging to master
+- Always request approval before pushing to master
+- Always ask the user before running `git commit` or `git push` commands
 
 ## Testing Standards (MANDATORY)
 
@@ -172,6 +174,7 @@ describe('UserProfile component', () => {
 4. Update types as needed (never use `as`)
 
 ### Before Committing (CRITICAL - NEVER SKIP)
+0. **GET EXPLICIT USER PERMISSION** - NEVER commit without user approval
 1. **RUN ALL UNIT TESTS** - MANDATORY for every commit
    - Web tests: `cd packages/web && npm test`
    - Lambda tests: `cd packages/lambdas && npm test`

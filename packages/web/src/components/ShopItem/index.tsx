@@ -3,14 +3,18 @@ import { Container, ActionArea, Content, Media, Name, MetaInfo, IconContainer } 
 import { IShopItemProps } from './types'
 import { useShopContext } from '../../providers/ShopProvider'
 import StorefrontIcon from '@mui/icons-material/Storefront'
+import { useNavigate } from 'react-router'
+import { Route } from '../../enums/route'
 
 const ShopItem = memo(({ id, name, icon, createdAt, updatedAt }: IShopItemProps) => {
   const { setCurrentShop } = useShopContext()
+  const navigate = useNavigate()
 
   const handleClick = useCallback(() => {
     const shop = { id, name, icon, createdAt, updatedAt, projectId: '' } // projectId will be set by the provider
     setCurrentShop(shop)
-  }, [id, name, icon, createdAt, updatedAt, setCurrentShop])
+    navigate(Route.GroceryList.replace(':shopId', id))
+  }, [id, name, icon, createdAt, updatedAt, setCurrentShop, navigate])
 
   const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString)

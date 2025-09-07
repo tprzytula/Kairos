@@ -2,10 +2,19 @@ import { render, screen, waitFor } from "@testing-library/react";
 import ShopItem from ".";
 import { useShopContext } from "../../providers/ShopProvider";
 import { IShop } from "../../providers/AppStateProvider/types";
+import { useNavigate } from "react-router";
 
 jest.mock("../../providers/ShopProvider");
+jest.mock("react-router", () => ({
+  useNavigate: jest.fn(),
+}));
 
 describe("Given the ShopItem component", () => {
+  beforeEach(() => {
+    const mockNavigate = jest.fn();
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+  });
+
   it("should render the component with correct props", () => {
     mockShopContext();
     renderShopItem();
@@ -38,8 +47,11 @@ describe("Given the ShopItem component", () => {
   });
 
   describe("When the user clicks the shop item", () => {
-    it("should call setCurrentShop with the shop data", async () => {
+    it("should call setCurrentShop and navigate to grocery list", async () => {
       const setCurrentShop = mockShopContext();
+      const mockNavigate = jest.fn();
+      (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+      
       renderShopItem();
 
       await waitFor(() => {
@@ -54,6 +66,8 @@ describe("Given the ShopItem component", () => {
         updatedAt: EXAMPLE_SHOP_PROPS.updatedAt,
         projectId: '',
       });
+
+      expect(mockNavigate).toHaveBeenCalledWith('/groceries/shop-123');
     });
   });
 
