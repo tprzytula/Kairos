@@ -1,4 +1,4 @@
-import { GroceryItem } from "../../providers/AppStateProvider/types";
+import { IGroceryItem } from "../../providers/AppStateProvider/types";
 
 export interface IGroceryListProps {
     groceryList: Array<GroceryItem>

@@ -132,7 +132,7 @@ const GroceryListContent = () => {
           }}
         />
         <ScrollableContainer>
-          <GroceryList allExpanded={allExpanded} expandKey={expandKey} />
+          <GroceryList allExpanded={allExpanded} expandKey={expandKey} shopId={shopId} />
         </ScrollableContainer>
       </Container>
     </StandardLayout>

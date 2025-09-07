@@ -14,7 +14,8 @@ import { IGroceryListProps } from './types';
 
 export const GroceryList = ({
   allExpanded = true,
-  expandKey = 0
+  expandKey = 0,
+  shopId
 }: IGroceryListProps = {}) => {
   const navigate = useNavigate()
   const { dispatch } = useAppState()
@@ -32,8 +33,9 @@ export const GroceryList = ({
   }, [removeGroceryItem, dispatch])
 
   const handleEdit = useCallback((id: string) => {
-    navigate(Route.EditGroceryItem.replace(':id', id))
-  }, [navigate])
+    const actualShopId = shopId === 'all' ? 'all' : shopId || ''
+    navigate(Route.EditGroceryItem.replace(':shopId', actualShopId).replace(':id', id))
+  }, [navigate, shopId])
 
   if (isLoading) {
     return <Placeholder />
