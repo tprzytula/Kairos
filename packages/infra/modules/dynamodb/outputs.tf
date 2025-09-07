@@ -33,3 +33,7 @@ output "user_preferences_arn" {
 output "push_subscriptions_arn" {
   value = aws_dynamodb_table.push_subscriptions.arn
 }
+
+output "shops_arn" {
+  value = aws_dynamodb_table.shops.arn
+}

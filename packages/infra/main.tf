@@ -53,6 +53,7 @@ module "policies" {
   dynamodb_project_members_arn        = module.dynamodb.project_members_arn
   dynamodb_user_preferences_arn       = module.dynamodb.user_preferences_arn
   dynamodb_push_subscriptions_arn     = module.dynamodb.push_subscriptions_arn
+  dynamodb_shops_arn                  = module.dynamodb.shops_arn
   sns_todo_notifications_arn          = module.sns.todo_notifications_topic_arn
   s3_kairos_web_arn                   = module.s3.kairos_web_arn
   s3_kairos_lambdas_arn               = module.s3.kairos_lambdas_arn

@@ -23,6 +23,7 @@ variable "lambda_functions" {
         project_members        = optional(string, "none")
         user_preferences       = optional(string, "none")
         push_subscriptions     = optional(string, "none")
+        shops                  = optional(string, "none")
       })
       sns = object({
         todo_notifications = optional(string, "none")
@@ -68,6 +69,10 @@ variable "dynamodb_user_preferences_arn" {
 }
 
 variable "dynamodb_push_subscriptions_arn" {
+  type = string
+}
+
+variable "dynamodb_shops_arn" {
   type = string
 }
 
