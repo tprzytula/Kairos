@@ -43,9 +43,10 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
     try {
       setIsLoading(true)
 
+      const actualShopId = shopId === 'all' ? undefined : shopId
 
       const groceryList = addPropertyToEachItemInList({
-        list: await retrieveGroceryList(currentProject.id, shopId),
+        list: await retrieveGroceryList(currentProject.id, actualShopId),
         properties: { toBeRemoved: false },
       })
 

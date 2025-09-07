@@ -2,7 +2,7 @@ import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
-import { BrowserRouter, useNavigate } from 'react-router'
+import { BrowserRouter, useNavigate, useParams } from 'react-router'
 import GroceryListRoute from '.'
 import * as API from '../../api/groceryList'
 import { GroceryItemUnit } from '../../enums/groceryItem'
@@ -24,6 +24,7 @@ jest.mock('../../api/groceryList')
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(),
+  useParams: jest.fn(),
 }))
 
 // Mock the useAuth hook for ProjectProvider
@@ -39,6 +40,7 @@ jest.mock('react-oidc-context', () => ({
 const mockUseProjectContext = useProjectContext as jest.MockedFunction<typeof useProjectContext>
 const mockNavigate = jest.fn()
 const mockUseNavigate = useNavigate as jest.MockedFunction<typeof useNavigate>
+const mockUseParams = useParams as jest.MockedFunction<typeof useParams>
 
 const MOCK_PROJECT: IProject = {
   id: 'test-project-id',
@@ -65,6 +67,7 @@ describe('Given the GroceryListRoute component', () => {
     
     mockNavigate.mockClear()
     mockUseNavigate.mockReturnValue(mockNavigate)
+    mockUseParams.mockReturnValue({ shopId: 'test-shop-id' })
   })
 
   afterEach(() => {
@@ -87,7 +90,7 @@ describe('Given the GroceryListRoute component', () => {
       renderComponent()
     })
 
-    expect(groceryListSpy).toHaveBeenCalledWith('test-project-id', undefined)
+    expect(groceryListSpy).toHaveBeenCalledWith('test-project-id', 'test-shop-id')
   })
 
   it('should display the grocery list', async () => {
@@ -129,6 +132,18 @@ describe('Given the GroceryListRoute component', () => {
     fireEvent.click(backButton)
 
     expect(mockNavigate).toHaveBeenCalledWith('/shops')
+  })
+
+  it('should display "All Grocery Items" title when shopId is "all"', async () => {
+    const groceryListSpy = jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
+    mockUseParams.mockReturnValue({ shopId: 'all' })
+
+    await act(async () => {
+      renderComponent()
+    })
+
+    expect(screen.getByText('All Grocery Items')).toBeInTheDocument()
+    expect(groceryListSpy).toHaveBeenCalledWith('test-project-id', undefined)
   })
 
   describe('When the fetch fails', () => {

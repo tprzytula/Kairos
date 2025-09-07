@@ -1,20 +1,24 @@
 import { useCallback, useState, useEffect } from 'react'
-import { useLocation } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import StandardLayout from '../../layout/standardLayout'
 import ModernPageHeader from '../../components/ModernPageHeader'
+import ActionButtonsBar from '../../components/ActionButtonsBar'
 import ShopList from '../../components/ShopList'
 import AddShopForm from '../../components/AddShopForm'
 import EditShopForm from '../../components/EditShopForm'
 import { ShopProvider, useShopContext } from '../../providers/ShopProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
+import { Route } from '../../enums/route'
 import StorefrontIcon from '@mui/icons-material/Storefront'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import { Container, ScrollableContainer, FormContainer } from './index.styled'
 
 type FormMode = 'none' | 'add' | 'edit'
 
 const ShopListContent = () => {
   const location = useLocation()
+  const navigate = useNavigate()
   const { dispatch } = useAppState()
   const { 
     shops, 
@@ -123,6 +127,10 @@ const ShopListContent = () => {
     }
   }, [updateShop, dispatch])
 
+  const handleViewAllItems = useCallback(() => {
+    navigate(Route.GroceryList.replace(':shopId', 'all'))
+  }, [navigate])
+
 
   return (
     <StandardLayout>
@@ -134,6 +142,20 @@ const ShopListContent = () => {
       <Container>
         {formMode === 'none' ? (
           <ScrollableContainer>
+            {totalItems > 0 && (
+              <ActionButtonsBar
+                actionButton={{
+                  isEnabled: true,
+                  onClick: handleViewAllItems,
+                  children: (
+                    <>
+                      <ShoppingCartIcon style={{ marginRight: 8 }} />
+                      View All Items
+                    </>
+                  ),
+                }}
+              />
+            )}
             <ShopList
               shops={shops}
               onDelete={handleDeleteShop}

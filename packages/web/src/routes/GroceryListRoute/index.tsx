@@ -27,7 +27,7 @@ const GroceryListContent = () => {
   const { state: { purchasedItems }, dispatch } = useAppState()
   const navigate = useNavigate()
   
-  const currentShop = shops.find(shop => shop.id === shopId)
+  const currentShop = shopId === 'all' ? null : shops.find(shop => shop.id === shopId)
   
   const handleBackToShops = useCallback(() => {
     navigate(Route.Shops)
@@ -97,7 +97,7 @@ const GroceryListContent = () => {
   return (
     <StandardLayout>
       <ModernPageHeader
-        title={currentShop ? currentShop.name : "Grocery List"}
+        title={shopId === 'all' ? 'All Grocery Items' : (currentShop ? currentShop.name : "Grocery List")}
         icon={<ShoppingCartIcon />}
         stats={stats}
         actionButton={{

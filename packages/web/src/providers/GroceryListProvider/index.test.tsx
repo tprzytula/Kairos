@@ -61,6 +61,20 @@ describe('Given the GroceryListProvider component', () => {
     await waitFor(() => expect(API.retrieveGroceryList).toHaveBeenCalledWith('test-project-id', undefined))
   })
 
+  describe('When shopId is "all"', () => {
+    it('should call retrieveGroceryList with undefined shopId to get all items', async () => {
+      jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
+
+      await act(async () => {
+        renderGroceryListProvider({ shopId: 'all' })
+      })
+
+      await waitFor(() => {
+        expect(API.retrieveGroceryList).toHaveBeenCalledWith('test-project-id', undefined)
+      })
+    })
+  })
+
   describe('When the API request fails', () => {
     it('should log an error', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error')
@@ -360,9 +374,9 @@ const EXAMPLE_GROCERY_LIST: Array<IGroceryItem> = [
   },
 ]
 
-const renderGroceryListProvider = () => {
+const renderGroceryListProvider = (props: { shopId?: string } = {}) => {
   return render(
-    <GroceryListProvider>
+    <GroceryListProvider shopId={props.shopId}>
       <div>Test</div>
     </GroceryListProvider>
   )
