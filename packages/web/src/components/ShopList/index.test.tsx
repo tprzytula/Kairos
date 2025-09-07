@@ -61,6 +61,21 @@ describe("Given the ShopList component", () => {
       expect(screen.queryAllByTestId("shop-item")).toHaveLength(0);
     });
   });
+
+  describe("When the shops list is loading", () => {
+    it("should render the loading placeholder", () => {
+      (useShopContext as jest.Mock).mockReturnValue({
+        currentShop: null,
+        setCurrentShop: jest.fn(),
+        isLoading: true,
+      });
+      
+      render(<ShopList shops={[]} onDelete={jest.fn()} onEdit={jest.fn()} />);
+
+      expect(screen.getByLabelText('Loading shops')).toBeInTheDocument();
+      expect(screen.getAllByLabelText('Shop item placeholder')).toHaveLength(4);
+    });
+  });
 });
 
 const renderShopList = () => {
@@ -77,6 +92,7 @@ const mockShopContext = () => {
   (useShopContext as jest.Mock).mockReturnValue({
     currentShop: null,
     setCurrentShop: jest.fn(),
+    isLoading: false,
   });
 };
 
