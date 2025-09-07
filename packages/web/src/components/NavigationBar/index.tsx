@@ -28,7 +28,7 @@ const NavigationBar = () => {
     }
   }, [currentShop, navigate]);
 
-  const isShoppingCartSelected = location.pathname.startsWith('/groceries') || location.pathname === '/shops';
+  const isShoppingCartSelected = location.pathname.startsWith('/groceries');
 
   return (
     <Container elevation={0}>

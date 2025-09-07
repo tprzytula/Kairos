@@ -10,9 +10,9 @@ const ShopItem = memo(({ id, name, icon, createdAt, updatedAt, itemCount }: ISho
   const { setCurrentShop } = useShopContext()
   const navigate = useNavigate()
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback(async () => {
     const shop = { id, name, icon, createdAt, updatedAt, projectId: '' } // projectId will be set by the provider
-    setCurrentShop(shop)
+    await setCurrentShop(shop)
     navigate(Route.GroceryList.replace(':shopId', id))
   }, [id, name, icon, createdAt, updatedAt, setCurrentShop, navigate])
 

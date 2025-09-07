@@ -6,6 +6,7 @@ export const updateUserPreferences = async (userId: string, updates: IRequestBod
   const updatedPreferences: IUserPreferences = {
     userId,
     currentProjectId: updates.currentProjectId,
+    currentShopId: updates.currentShopId,
     lastUpdated: Date.now(),
   };
 

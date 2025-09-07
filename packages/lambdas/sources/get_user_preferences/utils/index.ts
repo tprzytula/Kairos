@@ -12,6 +12,7 @@ export const getUserPreferences = async (userId: string): Promise<IUserPreferenc
     return preferences || {
       userId,
       currentProjectId: undefined,
+      currentShopId: undefined,
       lastUpdated: Date.now(),
     };
   } catch (error) {
@@ -21,6 +22,7 @@ export const getUserPreferences = async (userId: string): Promise<IUserPreferenc
     return {
       userId,
       currentProjectId: undefined,
+      currentShopId: undefined,
       lastUpdated: Date.now(),
     };
   }
