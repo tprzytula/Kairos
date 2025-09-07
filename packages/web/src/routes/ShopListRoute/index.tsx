@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router'
+import { useLocation } from 'react-router'
 import StandardLayout from '../../layout/standardLayout'
 import ModernPageHeader from '../../components/ModernPageHeader'
 import ShopList from '../../components/ShopList'
@@ -8,23 +8,19 @@ import EditShopForm from '../../components/EditShopForm'
 import { ShopProvider, useShopContext } from '../../providers/ShopProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
-import { Route } from '../../enums/route'
 import StorefrontIcon from '@mui/icons-material/Storefront'
 import { Container, ScrollableContainer, FormContainer } from './index.styled'
 
 type FormMode = 'none' | 'add' | 'edit'
 
 const ShopListContent = () => {
-  const navigate = useNavigate()
   const location = useLocation()
   const { dispatch } = useAppState()
   const { 
     shops, 
-    currentShop, 
     addShop, 
     updateShop, 
-    deleteShop, 
-    setCurrentShop 
+    deleteShop 
   } = useShopContext()
   
   const [formMode, setFormMode] = useState<FormMode>('none')
@@ -43,9 +39,11 @@ const ShopListContent = () => {
     }
   }, [location.search])
 
+  const totalItems = shops.reduce((sum, shop) => sum + (shop.itemCount || 0), 0)
+  
   const stats = [
     { value: shops.length, label: 'Total Shops' },
-    { value: currentShop ? 1 : 0, label: 'Selected' },
+    { value: totalItems, label: 'Total Items' },
   ]
 
   const handleEditShop = useCallback((shopId: string) => {
@@ -125,19 +123,6 @@ const ShopListContent = () => {
     }
   }, [updateShop, dispatch])
 
-  const handleShopSelect = useCallback((shopId: string) => {
-    const shop = shops.find(s => s.id === shopId)
-    if (shop) {
-      setCurrentShop(shop)
-      navigate(Route.GroceryList.replace(':shopId', shopId))
-    }
-  }, [shops, setCurrentShop, navigate])
-
-  // Override ShopItem click to handle navigation instead of just selection
-  const shopListItems = shops.map(shop => ({
-    ...shop,
-    onClick: () => handleShopSelect(shop.id)
-  }))
 
   return (
     <StandardLayout>
