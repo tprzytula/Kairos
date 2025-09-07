@@ -12,16 +12,11 @@ import GroceryItemPreviewPopup from '../../components/GroceryItemPreviewPopup'
 import HomeGroceryItemPlaceholder from './components/HomeGroceryItemPlaceholder'
 import HomeToDoItemPlaceholder from './components/HomeToDoItemPlaceholder'
 import HomeNoiseItemPlaceholder from './components/HomeNoiseItemPlaceholder'
-import HomeGroceryItem from './components/HomeGroceryItem'
-import HomeToDoItem from './components/HomeToDoItem'
-import HomeNoiseItem from './components/HomeNoiseItem'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-
-import { formatTimeElapsed, formatTimestamp } from './utils'
 
 const formatDueDateRelative = (dueDate?: number): string => {
   if (!dueDate) return ''
@@ -109,10 +104,8 @@ import {
   SectionCard,
   SectionHeader,
   SectionContent,
-  ItemList,
   EmptyState,
   GroceryStats,
-  StatItem,
   GroceryImagesGrid,
   GroceryImageItem,
   GroceryImageOverflow,
