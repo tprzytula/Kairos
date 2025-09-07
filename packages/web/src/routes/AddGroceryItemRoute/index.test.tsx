@@ -24,6 +24,7 @@ jest.mock('@mui/icons-material/ShoppingCart', () => () => <div>ShoppingCartIcon<
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(() => jest.fn()),
+  useParams: jest.fn(),
 }))
 
 describe('Given the AddGroceryItemContent component', () => {
@@ -58,6 +59,8 @@ describe('Given the AddGroceryItemContent component', () => {
       fetchProjects: jest.fn(),
       getProjectInviteInfo: jest.fn(),
     });
+
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({ shopId: 'test-shop-1' });
 
     (useItemDefaults as jest.Mock).mockReturnValue({
       defaults: []
@@ -112,6 +115,7 @@ describe('Given the AddGroceryItemContent component', () => {
         name: 'Test',
         quantity: 1,
         unit: GroceryItemUnit.KILOGRAM,
+        shopId: 'test-shop-1',
       }, 'test-project-id')  
     })
 
@@ -152,7 +156,7 @@ describe('Given the AddGroceryItemContent component', () => {
           ])
         })
 
-        expect(navigateSpy).toHaveBeenCalledWith(Route.GroceryList)
+        expect(navigateSpy).toHaveBeenCalledWith('/groceries/test-shop-1')
       })
     })
 

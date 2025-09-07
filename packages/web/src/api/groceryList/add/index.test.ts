@@ -28,6 +28,7 @@ describe('Given the addGroceryItem function', () => {
       name: 'Milk',
       quantity: 5,
       unit: GroceryItemUnit.LITER,
+      shopId: 'shop-1',
       imagePath: '/assets/icons/milk.png'
     })
 
@@ -35,7 +36,7 @@ describe('Given the addGroceryItem function', () => {
       'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items',
       {
         method: 'PUT',
-        body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, imagePath: '/assets/icons/milk.png' }),
+        body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, shopId: 'shop-1', imagePath: '/assets/icons/milk.png' }),
         headers: {
           'X-Project-ID': 'legacy-shared-project',
           'Content-Type': 'application/json',
@@ -51,6 +52,7 @@ describe('Given the addGroceryItem function', () => {
       name: 'Milk',
       quantity: 5,
       unit: GroceryItemUnit.LITER,
+      shopId: 'shop-1',
       imagePath: '/assets/icons/milk.png'
     }, 'test-project-id')
 
@@ -58,7 +60,7 @@ describe('Given the addGroceryItem function', () => {
       'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items',
       {
         method: 'PUT',
-        body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, imagePath: '/assets/icons/milk.png' }),
+        body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, shopId: 'shop-1', imagePath: '/assets/icons/milk.png' }),
         headers: {
           'X-Project-ID': 'test-project-id',
           'Content-Type': 'application/json',
@@ -74,6 +76,7 @@ describe('Given the addGroceryItem function', () => {
       name: 'Milk',
       quantity: 5,
       unit: GroceryItemUnit.LITER,
+      shopId: 'shop-1',
       imagePath: '/assets/icons/milk.png'
     })
 
@@ -90,6 +93,7 @@ describe('Given the addGroceryItem function', () => {
         name: 'Milk',
         quantity: 5,
         unit: GroceryItemUnit.LITER,
+        shopId: 'shop-1',
         imagePath: '/assets/icons/milk.png'
       })).rejects.toThrow('Failed to add a grocery item')
     })
@@ -105,6 +109,7 @@ describe('Given the addGroceryItem function', () => {
         name: 'Milk',
         quantity: 5,
         unit: GroceryItemUnit.LITER,
+        shopId: 'shop-1',
         imagePath: '/assets/icons/milk.png'
       })).rejects.toThrow('Unexpected response from API')
     })

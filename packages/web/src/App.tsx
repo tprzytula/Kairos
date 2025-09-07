@@ -3,6 +3,7 @@ import { ApplicationContainer } from './App.styled'
 import GroceryListRoute from './routes/GroceryListRoute'
 import AddGroceryItemRoute from './routes/AddGroceryItemRoute'
 import EditGroceryItemRoute from './routes/EditGroceryItemRoute'
+import ShopListRoute from './routes/ShopListRoute'
 import { Route as RouteEnum } from './enums/route'
 import NoiseTrackingRoute from './routes/NoiseTrackingRoute'
 import ToDoListRoute from './routes/ToDoListRoute'
@@ -25,6 +26,11 @@ export const App = () => {
         <Route path={RouteEnum.Home} element={
           <ProtectedContent>
             <HomeRoute />
+          </ProtectedContent>
+        } />
+        <Route path={RouteEnum.Shops} element={
+          <ProtectedContent>
+            <ShopListRoute />
           </ProtectedContent>
         } />
         <Route path={RouteEnum.GroceryList} element={

@@ -1,8 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
-import { StateComponentProps } from '../AppStateProvider/types'
 import { IGroceryItem } from '../AppStateProvider/types'
 import { removeGroceryItems, retrieveGroceryList, updateGroceryItem, updateGroceryItemFields, GroceryItemUpdateFields } from '../../api/groceryList'
-import { IState } from './types'
+import { IState, IGroceryListProviderProps } from './types'
 import { addPropertyToEachItemInList } from '../../utils/list'
 import { GroceryViewMode } from '../../enums/groceryCategory'
 import { useProjectContext } from '../ProjectProvider'
@@ -24,7 +23,7 @@ export const useGroceryListContext = () => useContext(GroceryListContext)
 
 const GROCERY_VIEW_MODE_STORAGE_KEY = 'grocery-view-mode'
 
-export const GroceryListProvider = ({ children }: StateComponentProps) => {
+export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderProps) => {
   const { currentProject } = useProjectContext()
   const [groceryList, setGroceryList] = useState<Array<IGroceryItem>>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -46,7 +45,7 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
 
 
       const groceryList = addPropertyToEachItemInList({
-        list: await retrieveGroceryList(currentProject.id),
+        list: await retrieveGroceryList(currentProject.id, shopId),
         properties: { toBeRemoved: false },
       })
 
@@ -62,7 +61,7 @@ export const GroceryListProvider = ({ children }: StateComponentProps) => {
     } finally {
       setIsLoading(false)
     }
-  }, [currentProject])
+  }, [currentProject, shopId])
 
   const refetchGroceryList = useCallback(async () => {
     await fetchGroceryList()

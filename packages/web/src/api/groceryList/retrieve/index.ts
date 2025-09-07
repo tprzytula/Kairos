@@ -2,8 +2,13 @@ import { GROCERY_LIST_API_URL } from '..'
 import { IDBGroceryItem, IDBGroceryItemDefault } from './types'
 import { createFetchOptions } from '../../../utils/api'
 
-export const retrieveGroceryList = async (projectId?: string): Promise<Array<IDBGroceryItem>> => {
-  const response = await fetch(`${GROCERY_LIST_API_URL}/grocery_list/items`, createFetchOptions({}, projectId))
+export const retrieveGroceryList = async (projectId?: string, shopId?: string): Promise<Array<IDBGroceryItem>> => {
+  const url = new URL(`${GROCERY_LIST_API_URL}/grocery_list/items`)
+  if (shopId) {
+    url.searchParams.append('shopId', shopId)
+  }
+  
+  const response = await fetch(url.toString(), createFetchOptions({}, projectId))
 
   if (response.ok) {
     return await response.json()

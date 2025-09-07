@@ -82,13 +82,13 @@ describe('Given the GroceryListRoute component', () => {
       renderComponent()
     })
 
-    expect(groceryListSpy).toHaveBeenCalledWith('test-project-id')
+    expect(groceryListSpy).toHaveBeenCalledWith('test-project-id', undefined)
   })
 
   it('should display the grocery list', async () => {
     const mockGroceryList = [
-      { id: '1', name: 'Milk', quantity: 1, unit: GroceryItemUnit.LITER, imagePath: 'https://hostname.com/image.png' },
-      { id: '2', name: 'Bread', quantity: 2, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png' },
+      { id: '1', name: 'Milk', quantity: 1, unit: GroceryItemUnit.LITER, imagePath: 'https://hostname.com/image.png', shopId: 'test-shop-1' },
+      { id: '2', name: 'Bread', quantity: 2, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', shopId: 'test-shop-1' },
     ]
 
     jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)

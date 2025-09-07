@@ -88,6 +88,7 @@ const EXAMPLE_GROCERY_LIST_RESPONSE: Array<IDBGroceryItem> = [
     quantity: 5,
     unit: GroceryItemUnit.LITER,
     imagePath: '/assets/icons/milk.png',
+    shopId: 'test-shop-1',
   },
   {
     id: '2',
@@ -95,6 +96,7 @@ const EXAMPLE_GROCERY_LIST_RESPONSE: Array<IDBGroceryItem> = [
     quantity: 2,
     unit: GroceryItemUnit.UNIT,
     imagePath: '/assets/icons/paper-towel.png',
+    shopId: 'test-shop-1',
   },
 ]
 

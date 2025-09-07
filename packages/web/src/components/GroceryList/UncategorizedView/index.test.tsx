@@ -11,6 +11,7 @@ const mockGroceryItems: IGroceryItem[] = [
     unit: GroceryItemUnit.LITER,
     imagePath: 'milk.png',
     toBeRemoved: false,
+    shopId: 'test-shop-1',
   },
   {
     id: '2',
@@ -19,6 +20,7 @@ const mockGroceryItems: IGroceryItem[] = [
     unit: GroceryItemUnit.UNIT,
     imagePath: 'bread.png',
     toBeRemoved: false,
+    shopId: 'test-shop-1',
   },
 ];
 

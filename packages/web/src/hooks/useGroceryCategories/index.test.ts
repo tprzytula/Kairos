@@ -11,6 +11,7 @@ const mockGroceryList = [
     unit: GroceryItemUnit.UNIT,
     imagePath: '/path/to/apple.png',
     toBeRemoved: false,
+    shopId: 'test-shop-1',
   },
   {
     id: '2',
@@ -19,6 +20,7 @@ const mockGroceryList = [
     unit: GroceryItemUnit.LITER,
     imagePath: '/path/to/milk.png',
     toBeRemoved: false,
+    shopId: 'test-shop-1',
   },
   {
     id: '3',
@@ -27,6 +29,7 @@ const mockGroceryList = [
     unit: GroceryItemUnit.UNIT,
     imagePath: '/path/to/bread.png',
     toBeRemoved: false,
+    shopId: 'test-shop-1',
   },
 ]
 

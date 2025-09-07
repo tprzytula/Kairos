@@ -5,6 +5,7 @@ export interface IDBGroceryItem {
   name: string
   quantity: number
   unit: GroceryItemUnit
+  shopId: string
   imagePath?: string
   category?: string
 }

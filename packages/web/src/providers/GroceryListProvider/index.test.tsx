@@ -58,7 +58,7 @@ describe('Given the GroceryListProvider component', () => {
       renderGroceryListProvider()
     })
 
-    await waitFor(() => expect(API.retrieveGroceryList).toHaveBeenCalledWith('test-project-id'))
+    await waitFor(() => expect(API.retrieveGroceryList).toHaveBeenCalledWith('test-project-id', undefined))
   })
 
   describe('When the API request fails', () => {
@@ -125,6 +125,7 @@ describe('Given the useGroceryListContext hook', () => {
         quantity: 5,
         imagePath: 'https://hostname.com/image.png',
         unit: GroceryItemUnit.LITER,
+        shopId: 'test-shop-1',
       },
     ])
 
@@ -141,6 +142,7 @@ describe('Given the useGroceryListContext hook', () => {
           imagePath: 'https://hostname.com/image.png',
           unit: GroceryItemUnit.LITER,
           toBeRemoved: false,
+          shopId: 'test-shop-1',
         },
       ])
     })
@@ -187,6 +189,7 @@ describe('Given the useGroceryListContext hook', () => {
           imagePath: 'https://hostname.com/image.png',
           unit: GroceryItemUnit.LITER,
           toBeRemoved: false,
+          shopId: 'test-shop-1',
         },
         {
           id: '2',
@@ -195,6 +198,7 @@ describe('Given the useGroceryListContext hook', () => {
           imagePath: 'https://hostname.com/image.png',
           unit: GroceryItemUnit.UNIT,
           toBeRemoved: false,
+          shopId: 'test-shop-1',
         },
       ])
     })
@@ -235,6 +239,7 @@ describe('Given the useGroceryListContext hook', () => {
           imagePath: 'https://hostname.com/image.png',
           unit: GroceryItemUnit.UNIT,
           toBeRemoved: false,
+          shopId: 'test-shop-1',
         },
         {
           id: '2',
@@ -243,6 +248,7 @@ describe('Given the useGroceryListContext hook', () => {
           imagePath: 'https://hostname.com/image.png',
           unit: GroceryItemUnit.UNIT,
           toBeRemoved: false,
+          shopId: 'test-shop-1',
         },
       ])
     })
@@ -341,6 +347,7 @@ const EXAMPLE_GROCERY_LIST: Array<IGroceryItem> = [
       imagePath: 'https://hostname.com/image.png',
       unit: GroceryItemUnit.LITER,
       toBeRemoved: false,
+      shopId: 'test-shop-1',
     },
     {
       id: '2',
@@ -349,6 +356,7 @@ const EXAMPLE_GROCERY_LIST: Array<IGroceryItem> = [
       imagePath: 'https://hostname.com/image.png',
       unit: GroceryItemUnit.UNIT,
       toBeRemoved: false,
+      shopId: 'test-shop-1',
   },
 ]
 

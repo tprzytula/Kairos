@@ -5,6 +5,7 @@ import { GroceryViewMode } from '../../enums/groceryCategory'
 
 export interface IGroceryListProviderProps {
     children: ReactNode
+    shopId?: string
 }
 
 export interface IState {

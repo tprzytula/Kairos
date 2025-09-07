@@ -167,6 +167,7 @@ const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
       unit: GroceryItemUnit.LITER,
       imagePath: 'https://hostname.com/image.png',
       toBeRemoved: false,
+      shopId: 'test-shop-1',
     },
     {
       id: '2',
@@ -175,6 +176,7 @@ const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
       unit: GroceryItemUnit.UNIT,
       imagePath: 'https://hostname.com/image.png',
       toBeRemoved: false,
+      shopId: 'test-shop-1',
     },
   ],
   isLoading: false,

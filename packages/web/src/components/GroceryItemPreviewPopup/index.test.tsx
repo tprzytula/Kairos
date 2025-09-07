@@ -12,7 +12,8 @@ const mockGroceryItem: IGroceryItem = {
   quantity: 5,
   unit: GroceryItemUnit.KILOGRAM,
   imagePath: '/test-image.jpg',
-  toBeRemoved: false
+  toBeRemoved: false,
+  shopId: 'test-shop-1'
 }
 
 const mockGroceryItemWithoutImage: IGroceryItem = {
@@ -20,7 +21,8 @@ const mockGroceryItemWithoutImage: IGroceryItem = {
   name: 'Milk',
   quantity: 2,
   unit: GroceryItemUnit.LITER,
-  toBeRemoved: false
+  toBeRemoved: false,
+  shopId: 'test-shop-1'
 }
 
 const mockAnchorPosition = {

@@ -11,6 +11,7 @@ import { showAlert } from '../../utils/alert'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import StandardLayout from '../../layout/standardLayout'
 import { GroceryListProvider, useGroceryListContext } from '../../providers/GroceryListProvider'
+import { ShopProvider, useShopContext } from '../../providers/ShopProvider'
 import { IGroceryItem } from '../../providers/AppStateProvider/types'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { retrieveGroceryListDefaults } from '../../api/groceryList'
@@ -19,11 +20,14 @@ const EditGroceryItemContent = () => {
   const { dispatch } = useAppState()
   const { groceryList, updateGroceryItemFields } = useGroceryListContext()
   const navigate = useNavigate()
-  const { id } = useParams()
+  const { shopId, id } = useParams<{ shopId: string; id: string }>()
+  const { shops } = useShopContext()
   const [currentItem, setCurrentItem] = useState<IGroceryItem | null>(null)
   const { defaults } = useItemDefaults({
     fetchMethod: retrieveGroceryListDefaults
   })
+  
+  const currentShop = shops.find(shop => shop.id === shopId)
 
   const groceryItem = useMemo(() => {
     return groceryList.find(item => item.id === id) || null
@@ -34,9 +38,9 @@ const EditGroceryItemContent = () => {
       setCurrentItem(groceryItem)
     } else if (!groceryItem && groceryList.length > 0) {
       createAlert('Grocery item not found', 'error')
-      navigate(Route.GroceryList)
+      navigate(Route.GroceryList.replace(':shopId', shopId || ''))
     }
-  }, [groceryItem, groceryList])
+  }, [groceryItem, groceryList, shopId, navigate])
 
   const FIELDS: Array<IFormField> = useMemo(() => [
     {
@@ -84,12 +88,12 @@ const EditGroceryItemContent = () => {
       await updateGroceryItemFields(id!, updatedFields)
 
       createAlert(`${name.value} has been updated`, 'success')
-      navigate(Route.GroceryList)
+      navigate(Route.GroceryList.replace(':shopId', shopId || ''))
     } catch (error) {
       console.error(error)
       createAlert('Error updating grocery item', 'error')
     }
-  }, [createAlert, navigate, id, currentItem?.imagePath, updateGroceryItemFields])
+  }, [createAlert, navigate, id, shopId, currentItem?.imagePath, updateGroceryItemFields])
 
   if (!currentItem) {
     return (
@@ -104,7 +108,7 @@ const EditGroceryItemContent = () => {
 
   return (
     <StandardLayout
-      title="Edit Grocery Item"
+      title={currentShop ? `Edit Item in ${currentShop.name}` : "Edit Grocery Item"}
       centerVertically
     >
       <AddItemForm
@@ -118,10 +122,14 @@ const EditGroceryItemContent = () => {
 }
 
 export const EditGroceryItemRoute = () => {
+  const { shopId } = useParams<{ shopId: string }>()
+  
   return (
-    <GroceryListProvider>
-      <EditGroceryItemContent />
-    </GroceryListProvider>
+    <ShopProvider>
+      <GroceryListProvider shopId={shopId}>
+        <EditGroceryItemContent />
+      </GroceryListProvider>
+    </ShopProvider>
   )
 }
 

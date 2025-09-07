@@ -83,7 +83,7 @@ describe('Given the HomeRoute component', () => {
       renderComponent()
     })
 
-    expect(groceryListSpy).toHaveBeenCalledWith('test-project-id')
+    expect(groceryListSpy).toHaveBeenCalledWith('test-project-id', undefined)
     expect(toDoListSpy).toHaveBeenCalledWith('test-project-id')
     expect(noiseListSpy).toHaveBeenCalledWith('test-project-id')
   })
@@ -114,11 +114,11 @@ describe('Given the HomeRoute component', () => {
 
   it('should display grocery items as image grid', async () => {
     const mockGroceryList = [
-      { id: '1', name: 'Milk', quantity: 1, unit: GroceryItemUnit.LITER, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
-      { id: '2', name: 'Bread', quantity: 2, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
-      { id: '3', name: 'Eggs', quantity: 12, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
-      { id: '4', name: 'Butter', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
-      { id: '5', name: 'Cheese', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+      { id: '1', name: 'Milk', quantity: 1, unit: GroceryItemUnit.LITER, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
+      { id: '2', name: 'Bread', quantity: 2, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
+      { id: '3', name: 'Eggs', quantity: 12, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
+      { id: '4', name: 'Butter', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
+      { id: '5', name: 'Cheese', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
     ]
 
     jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
@@ -184,9 +184,9 @@ describe('Given the HomeRoute component', () => {
   describe('Grocery grid layout behavior', () => {
     it('should display 3 grocery items when 3 items provided', async () => {
       const mockGroceryList = [
-        { id: '1', name: 'Item 1', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
-        { id: '2', name: 'Item 2', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
-        { id: '3', name: 'Item 3', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+        { id: '1', name: 'Item 1', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
+        { id: '2', name: 'Item 2', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
+        { id: '3', name: 'Item 3', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
       ]
 
       jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
@@ -207,13 +207,13 @@ describe('Given the HomeRoute component', () => {
 
     it('should display 7 grocery items when 7 items provided', async () => {
       const mockGroceryList = [
-        { id: '1', name: 'Item 1', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
-        { id: '2', name: 'Item 2', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
-        { id: '3', name: 'Item 3', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
-        { id: '4', name: 'Item 4', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
-        { id: '5', name: 'Item 5', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
-        { id: '6', name: 'Item 6', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
-        { id: '7', name: 'Item 7', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false },
+        { id: '1', name: 'Item 1', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
+        { id: '2', name: 'Item 2', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
+        { id: '3', name: 'Item 3', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
+        { id: '4', name: 'Item 4', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
+        { id: '5', name: 'Item 5', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
+        { id: '6', name: 'Item 6', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
+        { id: '7', name: 'Item 7', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
       ]
 
       jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
@@ -244,6 +244,7 @@ describe('Given the HomeRoute component', () => {
         unit: GroceryItemUnit.UNIT,
         imagePath: 'https://hostname.com/image.png',
         toBeRemoved: false,
+        shopId: 'test-shop-1',
       }))
 
       jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
@@ -360,8 +361,8 @@ describe('Given the HomeRoute component', () => {
 
   it('should allow switching between grocery items without closing popup', async () => {
     const mockGroceryList = [
-      { id: '1', name: 'Apple', quantity: 5, unit: GroceryItemUnit.UNIT, imagePath: '/apple.png' },
-      { id: '2', name: 'Banana', quantity: 3, unit: GroceryItemUnit.UNIT, imagePath: '/banana.png' },
+      { id: '1', name: 'Apple', quantity: 5, unit: GroceryItemUnit.UNIT, imagePath: '/apple.png', shopId: 'test-shop-1' },
+      { id: '2', name: 'Banana', quantity: 3, unit: GroceryItemUnit.UNIT, imagePath: '/banana.png', shopId: 'test-shop-1' },
     ]
 
     jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)

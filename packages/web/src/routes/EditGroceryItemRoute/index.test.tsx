@@ -52,7 +52,7 @@ describe('Given the EditGroceryItemRoute component', () => {
   const mockNavigate = jest.fn()
 
   beforeEach(() => {
-    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({ id: '1' })
+    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({ id: '1', shopId: 'test-shop-1' })
     jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate)
     mockNavigate.mockClear()
   })
@@ -126,7 +126,7 @@ describe('Given the EditGroceryItemRoute component', () => {
             imagePath: '/test.png',
           })
 
-          expect(mockNavigate).toHaveBeenCalledWith(Route.GroceryList)
+          expect(mockNavigate).toHaveBeenCalledWith('/groceries/test-shop-1')
         })
 
     describe('And validation fails', () => {

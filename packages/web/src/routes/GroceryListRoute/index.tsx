@@ -11,14 +11,20 @@ import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess'
 import { Container, ScrollableContainer } from './index.styled'
 import { useState, useCallback, useMemo } from 'react'
+import { useParams } from 'react-router'
 import { removeGroceryItems } from '../../api/groceryList'
 import { showAlert } from '../../utils/alert'
 import { ActionName } from '../../providers/AppStateProvider/enums'
 import { GroceryViewMode } from '../../enums/groceryCategory'
+import { ShopProvider, useShopContext } from '../../providers/ShopProvider'
 
 const GroceryListContent = () => {
+  const { shopId } = useParams<{ shopId: string }>()
+  const { shops } = useShopContext()
   const { groceryList, viewMode, setViewMode, refetchGroceryList } = useGroceryListContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
+  
+  const currentShop = shops.find(shop => shop.id === shopId)
   
   const unpurchasedItems = groceryList.filter(item => !purchasedItems.has(item.id))
   const purchasedCount = groceryList.length - unpurchasedItems.length
@@ -84,7 +90,7 @@ const GroceryListContent = () => {
   return (
     <StandardLayout>
       <ModernPageHeader
-        title="Grocery List"
+        title={currentShop ? currentShop.name : "Grocery List"}
         icon={<ShoppingCartIcon />}
         stats={stats}
       />
@@ -121,10 +127,14 @@ const GroceryListContent = () => {
 }
 
 export const GroceryListRoute = () => {
+  const { shopId } = useParams<{ shopId: string }>()
+  
   return (
-    <GroceryListProvider>
-      <GroceryListContent />
-    </GroceryListProvider>
+    <ShopProvider>
+      <GroceryListProvider shopId={shopId}>
+        <GroceryListContent />
+      </GroceryListProvider>
+    </ShopProvider>
   )
 }
 

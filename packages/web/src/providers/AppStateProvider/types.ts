@@ -23,10 +23,20 @@ export type IGroceryItem = {
   id: string
   name: string
   quantity: number
+  shopId: string
   imagePath?: string
   unit: GroceryItemUnit
   category?: string
   toBeRemoved: boolean
+}
+
+export type IShop = {
+  id: string
+  projectId: string
+  name: string
+  icon?: string
+  createdAt: string
+  updatedAt: string
 }
 
 export type Action = {
