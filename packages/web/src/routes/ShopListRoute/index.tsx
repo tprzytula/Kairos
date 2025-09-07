@@ -1,8 +1,7 @@
-import { useCallback, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useCallback, useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router'
 import StandardLayout from '../../layout/standardLayout'
 import ModernPageHeader from '../../components/ModernPageHeader'
-import ActionButtonsBar from '../../components/ActionButtonsBar'
 import ShopList from '../../components/ShopList'
 import AddShopForm from '../../components/AddShopForm'
 import EditShopForm from '../../components/EditShopForm'
@@ -11,13 +10,13 @@ import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
 import { Route } from '../../enums/route'
 import StorefrontIcon from '@mui/icons-material/Storefront'
-import AddIcon from '@mui/icons-material/Add'
 import { Container, ScrollableContainer, FormContainer } from './index.styled'
 
 type FormMode = 'none' | 'add' | 'edit'
 
 const ShopListContent = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const { dispatch } = useAppState()
   const { 
     shops, 
@@ -31,15 +30,23 @@ const ShopListContent = () => {
   const [formMode, setFormMode] = useState<FormMode>('none')
   const [editingShop, setEditingShop] = useState<{ id: string; name: string; icon?: string } | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  // Check URL parameters to show add form when triggered from navigation
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search)
+    if (searchParams.get('mode') === 'add') {
+      setFormMode('add')
+      // Clean up URL parameter
+      const newUrl = new URL(window.location.href)
+      newUrl.searchParams.delete('mode')
+      window.history.replaceState({}, '', newUrl.pathname)
+    }
+  }, [location.search])
 
   const stats = [
     { value: shops.length, label: 'Total Shops' },
     { value: currentShop ? 1 : 0, label: 'Selected' },
   ]
-
-  const handleAddShop = useCallback(() => {
-    setFormMode('add')
-  }, [])
 
   const handleEditShop = useCallback((shopId: string) => {
     const shop = shops.find(s => s.id === shopId)
@@ -141,23 +148,13 @@ const ShopListContent = () => {
       />
       <Container>
         {formMode === 'none' ? (
-          <>
-            <ActionButtonsBar
-              actionButton={{
-                isEnabled: true,
-                onClick: handleAddShop,
-                children: "Add Shop",
-                statusText: "Tap to add a new shop",
-              }}
+          <ScrollableContainer>
+            <ShopList
+              shops={shops}
+              onDelete={handleDeleteShop}
+              onEdit={handleEditShop}
             />
-            <ScrollableContainer>
-              <ShopList
-                shops={shops}
-                onDelete={handleDeleteShop}
-                onEdit={handleEditShop}
-              />
-            </ScrollableContainer>
-          </>
+          </ScrollableContainer>
         ) : (
           <FormContainer>
             {formMode === 'add' ? (

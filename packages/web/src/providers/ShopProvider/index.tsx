@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useLayoutEffect, useM
 import { IShop } from '../AppStateProvider/types'
 import { IShopProviderProps, IShopProviderState } from './types'
 import { retrieveShops, addShop as addShopAPI, updateShop as updateShopAPI, deleteShop as deleteShopAPI, ICreateShopRequestBody, IUpdateShopRequestBody } from '../../api/shops'
+import { retrieveGroceryList } from '../../api/groceryList/retrieve'
 import { useProjectContext } from '../ProjectProvider'
 
 export const initialState: IShopProviderState = {
@@ -35,12 +36,32 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
     try {
       setIsLoading(true)
       const shopList = await retrieveShops(currentProject.id)
-      setShops(shopList)
+      
+      // Fetch item counts for each shop
+      const shopsWithItemCounts = await Promise.all(
+        shopList.map(async (shop) => {
+          try {
+            const groceryItems = await retrieveGroceryList(currentProject.id, shop.id)
+            return {
+              ...shop,
+              itemCount: groceryItems.length
+            }
+          } catch (error) {
+            console.error(`Failed to fetch items for shop ${shop.id}:`, error)
+            return {
+              ...shop,
+              itemCount: 0
+            }
+          }
+        })
+      )
+      
+      setShops(shopsWithItemCounts)
       
       // Set current shop from localStorage if available and valid
       const savedShopId = localStorage.getItem(`${CURRENT_SHOP_STORAGE_KEY}-${currentProject.id}`)
       if (savedShopId) {
-        const savedShop = shopList.find(shop => shop.id === savedShopId)
+        const savedShop = shopsWithItemCounts.find(shop => shop.id === savedShopId)
         if (savedShop) {
           setCurrentShopState(savedShop)
         } else {

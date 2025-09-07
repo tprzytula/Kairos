@@ -37,6 +37,7 @@ export type IShop = {
   icon?: string
   createdAt: string
   updatedAt: string
+  itemCount?: number
 }
 
 export type Action = {

@@ -86,6 +86,7 @@ export type IRouteToAddItemMapping = {
 const RouteToAddItemMapping: IRouteToAddItemMapping = {
     [Route.GroceryList]: Route.AddGroceryItem,
     [Route.ToDoList]: Route.AddToDoItem,
+    [Route.Shops]: Route.Shops, // Special case: navigate to same route with mode parameter
 }
 
 const AddItemButton = () => {
@@ -105,7 +106,12 @@ const AddItemButton = () => {
 
     const onClick = useCallback(async () => {
         if (addItemRoute) {
-            navigate(addItemRoute);
+            if (location.pathname === Route.Shops) {
+                // Special case: navigate to shops with add mode parameter
+                navigate(`${Route.Shops}?mode=add`);
+            } else {
+                navigate(addItemRoute);
+            }
         }
 
         if (location.pathname === Route.NoiseTracking) {

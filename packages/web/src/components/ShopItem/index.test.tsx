@@ -20,7 +20,29 @@ describe("Given the ShopItem component", () => {
     renderShopItem();
     
     expect(screen.getByText(EXAMPLE_SHOP_PROPS.name)).toBeVisible();
-    expect(screen.getByText("Created Jan 1, 2024")).toBeVisible();
+    expect(screen.getByText("Loading items...")).toBeVisible();
+  });
+
+  it("should render with item count when provided", () => {
+    mockShopContext();
+    render(<ShopItem {...EXAMPLE_SHOP_PROPS} itemCount={5} />);
+    
+    expect(screen.getByText(EXAMPLE_SHOP_PROPS.name)).toBeVisible();
+    expect(screen.getByText("5 items")).toBeVisible();
+  });
+
+  it("should render with singular item text when count is 1", () => {
+    mockShopContext();
+    render(<ShopItem {...EXAMPLE_SHOP_PROPS} itemCount={1} />);
+    
+    expect(screen.getByText("1 item")).toBeVisible();
+  });
+
+  it("should render 'No items' when count is 0", () => {
+    mockShopContext();
+    render(<ShopItem {...EXAMPLE_SHOP_PROPS} itemCount={0} />);
+    
+    expect(screen.getByText("No items")).toBeVisible();
   });
 
   describe("When the shop has an icon", () => {
@@ -88,14 +110,6 @@ describe("Given the ShopItem component", () => {
     });
   });
 
-  describe("When formatting dates", () => {
-    it("should display the creation date in a readable format", () => {
-      mockShopContext();
-      render(<ShopItem {...EXAMPLE_SHOP_PROPS} createdAt="2024-06-15T10:30:00Z" />);
-      
-      expect(screen.getByText("Created Jun 15, 2024")).toBeVisible();
-    });
-  });
 });
 
 const renderShopItem = () => {

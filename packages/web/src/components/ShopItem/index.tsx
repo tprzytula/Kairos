@@ -6,7 +6,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront'
 import { useNavigate } from 'react-router'
 import { Route } from '../../enums/route'
 
-const ShopItem = memo(({ id, name, icon, createdAt, updatedAt }: IShopItemProps) => {
+const ShopItem = memo(({ id, name, icon, createdAt, updatedAt, itemCount }: IShopItemProps) => {
   const { setCurrentShop } = useShopContext()
   const navigate = useNavigate()
 
@@ -16,14 +16,12 @@ const ShopItem = memo(({ id, name, icon, createdAt, updatedAt }: IShopItemProps)
     navigate(Route.GroceryList.replace(':shopId', id))
   }, [id, name, icon, createdAt, updatedAt, setCurrentShop, navigate])
 
-  const formatDate = useCallback((dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      year: 'numeric'
-    })
-  }, [])
+  const getItemCountText = useCallback(() => {
+    if (itemCount === undefined) return 'Loading items...'
+    if (itemCount === 0) return 'No items'
+    if (itemCount === 1) return '1 item'
+    return `${itemCount} items`
+  }, [itemCount])
 
   return (
     <Container>
@@ -49,7 +47,7 @@ const ShopItem = memo(({ id, name, icon, createdAt, updatedAt }: IShopItemProps)
         <Content>
           <Name>{name}</Name>
           <MetaInfo>
-            Created {formatDate(createdAt)}
+            {getItemCountText()}
           </MetaInfo>
         </Content>
       </ActionArea>

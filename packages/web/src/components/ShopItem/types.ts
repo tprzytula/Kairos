@@ -4,4 +4,5 @@ export interface IShopItemProps {
     icon?: string
     createdAt: string
     updatedAt: string
+    itemCount?: number
 }
