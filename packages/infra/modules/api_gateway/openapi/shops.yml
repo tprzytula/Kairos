@@ -1,0 +1,262 @@
+openapi: 3.0.1
+info:
+  title: Shops
+  description: |
+    API for Shop Management
+  version: "1.0"
+paths:
+  /shops:
+    get:
+      security:
+        - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["get_shops"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Shops retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/shop"
+    put:
+      security:
+        - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createShopRequest"
+        required: true
+      x-amazon-apigateway-request-validator: Validate body
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["add_shop"].invoke_arn}
+        passthroughBehavior: "when_no_match"
+        contentHandling: "CONVERT_TO_TEXT"
+      responses:
+        201:
+          description: Shop created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "shop-123"
+        400:
+          description: Incorrect shop details
+        409:
+          description: Shop name already exists
+    options:
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET, PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /shops/{id}:
+    patch:
+      security:
+        - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identifier of the shop to be updated
+          example: "shop-123"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/updateShopRequest"
+        required: true
+      x-amazon-apigateway-request-validator: Validate body
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["update_shop"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Shop updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/updateShopRequest"
+        400:
+          description: Incorrect shop details
+    delete:
+      security:
+        - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identifier of the shop to be removed
+          example: "shop-123"
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["delete_shop"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Shop removed
+        400:
+          description: Invalid shop ID
+        404:
+          description: Shop does not exist
+    options:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identifier of the shop
+          example: "shop-123"
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE, PATCH'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+components:
+  parameters:
+    ProjectIDHeader:
+      name: X-Project-ID
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Project ID for multi-tenancy data isolation
+  schemas:
+    shop:
+      title: Shop Details
+      type: object
+      required:
+        - id
+        - projectId
+        - name
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          example: "shop-123"
+        projectId:
+          type: string
+          example: "project-456"
+        name:
+          type: string
+          example: "Grocery Store"
+        icon:
+          type: string
+          example: "/assets/icons/generic-grocery-item.png"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-01-01T00:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-01-01T00:00:00Z"
+    createShopRequest:
+      title: Create Shop Request
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "Chinese Market"
+        icon:
+          type: string
+          example: "/assets/icons/shop.png"
+    updateShopRequest:
+      title: Update Shop Request
+      type: object
+      properties:
+        id:
+          type: string
+          example: "shop-123"
+        name:
+          type: string
+          example: "Updated Shop Name"
+        icon:
+          type: string
+          example: "/assets/icons/updated-shop.png"
+      required:
+        - id
+  securitySchemes:
+    CognitoAuthorizer:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: cognito_user_pools
+      x-amazon-apigateway-authorizer:
+        type: cognito_user_pools
+        providerARNs:
+          - ${cognito_user_pool_arn}
+x-amazon-apigateway-request-validators:
+  Validate body:
+    validateRequestParameters: false
+    validateRequestBody: true

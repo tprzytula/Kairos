@@ -173,6 +173,54 @@ locals {
         }
       }
     },
+    "get_shops" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          shops = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "add_shop" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          shops = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "update_shop" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          shops = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "delete_shop" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          shops = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
     "db_migrations" = {
       environment_variables = {}
       timeout               = 900
@@ -186,6 +234,7 @@ locals {
           todo_list              = "read-write"
           noise_tracking         = "read-write"
           user_preferences       = "read-write"
+          shops                  = "read-write"
           push_subscriptions     = "none"
         }
         sns = {
