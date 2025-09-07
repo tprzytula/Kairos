@@ -39,7 +39,7 @@ export const HeaderContent = styled('div')({
   padding: '1rem 1.25rem',
   display: 'flex',
   flexDirection: 'column',
-  gap: '1rem',
+  gap: '0.75rem',
   width: '100%',
   boxSizing: 'border-box',
 })
