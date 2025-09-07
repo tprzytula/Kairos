@@ -6,6 +6,7 @@ import { INoiseTracking } from "../types/noiseTracking";
 import { ITodoItem } from "../types/todoList";
 import { IProject, IProjectMember } from "../types/projects";
 import { IPushSubscription } from "../types/pushSubscriptions";
+import { IShop } from "../types/shops";
 
 export type TableResponseMap = {
     [DynamoDBTable.GROCERY_LIST]: IGroceryItem;
@@ -16,4 +17,5 @@ export type TableResponseMap = {
     [DynamoDBTable.PROJECTS]: IProject;
     [DynamoDBTable.PROJECT_MEMBERS]: IProjectMember;
     [DynamoDBTable.PUSH_SUBSCRIPTIONS]: IPushSubscription;
+    [DynamoDBTable.SHOPS]: IShop;
 };

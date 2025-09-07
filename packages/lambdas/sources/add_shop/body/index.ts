@@ -1,16 +1,11 @@
 import { IRequestBody } from "./types";
 
-const validateBody = (body: IRequestBody) => {
-  if (!body.name || !body.unit || !body.shopId) {
+const validateBody = (body: any): body is IRequestBody => {
+  if (!body.name || typeof body.name !== 'string' || body.name.trim().length === 0) {
     return false;
   }
 
-  if (body.quantity === undefined || body.quantity === null) {
-    return false;
-  }
-
-  const quantity = Number(body.quantity);
-  if (isNaN(quantity) || quantity < 1) {
+  if (body.icon !== undefined && (typeof body.icon !== 'string' || body.icon.trim().length === 0)) {
     return false;
   }
 

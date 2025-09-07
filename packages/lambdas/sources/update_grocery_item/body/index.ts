@@ -8,6 +8,7 @@ const validateBody = (body: IRequestBody) => {
   const hasAtLeastOneField = body.quantity !== undefined || 
                            body.name !== undefined || 
                            body.unit !== undefined || 
+                           body.shopId !== undefined ||
                            body.imagePath !== undefined;
   
   if (!hasAtLeastOneField) {
@@ -32,6 +33,12 @@ const validateBody = (body: IRequestBody) => {
 
   if (body.imagePath !== undefined && body.imagePath !== null) {
     if (typeof body.imagePath !== 'string') {
+      return false;
+    }
+  }
+
+  if (body.shopId !== undefined && body.shopId !== null) {
+    if (typeof body.shopId !== 'string' || body.shopId.trim().length === 0) {
       return false;
     }
   }

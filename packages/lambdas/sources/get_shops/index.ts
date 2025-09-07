@@ -14,22 +14,15 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(async (event: A
     });
   }
 
-  const { shopId } = event.queryStringParameters ?? {};
-
   const items = await query({
-    tableName: DynamoDBTable.GROCERY_LIST,
-    indexName: DynamoDBIndex.GROCERY_LIST_PROJECT,
+    tableName: DynamoDBTable.SHOPS,
+    indexName: DynamoDBIndex.SHOPS_PROJECT,
     attributes: {
       projectId,
     },
   });
 
-  let filteredItems = items;
-  if (shopId) {
-    filteredItems = items.filter(item => item.shopId === shopId);
-  }
-
-  const sortedItems = sortItems(filteredItems);
+  const sortedItems = sortItems(items);
 
   logResponse(sortedItems);
 

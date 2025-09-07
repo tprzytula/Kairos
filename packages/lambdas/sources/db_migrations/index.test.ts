@@ -44,7 +44,7 @@ describe('db_migrations lambda handler', () => {
           failed: 0,
         },
       });
-      expect(consoleSpy).toHaveBeenCalledWith('Loaded 3 embedded migrations');
+      expect(consoleSpy).toHaveBeenCalledWith('Loaded 4 embedded migrations');
     });
   });
 
@@ -122,7 +122,7 @@ describe('db_migrations lambda handler', () => {
       await runHandler();
 
       expect(consoleSpy).toHaveBeenCalledWith('Starting database migrations...');
-      expect(consoleSpy).toHaveBeenCalledWith('Loaded 3 embedded migrations');
+      expect(consoleSpy).toHaveBeenCalledWith('Loaded 4 embedded migrations');
       expect(consoleSpy).toHaveBeenCalledWith('Migration run summary:', {
         total: 2,
         success: 2,

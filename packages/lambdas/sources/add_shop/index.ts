@@ -3,8 +3,6 @@ import { middleware, AuthenticatedEvent } from "@kairos-lambdas-libs/middleware"
 import { createResponse } from "@kairos-lambdas-libs/response";
 import { upsertItem } from "./database";
 import { getBody } from "./body";
-import { GroceryItemUnit } from "@kairos-lambdas-libs/dynamodb/enums";
-import { getCategoryForItem } from "./utils";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
@@ -25,18 +23,12 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    const { name, quantity, unit, shopId, imagePath } = body; 
-    
-    const category = await getCategoryForItem(name);
+    const { name, icon } = body; 
     
     const { id, statusCode } = await upsertItem({
       projectId,
-      shopId,
       name,
-      quantity,
-      unit: unit as GroceryItemUnit,
-      imagePath: imagePath || "",
-      category,
+      icon,
     });
 
     return createResponse({

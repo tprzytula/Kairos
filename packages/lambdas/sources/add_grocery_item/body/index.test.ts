@@ -14,6 +14,7 @@ describe('Given the getBody function', () => {
                 name: 'Example Item',
                 quantity: 1,
                 unit: 'kg',
+                shopId: 'shop-1',
             };
             const body = getBody(JSON.stringify(itemWithoutImage));
 
@@ -29,7 +30,7 @@ describe('Given the getBody function', () => {
         });
     });
 
-    describe.each(['name', 'quantity', 'unit'])(
+    describe.each(['name', 'quantity', 'unit', 'shopId'])(
         'When the body is missing the %s field',
         (field) => {
             it('should return null', () => {
@@ -61,5 +62,6 @@ const EXAMPLE_GROCERY_ITEM: IRequestBody = {
     name: 'Example Item',
     quantity: 1,
     unit: 'kg',
+    shopId: 'shop-1',
     imagePath: 'https://example.com/image.jpg',
 };

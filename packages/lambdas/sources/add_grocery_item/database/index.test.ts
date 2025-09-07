@@ -37,7 +37,7 @@ describe('Given the upsertItem function', () => {
             expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
                 key: { id: "1" },
                 tableName: DynamoDBTable.GROCERY_LIST,
-                updatedFields: { quantity: "2" }
+                updatedFields: { quantity: 2 }
             });
         });
 
@@ -80,8 +80,9 @@ describe('Given the upsertItem function', () => {
 const EXAMPLE_GROCERY_ITEM: IGroceryItem = {
     id: '1',
     projectId: 'test-project',
+    shopId: 'shop-1',
     name: 'Example Item',
-    quantity: '1',
+    quantity: 1,
     unit: 'kg',
     imagePath: 'https://example.com/image.jpg',
 };

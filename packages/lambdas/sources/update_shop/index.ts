@@ -1,10 +1,8 @@
 import { APIGatewayProxyEvent, Handler } from "aws-lambda";
 import { middleware, AuthenticatedEvent } from "@kairos-lambdas-libs/middleware";
 import { createResponse } from "@kairos-lambdas-libs/response";
-import { upsertItem } from "./database";
 import { getBody } from "./body";
-import { GroceryItemUnit } from "@kairos-lambdas-libs/dynamodb/enums";
-import { getCategoryForItem } from "./utils";
+import { DynamoDBTable, updateItem } from "@kairos-lambdas-libs/dynamodb";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
@@ -25,24 +23,24 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    const { name, quantity, unit, shopId, imagePath } = body; 
-    
-    const category = await getCategoryForItem(name);
-    
-    const { id, statusCode } = await upsertItem({
-      projectId,
-      shopId,
-      name,
-      quantity,
-      unit: unit as GroceryItemUnit,
-      imagePath: imagePath || "",
-      category,
-    });
+    const { id, ...updatedFields } = body;
 
+    const updateFieldsWithTimestamp = {
+      ...updatedFields,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await updateItem({
+      tableName: DynamoDBTable.SHOPS,
+      key: { id },
+      updatedFields: updateFieldsWithTimestamp,
+    });
+  
     return createResponse({
-      statusCode,
+      statusCode: 200,
       message: {
         id,
+        ...updatedFields,
       },
     });
   },
