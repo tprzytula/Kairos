@@ -5,6 +5,7 @@ export interface IGroceryListComponentProps {
 }
 
 export interface IGroceryListProps {
-    allExpanded?: boolean
-    expandKey?: number
+  allExpanded?: boolean
+  expandKey?: number
+  shopId?: string
 }
