@@ -12,12 +12,6 @@ jest.mock('react-router', () => ({
 }))
 
 describe('Given the StandardLayout component', () => {
-  it('should render the title', () => {
-    renderStandardLayout()
-
-    expect(screen.getByText('Title')).toBeVisible()
-  })
-
   it('should render the children', () => {
     renderStandardLayout()
 
@@ -56,7 +50,6 @@ const renderStandardLayout = (props?: { centerVertically?: boolean }) => {
   render(
     <ThemeProvider theme={theme}>
       <StandardLayout 
-        title="Title" 
         children={<div>Test</div>}
         {...props}
       />

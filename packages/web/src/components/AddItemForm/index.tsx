@@ -6,7 +6,7 @@ import ItemImage from "./components/ItemImage";
 import FormField from "./components/FormField";
 import { FormContainer, FormCard, FormContent, FormFieldsContainer, SubmitButton, ImageContainer } from "./index.styled";
 
-const AddItemForm = ({ defaults, fields, hideImage, initialImagePath, onSubmit }: IAddItemFormProps) => {
+const AddItemForm = ({ defaults, fields, hideImage, initialImagePath, onSubmit, submitButtonText = 'Add Item', submittingButtonText = 'Adding Item...' }: IAddItemFormProps) => {
     const [itemName, setItemName] = useState<string | undefined>();
     const [imagePath, setImagePath] = useState<string | undefined>();
 
@@ -71,7 +71,7 @@ const AddItemForm = ({ defaults, fields, hideImage, initialImagePath, onSubmit }
                                 startIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : null}
                                 fullWidth
                             >
-                                {isSubmitting ? 'Adding Item...' : 'Add Item'}
+                                {isSubmitting ? submittingButtonText : submitButtonText}
                             </SubmitButton>
                             {submitError && (
                                 <Alert severity="error" role="alert" sx={{ borderRadius: '12px' }}>

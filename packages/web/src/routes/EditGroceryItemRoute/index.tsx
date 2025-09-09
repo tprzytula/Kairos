@@ -10,14 +10,16 @@ import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import StandardLayout from '../../layout/standardLayout'
+import ModernPageHeader from '../../components/ModernPageHeader'
 import { GroceryListProvider, useGroceryListContext } from '../../providers/GroceryListProvider'
 import { ShopProvider, useShopContext } from '../../providers/ShopProvider'
 import { IGroceryItem } from '../../providers/AppStateProvider/types'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { retrieveGroceryListDefaults } from '../../api/groceryList'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 
 const EditGroceryItemContent = () => {
-  const { dispatch } = useAppState()
+  const { dispatch, state } = useAppState()
   const { groceryList, updateGroceryItemFields } = useGroceryListContext()
   const navigate = useNavigate()
   const { shopId, id } = useParams<{ shopId: string; id: string }>()
@@ -32,6 +34,16 @@ const EditGroceryItemContent = () => {
   const groceryItem = useMemo(() => {
     return groceryList.find(item => item.id === id) || null
   }, [groceryList, id])
+
+  // Use same statistics as grocery list page for consistency
+  const unpurchasedItems = groceryList.filter(item => !state.purchasedItems.has(item.id))
+  const purchasedCount = groceryList.length - unpurchasedItems.length
+
+  const stats = [
+    { value: groceryList.length, label: 'Total Items' },
+    { value: unpurchasedItems.length, label: 'Remaining' },
+    { value: purchasedCount, label: 'Purchased' }
+  ]
 
   useEffect(() => {
     if (groceryItem) {
@@ -97,25 +109,26 @@ const EditGroceryItemContent = () => {
 
   if (!currentItem) {
     return (
-      <StandardLayout
-        title="Edit Grocery Item"
-        centerVertically
-      >
+      <StandardLayout centerVertically>
         <div>Loading...</div>
       </StandardLayout>
     )
   }
 
   return (
-    <StandardLayout
-      title={currentShop ? `Edit Item in ${currentShop.name}` : "Edit Grocery Item"}
-      centerVertically
-    >
+    <StandardLayout>
+      <ModernPageHeader
+        title={currentShop ? `Edit Item in ${currentShop.name}` : "Edit Grocery Item"}
+        icon={<ShoppingCartIcon />}
+        stats={stats}
+      />
       <AddItemForm
         defaults={defaults}
         fields={FIELDS}
         initialImagePath={currentItem?.imagePath}
         onSubmit={onSubmit}
+        submitButtonText="Update Item"
+        submittingButtonText="Updating Item..."
       />
     </StandardLayout>
   )

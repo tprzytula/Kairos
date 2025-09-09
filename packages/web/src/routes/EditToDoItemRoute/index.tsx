@@ -9,8 +9,10 @@ import { AlertColor } from '@mui/material'
 import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
 import StandardLayout from '../../layout/standardLayout'
+import ModernPageHeader from '../../components/ModernPageHeader'
 import { ToDoListProvider, useToDoListContext } from '../../providers/ToDoListProvider'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
+import ChecklistIcon from '@mui/icons-material/Checklist'
 import dayjs from 'dayjs'
 
 const EditToDoItemContent = () => {
@@ -23,6 +25,20 @@ const EditToDoItemContent = () => {
   const todoItem = useMemo(() => {
     return toDoList.find(item => item.id === id) || null
   }, [toDoList, id])
+
+  // Format current date parts with consistent lengths
+  const today = new Date()
+  const currentDay = today.toLocaleDateString('en-US', { weekday: 'short' }) // Thu
+  const dayNumber = today.toLocaleDateString('en-US', { day: 'numeric' })   // 21
+  const monthName = today.toLocaleDateString('en-US', { month: 'short' })   // Aug
+  const yearNumber = today.toLocaleDateString('en-US', { year: 'numeric' }) // 2025
+
+  const stats = [
+    { value: currentDay, label: 'Today' },
+    { value: dayNumber, label: 'Day' },
+    { value: monthName, label: 'Month' },
+    { value: yearNumber, label: 'Year' }
+  ]
 
   useEffect(() => {
     if (todoItem) {
@@ -85,24 +101,25 @@ const EditToDoItemContent = () => {
 
   if (!currentItem) {
     return (
-      <StandardLayout
-        title="Edit Todo Item"
-        centerVertically
-      >
+      <StandardLayout centerVertically>
         <div>Loading...</div>
       </StandardLayout>
     )
   }
 
   return (
-    <StandardLayout
-      title="Edit Todo Item"
-      centerVertically
-    >
+    <StandardLayout>
+      <ModernPageHeader
+        title="Edit Todo Item"
+        icon={<ChecklistIcon />}
+        stats={stats}
+      />
       <AddItemForm
         fields={FIELDS}
         onSubmit={onSubmit}
         hideImage={true}
+        submitButtonText="Update Item"
+        submittingButtonText="Updating Item..."
       />
     </StandardLayout>
   )
