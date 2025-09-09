@@ -9,6 +9,7 @@ import StandardLayout from '../../layout/standardLayout'
 import AppInfoCard from '../../components/AppInfoCard'
 import DashboardHeader from '../../components/DashboardHeader'
 import GroceryItemPreviewPopup from '../../components/GroceryItemPreviewPopup'
+import SectionCard from '../../components/SectionCard'
 import HomeGroceryItemPlaceholder from './components/HomeGroceryItemPlaceholder'
 import HomeToDoItemPlaceholder from './components/HomeToDoItemPlaceholder'
 import HomeNoiseItemPlaceholder from './components/HomeNoiseItemPlaceholder'
@@ -100,10 +101,6 @@ const getNoiseViewTitle = (view: 'overview' | 'today' | 'last7days' | 'last30day
 
 import {
   Container,
-  FullWidthSection,
-  SectionCard,
-  SectionHeader,
-  SectionContent,
   EmptyState,
   GroceryStats,
   GroceryImagesGrid,
@@ -290,226 +287,209 @@ const HomeDataContent = () => {
   return (
     <>
       <Container>
-        <SectionCard>
-          <SectionContent>
-            <SectionHeader>
-              <div className="header-content">
-                <ShoppingCartIcon />
-                Grocery List
-              </div>
-              <span className="item-count">{groceryStats.totalItems}</span>
-            </SectionHeader>
-            {isGroceryLoading ? (
-              <HomeGroceryItemPlaceholder />
-            ) : (
-              <GroceryStats>
-                {groceryStats.totalItems > 0 ? (
-                  <GroceryImagesGrid itemCount={groceryStats.displayItems.length}>
-                    {groceryStats.displayItems.map((item) => (
-                      <GroceryImageItem
-                        key={item.id}
-                        style={{
-                          backgroundImage: item.imagePath ? `url(${item.imagePath})` : 'none'
-                        }}
-                        title={`${item.name} (${item.quantity} ${item.unit})`}
-                        onClick={(event) => handleGroceryItemClick(item, event)}
-                      >
-                        {!item.imagePath && item.name.charAt(0).toUpperCase()}
-                      </GroceryImageItem>
-                    ))}
-                    {groceryStats.hasOverflow && (
-                      <GroceryImageOverflow title={`+${groceryStats.unpurchasedItems.length - 9} more items`}>
-                        +{groceryStats.unpurchasedItems.length - 9}
-                      </GroceryImageOverflow>
-                    )}
-                  </GroceryImagesGrid>
-                ) : (
-                  <EmptyState>No grocery items found</EmptyState>
-                )}
-              </GroceryStats>
-            )}
-          </SectionContent>
-        </SectionCard>
-
-        <SectionCard>
-          <SectionContent>
-            <SectionHeader>
-              <div className="header-content">
-                <VolumeUpIcon />
-                Noise Recordings
-              </div>
-              <span className="item-count">{totalNoiseItems}</span>
-            </SectionHeader>
-            {isNoiseLoading ? (
-              <NoiseStats>
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <HomeNoiseItemPlaceholder key={index} />
-                ))}
-              </NoiseStats>
-            ) : (
-              <>
-                {noiseView === 'overview' ? (
-                  // Stats Overview
-                  totalNoiseItems > 0 ? (
-                    <NoiseStats>
-                      <NoiseStatBlock onClick={() => handleNoiseViewChange('today')}>
-                        <NoiseStatCount>{todayCount}</NoiseStatCount>
-                        <NoiseStatLabel>Today</NoiseStatLabel>
-                      </NoiseStatBlock>
-                      <NoiseStatBlock onClick={() => handleNoiseViewChange('last7days')}>
-                        <NoiseStatCount>{last7DaysCount}</NoiseStatCount>
-                        <NoiseStatLabel>Last 7 days</NoiseStatLabel>
-                      </NoiseStatBlock>
-                      <NoiseStatBlock onClick={() => handleNoiseViewChange('last30days')}>
-                        <NoiseStatCount>{last30DaysCount}</NoiseStatCount>
-                        <NoiseStatLabel>Last 30 days</NoiseStatLabel>
-                      </NoiseStatBlock>
-                    </NoiseStats>
-                  ) : (
-                    <EmptyState>No noise recordings found</EmptyState>
-                  )
-                ) : (
-                  // Detail View
-                  <div>
-                    <NoiseDetailHeader>
-                      <NoiseDetailTitle>{getNoiseViewTitle(noiseView)}</NoiseDetailTitle>
-                      <NoiseBackButton onClick={() => handleNoiseViewChange('overview')}>
-                        <ArrowBackIcon fontSize="small" />
-                        Back
-                      </NoiseBackButton>
-                    </NoiseDetailHeader>
-                    
-                    {(() => {
-                      const filteredItems = getFilteredNoiseItems()
-                      const sortedItems = filteredItems.sort((a, b) => b.timestamp - a.timestamp)
-                      
-                      return sortedItems.length > 0 ? (
-                        <NoiseDetailList>
-                          {sortedItems.map((item, index) => {
-                            const { date, time } = formatNoiseTimestamp(item.timestamp)
-                            return (
-                              <NoiseDetailItem key={`${item.timestamp}-${index}`}>
-                                <NoiseDetailDate>{date}</NoiseDetailDate>
-                                <NoiseDetailTime>{time}</NoiseDetailTime>
-                              </NoiseDetailItem>
-                            )
-                          })}
-                        </NoiseDetailList>
-                      ) : (
-                        <NoiseDetailEmpty>
-                          No recordings found for {getNoiseViewTitle(noiseView).toLowerCase()}
-                        </NoiseDetailEmpty>
-                      )
-                    })()}
-                  </div>
-                )}
-              </>
-            )}
-          </SectionContent>
-        </SectionCard>
-
-        <FullWidthSection>
-          <SectionCard>
-            <SectionContent>
-              <SectionHeader>
-                <div className="header-content">
-                  <ChecklistIcon />
-                  To-Do Items
-                </div>
-                <span className="item-count">{pendingToDoItems.length}</span>
-              </SectionHeader>
-              {isToDoLoading ? (
-              <CompactItemList>
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <HomeToDoItemPlaceholder key={index} />
-                ))}
-              </CompactItemList>
-            ) : (
-              <CompactItemList>
-                {displayedToDoItems.length > 0 ? (
-                  displayedToDoItems.map((item) => {
-                    const dueDateText = formatDueDateRelative(item.dueDate)
-                    const dueDateClass = getDueDateClass(item.dueDate)
-                    const isExpanded = expandedToDoItems.has(item.id)
-                    
-                    return (
-                      <CompactItemText key={item.id} onClick={() => handleToDoItemToggle(item.id)} $isExpanded={isExpanded}>
-                        <CompactItemHeader>
-                          <CompactItemContent>
-                            {item.name}
-                            {!isExpanded && item.description && (
-                              <CompactDescription>
-                                {item.description.length > 50 
-                                  ? `${item.description.substring(0, 50)}...` 
-                                  : item.description}
-                              </CompactDescription>
-                            )}
-                          </CompactItemContent>
-                          {dueDateText && (
-                            <CompactItemMeta>
-                              <DueDateText className={dueDateClass}>
-                                {dueDateText}
-                              </DueDateText>
-                            </CompactItemMeta>
-                          )}
-                        </CompactItemHeader>
-                        {isExpanded && (
-                          <ExpandedToDoContent>
-                            {item.description && (
-                              <ExpandedDescription>
-                                {item.description}
-                              </ExpandedDescription>
-                            )}
-                            {item.dueDate && (
-                              <ExpandedMetadata>
-                                <MetadataRow>
-                                  <MetadataIcon>
-                                    <CalendarTodayIcon />
-                                  </MetadataIcon>
-                                  <MetadataContent>
-                                    <MetadataLabel>Due Date</MetadataLabel>
-                                    <MetadataValue>
-                                      <DueDateChip 
-                                        $isOverdue={dueDateClass === 'overdue'}
-                                        $isToday={dueDateClass === 'today'}
-                                        $isSoon={dueDateClass === 'soon'}
-                                      >
-                                        <CalendarTodayIcon />
-                                        {new Date(item.dueDate).toLocaleDateString([], {
-                                          weekday: 'short',
-                                          month: 'short', 
-                                          day: 'numeric'
-                                        })} at {new Date(item.dueDate).toLocaleTimeString([], {
-                                          hour: '2-digit',
-                                          minute: '2-digit'
-                                        })}
-                                      </DueDateChip>
-                                    </MetadataValue>
-                                  </MetadataContent>
-                                </MetadataRow>
-                              </ExpandedMetadata>
-                            )}
-                          </ExpandedToDoContent>
-                        )}
-                      </CompactItemText>
-                    )
-                  })
-                ) : (
-                  <EmptyState>No pending to-do items found</EmptyState>
-                )}
-                {hasMoreToDoItems && (
-                  <MoreItemsIndicator onClick={handleToggleToDoItems}>
-                    {isToDoItemsExpanded 
-                      ? 'Show less'
-                      : `+${pendingToDoItems.length - 3} more items`
-                    }
-                  </MoreItemsIndicator>
-                )}
-              </CompactItemList>
+        <SectionCard
+          icon={ShoppingCartIcon}
+          title="Grocery List"
+          count={groceryStats.totalItems}
+        >
+          {isGroceryLoading ? (
+            <HomeGroceryItemPlaceholder />
+          ) : (
+            <GroceryStats>
+              {groceryStats.totalItems > 0 ? (
+                <GroceryImagesGrid itemCount={groceryStats.displayItems.length}>
+                  {groceryStats.displayItems.map((item) => (
+                    <GroceryImageItem
+                      key={item.id}
+                      style={{
+                        backgroundImage: item.imagePath ? `url(${item.imagePath})` : 'none'
+                      }}
+                      title={`${item.name} (${item.quantity} ${item.unit})`}
+                      onClick={(event) => handleGroceryItemClick(item, event)}
+                    >
+                      {!item.imagePath && item.name.charAt(0).toUpperCase()}
+                    </GroceryImageItem>
+                  ))}
+                  {groceryStats.hasOverflow && (
+                    <GroceryImageOverflow title={`+${groceryStats.unpurchasedItems.length - 9} more items`}>
+                      +{groceryStats.unpurchasedItems.length - 9}
+                    </GroceryImageOverflow>
+                  )}
+                </GroceryImagesGrid>
+              ) : (
+                <EmptyState>No grocery items found</EmptyState>
               )}
-            </SectionContent>
-          </SectionCard>
-        </FullWidthSection>
+            </GroceryStats>
+          )}
+        </SectionCard>
+
+        <SectionCard
+          icon={VolumeUpIcon}
+          title="Noise Recordings"
+          count={totalNoiseItems}
+        >
+          {isNoiseLoading ? (
+            <NoiseStats>
+              {Array.from({ length: 3 }).map((_, index) => (
+                <HomeNoiseItemPlaceholder key={index} />
+              ))}
+            </NoiseStats>
+          ) : (
+            <>
+              {noiseView === 'overview' ? (
+                // Stats Overview
+                totalNoiseItems > 0 ? (
+                  <NoiseStats>
+                    <NoiseStatBlock onClick={() => handleNoiseViewChange('today')}>
+                      <NoiseStatCount>{todayCount}</NoiseStatCount>
+                      <NoiseStatLabel>Today</NoiseStatLabel>
+                    </NoiseStatBlock>
+                    <NoiseStatBlock onClick={() => handleNoiseViewChange('last7days')}>
+                      <NoiseStatCount>{last7DaysCount}</NoiseStatCount>
+                      <NoiseStatLabel>Last 7 days</NoiseStatLabel>
+                    </NoiseStatBlock>
+                    <NoiseStatBlock onClick={() => handleNoiseViewChange('last30days')}>
+                      <NoiseStatCount>{last30DaysCount}</NoiseStatCount>
+                      <NoiseStatLabel>Last 30 days</NoiseStatLabel>
+                    </NoiseStatBlock>
+                  </NoiseStats>
+                ) : (
+                  <EmptyState>No noise recordings found</EmptyState>
+                )
+              ) : (
+                // Detail View
+                <div>
+                  <NoiseDetailHeader>
+                    <NoiseDetailTitle>{getNoiseViewTitle(noiseView)}</NoiseDetailTitle>
+                    <NoiseBackButton onClick={() => handleNoiseViewChange('overview')}>
+                      <ArrowBackIcon fontSize="small" />
+                      Back
+                    </NoiseBackButton>
+                  </NoiseDetailHeader>
+                  
+                  {(() => {
+                    const filteredItems = getFilteredNoiseItems()
+                    const sortedItems = filteredItems.sort((a, b) => b.timestamp - a.timestamp)
+                    
+                    return sortedItems.length > 0 ? (
+                      <NoiseDetailList>
+                        {sortedItems.map((item, index) => {
+                          const { date, time } = formatNoiseTimestamp(item.timestamp)
+                          return (
+                            <NoiseDetailItem key={`${item.timestamp}-${index}`}>
+                              <NoiseDetailDate>{date}</NoiseDetailDate>
+                              <NoiseDetailTime>{time}</NoiseDetailTime>
+                            </NoiseDetailItem>
+                          )
+                        })}
+                      </NoiseDetailList>
+                    ) : (
+                      <NoiseDetailEmpty>
+                        No recordings found for {getNoiseViewTitle(noiseView).toLowerCase()}
+                      </NoiseDetailEmpty>
+                    )
+                  })()}
+                </div>
+              )}
+            </>
+          )}
+        </SectionCard>
+
+        <SectionCard
+          icon={ChecklistIcon}
+          title="To-Do Items"
+          count={pendingToDoItems.length}
+        >
+          {isToDoLoading ? (
+            <CompactItemList>
+              {Array.from({ length: 3 }).map((_, index) => (
+                <HomeToDoItemPlaceholder key={index} />
+              ))}
+            </CompactItemList>
+          ) : (
+            <CompactItemList>
+              {displayedToDoItems.length > 0 ? (
+                displayedToDoItems.map((item) => {
+                  const dueDateText = formatDueDateRelative(item.dueDate)
+                  const dueDateClass = getDueDateClass(item.dueDate)
+                  const isExpanded = expandedToDoItems.has(item.id)
+                  
+                  return (
+                    <CompactItemText key={item.id} onClick={() => handleToDoItemToggle(item.id)} $isExpanded={isExpanded}>
+                      <CompactItemHeader>
+                        <CompactItemContent>
+                          {item.name}
+                          {!isExpanded && item.description && (
+                            <CompactDescription>
+                              {item.description.length > 50 
+                                ? `${item.description.substring(0, 50)}...` 
+                                : item.description}
+                            </CompactDescription>
+                          )}
+                        </CompactItemContent>
+                        {dueDateText && (
+                          <CompactItemMeta>
+                            <DueDateText className={dueDateClass}>
+                              {dueDateText}
+                            </DueDateText>
+                          </CompactItemMeta>
+                        )}
+                      </CompactItemHeader>
+                      {isExpanded && (
+                        <ExpandedToDoContent>
+                          {item.description && (
+                            <ExpandedDescription>
+                              {item.description}
+                            </ExpandedDescription>
+                          )}
+                          {item.dueDate && (
+                            <ExpandedMetadata>
+                              <MetadataRow>
+                                <MetadataIcon>
+                                  <CalendarTodayIcon />
+                                </MetadataIcon>
+                                <MetadataContent>
+                                  <MetadataLabel>Due Date</MetadataLabel>
+                                  <MetadataValue>
+                                    <DueDateChip 
+                                      $isOverdue={dueDateClass === 'overdue'}
+                                      $isToday={dueDateClass === 'today'}
+                                      $isSoon={dueDateClass === 'soon'}
+                                    >
+                                      <CalendarTodayIcon />
+                                      {new Date(item.dueDate).toLocaleDateString([], {
+                                        weekday: 'short',
+                                        month: 'short', 
+                                        day: 'numeric'
+                                      })} at {new Date(item.dueDate).toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                      })}
+                                    </DueDateChip>
+                                  </MetadataValue>
+                                </MetadataContent>
+                              </MetadataRow>
+                            </ExpandedMetadata>
+                          )}
+                        </ExpandedToDoContent>
+                      )}
+                    </CompactItemText>
+                  )
+                })
+              ) : (
+                <EmptyState>No pending to-do items found</EmptyState>
+              )}
+              {hasMoreToDoItems && (
+                <MoreItemsIndicator onClick={handleToggleToDoItems}>
+                  {isToDoItemsExpanded 
+                    ? 'Show less'
+                    : `+${pendingToDoItems.length - 3} more items`
+                  }
+                </MoreItemsIndicator>
+              )}
+            </CompactItemList>
+          )}
+        </SectionCard>
       </Container>
       
       <GroceryItemPreviewPopup
