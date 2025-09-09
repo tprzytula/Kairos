@@ -1,6 +1,4 @@
-export interface INoiseTrackingItem {
-  timestamp: number;
-}
+import { INoiseTrackingItem } from '../../../api/noiseTracking'
 
 export interface ISimpleViewProps {
   noiseTrackingItems: INoiseTrackingItem[];

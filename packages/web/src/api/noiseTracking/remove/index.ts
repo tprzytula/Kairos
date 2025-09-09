@@ -1,8 +1,8 @@
-import { NOISE_TRACKING_API_URL } from '..'
+import { API_BASE_URL } from '../../index'
 import { createFetchOptions } from '../../../utils/api'
 
 export const removeNoiseTrackingItem = async (timestamp: number): Promise<void> => {
-  const response = await fetch(`${NOISE_TRACKING_API_URL}/noise_tracking/items/${timestamp}`, createFetchOptions({
+  const response = await fetch(`${API_BASE_URL}/noise_tracking/items/${timestamp}`, createFetchOptions({
     method: 'DELETE',
   }))
 

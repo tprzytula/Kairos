@@ -1,4 +1,4 @@
-import { INoiseTrackingItem } from '../../../../api/noiseTracking/retrieve'
+import { INoiseTrackingItem } from '../../../../api/noiseTracking'
 
 export interface IHomeNoiseItemProps {
   item: INoiseTrackingItem

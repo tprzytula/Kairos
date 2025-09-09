@@ -1,8 +1,8 @@
-import { SHOPS_API_URL } from '../'
+import { API_BASE_URL } from '../../index'
 import { createFetchOptions } from '../../../utils/api'
 
 export const deleteShop = async (shopId: string, projectId?: string): Promise<void> => {
-  const response = await fetch(`${SHOPS_API_URL}/shops/${shopId}`, createFetchOptions({
+  const response = await fetch(`${API_BASE_URL}/shops/${shopId}`, createFetchOptions({
     method: 'DELETE',
   }, projectId))
 

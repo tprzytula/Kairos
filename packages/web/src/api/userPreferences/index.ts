@@ -1,2 +1,2 @@
-export { getUserPreferences } from './retrieve'
-export { updateUserPreferences } from './update'
+export * from './retrieve'
+export * from './update'

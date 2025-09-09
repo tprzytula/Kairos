@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { IGroceryItem } from '../AppStateProvider/types'
-import { GroceryItemUpdateFields } from '../../api/groceryList/update'
+import { GroceryItemUpdateFields } from '../../api/groceryList'
 import { GroceryViewMode } from '../../enums/groceryCategory'
 
 export interface IGroceryListProviderProps {

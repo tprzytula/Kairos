@@ -1,3 +1,3 @@
-export { savePushSubscription } from './savePushSubscription';
-export { deletePushSubscription } from './deletePushSubscription';
-export type { PushSubscriptionData } from './types';
+export * from './savePushSubscription';
+export * from './deletePushSubscription';
+export * from './types';

@@ -1,10 +1,6 @@
 import { createFetchOptions } from '../../../utils/api';
-import { PushSubscriptionData } from '../types';
+import { PushSubscriptionData, SavePushSubscriptionResponse } from '../types';
 import { API_BASE_URL } from '../../../api';
-
-interface SavePushSubscriptionResponse {
-  success: boolean;
-}
 
 export const savePushSubscription = async (
   subscriptionData: PushSubscriptionData,

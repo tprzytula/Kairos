@@ -1,9 +1,9 @@
-import { SHOPS_API_URL } from '../'
+import { API_BASE_URL } from '../../index'
 import { IUpdateShopRequestBody } from '../types'
 import { createFetchOptions } from '../../../utils/api'
 
 export const updateShop = async (shop: IUpdateShopRequestBody, projectId?: string): Promise<void> => {
-  const response = await fetch(`${SHOPS_API_URL}/shops/${shop.id}`, createFetchOptions({
+  const response = await fetch(`${API_BASE_URL}/shops/${shop.id}`, createFetchOptions({
     method: 'PATCH',
     body: JSON.stringify(shop),
   }, projectId))

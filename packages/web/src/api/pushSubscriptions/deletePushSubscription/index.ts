@@ -1,9 +1,6 @@
 import { createFetchOptions } from '../../../utils/api';
 import { API_BASE_URL } from '../../../api';
-
-interface DeletePushSubscriptionResponse {
-  success: boolean;
-}
+import { DeletePushSubscriptionResponse } from '../types';
 
 export const deletePushSubscription = async (
   endpoint: string,

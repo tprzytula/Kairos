@@ -2,7 +2,8 @@ import NoiseTrackingItem from '../../NoiseTrackingItem';
 import CollapsibleSection from '../../CollapsibleSection';
 import SwipeableList from '../../SwipeableList';
 import { Container } from './index.styled';
-import { ISimpleViewProps, INoiseTrackingItem } from './types';
+import { ISimpleViewProps } from './types';
+import { INoiseTrackingItem } from '../../../api/noiseTracking';
 
 const ALL_RECORDINGS_ICON = {
   emoji: '🔊',
