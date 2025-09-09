@@ -8,8 +8,8 @@ import { BrowserRouter } from 'react-router'
 import { Route } from '../../enums/route'
 import EditGroceryItemRoute from '.'
 import * as ReactRouter from 'react-router'
-import AddItemForm from '../../components/AddItemForm'
-import { FormFieldType } from '../../components/AddItemForm/enums'
+import ItemForm from '../../components/ItemForm'
+import { FormFieldType } from '../../components/ItemForm/enums'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 
 jest.mock('../../hooks/useItemDefaults', () => ({
@@ -18,7 +18,7 @@ jest.mock('../../hooks/useItemDefaults', () => ({
   }),
 }))
 
-jest.mock('../../components/AddItemForm');
+jest.mock('../../components/ItemForm');
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(() => jest.fn()),
@@ -62,10 +62,10 @@ describe('Given the EditGroceryItemRoute component', () => {
     expect(screen.getByText('Edit Grocery Item')).toBeVisible()
   })
 
-  it('should render the AddItemForm component with prefilled values', async () => {
+  it('should render the ItemForm component with prefilled values', async () => {
     await renderComponent()
     
-    const [firstCall] = jest.mocked(AddItemForm).mock.calls
+    const [firstCall] = jest.mocked(ItemForm).mock.calls
     const props = firstCall[0]
     
     expect(props.fields).toHaveLength(3)
@@ -89,9 +89,9 @@ describe('Given the EditGroceryItemRoute component', () => {
             it('should call updateGroceryItemFields with the updated values', async () => {
           let onSubmitCallback: any;
 
-          jest.mocked(AddItemForm).mockImplementation(({ onSubmit }) => {
+          jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
             onSubmitCallback = onSubmit;
-            return <div>AddItemForm</div>
+            return <div>ItemForm</div>
           })
 
           renderComponent()
@@ -134,9 +134,9 @@ describe('Given the EditGroceryItemRoute component', () => {
         const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
         let onSubmitCallback: any;
 
-        jest.mocked(AddItemForm).mockImplementation(({ onSubmit }) => {
+        jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
           onSubmitCallback = onSubmit;
-          return <div>AddItemForm</div>
+          return <div>ItemForm</div>
         })
         
         renderComponent()

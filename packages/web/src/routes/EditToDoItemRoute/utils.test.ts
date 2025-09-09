@@ -1,5 +1,5 @@
 import { validateFields } from './utils'
-import { FormFieldType } from '../../components/AddItemForm/enums'
+import { FormFieldType } from '../../components/ItemForm/enums'
 
 describe('Given the validateFields function', () => {
   it('should validate and return correctly formatted fields', () => {

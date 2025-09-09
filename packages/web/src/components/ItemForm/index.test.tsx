@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, act } from '@testing-library/react'
-import AddItemForm from './index'
+import ItemForm from './index'
 import { IFormField } from './types'
 import { FormFieldType } from './enums'
 import { useForm } from './hooks/useForm'
@@ -9,10 +9,10 @@ import { GroceryItemUnit } from '../../enums/groceryItem'
 jest.mock('../../api/groceryList');
 jest.mock('./hooks/useForm');
 
-describe('Given the AddItemForm component', () => {
+describe('Given the ItemForm component', () => {
     it('should render the form fields', () => {
         mockUseForm();
-        renderAddItemForm();
+        renderItemForm();
 
         expect(screen.getAllByLabelText('Name')[0]).toBeVisible()
         expect(screen.getAllByLabelText('Name')[0]).toHaveValue('test')
@@ -26,7 +26,7 @@ describe('Given the AddItemForm component', () => {
 
     it('should pass the initial fields to the useForm hook', () => {
         mockUseForm();
-        renderAddItemForm();
+        renderItemForm();
 
         expect(jest.mocked(useForm)).toHaveBeenCalledWith({
             initialFields: EXAMPLE_FIELDS,
@@ -39,7 +39,7 @@ describe('Given the AddItemForm component', () => {
         it('should call the handleSubmit function', async () => {
             const { handleSubmitMock } = mockUseForm();
             
-            renderAddItemForm();
+            renderItemForm();
 
             await submitForm()
 
@@ -51,7 +51,7 @@ describe('Given the AddItemForm component', () => {
         it('should render the error message', async () => {
             mockUseForm({ submitError: 'An error occurred while submitting the form' });
             
-            renderAddItemForm();
+            renderItemForm();
 
             await submitForm()
 
@@ -62,14 +62,14 @@ describe('Given the AddItemForm component', () => {
     describe('When the form is submitting', () => {
         it('should render the submit button as disabled', () => {
             mockUseForm({ isSubmitting: true });
-            renderAddItemForm();
+            renderItemForm();
             
             expect(screen.getByText('Adding Item...')).toBeDisabled()
         })
 
         it('should show circular progress', () => {
             mockUseForm({ isSubmitting: true });
-            renderAddItemForm();
+            renderItemForm();
             
             expect(screen.getByRole('progressbar')).toBeVisible()
         })
@@ -111,9 +111,9 @@ const submitForm = async () => {
     })
 }
 
-const renderAddItemForm = () => {
+const renderItemForm = () => {
     const onSubmit = jest.fn()
-    const component = render(<AddItemForm defaults={EXAMPLE_DEFAULTS} fields={EXAMPLE_FIELDS} onSubmit={onSubmit} />)
+    const component = render(<ItemForm defaults={EXAMPLE_DEFAULTS} fields={EXAMPLE_FIELDS} onSubmit={onSubmit} />)
 
     return { ...component, onSubmit }
 }

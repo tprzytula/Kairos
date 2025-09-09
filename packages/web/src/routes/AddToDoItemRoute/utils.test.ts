@@ -1,4 +1,4 @@
-import { FormFieldType } from "../../components/AddItemForm/enums"
+import { FormFieldType } from "../../components/ItemForm/enums"
 import { validateFields } from "./utils"
 
 describe('Given the validateFields function', () => {

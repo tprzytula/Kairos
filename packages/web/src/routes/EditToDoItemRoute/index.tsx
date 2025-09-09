@@ -1,6 +1,6 @@
-import AddItemForm from '../../components/AddItemForm'
-import { FormFieldType } from '../../components/AddItemForm/enums'
-import { IFormField } from '../../components/AddItemForm/types'
+import ItemForm from '../../components/ItemForm'
+import { FormFieldType } from '../../components/ItemForm/enums'
+import { IFormField } from '../../components/ItemForm/types'
 import { validateFields } from './utils'
 import { useNavigate, useParams } from 'react-router'
 import { useAppState } from '../../providers/AppStateProvider'
@@ -114,7 +114,7 @@ const EditToDoItemContent = () => {
         icon={<ChecklistIcon />}
         stats={stats}
       />
-      <AddItemForm
+      <ItemForm
         fields={FIELDS}
         onSubmit={onSubmit}
         hideImage={true}

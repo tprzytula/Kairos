@@ -6,16 +6,16 @@ import { BrowserRouter } from 'react-router'
 import { Route } from '../../enums/route'
 import { AddGroceryItemContent } from '.'
 import * as ReactRouter from 'react-router'
-import AddItemForm from '../../components/AddItemForm'
+import ItemForm from '../../components/ItemForm'
 import { addGroceryItem } from '../../api/groceryList'
-import { FormFieldType } from '../../components/AddItemForm/enums'
+import { FormFieldType } from '../../components/ItemForm/enums'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { useGroceryListContext } from '../../providers/GroceryListProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 
 jest.mock('../../api/groceryList');
-jest.mock('../../components/AddItemForm');
+jest.mock('../../components/ItemForm');
 jest.mock('../../hooks/useItemDefaults');
 jest.mock('../../providers/GroceryListProvider');
 jest.mock('../../providers/ProjectProvider');
@@ -72,18 +72,18 @@ describe('Given the AddGroceryItemContent component', () => {
     expect(screen.getByText('Add Grocery Item')).toBeVisible()
   })
 
-  it('should render the AddItemForm component', async () => {
+  it('should render the ItemForm component', async () => {
     await renderComponent()
-    expect(AddItemForm).toHaveBeenCalled()
+    expect(ItemForm).toHaveBeenCalled()
   })
 
   describe('When the form is submitted', () => {
     it('should create a new grocery item', async () => {
       let onSubmitCallback: any;
 
-      jest.mocked(AddItemForm).mockImplementation(({ onSubmit }) => {
+      jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
         onSubmitCallback = onSubmit;
-        return <div>AddItemForm</div>
+        return <div>ItemForm</div>
       })
 
       renderComponent()
@@ -127,9 +127,9 @@ describe('Given the AddGroceryItemContent component', () => {
 
         let onSubmitCallback: any;
 
-        jest.mocked(AddItemForm).mockImplementation(({ onSubmit }) => {
+        jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
           onSubmitCallback = onSubmit;
-          return <div>AddItemForm</div>
+          return <div>ItemForm</div>
         })
 
         renderComponent()
@@ -165,9 +165,9 @@ describe('Given the AddGroceryItemContent component', () => {
         const consoleSpy = jest.spyOn(console, 'error')
         let onSubmitCallback: any;
 
-        jest.mocked(AddItemForm).mockImplementation(({ onSubmit }) => {
+        jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
           onSubmitCallback = onSubmit;
-          return <div>AddItemForm</div>
+          return <div>ItemForm</div>
         })
 
         jest.mocked(addGroceryItem).mockRejectedValue(new Error('Error creating grocery item'))
@@ -215,9 +215,9 @@ describe('Given the AddGroceryItemContent component', () => {
 
         let onSubmitCallback: any;
 
-        jest.mocked(AddItemForm).mockImplementation(({ onSubmit }) => {
+        jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
           onSubmitCallback = onSubmit;
-          return <div>AddItemForm</div>
+          return <div>ItemForm</div>
         })
 
         renderComponent()

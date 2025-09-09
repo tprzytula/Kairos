@@ -4,13 +4,13 @@ import { ThemeProvider } from '@mui/material/styles'
 import * as ReactRouter from 'react-router'
 import EditToDoItemRoute from '.'
 import { AppStateProvider } from '../../providers/AppStateProvider'
-import AddItemForm from '../../components/AddItemForm'
-import { FormFieldType } from '../../components/AddItemForm/enums'
+import ItemForm from '../../components/ItemForm'
+import { FormFieldType } from '../../components/ItemForm/enums'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import theme from '../../theme'
 
-jest.mock('../../components/AddItemForm', () => {
-  return jest.fn(() => <div>AddItemForm Mock</div>)
+jest.mock('../../components/ItemForm', () => {
+  return jest.fn(() => <div>ItemForm Mock</div>)
 })
 
 const mockNavigate = jest.fn()
@@ -66,10 +66,10 @@ describe('Given the EditToDoItemRoute component', () => {
     expect(screen.getByText('Edit Todo Item')).toBeVisible()
   })
 
-  it('should render the AddItemForm component with prefilled values', async () => {
+  it('should render the ItemForm component with prefilled values', async () => {
     await renderComponent()
     
-    const [firstCall] = jest.mocked(AddItemForm).mock.calls
+    const [firstCall] = jest.mocked(ItemForm).mock.calls
     const props = firstCall[0]
     
     expect(props.fields).toHaveLength(3)
@@ -99,7 +99,7 @@ describe('Given the EditToDoItemRoute component', () => {
     it('should call updateToDoItemFields with correct data', async () => {
       await renderComponent()
       
-      const [firstCall] = jest.mocked(AddItemForm).mock.calls
+      const [firstCall] = jest.mocked(ItemForm).mock.calls
       const props = firstCall[0]
       
       const mockFields = [
@@ -140,7 +140,7 @@ describe('Given the EditToDoItemRoute component', () => {
     it('should call updateToDoItemFields with only name when other fields are empty', async () => {
       await renderComponent()
       
-      const [firstCall] = jest.mocked(AddItemForm).mock.calls
+      const [firstCall] = jest.mocked(ItemForm).mock.calls
       const props = firstCall[0]
       
       const mockFields = [
@@ -181,7 +181,7 @@ describe('Given the EditToDoItemRoute component', () => {
       
       await renderComponent()
       
-      const [firstCall] = jest.mocked(AddItemForm).mock.calls
+      const [firstCall] = jest.mocked(ItemForm).mock.calls
       const props = firstCall[0]
       
       const mockFields = [

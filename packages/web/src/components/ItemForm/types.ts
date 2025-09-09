@@ -11,7 +11,7 @@ export interface IFormField<T extends string | number | undefined = string | num
     options?: Array<{ label: string; value: string }>;
 }
 
-export interface IAddItemFormProps {
+export interface IItemFormProps {
     defaults?: Array<IItemDefault>;
     fields: Array<IFormField>
     hideImage?: boolean;

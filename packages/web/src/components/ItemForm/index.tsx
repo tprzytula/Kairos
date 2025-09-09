@@ -1,12 +1,12 @@
 import { Stack, CircularProgress, Alert } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
-import { IAddItemFormProps, IFormField } from "./types";
+import { IItemFormProps, IFormField } from "./types";
 import { useForm } from "./hooks/useForm";
 import ItemImage from "./components/ItemImage";
 import FormField from "./components/FormField";
 import { FormContainer, FormCard, FormContent, FormFieldsContainer, SubmitButton, ImageContainer } from "./index.styled";
 
-const AddItemForm = ({ defaults, fields, hideImage, initialImagePath, onSubmit, submitButtonText = 'Add Item', submittingButtonText = 'Adding Item...' }: IAddItemFormProps) => {
+const ItemForm = ({ defaults, fields, hideImage, initialImagePath, onSubmit, submitButtonText = 'Add Item', submittingButtonText = 'Adding Item...' }: IItemFormProps) => {
     const [itemName, setItemName] = useState<string | undefined>();
     const [imagePath, setImagePath] = useState<string | undefined>();
 
@@ -86,4 +86,4 @@ const AddItemForm = ({ defaults, fields, hideImage, initialImagePath, onSubmit, 
     );
 };
 
-export default AddItemForm;
+export default ItemForm;

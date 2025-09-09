@@ -4,9 +4,9 @@ import { AppStateProvider } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
 import { AddToDoItemContent } from '.'
-import AddItemForm from '../../components/AddItemForm'
+import ItemForm from '../../components/ItemForm'
 import { addTodoItem } from '../../api/toDoList'
-import { FormFieldType } from '../../components/AddItemForm/enums'
+import { FormFieldType } from '../../components/ItemForm/enums'
 import * as ReactRouter from 'react-router'
 import { useToDoListContext } from '../../providers/ToDoListProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
@@ -17,7 +17,7 @@ jest.mock('react-router', () => ({
 }))
 
 jest.mock('../../api/toDoList');
-jest.mock('../../components/AddItemForm');
+jest.mock('../../components/ItemForm');
 jest.mock('../../providers/ToDoListProvider');
 jest.mock('../../providers/ProjectProvider');
 jest.mock('../../components/ModernPageHeader', () => ({ title }: any) => <div>{title}</div>);
@@ -63,18 +63,18 @@ describe('Given the AddToDoItemContent component', () => {
     expect(screen.getByText('Add To-Do Item')).toBeVisible()
   })
 
-  it('should render the AddItemForm component', async () => {
+  it('should render the ItemForm component', async () => {
     await renderComponent()
-    expect(AddItemForm).toHaveBeenCalled()
+    expect(ItemForm).toHaveBeenCalled()
   })
 
   describe('When the form is submitted', () => {
     it('should create a new to do item', async () => {
       let onSubmitCallback: any;
 
-      jest.mocked(AddItemForm).mockImplementation(({ onSubmit }) => {
+      jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
         onSubmitCallback = onSubmit;
-        return <div>AddItemForm</div>
+        return <div>ItemForm</div>
       })
 
       renderComponent()
@@ -117,9 +117,9 @@ describe('Given the AddToDoItemContent component', () => {
 
         let onSubmitCallback: any;
 
-        jest.mocked(AddItemForm).mockImplementation(({ onSubmit }) => {
+        jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
           onSubmitCallback = onSubmit;
-          return <div>AddItemForm</div>
+          return <div>ItemForm</div>
         })
 
         renderComponent()
@@ -155,9 +155,9 @@ describe('Given the AddToDoItemContent component', () => {
         const consoleSpy = jest.spyOn(console, 'error')
         let onSubmitCallback: any;
 
-        jest.mocked(AddItemForm).mockImplementation(({ onSubmit }) => {
+        jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
           onSubmitCallback = onSubmit;
-          return <div>AddItemForm</div>
+          return <div>ItemForm</div>
         })
 
         jest.mocked(addTodoItem).mockRejectedValue(new Error('Error creating to do item'))

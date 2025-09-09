@@ -1,6 +1,6 @@
-import AddItemForm from '../../components/AddItemForm'
-import { FormFieldType } from '../../components/AddItemForm/enums'
-import { IFormField } from '../../components/AddItemForm/types'
+import ItemForm from '../../components/ItemForm'
+import { FormFieldType } from '../../components/ItemForm/enums'
+import { IFormField } from '../../components/ItemForm/types'
 import { addGroceryItem, retrieveGroceryListDefaults } from '../../api/groceryList'
 import { validateFields } from './utils'
 import { useNavigate, useParams } from 'react-router'
@@ -110,11 +110,11 @@ export const AddGroceryItemContent = () => {
         icon={<ShoppingCartIcon />}
         stats={stats}
       />
-      <AddItemForm
-        defaults={defaults}
-        fields={FIELDS}
-        onSubmit={onSubmit}
-      />
+        <ItemForm
+          defaults={defaults}
+          fields={FIELDS}
+          onSubmit={onSubmit}
+        />
     </StandardLayout>
   )
 }

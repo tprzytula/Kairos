@@ -1,4 +1,4 @@
-import { IFormField } from "../../components/AddItemForm/types"
+import { IFormField } from "../../components/ItemForm/types"
 
 export type IValidatedFields = [
     IFormField<string>,
