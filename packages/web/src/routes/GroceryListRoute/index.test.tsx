@@ -8,6 +8,7 @@ import * as API from '../../api/groceryList'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 import { useAppState } from '../../providers/AppStateProvider'
 import { ProjectProvider, useProjectContext } from '../../providers/ProjectProvider'
+import { useShopContext } from '../../providers/ShopProvider'
 import { IProject, ProjectRole } from '../../types/project'
 
 jest.mock('../../providers/AppStateProvider', () => ({
@@ -18,6 +19,10 @@ jest.mock('../../providers/AppStateProvider', () => ({
 jest.mock('../../providers/ProjectProvider', () => ({
   ...jest.requireActual('../../providers/ProjectProvider'),
   useProjectContext: jest.fn(),
+}))
+
+jest.mock('../../providers/ShopProvider', () => ({
+  useShopContext: jest.fn(),
 }))
 
 jest.mock('../../api/groceryList')
@@ -38,6 +43,7 @@ jest.mock('react-oidc-context', () => ({
 }))
 
 const mockUseProjectContext = useProjectContext as jest.MockedFunction<typeof useProjectContext>
+const mockUseShopContext = useShopContext as jest.MockedFunction<typeof useShopContext>
 const mockNavigate = jest.fn()
 const mockUseNavigate = useNavigate as jest.MockedFunction<typeof useNavigate>
 const mockUseParams = useParams as jest.MockedFunction<typeof useParams>
@@ -64,6 +70,23 @@ describe('Given the GroceryListRoute component', () => {
       switchProject: jest.fn(),
       getProjectInviteInfo: jest.fn(),
     })
+
+    mockUseShopContext.mockReturnValue({
+      shops: [{ 
+        id: 'test-shop-id', 
+        name: 'Test Shop',
+        projectId: 'test-project-id',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }],
+      isLoading: false,
+      currentShop: null,
+      fetchShops: jest.fn(),
+      addShop: jest.fn(),
+      updateShop: jest.fn(),
+      deleteShop: jest.fn(),
+      setCurrentShop: jest.fn(),
+    })
     
     mockNavigate.mockClear()
     mockUseNavigate.mockReturnValue(mockNavigate)
@@ -80,7 +103,7 @@ describe('Given the GroceryListRoute component', () => {
       renderComponent()
     })
 
-    expect(screen.getByText('Grocery List')).toBeVisible()
+    expect(screen.getByText('Test Shop')).toBeVisible()
   })
 
   it('should retrieve the grocery list', async () => {

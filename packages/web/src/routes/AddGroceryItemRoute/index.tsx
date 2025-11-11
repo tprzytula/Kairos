@@ -16,7 +16,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { GroceryListProvider, useGroceryListContext } from '../../providers/GroceryListProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
-import { ShopProvider, useShopContext } from '../../providers/ShopProvider'
+import { useShopContext } from '../../providers/ShopProvider'
 
 const FIELDS: Array<IFormField> = [
   {
@@ -123,11 +123,9 @@ export const AddGroceryItemRoute = () => {
   const { shopId } = useParams<{ shopId: string }>()
   
   return (
-    <ShopProvider>
-      <GroceryListProvider shopId={shopId}>
-        <AddGroceryItemContent />
-      </GroceryListProvider>
-    </ShopProvider>
+    <GroceryListProvider shopId={shopId}>
+      <AddGroceryItemContent />
+    </GroceryListProvider>
   )
 }
 

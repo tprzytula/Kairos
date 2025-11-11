@@ -1,7 +1,6 @@
 import HomeIcon from '@mui/icons-material/Home';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeUpOutlinedIcon from '@mui/icons-material/VolumeUpOutlined';
 import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
@@ -28,7 +27,7 @@ const NavigationBar = () => {
     }
   }, [currentShop, navigate]);
 
-  const isShoppingCartSelected = location.pathname.startsWith('/groceries');
+  const isShoppingCartSelected = location.pathname.includes('/groceries') || location.pathname === Route.Shops;
 
   return (
     <Container elevation={0}>
@@ -40,11 +39,7 @@ const NavigationBar = () => {
           route={Route.Home}
         />
         <StyledNavigationButton onClick={handleShoppingCartClick} isSelected={isShoppingCartSelected}>
-          {isShoppingCartSelected ? (
-            <ShoppingCartIcon fontSize="large" />
-          ) : (
-            <ShoppingCartOutlinedIcon fontSize="large" />
-          )}
+          <ShoppingCartIcon fontSize="large" />
         </StyledNavigationButton>
         <AddItemButton />
         <NavigationButton

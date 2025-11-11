@@ -33,6 +33,20 @@ jest.mock('../../providers/AppStateProvider', () => ({
   })
 }));
 
+jest.mock('../../providers/ShopProvider', () => ({
+  ShopProvider: ({ children }: any) => children,
+  useShopContext: () => ({
+    shops: [],
+    isLoading: false,
+    currentShop: null,
+    fetchShops: jest.fn(),
+    addShop: jest.fn(),
+    updateShop: jest.fn(),
+    deleteShop: jest.fn(),
+    setCurrentShop: jest.fn(),
+  })
+}));
+
 const TestComponent = () => <div>Test Route Content</div>;
 
 const renderWithProviders = (component: React.ReactElement) => {

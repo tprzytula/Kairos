@@ -6,7 +6,7 @@ import ActionButtonsBar from '../../components/ActionButtonsBar'
 import ShopList from '../../components/ShopList'
 import AddShopForm from '../../components/AddShopForm'
 import EditShopForm from '../../components/EditShopForm'
-import { ShopProvider, useShopContext } from '../../providers/ShopProvider'
+import { useShopContext } from '../../providers/ShopProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
 import { Route } from '../../enums/route'
@@ -188,11 +188,7 @@ const ShopListContent = () => {
 }
 
 export const ShopListRoute = () => {
-  return (
-    <ShopProvider>
-      <ShopListContent />
-    </ShopProvider>
-  )
+  return <ShopListContent />
 }
 
 export default ShopListRoute

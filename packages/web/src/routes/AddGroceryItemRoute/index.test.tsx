@@ -13,12 +13,16 @@ import { GroceryItemUnit } from '../../enums/groceryItem'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { useGroceryListContext } from '../../providers/GroceryListProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
+import { useShopContext } from '../../providers/ShopProvider'
 
 jest.mock('../../api/groceryList');
 jest.mock('../../components/ItemForm');
 jest.mock('../../hooks/useItemDefaults');
 jest.mock('../../providers/GroceryListProvider');
 jest.mock('../../providers/ProjectProvider');
+jest.mock('../../providers/ShopProvider', () => ({
+  useShopContext: jest.fn(),
+}));
 jest.mock('../../components/ModernPageHeader', () => ({ title }: any) => <div>{title}</div>);
 jest.mock('@mui/icons-material/ShoppingCart', () => () => <div>ShoppingCartIcon</div>);
 jest.mock('react-router', () => ({
@@ -65,11 +69,28 @@ describe('Given the AddGroceryItemContent component', () => {
     (useItemDefaults as jest.Mock).mockReturnValue({
       defaults: []
     });
+
+    (useShopContext as jest.Mock).mockReturnValue({
+      shops: [{ 
+        id: 'test-shop-1', 
+        name: 'Test Shop',
+        projectId: 'test-project-id',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }],
+      isLoading: false,
+      currentShop: null,
+      fetchShops: jest.fn(),
+      addShop: jest.fn(),
+      updateShop: jest.fn(),
+      deleteShop: jest.fn(),
+      setCurrentShop: jest.fn(),
+    });
   })
 
   it('should have the correct title', async () => {
     await renderComponent()
-    expect(screen.getByText('Add Grocery Item')).toBeVisible()
+    expect(screen.getByText('Add Item to Test Shop')).toBeVisible()
   })
 
   it('should render the ItemForm component', async () => {

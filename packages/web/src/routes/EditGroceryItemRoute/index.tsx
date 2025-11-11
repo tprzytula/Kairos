@@ -12,7 +12,7 @@ import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryIte
 import StandardLayout from '../../layout/standardLayout'
 import ModernPageHeader from '../../components/ModernPageHeader'
 import { GroceryListProvider, useGroceryListContext } from '../../providers/GroceryListProvider'
-import { ShopProvider, useShopContext } from '../../providers/ShopProvider'
+import { useShopContext } from '../../providers/ShopProvider'
 import { IGroceryItem } from '../../providers/AppStateProvider/types'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { retrieveGroceryListDefaults } from '../../api/groceryList'
@@ -138,11 +138,9 @@ export const EditGroceryItemRoute = () => {
   const { shopId } = useParams<{ shopId: string }>()
   
   return (
-    <ShopProvider>
-      <GroceryListProvider shopId={shopId}>
-        <EditGroceryItemContent />
-      </GroceryListProvider>
-    </ShopProvider>
+    <GroceryListProvider shopId={shopId}>
+      <EditGroceryItemContent />
+    </GroceryListProvider>
   )
 }
 

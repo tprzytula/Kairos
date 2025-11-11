@@ -17,12 +17,12 @@ import { removeGroceryItems } from '../../api/groceryList'
 import { showAlert } from '../../utils/alert'
 import { ActionName } from '../../providers/AppStateProvider/enums'
 import { GroceryViewMode } from '../../enums/groceryCategory'
-import { ShopProvider, useShopContext } from '../../providers/ShopProvider'
+import { useShopContext } from '../../providers/ShopProvider'
 import { Route } from '../../enums/route'
 
 const GroceryListContent = () => {
   const { shopId } = useParams<{ shopId: string }>()
-  const { shops } = useShopContext()
+  const { shops, setCurrentShop } = useShopContext()
   const { groceryList, viewMode, setViewMode, refetchGroceryList } = useGroceryListContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
   const navigate = useNavigate()
@@ -30,8 +30,9 @@ const GroceryListContent = () => {
   const currentShop = shopId === 'all' ? null : shops.find(shop => shop.id === shopId)
   
   const handleBackToShops = useCallback(() => {
+    setCurrentShop(null)
     navigate(Route.Shops)
-  }, [navigate])
+  }, [navigate, setCurrentShop])
   
   const unpurchasedItems = groceryList.filter(item => !purchasedItems.has(item.id))
   const purchasedCount = groceryList.length - unpurchasedItems.length
@@ -143,11 +144,9 @@ export const GroceryListRoute = () => {
   const { shopId } = useParams<{ shopId: string }>()
   
   return (
-    <ShopProvider>
-      <GroceryListProvider shopId={shopId}>
-        <GroceryListContent />
-      </GroceryListProvider>
-    </ShopProvider>
+    <GroceryListProvider shopId={shopId}>
+      <GroceryListContent />
+    </GroceryListProvider>
   )
 }
 

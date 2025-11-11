@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useLayoutEffect, useMemo } from 'react'
+import { createContext, useContext, useState, useCallback, useLayoutEffect, useEffect, useMemo } from 'react'
 import { IShop } from '../AppStateProvider/types'
 import { IShopProviderProps, IShopProviderState } from './types'
 import { retrieveShops, addShop as addShopAPI, updateShop as updateShopAPI, deleteShop as deleteShopAPI, ICreateShopRequestBody, IUpdateShopRequestBody } from '../../api/shops'
@@ -6,6 +6,7 @@ import { retrieveGroceryList } from '../../api/groceryList/retrieve'
 import { getUserPreferences, updateUserPreferences } from '../../api/userPreferences'
 import { useProjectContext } from '../ProjectProvider'
 import { useAuth } from 'react-oidc-context'
+import { useLocation } from 'react-router'
 
 export const initialState: IShopProviderState = {
   shops: [],
@@ -25,6 +26,7 @@ export const useShopContext = () => useContext(ShopContext)
 export const ShopProvider = ({ children }: IShopProviderProps) => {
   const { currentProject } = useProjectContext()
   const auth = useAuth()
+  const location = useLocation()
   const [shops, setShops] = useState<Array<IShop>>([])
   const [isLoading, setIsLoading] = useState(false)
   const [currentShop, setCurrentShopState] = useState<IShop | null>(null)
@@ -62,23 +64,35 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
       
       setShops(shopsWithItemCounts)
       
-      // Set current shop from user preferences if available and valid
-      if (userPreferences.currentShopId) {
-        const savedShop = shopsWithItemCounts.find(shop => shop.id === userPreferences.currentShopId)
-        if (savedShop) {
-          setCurrentShopState(savedShop)
-        } else {
-          // Clear invalid saved shop id from database
-          try {
-            await updateUserPreferences({ 
-              currentProjectId: userPreferences.currentProjectId,
-              currentShopId: undefined 
-            }, auth.user.access_token)
-          } catch (error) {
-            console.error('Failed to clear invalid shop preference:', error)
+      // Preserve current shop if it's still valid in the shops list
+      setCurrentShopState(prev => {
+        if (prev) {
+          const stillValidShop = shopsWithItemCounts.find(shop => shop.id === prev.id)
+          if (stillValidShop) {
+            return stillValidShop
           }
         }
-      }
+        
+        // Set current shop from user preferences if available and valid
+        if (userPreferences.currentShopId) {
+          const savedShop = shopsWithItemCounts.find(shop => shop.id === userPreferences.currentShopId)
+          if (savedShop) {
+            return savedShop
+          } else {
+            // Clear invalid saved shop id from database
+            if (auth.user?.access_token) {
+              updateUserPreferences({ 
+                currentProjectId: userPreferences.currentProjectId,
+                currentShopId: undefined 
+              }, auth.user.access_token).catch(error => {
+                console.error('Failed to clear invalid shop preference:', error)
+              })
+            }
+          }
+        }
+        
+        return null
+      })
       
     } catch (error) {
       console.error('Failed to fetch shops:', error)
@@ -160,7 +174,23 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
   }, [currentProject, currentShop, auth?.user?.access_token])
 
   const setCurrentShop = useCallback(async (shop: IShop | null) => {
-    setCurrentShopState(shop)
+    let shopToSet: IShop | null = null
+    
+    if (shop) {
+      // Find the shop in the shops list to ensure we have the complete shop object
+      const foundShop = shops.find(s => s.id === shop.id)
+      if (foundShop) {
+        shopToSet = foundShop
+      } else {
+        // If shop not found in list, use the provided shop but ensure projectId is set
+        shopToSet = {
+          ...shop,
+          projectId: shop.projectId || currentProject?.id || ''
+        }
+      }
+    }
+    
+    setCurrentShopState(shopToSet)
     
     if (currentProject && auth?.user?.access_token) {
       try {
@@ -169,13 +199,13 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
         
         await updateUserPreferences({
           currentProjectId: userPreferences.currentProjectId,
-          currentShopId: shop?.id || undefined
+          currentShopId: shopToSet?.id || undefined
         }, auth.user.access_token)
       } catch (error) {
         console.error('Failed to update current shop preference:', error)
       }
     }
-  }, [currentProject, auth?.user?.access_token])
+  }, [currentProject, auth?.user?.access_token, shops])
 
   useLayoutEffect(() => {
     if (currentProject) {
@@ -185,6 +215,15 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
       setCurrentShopState(null)
     }
   }, [currentProject, fetchShops])
+
+  useEffect(() => {
+    if (currentProject && auth?.user?.access_token) {
+      const pathname = location.pathname
+      if (pathname === '/shops' || pathname.startsWith('/groceries/')) {
+        fetchShops()
+      }
+    }
+  }, [location.pathname, currentProject, auth?.user?.access_token, fetchShops])
 
   const value = useMemo(() => ({
     shops,

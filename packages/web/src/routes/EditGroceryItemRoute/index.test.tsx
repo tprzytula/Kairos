@@ -48,6 +48,11 @@ jest.mock('../../providers/GroceryListProvider', () => ({
   useGroceryListContext: () => mockGroceryListContext,
 }))
 
+const mockUseShopContext = jest.fn()
+jest.mock('../../providers/ShopProvider', () => ({
+  useShopContext: () => mockUseShopContext(),
+}))
+
 describe('Given the EditGroceryItemRoute component', () => {
   const mockNavigate = jest.fn()
 
@@ -55,11 +60,28 @@ describe('Given the EditGroceryItemRoute component', () => {
     jest.spyOn(ReactRouter, 'useParams').mockReturnValue({ id: '1', shopId: 'test-shop-1' })
     jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate)
     mockNavigate.mockClear()
+
+    mockUseShopContext.mockReturnValue({
+      shops: [{ 
+        id: 'test-shop-1', 
+        name: 'Test Shop',
+        projectId: 'test-project-id',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }],
+      isLoading: false,
+      currentShop: null,
+      fetchShops: jest.fn(),
+      addShop: jest.fn(),
+      updateShop: jest.fn(),
+      deleteShop: jest.fn(),
+      setCurrentShop: jest.fn(),
+    })
   })
 
   it('should have the correct title', async () => {
     await renderComponent()
-    expect(screen.getByText('Edit Grocery Item')).toBeVisible()
+    expect(screen.getByText('Edit Item in Test Shop')).toBeVisible()
   })
 
   it('should render the ItemForm component with prefilled values', async () => {
