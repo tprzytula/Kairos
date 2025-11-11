@@ -35,7 +35,7 @@ export const oidcConfig: UserManagerSettings = {
   
   silent_redirect_uri: `${window.location.origin}/silent-callback`,
   
-  silentRequestTimeoutInSeconds: 10,
+  silentRequestTimeoutInSeconds: 30,
   
   accessTokenExpiringNotificationTimeInSeconds: 300,
   
