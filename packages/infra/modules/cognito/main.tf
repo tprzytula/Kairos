@@ -103,9 +103,9 @@ resource "aws_cognito_user_pool_client" "kairos_user_pool_client" {
   ]
 
   # Token configuration
-  access_token_validity  = 24   # 24 hours
-  id_token_validity      = 24   # 24 hours
-  refresh_token_validity = 30   # 30 days
+  access_token_validity  = 24   # 24 hours (maximum allowed)
+  id_token_validity      = 24   # 24 hours (maximum allowed)
+  refresh_token_validity = 365  # 365 days (1 year) - can be extended up to 10 years
 
   token_validity_units {
     access_token  = "hours"
