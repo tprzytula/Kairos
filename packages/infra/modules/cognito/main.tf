@@ -88,7 +88,7 @@ resource "aws_cognito_user_pool_client" "kairos_user_pool_client" {
   supported_identity_providers         = var.google_client_id != "" && var.google_client_secret != "" ? ["Google"] : ["COGNITO"]
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows                  = ["code"]
-  allowed_oauth_scopes                 = ["email", "openid", "profile"]
+  allowed_oauth_scopes                 = ["email", "openid", "profile", "offline_access"]
   
   # Callback URLs for your CloudFront hosted app and localhost development
   callback_urls = [
