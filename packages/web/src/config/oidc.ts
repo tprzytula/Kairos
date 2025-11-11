@@ -26,7 +26,7 @@ export const oidcConfig: UserManagerSettings = {
   redirect_uri: getRedirectUri(),
   post_logout_redirect_uri: getPostLogoutRedirectUri(),
   response_type: 'code',
-  scope: 'email openid profile offline_access',
+  scope: 'email openid profile',
   automaticSilentRenew: true,
   includeIdTokenInSilentRenew: true,
   loadUserInfo: true,
