@@ -23,6 +23,8 @@ jobs:
           cache-dependency-path: packages/lambdas/yarn.lock
       - name: Install Modules
         run: yarn
+      - name: Lint
+        run: yarn lint
       - name: Build
         run: yarn build
       - name: Test

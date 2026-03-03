@@ -1,0 +1,6 @@
+**/node_modules
+**/dist
+**/.parcel-cache
+**/.coverage
+packages/infra
+**/yarn.lock

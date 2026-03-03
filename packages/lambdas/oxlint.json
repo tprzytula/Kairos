@@ -1,0 +1,6 @@
+{
+  "plugins": ["typescript", "jest"],
+  "env": { "node": true, "es2020": true },
+  "ignore_patterns": ["dist/**", "node_modules/**", "libs/types/generated/**"],
+  "rules": {}
+}

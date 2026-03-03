@@ -1,0 +1,5 @@
+{
+  "plugins": ["react", "typescript", "jest"],
+  "env": { "browser": true, "es2020": true },
+  "rules": {}
+}
