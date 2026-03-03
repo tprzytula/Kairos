@@ -2,7 +2,5 @@
 **/dist
 **/.parcel-cache
 **/.coverage
-**/src/types/generated
-**/libs/types/generated
 packages/infra
 **/yarn.lock

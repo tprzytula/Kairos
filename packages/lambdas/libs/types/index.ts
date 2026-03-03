@@ -1,8 +1,6 @@
 import { Handler, Context, Callback, APIGatewayProxyResult } from "aws-lambda";
 import { createResponse } from "@kairos-lambdas-libs/response";
 
-export * from "./generated";
-
 export const middleware =
   <T>(handler: Handler<T, APIGatewayProxyResult>) =>
   async (
