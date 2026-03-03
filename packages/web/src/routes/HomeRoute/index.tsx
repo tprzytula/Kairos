@@ -4,9 +4,12 @@ import { useToDoListContext, ToDoListProvider } from '../../providers/ToDoListPr
 import { useNoiseTrackingContext, NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
+import { AgentChatProvider } from '../../providers/AgentChatProvider'
 import StandardLayout from '../../layout/standardLayout'
 import AppInfoCard from '../../components/AppInfoCard'
 import DashboardHeader from '../../components/DashboardHeader'
+import AgentMessageButton from '../../components/AgentMessageButton'
+import AgentChatDrawer from '../../components/AgentChatDrawer'
 import GroceryItemPreviewPopup from '../../components/GroceryItemPreviewPopup'
 import GrocerySection from './components/GrocerySection'
 import NoiseSection from './components/NoiseSection'
@@ -71,19 +74,23 @@ const HomeDataContent = () => {
 
 const HomeContent = () => {
   const { currentProject } = useProjectContext()
-  
+
   return (
-    <StandardLayout>
-      <AppInfoCard />
-      <DashboardHeader />
-      <GroceryListProvider key={`grocery-${currentProject?.id || 'no-project'}`}>
-        <ToDoListProvider key={`todo-${currentProject?.id || 'no-project'}`}>
-          <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>
-            <HomeDataContent />
-          </NoiseTrackingProvider>
-        </ToDoListProvider>
-      </GroceryListProvider>
-    </StandardLayout>
+    <AgentChatProvider>
+      <StandardLayout>
+        <AppInfoCard />
+        <DashboardHeader />
+        <AgentMessageButton />
+        <GroceryListProvider key={`grocery-${currentProject?.id || 'no-project'}`}>
+          <ToDoListProvider key={`todo-${currentProject?.id || 'no-project'}`}>
+            <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>
+              <HomeDataContent />
+            </NoiseTrackingProvider>
+          </ToDoListProvider>
+        </GroceryListProvider>
+      </StandardLayout>
+      <AgentChatDrawer />
+    </AgentChatProvider>
   )
 }
 
