@@ -8,6 +8,7 @@
     "build": "yarn bundle && yarn package",
     "bundle": "rm -rf dist && esbuild ./sources/* --entry-names=[dir]/[name]/index --bundle --minify --sourcemap --platform=node --target=node20 --outdir=dist",
     "package": "cd dist && for f in * ; do ([ -d \"$f\" ] && cd $f && zip $f.zip *) ; done",
+    "lint": "oxlint sources libs --ignore-pattern='dist/**' --ignore-pattern='libs/types/generated/**'",
     "prettier": "prettier . --write",
     "test": "jest --silent",
     "test:watch": "jest --watch --silent"
@@ -26,6 +27,7 @@
     "aws-sdk": "^2.1692.0",
     "jest": "^29.7.0",
     "lint-staged": "^15.5.0",
+    "oxlint": "^1.51.0",
     "prettier": "^3.5.3",
     "ts-jest": "^29.3.1",
     "ts-node": "^10.9.2"

@@ -5,11 +5,21 @@
   "author": "Tomasz Przytula",
   "license": "AGPL-3.0",
   "scripts": {
-    "build": "yarn build:web && yarn build:lambdas",
+    "codegen": "node scripts/codegen.mjs",
+    "build": "yarn codegen && yarn build:web && yarn build:lambdas",
     "build:web": "cd packages/web && yarn && yarn build",
     "build:lambdas": "cd packages/lambdas && yarn && yarn build",
     "test": "yarn test:web && yarn test:lambdas",
     "test:web": "cd packages/web && yarn test",
-    "test:lambdas": "cd packages/lambdas && yarn test"
+    "test:lambdas": "cd packages/lambdas && yarn test",
+    "lint": "yarn lint:web && yarn lint:lambdas",
+    "lint:web": "cd packages/web && yarn lint",
+    "lint:lambdas": "cd packages/lambdas && yarn lint",
+    "prettier": "prettier . --check"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.13.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.9.3"
   }
 }
