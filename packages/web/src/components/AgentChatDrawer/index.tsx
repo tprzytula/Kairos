@@ -34,7 +34,7 @@ const AgentChatDrawer = () => {
       onClose={closeChat}
       PaperProps={{
         sx: {
-          height: '100%',
+          height: 'calc(100% - env(safe-area-inset-top) - 16px)',
           borderRadius: '16px 16px 0 0',
           display: 'flex',
           flexDirection: 'column',
