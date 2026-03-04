@@ -4,7 +4,7 @@ export interface IChatMessage {
   id: string
   content: string
   timestamp: Date
-  role: 'user'
+  role: 'user' | 'agent'
 }
 
 export interface IState {
@@ -12,7 +12,7 @@ export interface IState {
   isOpen: boolean
   openChat: () => void
   closeChat: () => void
-  sendMessage: (content: string) => void
+  sendMessage: (content: string) => Promise<void>
 }
 
 export interface IAgentChatProviderProps {

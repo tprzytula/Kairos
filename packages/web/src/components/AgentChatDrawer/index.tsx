@@ -100,39 +100,45 @@ const AgentChatDrawer = () => {
         aria-label="Drag to close"
         sx={{
           width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          pt: '10px',
-          pb: '2px',
-          cursor: 'grab',
           flexShrink: 0,
+          cursor: 'grab',
           touchAction: 'none',
           '&:active': { cursor: 'grabbing' },
         }}
       >
         <Box
           sx={{
-            width: '36px',
-            height: '4px',
-            borderRadius: '2px',
-            background: 'rgba(0,0,0,0.15)',
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            pt: '10px',
+            pb: '2px',
           }}
-        />
+        >
+          <Box
+            sx={{
+              width: '36px',
+              height: '4px',
+              borderRadius: '2px',
+              background: 'rgba(0,0,0,0.15)',
+            }}
+          />
+        </Box>
+        <DrawerHeader>
+          <DrawerHeaderLeft>
+            <DrawerIconBox>
+              <SmartToyOutlinedIcon />
+            </DrawerIconBox>
+            <div>
+              <DrawerTitle>Agent</DrawerTitle>
+              <StatusRow>
+                <StatusDot />
+                <StatusLabel>Connected</StatusLabel>
+              </StatusRow>
+            </div>
+          </DrawerHeaderLeft>
+        </DrawerHeader>
       </Box>
-      <DrawerHeader>
-        <DrawerHeaderLeft>
-          <DrawerIconBox>
-            <SmartToyOutlinedIcon />
-          </DrawerIconBox>
-          <div>
-            <DrawerTitle>Agent</DrawerTitle>
-            <StatusRow>
-              <StatusDot />
-              <StatusLabel>Connected</StatusLabel>
-            </StatusRow>
-          </div>
-        </DrawerHeaderLeft>
-      </DrawerHeader>
 
       <MessageList ref={messageListRef} data-testid="message-list">
         {messages.length === 0 ? (

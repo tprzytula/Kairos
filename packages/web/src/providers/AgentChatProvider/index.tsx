@@ -1,12 +1,14 @@
 import { createContext, useContext, useState, useCallback, useMemo } from 'react'
+import { useAuth } from 'react-oidc-context'
 import { IState, IAgentChatProviderProps, IChatMessage } from './types'
+import { sendAgentMessage } from '../../api/agent/sendMessage'
 
 export const initialState: IState = {
   messages: [],
   isOpen: false,
   openChat: () => {},
   closeChat: () => {},
-  sendMessage: () => {},
+  sendMessage: async () => {},
 }
 
 export const AgentChatContext = createContext<IState>(initialState)
@@ -14,6 +16,7 @@ export const AgentChatContext = createContext<IState>(initialState)
 export const useAgentChatContext = () => useContext(AgentChatContext)
 
 export const AgentChatProvider = ({ children }: IAgentChatProviderProps) => {
+  const auth = useAuth()
   const [messages, setMessages] = useState<IChatMessage[]>([])
   const [isOpen, setIsOpen] = useState(false)
 
@@ -25,15 +28,24 @@ export const AgentChatProvider = ({ children }: IAgentChatProviderProps) => {
     setIsOpen(false)
   }, [])
 
-  const sendMessage = useCallback((content: string) => {
-    const message: IChatMessage = {
+  const sendMessage = useCallback(async (content: string) => {
+    const userMessage: IChatMessage = {
       id: crypto.randomUUID(),
       content,
       timestamp: new Date(),
       role: 'user',
     }
-    setMessages((prev) => [...prev, message])
-  }, [])
+    setMessages((prev) => [...prev, userMessage])
+
+    const reply = await sendAgentMessage(content, auth.user?.access_token)
+    const agentMessage: IChatMessage = {
+      id: crypto.randomUUID(),
+      content: reply.message,
+      timestamp: new Date(),
+      role: 'agent',
+    }
+    setMessages((prev) => [...prev, agentMessage])
+  }, [auth.user?.access_token])
 
   const value = useMemo(
     () => ({
