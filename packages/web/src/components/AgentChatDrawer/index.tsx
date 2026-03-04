@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Box, Drawer } from '@mui/material'
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
 import { useAgentChatContext } from '../../providers/AgentChatProvider'
@@ -21,11 +21,9 @@ const DRAG_CLOSE_THRESHOLD = 100
 const AgentChatDrawer = () => {
   const { isOpen, closeChat, messages, sendMessage } = useAgentChatContext()
   const messageListRef = useRef<HTMLDivElement>(null)
-  const dragHandleRef = useRef<HTMLDivElement>(null)
   const [dragOffset, setDragOffset] = useState(0)
   const isDragging = useRef(false)
   const dragStartY = useRef(0)
-  const dragOffsetRef = useRef(0)
 
   useEffect(() => {
     if (messageListRef.current) {
@@ -33,44 +31,27 @@ const AgentChatDrawer = () => {
     }
   }, [messages])
 
-  useEffect(() => {
-    const handle = dragHandleRef.current
-    if (!handle) return
+  const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    isDragging.current = true
+    dragStartY.current = e.clientY
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }, [])
 
-    const onPointerDown = (e: PointerEvent) => {
-      isDragging.current = true
-      dragStartY.current = e.clientY
-      handle.setPointerCapture?.(e.pointerId)
-    }
+  const onPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging.current) return
+    const offset = Math.max(0, e.clientY - dragStartY.current)
+    setDragOffset(offset)
+  }, [])
 
-    const onPointerMove = (e: PointerEvent) => {
-      if (!isDragging.current) return
-      const offset = Math.max(0, e.clientY - dragStartY.current)
-      dragOffsetRef.current = offset
-      setDragOffset(offset)
-    }
-
-    const onPointerUp = (e: PointerEvent) => {
-      if (isDragging.current) {
-        const finalOffset = Math.max(0, e.clientY - dragStartY.current)
-        if (finalOffset >= DRAG_CLOSE_THRESHOLD) {
-          closeChat()
-        }
+  const onPointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (isDragging.current) {
+      const finalOffset = Math.max(0, e.clientY - dragStartY.current)
+      if (finalOffset >= DRAG_CLOSE_THRESHOLD) {
+        closeChat()
       }
-      isDragging.current = false
-      dragOffsetRef.current = 0
-      setDragOffset(0)
     }
-
-    handle.addEventListener('pointerdown', onPointerDown)
-    handle.addEventListener('pointermove', onPointerMove)
-    handle.addEventListener('pointerup', onPointerUp)
-
-    return () => {
-      handle.removeEventListener('pointerdown', onPointerDown)
-      handle.removeEventListener('pointermove', onPointerMove)
-      handle.removeEventListener('pointerup', onPointerUp)
-    }
+    isDragging.current = false
+    setDragOffset(0)
   }, [closeChat])
 
   return (
@@ -95,14 +76,18 @@ const AgentChatDrawer = () => {
       }}
     >
       <Box
-        ref={dragHandleRef}
         role="button"
         aria-label="Drag to close"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
         sx={{
           width: '100%',
           flexShrink: 0,
           cursor: 'grab',
           touchAction: 'none',
+          userSelect: 'none',
+          '& *': { touchAction: 'none', userSelect: 'none' },
           '&:active': { cursor: 'grabbing' },
         }}
       >
