@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Drawer, IconButton } from '@mui/material'
+import { Box, Drawer, IconButton } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
 import { useAgentChatContext } from '../../providers/AgentChatProvider'
@@ -39,9 +39,22 @@ const AgentChatDrawer = () => {
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
+          paddingBottom: 'env(safe-area-inset-bottom)',
         },
       }}
     >
+      <Box
+        sx={{
+          width: '36px',
+          height: '4px',
+          borderRadius: '2px',
+          background: 'rgba(0,0,0,0.15)',
+          mx: 'auto',
+          mt: '10px',
+          mb: '2px',
+          flexShrink: 0,
+        }}
+      />
       <DrawerHeader>
         <DrawerHeaderLeft>
           <DrawerIconBox>
