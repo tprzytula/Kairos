@@ -355,6 +355,17 @@ locals {
           todo_notifications = "none"
         }
       }
+    },
+    "send_agent_message" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
     }
   }
 }

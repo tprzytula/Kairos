@@ -1,0 +1,116 @@
+openapi: 3.0.3
+info:
+  title: Kairos Agent API
+  version: 1.0.0
+paths:
+  /agent/message:
+    post:
+      operationId: sendAgentMessage
+      summary: Send a message to the agent
+      security:
+        - CognitoUserPool: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentMessageRequest'
+            example:
+              message: "hello"
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentMessageResponse'
+              example:
+                message: "hello"
+        '400':
+          description: Bad request - missing message field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentErrorResponse'
+              example:
+                error:
+                  message: "Missing required field: message"
+                  type: "BAD_REQUEST"
+        '401':
+          description: Unauthorized - user authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentErrorResponse'
+              example:
+                error:
+                  message: "User not authenticated"
+                  type: "UNAUTHORIZED"
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        uri: ${lambda_functions["send_agent_message"].invoke_arn}
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+
+components:
+  schemas:
+    AgentMessageRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: The message to send to the agent
+          example: "hello"
+
+    AgentMessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "hello"
+
+    AgentErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Human-readable error message
+            type:
+              type: string
+              description: Error type identifier
+
+  securitySchemes:
+    CognitoUserPool:
+      type: apiKey
+      name: Authorization
+      in: header
