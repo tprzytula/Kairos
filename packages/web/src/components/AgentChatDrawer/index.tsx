@@ -65,17 +65,24 @@ const AgentChatDrawer = () => {
         sx: {
           height: 'calc(100% - env(safe-area-inset-top) - 16px)',
           borderRadius: '16px 16px 0 0',
+          overflow: 'hidden',
+          background: 'transparent',
+        },
+      }}
+    >
+      <Box
+        sx={{
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden',
+          height: '100%',
           paddingBottom: 'env(safe-area-inset-bottom)',
+          bgcolor: 'background.paper',
           transform: `translateY(${dragOffset}px)`,
           transition: isDragging.current
             ? 'transform 0s'
             : 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        },
-      }}
-    >
+        }}
+      >
       <Box
         role="button"
         aria-label="Drag to close"
@@ -136,6 +143,7 @@ const AgentChatDrawer = () => {
       </MessageList>
 
       <ChatInput onSend={sendMessage} />
+      </Box>
     </Drawer>
   )
 }
