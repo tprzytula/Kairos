@@ -5,6 +5,7 @@ import { useAgentChatContext } from '../../providers/AgentChatProvider'
 import ChatMessageBubble from './components/ChatMessageBubble'
 import ChatEmptyState from './components/ChatEmptyState'
 import ChatInput from './components/ChatInput'
+import TypingIndicator from './components/TypingIndicator'
 import {
   DrawerHeader,
   DrawerHeaderLeft,
@@ -19,7 +20,7 @@ import {
 const DRAG_CLOSE_THRESHOLD = 100
 
 const AgentChatDrawer = () => {
-  const { isOpen, closeChat, messages, sendMessage } = useAgentChatContext()
+  const { isOpen, closeChat, messages, sendMessage, isTyping } = useAgentChatContext()
   const messageListRef = useRef<HTMLDivElement>(null)
   const [dragOffset, setDragOffset] = useState(0)
   const isDragging = useRef(false)
@@ -131,6 +132,7 @@ const AgentChatDrawer = () => {
         ) : (
           messages.map((message) => <ChatMessageBubble key={message.id} message={message} />)
         )}
+        {isTyping && <TypingIndicator />}
       </MessageList>
 
       <ChatInput onSend={sendMessage} />

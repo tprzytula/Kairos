@@ -10,6 +10,7 @@ export interface IChatMessage {
 export interface IState {
   messages: IChatMessage[]
   isOpen: boolean
+  isTyping: boolean
   openChat: () => void
   closeChat: () => void
   sendMessage: (content: string) => Promise<void>

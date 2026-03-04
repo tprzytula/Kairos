@@ -6,6 +6,7 @@ import { sendAgentMessage } from '../../api/agent/sendMessage'
 export const initialState: IState = {
   messages: [],
   isOpen: false,
+  isTyping: false,
   openChat: () => {},
   closeChat: () => {},
   sendMessage: async () => {},
@@ -19,6 +20,7 @@ export const AgentChatProvider = ({ children }: IAgentChatProviderProps) => {
   const auth = useAuth()
   const [messages, setMessages] = useState<IChatMessage[]>([])
   const [isOpen, setIsOpen] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
 
   const openChat = useCallback(() => {
     setIsOpen(true)
@@ -36,26 +38,32 @@ export const AgentChatProvider = ({ children }: IAgentChatProviderProps) => {
       role: 'user',
     }
     setMessages((prev) => [...prev, userMessage])
+    setIsTyping(true)
 
-    const reply = await sendAgentMessage(content, auth.user?.access_token)
-    const agentMessage: IChatMessage = {
-      id: crypto.randomUUID(),
-      content: reply.message,
-      timestamp: new Date(),
-      role: 'agent',
+    try {
+      const reply = await sendAgentMessage(content, auth.user?.access_token)
+      const agentMessage: IChatMessage = {
+        id: crypto.randomUUID(),
+        content: reply.message,
+        timestamp: new Date(),
+        role: 'agent',
+      }
+      setMessages((prev) => [...prev, agentMessage])
+    } finally {
+      setIsTyping(false)
     }
-    setMessages((prev) => [...prev, agentMessage])
   }, [auth.user?.access_token])
 
   const value = useMemo(
     () => ({
       messages,
       isOpen,
+      isTyping,
       openChat,
       closeChat,
       sendMessage,
     }),
-    [messages, isOpen, openChat, closeChat, sendMessage]
+    [messages, isOpen, isTyping, openChat, closeChat, sendMessage]
   )
 
   return <AgentChatContext.Provider value={value}>{children}</AgentChatContext.Provider>
