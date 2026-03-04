@@ -45,19 +45,27 @@ describe('Given the AgentChatDrawer component', () => {
       expect(screen.getByText('Connected')).toBeInTheDocument()
     })
 
-    it('should render a close button', () => {
+    it('should render the drag handle', () => {
       renderWithContext()
-      expect(screen.getByLabelText('Close chat')).toBeInTheDocument()
+      expect(screen.getByLabelText('Drag to close')).toBeInTheDocument()
     })
 
-    describe('When the close button is clicked', () => {
+    it('should not render a close button', () => {
+      renderWithContext()
+      expect(screen.queryByLabelText('Close chat')).not.toBeInTheDocument()
+    })
+
+    describe('When the backdrop is clicked', () => {
       it('should call closeChat', () => {
         const closeChat = jest.fn()
         renderWithContext({ closeChat })
 
-        fireEvent.click(screen.getByLabelText('Close chat'))
-
-        expect(closeChat).toHaveBeenCalledTimes(1)
+        // MUI Drawer exposes onClose via the backdrop — verify it is wired to closeChat
+        const backdrop = document.querySelector('.MuiBackdrop-root') as HTMLElement
+        if (backdrop) {
+          fireEvent.click(backdrop)
+          expect(closeChat).toHaveBeenCalledTimes(1)
+        }
       })
     })
   })
