@@ -22,7 +22,7 @@ resource "aws_cloudfront_distribution" "kairos_web_distribution" {
 
     forwarded_values {
       query_string = false
-      headers      = ["Authorization", "Content-Type"]
+      headers      = ["Authorization", "Content-Type", "X-Project-ID"]
       cookies {
         forward = "none"
       }

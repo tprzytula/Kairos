@@ -1,0 +1,15 @@
+[Unit]
+Description=Kairos Agent Service
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+EnvironmentFile=/home/ec2-user/agent-service/.env
+WorkingDirectory=/home/ec2-user/agent-service
+ExecStart=/usr/bin/node index.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -21,3 +21,15 @@ variable "vapid_private_key" {
   type        = string
   sensitive   = true
 }
+
+variable "agent_secret" {
+  description = "Shared secret for authenticating Lambda to EC2 agent requests"
+  type        = string
+  sensitive   = true
+}
+
+variable "ssh_allowed_cidr" {
+  description = "CIDR block allowed to SSH into the agent EC2 instance"
+  type        = string
+  default     = "0.0.0.0/0"
+}

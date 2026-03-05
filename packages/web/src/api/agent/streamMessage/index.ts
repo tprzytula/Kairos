@@ -1,14 +1,20 @@
 export interface StreamChunk {
-  type: 'message' | 'timestamp' | 'done' | 'error'
+  type: 'text_delta' | 'done' | 'error'
   content?: string
-  index?: number
+}
+
+interface ConversationTurn {
+  role: 'user' | 'agent'
+  content: string
 }
 
 export const streamAgentMessage = async (
   message: string,
   accessToken: string | undefined,
   onChunk: (chunk: StreamChunk) => void,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  conversationHistory?: ConversationTurn[],
+  projectId?: string
 ): Promise<void> => {
   const response = await fetch('/agent/stream', {
     method: 'POST',
@@ -16,8 +22,9 @@ export const streamAgentMessage = async (
     headers: {
       'Content-Type': 'application/json',
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      ...(projectId ? { 'X-Project-ID': projectId } : {}),
     },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ message, conversationHistory }),
   })
 
   if (!response.ok || !response.body) throw new Error(`Stream failed: ${response.status}`)

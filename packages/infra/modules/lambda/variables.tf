@@ -18,3 +18,14 @@ variable "vapid_private_key" {
   type        = string
   sensitive   = true
 }
+
+variable "agent_ec2_ip" {
+  description = "Public IP of the agent EC2 instance"
+  type        = string
+}
+
+variable "agent_secret" {
+  description = "Shared secret for authenticating Lambda to EC2 agent requests"
+  type        = string
+  sensitive   = true
+}

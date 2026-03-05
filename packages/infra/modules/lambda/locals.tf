@@ -368,10 +368,18 @@ locals {
       }
     },
     "stream_agent_message" = {
-      environment_variables = {}
-      timeout               = 15
+      environment_variables = {
+        AGENT_EC2_URL = "http://${var.agent_ec2_ip}:3001"
+        AGENT_SECRET  = var.agent_secret
+      }
+      timeout = 120
       permissions = {
         database = {
+          todo_list        = "read-only"
+          grocery_list     = "read-only"
+          noise_tracking   = "read-only"
+          shops            = "read-only"
+          user_preferences = "read-only"
           push_subscriptions = "none"
         }
         sns = {

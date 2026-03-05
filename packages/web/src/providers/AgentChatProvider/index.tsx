@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react'
 import { useAuth } from 'react-oidc-context'
+import { useProjectContext } from '../ProjectProvider/ProjectProvider'
 import { IState, IAgentChatProviderProps, IChatMessage } from './types'
 import { streamAgentMessage } from '../../api/agent/streamMessage'
 
@@ -18,6 +19,7 @@ export const useAgentChatContext = () => useContext(AgentChatContext)
 
 export const AgentChatProvider = ({ children }: IAgentChatProviderProps) => {
   const auth = useAuth()
+  const { currentProject } = useProjectContext()
   const [messages, setMessages] = useState<IChatMessage[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
@@ -55,22 +57,23 @@ export const AgentChatProvider = ({ children }: IAgentChatProviderProps) => {
     const controller = new AbortController()
     abortControllerRef.current = controller
 
+    // Build conversation history from existing messages (exclude the just-added user message)
+    const conversationHistory = messages.map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    }))
+
     try {
       await streamAgentMessage(
         content,
         auth.user?.access_token,
         (chunk) => {
-          if (chunk.type === 'message' || chunk.type === 'timestamp') {
+          if (chunk.type === 'text_delta') {
             setIsTyping(false)
             setMessages((prev) =>
               prev.map((msg) =>
                 msg.id === agentMessageId
-                  ? {
-                      ...msg,
-                      content: chunk.type === 'message'
-                        ? (chunk.content ?? '')
-                        : msg.content + '\n' + (chunk.content ?? ''),
-                    }
+                  ? { ...msg, content: msg.content + (chunk.content ?? '') }
                   : msg
               )
             )
@@ -80,9 +83,20 @@ export const AgentChatProvider = ({ children }: IAgentChatProviderProps) => {
                 msg.id === agentMessageId ? { ...msg, isStreaming: false } : msg
               )
             )
+          } else if (chunk.type === 'error') {
+            setIsTyping(false)
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === agentMessageId
+                  ? { ...msg, isStreaming: false, content: chunk.content ?? 'Something went wrong.' }
+                  : msg
+              )
+            )
           }
         },
-        controller.signal
+        controller.signal,
+        conversationHistory,
+        currentProject?.id
       )
     } catch (err) {
       const isAbort = err instanceof Error && err.name === 'AbortError'
@@ -100,7 +114,7 @@ export const AgentChatProvider = ({ children }: IAgentChatProviderProps) => {
     } finally {
       setIsTyping(false)
     }
-  }, [auth.user?.access_token])
+  }, [auth.user?.access_token, messages, currentProject?.id])
 
   const value = useMemo(
     () => ({

@@ -8,6 +8,14 @@ module "dynamodb" {
   random_name = module.random.random_name
 }
 
+module "ec2_agent" {
+  source = "./modules/ec2_agent"
+
+  random_name      = module.random.random_name
+  agent_secret     = var.agent_secret
+  ssh_allowed_cidr = var.ssh_allowed_cidr
+}
+
 module "lambda" {
   source = "./modules/lambda"
 
@@ -15,6 +23,8 @@ module "lambda" {
   todo_notifications_topic_arn = module.sns.todo_notifications_topic_arn
   vapid_public_key             = var.vapid_public_key
   vapid_private_key            = var.vapid_private_key
+  agent_ec2_ip                 = module.ec2_agent.public_ip
+  agent_secret                 = var.agent_secret
 }
 
 module "api_gateway" {
