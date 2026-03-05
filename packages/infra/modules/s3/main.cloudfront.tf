@@ -39,8 +39,8 @@ resource "aws_cloudfront_distribution" "kairos_web_distribution" {
     compress               = true
 
     min_ttl     = 0
-    default_ttl = 24 * 60 * 60  # 24 hours for JS files
-    max_ttl     = 365 * 24 * 60 * 60  # 1 year
+    default_ttl = 24 * 60 * 60       # 24 hours for JS files
+    max_ttl     = 365 * 24 * 60 * 60 # 1 year
 
     forwarded_values {
       query_string = false
@@ -59,8 +59,8 @@ resource "aws_cloudfront_distribution" "kairos_web_distribution" {
     compress               = true
 
     min_ttl     = 0
-    default_ttl = 24 * 60 * 60  # 24 hours for CSS files
-    max_ttl     = 365 * 24 * 60 * 60  # 1 year
+    default_ttl = 24 * 60 * 60       # 24 hours for CSS files
+    max_ttl     = 365 * 24 * 60 * 60 # 1 year
 
     forwarded_values {
       query_string = false
@@ -79,7 +79,7 @@ resource "aws_cloudfront_distribution" "kairos_web_distribution" {
     compress               = true
 
     min_ttl     = 0
-    default_ttl = 0  # Never cache service worker
+    default_ttl = 0 # Never cache service worker
     max_ttl     = 0
 
     forwarded_values {
@@ -99,8 +99,8 @@ resource "aws_cloudfront_distribution" "kairos_web_distribution" {
     compress               = true
 
     min_ttl     = 0
-    default_ttl = 60  # 1 minute for HTML/manifest
-    max_ttl     = 60 * 60  # 1 hour max
+    default_ttl = 60      # 1 minute for HTML/manifest
+    max_ttl     = 60 * 60 # 1 hour max
 
     forwarded_values {
       query_string = true

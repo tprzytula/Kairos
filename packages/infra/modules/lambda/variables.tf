@@ -22,10 +22,12 @@ variable "vapid_private_key" {
 variable "agent_ec2_ip" {
   description = "Public IP of the agent EC2 instance"
   type        = string
+  default     = ""
 }
 
 variable "agent_secret" {
   description = "Shared secret for authenticating Lambda to EC2 agent requests"
   type        = string
+  default     = ""
   sensitive   = true
 }

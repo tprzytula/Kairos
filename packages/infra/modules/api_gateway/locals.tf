@@ -9,8 +9,8 @@ locals {
     spec => yamldecode(
       templatefile(
         "${path.module}/openapi/${spec}.yml",
-        { 
-          lambda_functions = var.lambda_functions
+        {
+          lambda_functions      = var.lambda_functions
           cognito_user_pool_arn = var.cognito_user_pool_arn
         }
       )
@@ -21,7 +21,7 @@ locals {
     for spec in local.openapi_files :
     local.openapi_specs[spec].paths
   ]...)
-  
+
   merged_schemas = merge([
     for spec in local.openapi_files :
     local.openapi_specs[spec].components.schemas

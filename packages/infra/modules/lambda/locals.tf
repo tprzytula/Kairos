@@ -6,7 +6,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          grocery_list = "read-only"
+          grocery_list       = "read-only"
           push_subscriptions = "none"
         }
         sns = {
@@ -18,9 +18,9 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          grocery_list = "read-write"
+          grocery_list           = "read-write"
           grocery_items_defaults = "read-only"
-          push_subscriptions = "none"
+          push_subscriptions     = "none"
         }
         sns = {
           todo_notifications = "none"
@@ -31,7 +31,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          grocery_list = "read-write"
+          grocery_list       = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -43,7 +43,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          grocery_list = "read-write"
+          grocery_list       = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -55,7 +55,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          noise_tracking = "read-write"
+          noise_tracking     = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -67,7 +67,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          noise_tracking = "read-only"
+          noise_tracking     = "read-only"
           push_subscriptions = "none"
         }
         sns = {
@@ -79,7 +79,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          noise_tracking = "read-write"
+          noise_tracking     = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -92,7 +92,7 @@ locals {
       permissions = {
         database = {
           grocery_items_defaults = "read-only"
-          push_subscriptions = "none"
+          push_subscriptions     = "none"
         }
         sns = {
           todo_notifications = "none"
@@ -105,7 +105,7 @@ locals {
       }
       permissions = {
         database = {
-          todo_list = "read-write"
+          todo_list          = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -117,7 +117,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          todo_list = "read-only"
+          todo_list          = "read-only"
           push_subscriptions = "none"
         }
         sns = {
@@ -129,7 +129,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          todo_list = "read-write"
+          todo_list          = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -141,7 +141,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          todo_list = "read-write"
+          todo_list          = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -153,7 +153,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          todo_list = "read-write"
+          todo_list          = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -165,7 +165,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          grocery_list = "read-write"
+          grocery_list       = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -177,7 +177,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          shops = "read-only"
+          shops              = "read-only"
           push_subscriptions = "none"
         }
         sns = {
@@ -189,7 +189,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          shops = "read-write"
+          shops              = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -201,7 +201,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          shops = "read-write"
+          shops              = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -213,7 +213,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          shops = "read-write"
+          shops              = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -246,8 +246,8 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          projects = "read-only"
-          project_members = "read-only"
+          projects           = "read-only"
+          project_members    = "read-only"
           push_subscriptions = "none"
         }
         sns = {
@@ -259,8 +259,8 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          projects = "read-write"
-          project_members = "read-write"
+          projects           = "read-write"
+          project_members    = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -272,8 +272,8 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          projects = "read-only"
-          project_members = "read-write"
+          projects           = "read-only"
+          project_members    = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -285,8 +285,8 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          projects = "read-only"
-          project_members = "read-only"
+          projects           = "read-only"
+          project_members    = "read-only"
           push_subscriptions = "none"
         }
         sns = {
@@ -298,7 +298,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          user_preferences = "read-only"
+          user_preferences   = "read-only"
           push_subscriptions = "none"
         }
         sns = {
@@ -310,7 +310,7 @@ locals {
       environment_variables = {}
       permissions = {
         database = {
-          user_preferences = "read-write"
+          user_preferences   = "read-write"
           push_subscriptions = "none"
         }
         sns = {
@@ -325,8 +325,8 @@ locals {
       }
       permissions = {
         database = {
-          project_members = "read-only"
-          projects = "read-only"
+          project_members    = "read-only"
+          projects           = "read-only"
           push_subscriptions = "read-only"
         }
         sns = {
@@ -375,11 +375,11 @@ locals {
       timeout = 120
       permissions = {
         database = {
-          todo_list        = "read-only"
-          grocery_list     = "read-only"
-          noise_tracking   = "read-only"
-          shops            = "read-only"
-          user_preferences = "read-only"
+          todo_list          = "read-only"
+          grocery_list       = "read-only"
+          noise_tracking     = "read-only"
+          shops              = "read-only"
+          user_preferences   = "read-only"
           push_subscriptions = "none"
         }
         sns = {

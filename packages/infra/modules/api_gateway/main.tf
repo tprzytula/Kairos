@@ -3,9 +3,9 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
   body = yamlencode({
     openapi = "3.0.1"
     info = {
-      title = "Kairos API"
+      title       = "Kairos API"
       description = "API for Kairos"
-      version = "1.0"
+      version     = "1.0"
     }
     paths = local.merged_paths
     components = {
@@ -14,13 +14,13 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
     x-amazon-apigateway-request-validators = {
       "Validate body" = {
         validateRequestParameters = false
-        validateRequestBody = true
+        validateRequestBody       = true
       }
     }
     x-amazon-apigateway-gateway-responses = {
       DEFAULT_4XX = {
         responseParameters = {
-          "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'"
+          "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
           "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
           "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,PUT,POST,DELETE,PATCH,OPTIONS'"
         }
@@ -28,14 +28,14 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
           "application/json" = jsonencode({
             error = {
               message = "$context.error.message"
-              type = "$context.error.responseType"
+              type    = "$context.error.responseType"
             }
           })
         }
       }
       DEFAULT_5XX = {
         responseParameters = {
-          "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'"
+          "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
           "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
           "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,PUT,POST,DELETE,PATCH,OPTIONS'"
         }
@@ -43,14 +43,14 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
           "application/json" = jsonencode({
             error = {
               message = "$context.error.message"
-              type = "$context.error.responseType"
+              type    = "$context.error.responseType"
             }
           })
         }
       }
       UNAUTHORIZED = {
         responseParameters = {
-          "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'"
+          "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
           "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
           "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,PUT,POST,DELETE,PATCH,OPTIONS'"
         }
@@ -58,7 +58,7 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
           "application/json" = jsonencode({
             error = {
               message = "Unauthorized"
-              type = "UNAUTHORIZED"
+              type    = "UNAUTHORIZED"
             }
           })
         }
@@ -73,11 +73,11 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
 
 # Cognito User Pool Authorizer
 resource "aws_api_gateway_authorizer" "cognito_authorizer" {
-  name                   = "cognito-authorizer"
-  rest_api_id           = aws_api_gateway_rest_api.kairos_api.id
-  type                  = "COGNITO_USER_POOLS"
-  provider_arns         = [var.cognito_user_pool_arn]
-  identity_source       = "method.request.header.Authorization"
+  name            = "cognito-authorizer"
+  rest_api_id     = aws_api_gateway_rest_api.kairos_api.id
+  type            = "COGNITO_USER_POOLS"
+  provider_arns   = [var.cognito_user_pool_arn]
+  identity_source = "method.request.header.Authorization"
 }
 
 resource "aws_lambda_permission" "kairos_api_lambda_permissions" {

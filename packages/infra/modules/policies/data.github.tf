@@ -40,7 +40,7 @@ data "aws_iam_policy_document" "cloudfront_kairos_web" {
       "cloudfront:GetDistribution",
       "cloudfront:CreateInvalidation"
     ]
-    effect = "Allow"
+    effect    = "Allow"
     resources = ["*"]
   }
 }
@@ -51,10 +51,10 @@ data "aws_iam_policy_document" "lambda_invoke_migrations" {
     actions = [
       "lambda:ListFunctions"
     ]
-    effect = "Allow"
+    effect    = "Allow"
     resources = ["*"]
   }
-  
+
   statement {
     sid = "LambdaInvokeMigrations"
     actions = [

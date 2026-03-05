@@ -1,8 +1,8 @@
 resource "aws_dynamodb_table" "push_subscriptions" {
-  name           = "PushSubscriptions"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "userId"
-  range_key      = "endpoint"
+  name         = "PushSubscriptions"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "userId"
+  range_key    = "endpoint"
 
   attribute {
     name = "userId"

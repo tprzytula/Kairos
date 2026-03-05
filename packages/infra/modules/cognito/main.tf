@@ -4,9 +4,9 @@ resource "aws_cognito_user_pool" "kairos_user_pool" {
   # User attributes
   schema {
     attribute_data_type = "String"
-    name               = "email"
-    required           = true
-    mutable            = true
+    name                = "email"
+    required            = true
+    mutable             = true
 
     string_attribute_constraints {
       min_length = 1
@@ -16,9 +16,9 @@ resource "aws_cognito_user_pool" "kairos_user_pool" {
 
   schema {
     attribute_data_type = "String"
-    name               = "given_name"
-    required           = false
-    mutable            = true
+    name                = "given_name"
+    required            = false
+    mutable             = true
 
     string_attribute_constraints {
       min_length = 1
@@ -28,9 +28,9 @@ resource "aws_cognito_user_pool" "kairos_user_pool" {
 
   schema {
     attribute_data_type = "String"
-    name               = "family_name"
-    required           = false
-    mutable            = true
+    name                = "family_name"
+    required            = false
+    mutable             = true
 
     string_attribute_constraints {
       min_length = 1
@@ -40,9 +40,9 @@ resource "aws_cognito_user_pool" "kairos_user_pool" {
 
   schema {
     attribute_data_type = "String"
-    name               = "picture"
-    required           = false
-    mutable            = true
+    name                = "picture"
+    required            = false
+    mutable             = true
 
     string_attribute_constraints {
       min_length = 1
@@ -52,7 +52,7 @@ resource "aws_cognito_user_pool" "kairos_user_pool" {
 
   # Email configuration
   auto_verified_attributes = ["email"]
-  
+
   email_configuration {
     email_sending_account = "COGNITO_DEFAULT"
   }
@@ -89,7 +89,7 @@ resource "aws_cognito_user_pool_client" "kairos_user_pool_client" {
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
-  
+
   # Callback URLs for your CloudFront hosted app and localhost development
   callback_urls = [
     "https://d1568c842iynon.cloudfront.net/auth/callback",
@@ -103,9 +103,9 @@ resource "aws_cognito_user_pool_client" "kairos_user_pool_client" {
   ]
 
   # Token configuration
-  access_token_validity  = 24   # 24 hours (maximum allowed)
-  id_token_validity      = 24   # 24 hours (maximum allowed)
-  refresh_token_validity = 365  # 365 days (1 year) - can be extended up to 10 years
+  access_token_validity  = 24  # 24 hours (maximum allowed)
+  id_token_validity      = 24  # 24 hours (maximum allowed)
+  refresh_token_validity = 365 # 365 days (1 year) - can be extended up to 10 years
 
   token_validity_units {
     access_token  = "hours"

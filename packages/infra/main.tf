@@ -10,6 +10,7 @@ module "dynamodb" {
 
 module "ec2_agent" {
   source = "./modules/ec2_agent"
+  count  = var.enable_agent ? 1 : 0
 
   random_name      = module.random.random_name
   agent_secret     = var.agent_secret
@@ -19,34 +20,34 @@ module "ec2_agent" {
 module "lambda" {
   source = "./modules/lambda"
 
-  random_name                   = module.random.random_name
+  random_name                  = module.random.random_name
   todo_notifications_topic_arn = module.sns.todo_notifications_topic_arn
   vapid_public_key             = var.vapid_public_key
   vapid_private_key            = var.vapid_private_key
-  agent_ec2_ip                 = module.ec2_agent.public_ip
+  agent_ec2_ip                 = var.enable_agent ? module.ec2_agent[0].public_ip : ""
   agent_secret                 = var.agent_secret
 }
 
 module "api_gateway" {
   source = "./modules/api_gateway"
 
-  random_name            = module.random.random_name
-  lambda_functions       = module.lambda.lambda_functions
-  cognito_user_pool_arn  = module.cognito.user_pool_arn
+  random_name           = module.random.random_name
+  lambda_functions      = module.lambda.lambda_functions
+  cognito_user_pool_arn = module.cognito.user_pool_arn
 }
 
 module "s3" {
   source = "./modules/s3"
 
-  random_name                  = module.random.random_name
-  stream_agent_message_url     = module.lambda.stream_agent_message_url
+  random_name              = module.random.random_name
+  stream_agent_message_url = module.lambda.stream_agent_message_url
 }
 
 module "sns" {
   source = "./modules/sns"
 
-  random_name                      = module.random.random_name
-  notification_lambda_arn          = module.lambda.lambda_functions["send_todo_notifications"].function_arn
+  random_name                       = module.random.random_name
+  notification_lambda_arn           = module.lambda.lambda_functions["send_todo_notifications"].function_arn
   notification_lambda_function_name = module.lambda.lambda_functions["send_todo_notifications"].function_name
 }
 
