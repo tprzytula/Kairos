@@ -3,11 +3,28 @@ const { spawn } = require('child_process')
 
 const PORT = 3001
 const SECRET = process.env.AGENT_SECRET
+const MAX_REQUESTS_PER_MINUTE = 10
+const MAX_PROCESS_DURATION_MS = 2 * 60 * 1000
 
 if (!SECRET) {
   console.error('AGENT_SECRET environment variable is required')
   process.exit(1)
 }
+
+// --- Rate limiting ---
+const requestCounts = new Map()
+
+setInterval(() => requestCounts.clear(), 60_000)
+
+const isRateLimited = (ip) => {
+  const count = requestCounts.get(ip) ?? 0
+  if (count >= MAX_REQUESTS_PER_MINUTE) return true
+  requestCounts.set(ip, count + 1)
+  return false
+}
+
+// --- Concurrency control ---
+let activeProcess = null
 
 const server = http.createServer((req, res) => {
   if (req.method === 'GET' && req.url === '/health') {
@@ -21,6 +38,19 @@ const server = http.createServer((req, res) => {
     if (!auth || auth !== `Bearer ${SECRET}`) {
       res.writeHead(401, { 'Content-Type': 'application/json' })
       res.end(JSON.stringify({ error: 'Unauthorized' }))
+      return
+    }
+
+    const ip = req.socket.remoteAddress
+    if (isRateLimited(ip)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: 'Too many requests' }))
+      return
+    }
+
+    if (activeProcess) {
+      res.writeHead(503, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: 'Agent is busy, try again shortly' }))
       return
     }
 
@@ -65,6 +95,21 @@ const server = http.createServer((req, res) => {
         env: { ...process.env, HOME: '/home/ec2-user' },
       })
 
+      activeProcess = claude
+
+      // Auto-kill if process runs too long
+      const timeout = setTimeout(() => {
+        if (!claude.killed) {
+          console.error('Claude process exceeded max duration, killing')
+          claude.kill('SIGTERM')
+        }
+      }, MAX_PROCESS_DURATION_MS)
+
+      const cleanup = () => {
+        clearTimeout(timeout)
+        if (activeProcess === claude) activeProcess = null
+      }
+
       res.writeHead(200, {
         'Content-Type': 'application/x-ndjson',
         'Transfer-Encoding': 'chunked',
@@ -80,6 +125,7 @@ const server = http.createServer((req, res) => {
       })
 
       claude.on('close', code => {
+        cleanup()
         if (code !== 0) {
           console.error(`claude process exited with code ${code}`)
         }
@@ -87,6 +133,7 @@ const server = http.createServer((req, res) => {
       })
 
       claude.on('error', err => {
+        cleanup()
         console.error('Failed to spawn claude:', err)
         if (!res.headersSent) {
           res.writeHead(500, { 'Content-Type': 'application/json' })
