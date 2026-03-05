@@ -4,15 +4,13 @@ export interface StreamChunk {
   index?: number
 }
 
-const STREAM_AGENT_URL = process.env.STREAM_AGENT_URL ?? ''
-
 export const streamAgentMessage = async (
   message: string,
   accessToken: string | undefined,
   onChunk: (chunk: StreamChunk) => void,
   signal?: AbortSignal
 ): Promise<void> => {
-  const response = await fetch(STREAM_AGENT_URL, {
+  const response = await fetch('/agent/stream', {
     method: 'POST',
     signal,
     headers: {

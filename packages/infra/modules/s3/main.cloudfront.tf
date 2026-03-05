@@ -7,6 +7,28 @@ resource "aws_cloudfront_distribution" "kairos_web_distribution" {
   enabled             = true
   default_root_object = "index.html"
 
+  # Streaming agent endpoint — no cache, forward auth header
+  ordered_cache_behavior {
+    path_pattern           = "/agent/stream"
+    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = "stream_agent_message"
+    viewer_protocol_policy = "https-only"
+    compress               = false
+
+    min_ttl     = 0
+    default_ttl = 0
+    max_ttl     = 0
+
+    forwarded_values {
+      query_string = false
+      headers      = ["Authorization", "Content-Type"]
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
   # Cache behavior for static assets (long cache)
   ordered_cache_behavior {
     path_pattern           = "*.js"
@@ -94,6 +116,18 @@ resource "aws_cloudfront_distribution" "kairos_web_distribution" {
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.kairos_web_distribution.cloudfront_access_identity_path
+    }
+  }
+
+  origin {
+    domain_name = trimsuffix(trimprefix(var.stream_agent_message_url, "https://"), "/")
+    origin_id   = "stream_agent_message"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
 

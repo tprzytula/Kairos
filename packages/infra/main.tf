@@ -28,7 +28,8 @@ module "api_gateway" {
 module "s3" {
   source = "./modules/s3"
 
-  random_name = module.random.random_name
+  random_name                  = module.random.random_name
+  stream_agent_message_url     = module.lambda.stream_agent_message_url
 }
 
 module "sns" {
