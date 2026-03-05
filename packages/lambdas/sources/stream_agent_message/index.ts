@@ -237,6 +237,8 @@ export const handler = awslambda.streamifyResponse(async (event: StreamEvent, re
   let body: { message?: string; conversationHistory?: ConversationTurn[] } = {}
   try { body = event.body ? JSON.parse(event.body) : {} } catch { /* ignore */ }
 
+  console.log('body.message:', body.message ? 'present' : 'missing')
+
   if (!body.message) {
     writeSSE(httpStream, { type: 'error', content: 'Missing message field' })
     ;(httpStream as unknown as Writable).end()
@@ -245,6 +247,7 @@ export const handler = awslambda.streamifyResponse(async (event: StreamEvent, re
 
   // Extract user info from JWT
   const user = extractUserObjectFromEvent(event as unknown as APIGatewayProxyEvent)
+  console.log('user:', user ? `sub=${user.sub}` : 'null')
   if (!user) {
     writeSSE(httpStream, { type: 'error', content: 'Authentication required' })
     ;(httpStream as unknown as Writable).end()
@@ -253,11 +256,14 @@ export const handler = awslambda.streamifyResponse(async (event: StreamEvent, re
 
   // Extract project ID from header
   const projectId = extractProjectFromEvent(event as unknown as APIGatewayProxyEvent)
+  console.log('projectId:', projectId ?? 'null')
   if (!projectId) {
     writeSSE(httpStream, { type: 'error', content: 'Project ID required' })
     ;(httpStream as unknown as Writable).end()
     return
   }
+
+  console.log('fetching DynamoDB data for project:', projectId)
 
   try {
     // Fetch user data from DynamoDB
