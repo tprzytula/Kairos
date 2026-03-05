@@ -86,6 +86,7 @@ const server = http.createServer((req, res) => {
       const args = [
         '-p', fullPrompt,
         '--output-format', 'stream-json',
+        '--verbose',
       ]
       if (systemPrompt) {
         args.push('--system-prompt', systemPrompt)
