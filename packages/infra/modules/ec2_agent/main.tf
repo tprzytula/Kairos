@@ -86,20 +86,9 @@ resource "aws_instance" "agent" {
   vpc_security_group_ids = [aws_security_group.agent.id]
   iam_instance_profile   = aws_iam_instance_profile.agent.name
 
-  user_data = <<-EOF
-    #!/bin/bash
-    set -e
-
-    # Install Node.js 20
-    dnf install -y nodejs20
-
-    # Install Claude Code CLI
-    npm install -g @anthropic-ai/claude-code
-
-    # Create service directory
-    mkdir -p /home/ec2-user/agent-service
-    chown ec2-user:ec2-user /home/ec2-user/agent-service
-  EOF
+  user_data = base64encode(templatefile("${path.module}/user_data.sh.tpl", {
+    agent_secret = var.agent_secret
+  }))
 
   root_block_device {
     volume_size = 30
