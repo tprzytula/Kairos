@@ -49,3 +49,10 @@ resource "aws_lambda_permission" "stream_agent_message_public" {
   function_url_auth_type = "NONE"
 }
 
+resource "aws_lambda_permission" "stream_agent_message_invoke" {
+  statement_id  = "FunctionURLAllowInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_functions["stream_agent_message"].function_name
+  principal     = "*"
+}
+
