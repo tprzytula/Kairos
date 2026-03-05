@@ -8,8 +8,8 @@ import { AgentChatProvider } from '../../providers/AgentChatProvider'
 import StandardLayout from '../../layout/standardLayout'
 import AppInfoCard from '../../components/AppInfoCard'
 import DashboardHeader from '../../components/DashboardHeader'
-import AgentMessageButton from '../../components/AgentMessageButton'
 import AgentChatDrawer from '../../components/AgentChatDrawer'
+import AgentMessageButton from '../../components/AgentMessageButton'
 import GroceryItemPreviewPopup from '../../components/GroceryItemPreviewPopup'
 import GrocerySection from './components/GrocerySection'
 import NoiseSection from './components/NoiseSection'
@@ -60,6 +60,8 @@ const HomeDataContent = () => {
           onToggleExpansion={interactions.handleToggleToDoItems}
           onItemToggle={interactions.handleToDoItemToggle}
         />
+
+        <AgentMessageButton />
       </Container>
       
       <GroceryItemPreviewPopup
@@ -80,7 +82,6 @@ const HomeContent = () => {
       <StandardLayout>
         <AppInfoCard />
         <DashboardHeader />
-        <AgentMessageButton />
         <GroceryListProvider key={`grocery-${currentProject?.id || 'no-project'}`}>
           <ToDoListProvider key={`todo-${currentProject?.id || 'no-project'}`}>
             <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>
