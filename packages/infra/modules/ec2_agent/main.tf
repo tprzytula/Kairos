@@ -86,9 +86,9 @@ resource "aws_instance" "agent" {
   vpc_security_group_ids = [aws_security_group.agent.id]
   iam_instance_profile   = aws_iam_instance_profile.agent.name
 
-  user_data = base64encode(templatefile("${path.module}/user_data.sh.tpl", {
+  user_data = templatefile("${path.module}/user_data.sh.tpl", {
     agent_secret = var.agent_secret
-  }))
+  })
 
   root_block_device {
     volume_size = 30
