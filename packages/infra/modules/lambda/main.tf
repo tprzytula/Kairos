@@ -27,3 +27,17 @@ resource "aws_lambda_function" "lambda_functions" {
   }
 }
 
+resource "aws_lambda_function_url" "stream_agent_message" {
+  function_name      = aws_lambda_function.lambda_functions["stream_agent_message"].function_name
+  authorization_type = "NONE"
+  invoke_mode        = "RESPONSE_STREAM"
+
+  cors {
+    allow_credentials = false
+    allow_origins     = ["*"]
+    allow_methods     = ["POST", "OPTIONS"]
+    allow_headers     = ["Content-Type", "Authorization"]
+    max_age           = 300
+  }
+}
+

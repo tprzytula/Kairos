@@ -366,6 +366,18 @@ locals {
           todo_notifications = "none"
         }
       }
+    },
+    "stream_agent_message" = {
+      environment_variables = {}
+      timeout               = 15
+      permissions = {
+        database = {
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
     }
   }
 }

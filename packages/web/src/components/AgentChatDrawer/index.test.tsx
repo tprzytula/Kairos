@@ -10,6 +10,7 @@ const renderWithContext = (contextValue: Partial<IState> = {}) => {
   const defaultValue: IState = {
     messages: [],
     isOpen: true,
+    isTyping: false,
     openChat: jest.fn(),
     closeChat: jest.fn(),
     sendMessage: jest.fn(),

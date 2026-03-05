@@ -5,6 +5,7 @@ export interface IChatMessage {
   content: string
   timestamp: Date
   role: 'user' | 'agent'
+  isStreaming?: boolean
 }
 
 export interface IState {
