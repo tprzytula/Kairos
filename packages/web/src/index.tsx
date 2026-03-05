@@ -11,6 +11,7 @@ import { AppStateProvider } from './providers/AppStateProvider'
 import { BrowserRouter } from 'react-router'
 import AuthProvider from './providers/AuthProvider'
 import { ProjectProvider } from './providers/ProjectProvider'
+import { RecipeProvider } from './providers/RecipeProvider'
 
 const requestPersistentStorage = async (): Promise<void> => {
   if (navigator.storage && navigator.storage.persist) {
@@ -34,9 +35,11 @@ if (container) {
       <AuthProvider>
         <ProjectProvider>
           <AppStateProvider>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
+            <RecipeProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </RecipeProvider>
           </AppStateProvider>
         </ProjectProvider>
       </AuthProvider>

@@ -10,8 +10,10 @@ import SortByAlphaIcon from '@mui/icons-material/SortByAlpha'
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess'
 import StorefrontIcon from '@mui/icons-material/Storefront'
+import MenuBookIcon from '@mui/icons-material/MenuBook'
 import { Container, ScrollableContainer } from './index.styled'
 import { useState, useCallback, useMemo } from 'react'
+import RecipeDrawer from '../../components/RecipeDrawer'
 import { useParams, useNavigate } from 'react-router'
 import { removeGroceryItems } from '../../api/groceryList'
 import { showAlert } from '../../utils/alert'
@@ -45,6 +47,7 @@ const GroceryListContent = () => {
   
   const [allExpanded, setAllExpanded] = useState<boolean>(true)
   const [expandKey, setExpandKey] = useState<number>(0)
+  const [recipeDrawerOpen, setRecipeDrawerOpen] = useState(false)
   const toggleAll = useCallback(() => {
     setAllExpanded((v) => !v)
     setExpandKey((k) => k + 1)
@@ -105,7 +108,14 @@ const GroceryListContent = () => {
           icon: <StorefrontIcon />,
           onClick: handleBackToShops,
           tooltip: "Back to Shops",
-          ariaLabel: "Navigate back to shops list"
+          ariaLabel: "Navigate back to shops list",
+          label: "Switch Shop",
+        }}
+        secondaryActionButton={{
+          icon: <MenuBookIcon />,
+          onClick: () => setRecipeDrawerOpen(true),
+          tooltip: "Browse recipes",
+          ariaLabel: "Open recipe book",
         }}
       />
       <Container>
@@ -136,6 +146,11 @@ const GroceryListContent = () => {
           <GroceryList allExpanded={allExpanded} expandKey={expandKey} shopId={shopId} />
         </ScrollableContainer>
       </Container>
+      <RecipeDrawer
+        open={recipeDrawerOpen}
+        onClose={() => setRecipeDrawerOpen(false)}
+        shopId={shopId}
+      />
     </StandardLayout>
   )
 }

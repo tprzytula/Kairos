@@ -9,6 +9,7 @@ export enum DynamoDBTable {
   USER_PREFERENCES = "UserPreferences",
   PUSH_SUBSCRIPTIONS = "PushSubscriptions",
   SHOPS = "Shops",
+  RECIPES = "Recipes",
 }
 
 export enum DynamoDBIndex {
@@ -22,6 +23,7 @@ export enum DynamoDBIndex {
   PROJECT_MEMBERS_PROJECT = "ProjectMembersIndex",
   PUSH_SUBSCRIPTIONS_USER = "UserPushSubscriptionsIndex",
   SHOPS_PROJECT = "ProjectShopsIndex",
+  RECIPES_PROJECT = "ProjectRecipesIndex",
 }
 
 export enum GroceryItemUnit {
