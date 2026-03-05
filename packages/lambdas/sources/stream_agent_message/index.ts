@@ -155,46 +155,52 @@ const streamFromEC2 = (
         }
 
         let buffer = ''
+        let sentResult = false
+
+        // Claude CLI stream-json outputs concatenated JSON objects without newline separators.
+        // We parse them by tracking brace depth.
+        const parseAndEmit = (json: string) => {
+          try {
+            const parsed = JSON.parse(json)
+            if (parsed.type === 'result' && parsed.result && !sentResult) {
+              sentResult = true
+              writeSSE(httpStream, { type: 'text_delta', content: parsed.result })
+            }
+          } catch {
+            // malformed JSON, skip
+          }
+        }
+
+        const extractObjects = (text: string): string => {
+          let depth = 0
+          let start = -1
+
+          for (let i = 0; i < text.length; i++) {
+            if (text[i] === '{') {
+              if (depth === 0) start = i
+              depth++
+            } else if (text[i] === '}') {
+              depth--
+              if (depth === 0 && start >= 0) {
+                parseAndEmit(text.slice(start, i + 1))
+                start = -1
+              }
+            }
+          }
+
+          // Return unparsed remainder (incomplete object)
+          if (start >= 0) return text.slice(start)
+          return ''
+        }
 
         res.on('data', (chunk: Buffer) => {
           buffer += chunk.toString()
-          const lines = buffer.split('\n')
-          buffer = lines.pop() ?? ''
-
-          for (const line of lines) {
-            if (!line.trim()) continue
-            try {
-              const parsed = JSON.parse(line)
-              // Claude stream-json emits objects with type "content_block_delta" or "assistant"
-              // Extract text from the various possible formats
-              if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
-                writeSSE(httpStream, { type: 'text_delta', content: parsed.delta.text })
-              } else if (parsed.type === 'assistant' && parsed.content) {
-                // Final message — send as text_delta
-                writeSSE(httpStream, { type: 'text_delta', content: parsed.content })
-              } else if (parsed.result) {
-                // stream-json result line — contains the full text
-                writeSSE(httpStream, { type: 'text_delta', content: parsed.result })
-              }
-            } catch {
-              // Non-JSON line, skip
-            }
-          }
+          buffer = extractObjects(buffer)
         })
 
         res.on('end', () => {
-          // Process remaining buffer
           if (buffer.trim()) {
-            try {
-              const parsed = JSON.parse(buffer)
-              if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
-                writeSSE(httpStream, { type: 'text_delta', content: parsed.delta.text })
-              } else if (parsed.result) {
-                writeSSE(httpStream, { type: 'text_delta', content: parsed.result })
-              }
-            } catch {
-              // ignore
-            }
+            extractObjects(buffer)
           }
           writeSSE(httpStream, { type: 'done' })
           resolve()
