@@ -50,10 +50,41 @@ resource "aws_security_group" "agent" {
   }
 }
 
+resource "aws_iam_role" "agent" {
+  name = format("kairos-agent-%s", var.random_name)
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+  })
+
+  tags = {
+    Name = format("kairos-agent-%s", var.random_name)
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "agent_ssm" {
+  role       = aws_iam_role.agent.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+
+resource "aws_iam_instance_profile" "agent" {
+  name = format("kairos-agent-%s", var.random_name)
+  role = aws_iam_role.agent.name
+}
+
 resource "aws_instance" "agent" {
   ami                    = data.aws_ami.amazon_linux_2023_arm.id
   instance_type          = "t4g.micro"
   vpc_security_group_ids = [aws_security_group.agent.id]
+  iam_instance_profile   = aws_iam_instance_profile.agent.name
 
   user_data = <<-EOF
     #!/bin/bash
