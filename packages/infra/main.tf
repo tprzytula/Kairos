@@ -12,9 +12,9 @@ module "ec2_agent" {
   source = "./modules/ec2_agent"
   count  = var.enable_agent ? 1 : 0
 
-  random_name      = module.random.random_name
-  agent_secret     = var.agent_secret
-  ssh_allowed_cidr = var.ssh_allowed_cidr
+  random_name       = module.random.random_name
+  agent_secret      = var.agent_secret
+  ssh_allowed_cidrs = var.ssh_allowed_cidrs
 }
 
 module "lambda" {

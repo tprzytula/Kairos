@@ -35,8 +35,8 @@ variable "agent_secret" {
   sensitive   = true
 }
 
-variable "ssh_allowed_cidr" {
-  description = "CIDR block allowed to SSH into the agent EC2 instance"
-  type        = string
-  default     = "0.0.0.0/0"
+variable "ssh_allowed_cidrs" {
+  description = "CIDR blocks allowed to SSH into the agent EC2 instance"
+  type        = list(string)
+  default     = []
 }
