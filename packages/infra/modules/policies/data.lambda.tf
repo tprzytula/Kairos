@@ -296,6 +296,34 @@ data "aws_iam_policy_document" "lambda_policies" {
   }
 
   dynamic "statement" {
+    for_each = each.value.permissions.database.recipes == local.permissions.read_only ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadOnlyRecipes"
+      actions = local.database_read_only_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_recipes_arn,
+        "${var.dynamodb_recipes_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.recipes == local.permissions.read_write ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadWriteRecipes"
+      actions = local.database_read_write_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_recipes_arn,
+        "${var.dynamodb_recipes_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
     for_each = each.value.permissions.sns.todo_notifications == local.permissions.publish ? [each.key] : []
 
     content {

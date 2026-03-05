@@ -386,6 +386,54 @@ locals {
           todo_notifications = "none"
         }
       }
+    },
+    "add_recipe" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          recipes            = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "get_recipes" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          recipes            = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "update_recipe" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          recipes            = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "delete_recipe" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          recipes            = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
     }
   }
 }
