@@ -35,7 +35,7 @@ resource "aws_lambda_function_url" "stream_agent_message" {
   cors {
     allow_credentials = false
     allow_origins     = ["*"]
-    allow_methods     = ["POST", "OPTIONS"]
+    allow_methods     = ["POST"]
     allow_headers     = ["Content-Type", "Authorization"]
     max_age           = 300
   }
