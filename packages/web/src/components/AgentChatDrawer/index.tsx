@@ -21,6 +21,7 @@ const DRAG_CLOSE_THRESHOLD = 100
 
 const AgentChatDrawer = () => {
   const { isOpen, closeChat, messages, sendMessage, isTyping } = useAgentChatContext()
+  const hasStreamingBubble = messages.some((m) => m.role === 'agent' && m.isStreaming)
   const messageListRef = useRef<HTMLDivElement>(null)
   const [dragOffset, setDragOffset] = useState(0)
   const isDragging = useRef(false)
@@ -139,7 +140,7 @@ const AgentChatDrawer = () => {
         ) : (
           messages.map((message) => <ChatMessageBubble key={message.id} message={message} />)
         )}
-        {isTyping && <TypingIndicator />}
+        {isTyping && !hasStreamingBubble && <TypingIndicator />}
       </MessageList>
 
       <ChatInput onSend={sendMessage} />
