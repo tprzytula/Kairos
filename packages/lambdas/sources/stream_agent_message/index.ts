@@ -155,53 +155,55 @@ const streamFromEC2 = (
         }
 
         let buffer = ''
-        let sentResult = false
 
-        // Claude CLI stream-json outputs concatenated JSON objects without newline separators.
-        // We parse them by tracking brace depth.
-        const parseAndEmit = (json: string) => {
-          try {
-            const parsed = JSON.parse(json)
-            if (parsed.type === 'result' && parsed.result && !sentResult) {
-              sentResult = true
-              writeSSE(httpStream, { type: 'text_delta', content: parsed.result })
+        // Claude CLI stream-json outputs concatenated JSON objects.
+        // Each starts with {"type":. We split on this boundary.
+        const processBuffer = () => {
+          const marker = '{"type":'
+          while (true) {
+            const firstIdx = buffer.indexOf(marker)
+            if (firstIdx < 0) break
+
+            const secondIdx = buffer.indexOf(marker, firstIdx + 1)
+            if (secondIdx < 0) break // incomplete — wait for more data
+
+            const jsonStr = buffer.slice(firstIdx, secondIdx)
+            buffer = buffer.slice(secondIdx)
+
+            try {
+              const parsed = JSON.parse(jsonStr)
+              if (parsed.type === 'result' && parsed.result) {
+                writeSSE(httpStream, { type: 'text_delta', content: parsed.result })
+              }
+            } catch {
+              // malformed, skip
             }
-          } catch {
-            // malformed JSON, skip
           }
         }
 
-        const extractObjects = (text: string): string => {
-          let depth = 0
-          let start = -1
+        const processRemainder = () => {
+          const marker = '{"type":'
+          const idx = buffer.lastIndexOf(marker)
+          if (idx < 0) return
 
-          for (let i = 0; i < text.length; i++) {
-            if (text[i] === '{') {
-              if (depth === 0) start = i
-              depth++
-            } else if (text[i] === '}') {
-              depth--
-              if (depth === 0 && start >= 0) {
-                parseAndEmit(text.slice(start, i + 1))
-                start = -1
-              }
+          const jsonStr = buffer.slice(idx)
+          try {
+            const parsed = JSON.parse(jsonStr)
+            if (parsed.type === 'result' && parsed.result) {
+              writeSSE(httpStream, { type: 'text_delta', content: parsed.result })
             }
+          } catch {
+            // incomplete, ignore
           }
-
-          // Return unparsed remainder (incomplete object)
-          if (start >= 0) return text.slice(start)
-          return ''
         }
 
         res.on('data', (chunk: Buffer) => {
           buffer += chunk.toString()
-          buffer = extractObjects(buffer)
+          processBuffer()
         })
 
         res.on('end', () => {
-          if (buffer.trim()) {
-            extractObjects(buffer)
-          }
+          processRemainder()
           writeSSE(httpStream, { type: 'done' })
           resolve()
         })
