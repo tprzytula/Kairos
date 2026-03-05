@@ -41,3 +41,11 @@ resource "aws_lambda_function_url" "stream_agent_message" {
   }
 }
 
+resource "aws_lambda_permission" "stream_agent_message_public" {
+  statement_id           = "FunctionURLAllowPublicAccess"
+  action                 = "lambda:InvokeFunctionUrl"
+  function_name          = aws_lambda_function.lambda_functions["stream_agent_message"].function_name
+  principal              = "*"
+  function_url_auth_type = "NONE"
+}
+
