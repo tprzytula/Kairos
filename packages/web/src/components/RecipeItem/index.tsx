@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { Typography, IconButton, Button, Chip, Tooltip } from '@mui/material'
+import { Typography, IconButton, Button, Chip, Tooltip, Box } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
@@ -116,6 +116,38 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
             )
           })}
         </IngredientList>
+      )}
+
+      {recipe.instructions && recipe.instructions.length > 0 && (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+          <Typography variant="body2" fontWeight={600} color="text.secondary">
+            Instructions
+          </Typography>
+          {recipe.instructions.map((step, index) => (
+            <Box key={index} sx={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  minWidth: '20px',
+                  height: '20px',
+                  borderRadius: '50%',
+                  background: 'rgba(102, 126, 234, 0.15)',
+                  color: '#667eea',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 600,
+                  flexShrink: 0,
+                }}
+              >
+                {index + 1}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ lineHeight: '1.4', paddingTop: '2px' }}>
+                {step}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
       )}
 
       <Tooltip title={canUseRecipe ? `Add all ingredients to current shop's list` : 'Open a specific shop to use this recipe'}>

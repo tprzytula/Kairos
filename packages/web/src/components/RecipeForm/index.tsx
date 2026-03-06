@@ -41,6 +41,9 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   const [ingredients, setIngredients] = useState<IRecipeIngredient[]>(
     initialRecipe?.ingredients ?? [{ ...DEFAULT_INGREDIENT }]
   )
+  const [instructions, setInstructions] = useState<string[]>(
+    initialRecipe?.instructions ?? ['']
+  )
   const [isSaving, setIsSaving] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialRecipe?.imagePath ?? null)
   const [imagePath, setImagePath] = useState<string>(initialRecipe?.imagePath ?? '')
@@ -64,6 +67,18 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
 
   const handleRemoveIngredient = useCallback((index: number) => {
     setIngredients((prev) => prev.filter((_, i) => i !== index))
+  }, [])
+
+  const handleInstructionChange = useCallback((index: number, value: string) => {
+    setInstructions((prev) => prev.map((step, i) => i === index ? value : step))
+  }, [])
+
+  const handleAddInstruction = useCallback(() => {
+    setInstructions((prev) => [...prev, ''])
+  }, [])
+
+  const handleRemoveInstruction = useCallback((index: number) => {
+    setInstructions((prev) => prev.filter((_, i) => i !== index))
   }, [])
 
   const handleImageClick = useCallback(() => {
@@ -111,11 +126,13 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
     setIsSaving(true)
     try {
       const imagePathValue = imagePath || undefined
+      const validInstructions = instructions.map((s) => s.trim()).filter((s) => s.length > 0)
+      const instructionsValue = validInstructions.length > 0 ? validInstructions : undefined
       if (initialRecipe) {
-        await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients, imagePath: imagePathValue })
+        await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients, instructions: instructionsValue, imagePath: imagePathValue })
         showAlert({ description: 'Recipe updated', severity: 'success' }, dispatch)
       } else {
-        await addRecipe(trimmedName, validIngredients, imagePathValue)
+        await addRecipe(trimmedName, validIngredients, imagePathValue, instructionsValue)
         showAlert({ description: 'Recipe added', severity: 'success' }, dispatch)
       }
       onDone()
@@ -124,7 +141,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
     } finally {
       setIsSaving(false)
     }
-  }, [name, ingredients, imagePath, initialRecipe, addRecipe, updateRecipe, dispatch, onDone])
+  }, [name, ingredients, instructions, imagePath, initialRecipe, addRecipe, updateRecipe, dispatch, onDone])
 
   return (
     <FormContainer>
@@ -214,6 +231,43 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           sx={{ alignSelf: 'flex-start', borderRadius: '8px' }}
         >
           Add Ingredient
+        </Button>
+      </IngredientsSection>
+
+      <IngredientsSection>
+        <Typography variant="body2" fontWeight={600} color="text.secondary">
+          Instructions
+        </Typography>
+
+        {instructions.map((step, index) => (
+          <IngredientRow key={index} sx={{ gridTemplateColumns: '1fr 36px' }}>
+            <TextField
+              label={`Step ${index + 1}`}
+              value={step}
+              onChange={(e) => handleInstructionChange(index, e.target.value)}
+              size="small"
+              multiline
+              placeholder={`Describe step ${index + 1}...`}
+            />
+            <IconButton
+              size="small"
+              onClick={() => handleRemoveInstruction(index)}
+              disabled={instructions.length === 1}
+              aria-label={`Remove step ${index + 1}`}
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </IngredientRow>
+        ))}
+
+        <Button
+          variant="outlined"
+          size="small"
+          startIcon={<AddIcon />}
+          onClick={handleAddInstruction}
+          sx={{ alignSelf: 'flex-start', borderRadius: '8px' }}
+        >
+          Add Step
         </Button>
       </IngredientsSection>
 

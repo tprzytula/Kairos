@@ -12,6 +12,7 @@ export interface IRecipe {
     name: string
     imagePath?: string
     ingredients: string  // JSON-serialized IRecipeIngredient[]
+    instructions?: string  // JSON-serialized string[]
     createdAt: string
     updatedAt: string
 }
