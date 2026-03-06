@@ -41,6 +41,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   const { currentProject } = useProjectContext()
   const { dispatch } = useAppState()
   const [name, setName] = useState(initialRecipe?.name ?? '')
+  const [externalLink, setExternalLink] = useState(initialRecipe?.externalLink ?? '')
   const [ingredients, setIngredients] = useState<IRecipeIngredient[]>(
     initialRecipe?.ingredients ?? [{ ...DEFAULT_INGREDIENT }]
   )
@@ -168,13 +169,14 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
     setIsSaving(true)
     try {
       const imagePathValue = imagePath || undefined
+      const externalLinkValue = externalLink.trim() || undefined
       const validInstructions = instructions.map((s) => s.trim()).filter((s) => s.length > 0)
       const instructionsValue = validInstructions.length > 0 ? validInstructions : undefined
       if (initialRecipe) {
-        await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients, instructions: instructionsValue, imagePath: imagePathValue })
+        await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients, instructions: instructionsValue, imagePath: imagePathValue, externalLink: externalLinkValue })
         showAlert({ description: 'Recipe updated', severity: 'success' }, dispatch)
       } else {
-        await addRecipe(trimmedName, validIngredients, imagePathValue, instructionsValue)
+        await addRecipe(trimmedName, validIngredients, imagePathValue, instructionsValue, externalLinkValue)
         showAlert({ description: 'Recipe added', severity: 'success' }, dispatch)
       }
       onDone()
@@ -224,6 +226,16 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
         fullWidth
         size="small"
         placeholder="e.g. Pasta Carbonara"
+      />
+
+      <TextField
+        label="Original recipe URL"
+        value={externalLink}
+        onChange={(e) => setExternalLink(e.target.value)}
+        fullWidth
+        size="small"
+        placeholder="https://..."
+        type="url"
       />
 
       <IngredientsSection>

@@ -4,7 +4,7 @@ import { createFetchOptions } from '../../../utils/api'
 
 export const updateRecipe = async (
   id: string,
-  fields: { name?: string; ingredients?: IRecipeIngredient[]; instructions?: string[]; imagePath?: string },
+  fields: { name?: string; ingredients?: IRecipeIngredient[]; instructions?: string[]; imagePath?: string; externalLink?: string },
   projectId?: string
 ): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/recipes/${id}`, createFetchOptions({

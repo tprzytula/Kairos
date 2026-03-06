@@ -8,6 +8,7 @@ export const createRecipe = async (recipe: {
   ingredients: IRecipeIngredientBody[];
   instructions?: string[];
   imagePath?: string;
+  externalLink?: string;
 }): Promise<string> => {
   const id = randomUUID();
   const now = new Date().toISOString();
@@ -27,6 +28,10 @@ export const createRecipe = async (recipe: {
 
   if (recipe.imagePath) {
     item.imagePath = recipe.imagePath;
+  }
+
+  if (recipe.externalLink) {
+    item.externalLink = recipe.externalLink;
   }
 
   await putItem({

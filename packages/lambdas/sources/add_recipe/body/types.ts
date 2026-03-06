@@ -11,4 +11,5 @@ export interface IRequestBody {
     ingredients: IRecipeIngredientBody[];
     instructions?: string[];
     imagePath?: string;
+    externalLink?: string;
 }
