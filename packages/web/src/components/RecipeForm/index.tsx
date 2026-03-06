@@ -13,6 +13,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import { type Area } from 'react-easy-crop'
 import { IRecipe, IRecipeIngredient } from '../../types/recipe'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import { useRecipeContext } from '../../providers/RecipeProvider'
@@ -21,6 +22,8 @@ import { showAlert } from '../../utils/alert'
 import { getRecipeUploadUrl } from '../../api/recipes'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { FormContainer, IngredientRow, IngredientsSection, FormActions, ImageUploadBox, ImagePreview } from './index.styled'
+import ImageCropModal from './ImageCropModal'
+import { getCroppedBlob } from './cropUtils'
 
 interface RecipeFormProps {
   initialRecipe?: IRecipe | null
@@ -48,6 +51,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialRecipe?.imagePath ?? null)
   const [imagePath, setImagePath] = useState<string>(initialRecipe?.imagePath ?? '')
   const [isUploading, setIsUploading] = useState(false)
+  const [pendingImageSrc, setPendingImageSrc] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleIngredientChange = useCallback(
@@ -85,30 +89,47 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
     fileInputRef.current?.click()
   }, [])
 
-  const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    setPendingImageSrc(URL.createObjectURL(file))
+    // Reset so the same file can be picked again if the user cancels
+    e.target.value = ''
+  }, [])
 
-    const ext = file.name.split('.').pop() ?? 'jpg'
-    setPreviewUrl(URL.createObjectURL(file))
-    setIsUploading(true)
+  const handleCropConfirm = useCallback(async (croppedAreaPixels: Area) => {
+    if (!pendingImageSrc) return
+
+    const previousPreview = previewUrl
+    const previousPath = imagePath
 
     try {
-      const { uploadUrl, imagePath: path } = await getRecipeUploadUrl(ext, currentProject?.id)
+      const croppedBlob = await getCroppedBlob(pendingImageSrc, croppedAreaPixels)
+      const objectUrl = URL.createObjectURL(croppedBlob)
+      setPreviewUrl(objectUrl)
+      setPendingImageSrc(null)
+      setIsUploading(true)
+
+      const { uploadUrl, imagePath: path } = await getRecipeUploadUrl('jpg', currentProject?.id)
       await fetch(uploadUrl, {
         method: 'PUT',
-        body: file,
-        headers: { 'Content-Type': file.type },
+        body: croppedBlob,
+        headers: { 'Content-Type': 'image/jpeg' },
       })
       setImagePath(path)
     } catch (error) {
       showAlert({ description: 'Failed to upload image', severity: 'error' }, dispatch)
-      setPreviewUrl(initialRecipe?.imagePath ?? null)
-      setImagePath(initialRecipe?.imagePath ?? '')
+      setPreviewUrl(previousPreview)
+      setImagePath(previousPath)
+      setPendingImageSrc(null)
     } finally {
       setIsUploading(false)
     }
-  }, [currentProject, dispatch, initialRecipe])
+  }, [pendingImageSrc, previewUrl, imagePath, currentProject, dispatch])
+
+  const handleCropCancel = useCallback(() => {
+    setPendingImageSrc(null)
+  }, [])
 
   const handleSave = useCallback(async () => {
     const trimmedName = name.trim()
@@ -145,6 +166,14 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
 
   return (
     <FormContainer>
+      {pendingImageSrc && (
+        <ImageCropModal
+          imageSrc={pendingImageSrc}
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
+      )}
+
       <input
         ref={fileInputRef}
         type="file"
