@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import {
   TextField,
   Button,
@@ -37,7 +37,7 @@ const DEFAULT_INGREDIENT: IRecipeIngredient = {
 }
 
 const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
-  const { addRecipe, updateRecipe } = useRecipeContext()
+  const { addRecipe, updateRecipe, removeRecipe } = useRecipeContext()
   const { currentProject } = useProjectContext()
   const { dispatch } = useAppState()
   const [name, setName] = useState(initialRecipe?.name ?? '')
@@ -48,6 +48,13 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
     initialRecipe?.instructions ?? ['']
   )
   const [isSaving, setIsSaving] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
+
+  useEffect(() => {
+    if (!deleteConfirm) return
+    const timer = setTimeout(() => setDeleteConfirm(false), 3000)
+    return () => clearTimeout(timer)
+  }, [deleteConfirm])
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialRecipe?.imagePath ?? null)
   const [imagePath, setImagePath] = useState<string>(initialRecipe?.imagePath ?? '')
   const [isUploading, setIsUploading] = useState(false)
@@ -130,6 +137,20 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   const handleCropCancel = useCallback(() => {
     setPendingImageSrc(null)
   }, [])
+
+  const handleDelete = useCallback(async () => {
+    if (!deleteConfirm) {
+      setDeleteConfirm(true)
+      return
+    }
+    try {
+      await removeRecipe(initialRecipe!.id)
+      onDone()
+    } catch (error) {
+      showAlert({ description: 'Failed to delete recipe', severity: 'error' }, dispatch)
+      setDeleteConfirm(false)
+    }
+  }, [deleteConfirm, removeRecipe, initialRecipe, onDone, dispatch])
 
   const handleSave = useCallback(async () => {
     const trimmedName = name.trim()
@@ -301,6 +322,23 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
       </IngredientsSection>
 
       <FormActions>
+        {initialRecipe && (
+          <Button
+            variant={deleteConfirm ? 'contained' : 'outlined'}
+            size="small"
+            onClick={handleDelete}
+            disabled={isSaving}
+            sx={{
+              borderRadius: '8px',
+              mr: 'auto',
+              ...(deleteConfirm
+                ? { background: '#d32f2f', color: '#fff', '&:hover': { background: '#b71c1c' } }
+                : { borderColor: 'rgba(211,47,47,0.4)', color: '#d32f2f', '&:hover': { borderColor: '#d32f2f', background: 'rgba(211,47,47,0.05)' } }),
+            }}
+          >
+            {deleteConfirm ? 'Confirm delete?' : 'Delete'}
+          </Button>
+        )}
         <Button variant="outlined" onClick={onDone} disabled={isSaving} sx={{ borderRadius: '8px' }}>
           Cancel
         </Button>
