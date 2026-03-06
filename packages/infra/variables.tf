@@ -40,3 +40,4 @@ variable "ssh_allowed_cidrs" {
   type        = list(string)
   default     = []
 }
+

@@ -4,21 +4,25 @@ import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 import { IRecipe } from '../../types/recipe'
+import { IItemDefault } from '../../hooks/useItemDefaults/types'
+import { findItemIcon } from '../ItemForm/components/ItemImage/utils'
+import { GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { addGroceryItem } from '../../api/groceryList'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
-import { RecipeCard, RecipeCardHeader, RecipeCardActions } from './index.styled'
+import { RecipeCard, RecipeCardHeader, RecipeCardActions, RecipeCoverImage, IngredientList, IngredientItemRow, IngredientIcon } from './index.styled'
 
 interface RecipeItemProps {
   recipe: IRecipe
   onEdit: (recipe: IRecipe) => void
   onUseRecipe: () => void
   shopId?: string
+  defaults?: IItemDefault[]
 }
 
-const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId }: RecipeItemProps) => {
+const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeItemProps) => {
   const { removeRecipe } = useRecipeContext()
   const { currentProject } = useProjectContext()
   const { dispatch } = useAppState()
@@ -64,6 +68,10 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId }: RecipeItemProps) =>
 
   return (
     <RecipeCard>
+      {recipe.imagePath && (
+        <RecipeCoverImage src={recipe.imagePath} alt={recipe.name} />
+      )}
+
       <RecipeCardHeader>
         <Typography variant="body1" fontWeight={600}>
           {recipe.name}
@@ -93,6 +101,22 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId }: RecipeItemProps) =>
           fontSize: '0.7rem',
         }}
       />
+
+      {recipe.ingredients.length > 0 && (
+        <IngredientList>
+          {recipe.ingredients.map((ingredient, index) => {
+            const icon = findItemIcon(ingredient.name, defaults)
+            return (
+              <IngredientItemRow key={index}>
+                {icon && <IngredientIcon src={icon} alt={ingredient.name} />}
+                <Typography variant="caption" color="text.secondary">
+                  {ingredient.name} — {ingredient.quantity} {GroceryItemUnitLabelMap[ingredient.unit]}
+                </Typography>
+              </IngredientItemRow>
+            )
+          })}
+        </IngredientList>
+      )}
 
       <Tooltip title={canUseRecipe ? `Add all ingredients to current shop's list` : 'Open a specific shop to use this recipe'}>
         <span>

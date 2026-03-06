@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import { IRecipe } from '../../types/recipe'
+import { IItemDefault } from '../../hooks/useItemDefaults/types'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import RecipeItem from '../RecipeItem'
 
@@ -8,9 +9,10 @@ interface RecipeListProps {
   onEditRecipe: (recipe: IRecipe) => void
   onUseRecipe: () => void
   shopId?: string
+  defaults?: IItemDefault[]
 }
 
-const RecipeList = ({ onEditRecipe, onUseRecipe, shopId }: RecipeListProps) => {
+const RecipeList = ({ onEditRecipe, onUseRecipe, shopId, defaults }: RecipeListProps) => {
   const { recipes, isLoading } = useRecipeContext()
 
   if (isLoading) {
@@ -53,6 +55,7 @@ const RecipeList = ({ onEditRecipe, onUseRecipe, shopId }: RecipeListProps) => {
           onEdit={onEditRecipe}
           onUseRecipe={onUseRecipe}
           shopId={shopId}
+          defaults={defaults}
         />
       ))}
     </Box>

@@ -3,7 +3,7 @@ import { IRecipeIngredientBody } from "../body/types";
 
 export const updateRecipe = async (
   id: string,
-  fields: { name?: string; ingredients?: IRecipeIngredientBody[] }
+  fields: { name?: string; ingredients?: IRecipeIngredientBody[]; imagePath?: string }
 ): Promise<void> => {
   const updatedFields: Record<string, any> = {
     updatedAt: new Date().toISOString(),
@@ -15,6 +15,10 @@ export const updateRecipe = async (
 
   if (fields.ingredients !== undefined) {
     updatedFields.ingredients = JSON.stringify(fields.ingredients);
+  }
+
+  if (fields.imagePath !== undefined) {
+    updatedFields.imagePath = fields.imagePath;
   }
 
   await updateItem({

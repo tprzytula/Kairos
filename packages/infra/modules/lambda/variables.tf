@@ -31,3 +31,15 @@ variable "agent_secret" {
   default     = ""
   sensitive   = true
 }
+
+variable "s3_kairos_web_bucket_name" {
+  description = "Name of the S3 bucket for web assets (used for recipe image uploads)"
+  type        = string
+  default     = ""
+}
+
+variable "s3_cloudfront_domain" {
+  description = "CloudFront domain for serving uploaded recipe images"
+  type        = string
+  default     = ""
+}

@@ -1,35 +1,32 @@
 import { APIGatewayProxyEvent, Handler } from "aws-lambda";
 import { middleware, AuthenticatedEvent } from "@kairos-lambdas-libs/middleware";
 import { createResponse } from "@kairos-lambdas-libs/response";
-import { getBody } from "./body";
-import { updateRecipe } from "./database";
+import { generateUploadUrl } from "./s3";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
-    const { projectId } = event;
+    const extension = event.queryStringParameters?.extension;
 
-    if (!projectId) {
+    if (!extension) {
       return createResponse({
         statusCode: 400,
-        message: "Project ID is required",
+        message: "extension query parameter is required",
       });
     }
 
-    const body = getBody(event.body);
-
-    if (!body) {
+    const safeExtension = extension.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (!safeExtension) {
       return createResponse({
         statusCode: 400,
+        message: "Invalid extension",
       });
     }
 
-    const { id, name, ingredients, imagePath } = body;
-
-    await updateRecipe(id, { name, ingredients, imagePath });
+    const result = await generateUploadUrl(safeExtension);
 
     return createResponse({
       statusCode: 200,
-      message: { id },
+      message: result,
     });
   },
 );

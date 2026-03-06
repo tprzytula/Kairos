@@ -10,6 +10,7 @@ export interface IRecipe {
     id: string
     projectId: string
     name: string
+    imagePath?: string
     ingredients: IRecipeIngredient[]
     createdAt: string
     updatedAt: string

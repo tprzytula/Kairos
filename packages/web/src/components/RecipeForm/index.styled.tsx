@@ -26,3 +26,28 @@ export const FormActions = styled(Box)({
   justifyContent: 'flex-end',
   paddingTop: '0.5rem',
 })
+
+export const ImageUploadBox = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '120px',
+  border: '2px dashed rgba(102, 126, 234, 0.4)',
+  borderRadius: '12px',
+  cursor: 'pointer',
+  overflow: 'hidden',
+  position: 'relative',
+  '&:hover': {
+    borderColor: 'rgba(102, 126, 234, 0.8)',
+    background: 'rgba(102, 126, 234, 0.04)',
+  },
+})
+
+export const ImagePreview = styled('img')({
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+})
