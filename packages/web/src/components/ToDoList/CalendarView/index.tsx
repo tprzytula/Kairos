@@ -48,7 +48,7 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
   const todosByDay = useMemo(() => {
     const map = new Map<string, ITodoItem[]>()
     for (const item of itemsWithDueDate) {
-      const key = dayjs(item.dueDate! * 1000).format('YYYY-MM-DD')
+      const key = dayjs(item.dueDate!).format('YYYY-MM-DD')
       const existing = map.get(key)
       if (existing) {
         existing.push(item)
