@@ -56,9 +56,12 @@ export const RecipeProvider = ({ children }: IRecipeProviderProps) => {
     if (!currentProject) return
 
     await updateRecipeApi(id, fields, currentProject.id)
+    const definedFields = Object.fromEntries(
+      Object.entries(fields).filter(([, v]) => v !== undefined)
+    ) as Partial<IRecipe>
     setRecipes((prev) =>
       prev.map((recipe) =>
-        recipe.id === id ? { ...recipe, ...fields } : recipe
+        recipe.id === id ? { ...recipe, ...definedFields } : recipe
       )
     )
   }, [currentProject])

@@ -129,17 +129,30 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
               {recipe.name}
             </Typography>
           </RecipeCardHeader>
-          <Chip
-            label={`${recipe.ingredients.length} ingredient${recipe.ingredients.length !== 1 ? 's' : ''}`}
-            size="small"
-            sx={{
-              alignSelf: 'flex-start',
-              background: 'rgba(102, 126, 234, 0.1)',
-              color: '#667eea',
-              fontWeight: 500,
-              fontSize: '0.7rem',
-            }}
-          />
+          <Box sx={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+            <Chip
+              label={`${recipe.ingredients.length} ingredient${recipe.ingredients.length !== 1 ? 's' : ''}`}
+              size="small"
+              sx={{
+                background: 'rgba(102, 126, 234, 0.1)',
+                color: '#667eea',
+                fontWeight: 500,
+                fontSize: '0.7rem',
+              }}
+            />
+            {recipe.instructions && recipe.instructions.length > 0 && (
+              <Chip
+                label={`${recipe.instructions.length} step${recipe.instructions.length !== 1 ? 's' : ''}`}
+                size="small"
+                sx={{
+                  background: 'rgba(118, 75, 162, 0.1)',
+                  color: '#764ba2',
+                  fontWeight: 500,
+                  fontSize: '0.7rem',
+                }}
+              />
+            )}
+          </Box>
         </RecipeCardBody>
       </RecipeCardTapArea>
 
