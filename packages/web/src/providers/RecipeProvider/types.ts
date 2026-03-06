@@ -4,8 +4,8 @@ export interface IState {
   recipes: IRecipe[]
   isLoading: boolean
   fetchRecipes: () => Promise<void>
-  addRecipe: (name: string, ingredients: IRecipeIngredient[], imagePath?: string, instructions?: string[]) => Promise<void>
-  updateRecipe: (id: string, fields: { name?: string; ingredients?: IRecipeIngredient[]; instructions?: string[]; imagePath?: string }) => Promise<void>
+  addRecipe: (name: string, ingredients: IRecipeIngredient[], imagePath?: string, instructions?: string[], externalLink?: string) => Promise<void>
+  updateRecipe: (id: string, fields: { name?: string; ingredients?: IRecipeIngredient[]; instructions?: string[]; imagePath?: string; externalLink?: string }) => Promise<void>
   removeRecipe: (id: string) => Promise<void>
 }
 

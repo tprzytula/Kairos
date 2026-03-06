@@ -11,6 +11,7 @@ export interface IRecipe {
     projectId: string
     name: string
     imagePath?: string
+    externalLink?: string
     ingredients: IRecipeIngredient[]
     instructions?: string[]
     createdAt: string

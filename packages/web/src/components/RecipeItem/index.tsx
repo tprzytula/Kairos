@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react'
-import { Typography, Button, Chip, Tooltip, Box, Checkbox } from '@mui/material'
+import { Typography, Button, Chip, Tooltip, Box, Checkbox, IconButton } from '@mui/material'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { IRecipe } from '../../types/recipe'
 import { IItemDefault } from '../../hooks/useItemDefaults/types'
 import { findItemIcon } from '../ItemForm/components/ItemImage/utils'
@@ -128,6 +129,21 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
             <Typography variant="body1" fontWeight={600}>
               {recipe.name}
             </Typography>
+            {recipe.externalLink && (
+              <Tooltip title="View original recipe">
+                <IconButton
+                  size="small"
+                  component="a"
+                  href={recipe.externalLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                  sx={{ color: '#667eea', padding: '2px' }}
+                >
+                  <OpenInNewIcon sx={{ fontSize: '1rem' }} />
+                </IconButton>
+              </Tooltip>
+            )}
           </RecipeCardHeader>
           <Box sx={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
             <Chip

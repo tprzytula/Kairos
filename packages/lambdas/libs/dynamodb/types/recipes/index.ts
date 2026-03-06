@@ -11,6 +11,7 @@ export interface IRecipe {
     projectId: string
     name: string
     imagePath?: string
+    externalLink?: string
     ingredients: string  // JSON-serialized IRecipeIngredient[]
     instructions?: string  // JSON-serialized string[]
     createdAt: string

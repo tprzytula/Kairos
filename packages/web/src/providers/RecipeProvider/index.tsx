@@ -8,7 +8,7 @@ const initialState: IState = {
   recipes: [],
   isLoading: false,
   fetchRecipes: async () => {},
-  addRecipe: async (_name, _ingredients, _imagePath?, _instructions?) => {},
+  addRecipe: async (_name, _ingredients, _imagePath?, _instructions?, _externalLink?) => {},
   updateRecipe: async (_id, _fields) => {},
   removeRecipe: async () => {},
 }
@@ -37,22 +37,23 @@ export const RecipeProvider = ({ children }: IRecipeProviderProps) => {
     }
   }, [currentProject])
 
-  const addRecipe = useCallback(async (name: string, ingredients: IRecipeIngredient[], imagePath?: string, instructions?: string[]) => {
+  const addRecipe = useCallback(async (name: string, ingredients: IRecipeIngredient[], imagePath?: string, instructions?: string[], externalLink?: string) => {
     if (!currentProject) return
 
-    const result = await addRecipeApi({ name, ingredients, imagePath, instructions }, currentProject.id)
+    const result = await addRecipeApi({ name, ingredients, imagePath, instructions, externalLink }, currentProject.id)
     const newRecipe: IRecipe = {
       ...result,
       name,
       ingredients,
       imagePath,
       instructions,
+      externalLink,
       projectId: currentProject.id,
     }
     setRecipes((prev) => [...prev, newRecipe])
   }, [currentProject])
 
-  const updateRecipe = useCallback(async (id: string, fields: { name?: string; ingredients?: IRecipeIngredient[]; instructions?: string[]; imagePath?: string }) => {
+  const updateRecipe = useCallback(async (id: string, fields: { name?: string; ingredients?: IRecipeIngredient[]; instructions?: string[]; imagePath?: string; externalLink?: string }) => {
     if (!currentProject) return
 
     await updateRecipeApi(id, fields, currentProject.id)
