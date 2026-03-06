@@ -26,6 +26,8 @@ module "lambda" {
   vapid_private_key            = var.vapid_private_key
   agent_ec2_ip                 = var.enable_agent ? module.ec2_agent[0].public_ip : ""
   agent_secret                 = var.agent_secret
+  s3_kairos_web_bucket_name    = module.s3.kairos_web_bucket_name
+  s3_cloudfront_domain         = module.s3.cloudfront_domain
 }
 
 module "api_gateway" {

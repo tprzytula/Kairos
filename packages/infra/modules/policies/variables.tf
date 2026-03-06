@@ -29,6 +29,9 @@ variable "lambda_functions" {
       sns = object({
         todo_notifications = optional(string, "none")
       })
+      s3 = optional(object({
+        recipe_uploads = optional(string, "none")
+      }), { recipe_uploads = "none" })
     })
   }))
 }

@@ -6,20 +6,27 @@ export const createRecipe = async (recipe: {
   projectId: string;
   name: string;
   ingredients: IRecipeIngredientBody[];
+  imagePath?: string;
 }): Promise<string> => {
   const id = randomUUID();
   const now = new Date().toISOString();
 
+  const item: Record<string, any> = {
+    id,
+    projectId: recipe.projectId,
+    name: recipe.name.trim(),
+    ingredients: JSON.stringify(recipe.ingredients),
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  if (recipe.imagePath) {
+    item.imagePath = recipe.imagePath;
+  }
+
   await putItem({
     tableName: DynamoDBTable.RECIPES,
-    item: {
-      id,
-      projectId: recipe.projectId,
-      name: recipe.name.trim(),
-      ingredients: JSON.stringify(recipe.ingredients),
-      createdAt: now,
-      updatedAt: now,
-    },
+    item,
   });
 
   return id;

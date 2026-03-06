@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import {
   TextField,
   Button,
@@ -8,15 +8,19 @@ import {
   InputLabel,
   FormControl,
   Typography,
+  CircularProgress,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
 import { IRecipe, IRecipeIngredient } from '../../types/recipe'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
-import { FormContainer, IngredientRow, IngredientsSection, FormActions } from './index.styled'
+import { getRecipeUploadUrl } from '../../api/recipes'
+import { useProjectContext } from '../../providers/ProjectProvider'
+import { FormContainer, IngredientRow, IngredientsSection, FormActions, ImageUploadBox, ImagePreview } from './index.styled'
 
 interface RecipeFormProps {
   initialRecipe?: IRecipe | null
@@ -31,12 +35,17 @@ const DEFAULT_INGREDIENT: IRecipeIngredient = {
 
 const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   const { addRecipe, updateRecipe } = useRecipeContext()
+  const { currentProject } = useProjectContext()
   const { dispatch } = useAppState()
   const [name, setName] = useState(initialRecipe?.name ?? '')
   const [ingredients, setIngredients] = useState<IRecipeIngredient[]>(
     initialRecipe?.ingredients ?? [{ ...DEFAULT_INGREDIENT }]
   )
   const [isSaving, setIsSaving] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initialRecipe?.imagePath ?? null)
+  const [imagePath, setImagePath] = useState<string>(initialRecipe?.imagePath ?? '')
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleIngredientChange = useCallback(
     (index: number, field: keyof IRecipeIngredient, value: string | number) => {
@@ -57,6 +66,35 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
     setIngredients((prev) => prev.filter((_, i) => i !== index))
   }, [])
 
+  const handleImageClick = useCallback(() => {
+    fileInputRef.current?.click()
+  }, [])
+
+  const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const ext = file.name.split('.').pop() ?? 'jpg'
+    setPreviewUrl(URL.createObjectURL(file))
+    setIsUploading(true)
+
+    try {
+      const { uploadUrl, imagePath: path } = await getRecipeUploadUrl(ext, currentProject?.id)
+      await fetch(uploadUrl, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': file.type },
+      })
+      setImagePath(path)
+    } catch (error) {
+      showAlert({ description: 'Failed to upload image', severity: 'error' }, dispatch)
+      setPreviewUrl(initialRecipe?.imagePath ?? null)
+      setImagePath(initialRecipe?.imagePath ?? '')
+    } finally {
+      setIsUploading(false)
+    }
+  }, [currentProject, dispatch, initialRecipe])
+
   const handleSave = useCallback(async () => {
     const trimmedName = name.trim()
     if (!trimmedName) {
@@ -72,11 +110,12 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
 
     setIsSaving(true)
     try {
+      const imagePathValue = imagePath || undefined
       if (initialRecipe) {
-        await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients })
+        await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients, imagePath: imagePathValue })
         showAlert({ description: 'Recipe updated', severity: 'success' }, dispatch)
       } else {
-        await addRecipe(trimmedName, validIngredients)
+        await addRecipe(trimmedName, validIngredients, imagePathValue)
         showAlert({ description: 'Recipe added', severity: 'success' }, dispatch)
       }
       onDone()
@@ -85,10 +124,32 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
     } finally {
       setIsSaving(false)
     }
-  }, [name, ingredients, initialRecipe, addRecipe, updateRecipe, dispatch, onDone])
+  }, [name, ingredients, imagePath, initialRecipe, addRecipe, updateRecipe, dispatch, onDone])
 
   return (
     <FormContainer>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+
+      <ImageUploadBox onClick={handleImageClick} aria-label="Upload cover image">
+        {previewUrl ? (
+          <ImagePreview src={previewUrl} alt="Recipe cover" />
+        ) : null}
+        {isUploading ? (
+          <CircularProgress size={24} sx={{ position: 'relative', zIndex: 1 }} />
+        ) : !previewUrl ? (
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <AddPhotoAlternateIcon fontSize="small" />
+            Add cover image
+          </Typography>
+        ) : null}
+      </ImageUploadBox>
+
       <TextField
         label="Recipe name"
         value={name}
@@ -163,7 +224,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
         <Button
           variant="contained"
           onClick={handleSave}
-          disabled={isSaving}
+          disabled={isSaving || isUploading}
           sx={{
             borderRadius: '8px',
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',

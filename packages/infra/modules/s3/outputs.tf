@@ -13,3 +13,7 @@ output "kairos_lambdas_arn" {
 output "kairos_web_bucket_id" {
   value = aws_s3_bucket.kairos_web_bucket.id
 }
+
+output "cloudfront_domain" {
+  value = aws_cloudfront_distribution.kairos_web_distribution.domain_name
+}

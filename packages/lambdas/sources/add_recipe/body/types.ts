@@ -9,4 +9,5 @@ export interface IRecipeIngredientBody {
 export interface IRequestBody {
     name: string;
     ingredients: IRecipeIngredientBody[];
+    imagePath?: string;
 }
