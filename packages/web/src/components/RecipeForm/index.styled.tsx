@@ -31,7 +31,7 @@ export const ImageUploadBox = styled(Box)({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  height: '120px',
+  height: '195px',
   border: '2px dashed rgba(102, 126, 234, 0.4)',
   borderRadius: '12px',
   cursor: 'pointer',

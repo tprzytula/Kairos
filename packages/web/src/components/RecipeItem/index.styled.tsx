@@ -26,7 +26,7 @@ export const RecipeCardActions = styled(Box)({
 
 export const RecipeCoverImage = styled('img')({
   width: 'calc(100% + 2rem)',
-  height: '120px',
+  height: '195px',
   objectFit: 'cover',
   borderRadius: '10px 10px 0 0',
   margin: '-1rem -1rem 0',

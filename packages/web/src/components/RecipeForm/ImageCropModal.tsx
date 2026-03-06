@@ -13,8 +13,7 @@ import {
 } from '@mui/material'
 import ZoomInIcon from '@mui/icons-material/ZoomIn'
 
-// Matches the wide-banner display: 120px tall at full card width (~380px) ≈ 3.2:1
-const CROP_ASPECT = 16 / 5
+const CROP_ASPECT = 16 / 9
 
 interface ImageCropModalProps {
   imageSrc: string
