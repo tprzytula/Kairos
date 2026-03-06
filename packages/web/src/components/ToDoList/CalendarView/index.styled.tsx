@@ -71,13 +71,14 @@ export const TodoChip = styled('div')({
   backgroundColor: '#eff6ff',
   color: '#2563eb',
   fontSize: '0.65rem',
-  padding: '1px 4px',
+  padding: '2px 4px',
   borderRadius: '3px',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-  cursor: 'default',
+  cursor: 'pointer',
   lineHeight: 1.4,
+  wordBreak: 'break-word',
+  '&:hover': {
+    backgroundColor: '#dbeafe',
+  },
 })
 
 export const MoreLabel = styled(Typography)({
@@ -104,9 +105,14 @@ export const NoDueDateHeader = styled(Typography)({
 export const NoDueDateItem = styled(Typography)({
   fontSize: '0.85rem',
   color: '#374151',
-  padding: '2px 0',
+  padding: '6px 4px',
   borderBottom: '1px solid #e5e7eb',
+  cursor: 'pointer',
+  borderRadius: '4px',
   '&:last-child': {
     borderBottom: 'none',
+  },
+  '&:hover': {
+    backgroundColor: '#e5e7eb',
   },
 })

@@ -25,9 +25,10 @@ const MAX_VISIBLE_TODOS = 2
 
 interface ICalendarViewProps {
   visibleToDoItems: ITodoItem[]
+  onItemClick: (id: string) => void
 }
 
-const CalendarView = ({ visibleToDoItems }: ICalendarViewProps) => {
+const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => {
   const [currentMonth, setCurrentMonth] = useState<Dayjs>(() => dayjs().startOf('month'))
   const today = dayjs()
 
@@ -111,7 +112,7 @@ const CalendarView = ({ visibleToDoItems }: ICalendarViewProps) => {
             <DayCell key={index} isToday={isToday} isCurrentMonth={isCurrentMonth}>
               <DayNumber isToday={isToday}>{day.date()}</DayNumber>
               {visibleTodos.map(todo => (
-                <TodoChip key={todo.id} title={todo.name}>{todo.name}</TodoChip>
+                <TodoChip key={todo.id} onClick={() => onItemClick(todo.id)}>{todo.name}</TodoChip>
               ))}
               {remaining > 0 && (
                 <MoreLabel>+{remaining} more</MoreLabel>
@@ -125,7 +126,7 @@ const CalendarView = ({ visibleToDoItems }: ICalendarViewProps) => {
         <NoDueDateSection>
           <NoDueDateHeader>📝 No Due Date</NoDueDateHeader>
           {itemsWithoutDueDate.map(item => (
-            <NoDueDateItem key={item.id}>{item.name}</NoDueDateItem>
+            <NoDueDateItem key={item.id} onClick={() => onItemClick(item.id)}>{item.name}</NoDueDateItem>
           ))}
         </NoDueDateSection>
       )}
