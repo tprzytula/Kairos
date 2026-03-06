@@ -4,6 +4,7 @@ import ToDoList from '../../components/ToDoList'
 import ActionButtonsBar from '../../components/ActionButtonsBar'
 import ModernPageHeader from '../../components/ModernPageHeader'
 import ChecklistIcon from '@mui/icons-material/Checklist'
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import ViewModuleIcon from '@mui/icons-material/ViewModule'
 import ViewListIcon from '@mui/icons-material/ViewList'
 import { Container, ScrollableContainer } from './index.styled'
@@ -21,7 +22,7 @@ const ToDoListContent = () => {
   const { currentProject } = useProjectContext()
   const [allExpanded, setAllExpanded] = useState(true)
   const [expandKey, setExpandKey] = useState(0)
-  const [viewMode, setViewMode] = useState<ToDoViewMode>(ToDoViewMode.GROUPED)
+  const [viewMode, setViewMode] = useState<ToDoViewMode>(ToDoViewMode.CALENDAR)
   
   const pendingItems = toDoList.filter(item => !item.isDone)
   const completedItems = toDoList.filter(item => item.isDone)
@@ -83,8 +84,18 @@ const ToDoListContent = () => {
   }, [allExpanded])
 
   const toggleViewMode = useCallback(() => {
-    setViewMode(prev => prev === ToDoViewMode.GROUPED ? ToDoViewMode.SIMPLE : ToDoViewMode.GROUPED)
+    setViewMode(prev => {
+      if (prev === ToDoViewMode.CALENDAR) return ToDoViewMode.GROUPED
+      if (prev === ToDoViewMode.GROUPED) return ToDoViewMode.SIMPLE
+      return ToDoViewMode.CALENDAR
+    })
   }, [])
+
+  const viewToggleIcon = viewMode === ToDoViewMode.CALENDAR
+    ? <CalendarMonthIcon />
+    : viewMode === ToDoViewMode.GROUPED
+      ? <ViewModuleIcon />
+      : <ViewListIcon />
   
   return (
     <StandardLayout>
@@ -98,7 +109,7 @@ const ToDoListContent = () => {
           expandCollapseButton={{
             isExpanded: allExpanded,
             onToggle: toggleAll,
-            disabled: pendingItems.length === 0,
+            disabled: pendingItems.length === 0 || viewMode === ToDoViewMode.CALENDAR,
           }}
           actionButton={{
             isEnabled: selectedTodoItems.size > 0,
@@ -107,7 +118,7 @@ const ToDoListContent = () => {
             statusText: statusText,
           }}
           viewToggleButton={{
-            children: viewMode === ToDoViewMode.GROUPED ? <ViewModuleIcon /> : <ViewListIcon />,
+            children: viewToggleIcon,
             onClick: toggleViewMode,
           }}
         />
