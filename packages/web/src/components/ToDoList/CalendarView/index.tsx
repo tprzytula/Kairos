@@ -13,15 +13,17 @@ import {
   CalendarGrid,
   DayCell,
   DayNumber,
-  TodoChip,
-  MoreLabel,
+  TodoDot,
+  DayDetailPanel,
+  DayDetailHeader,
+  DayDetailItem,
+  DayDetailEmpty,
   NoDueDateSection,
   NoDueDateHeader,
   NoDueDateItem,
 } from './index.styled'
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const MAX_VISIBLE_TODOS = 2
 
 interface ICalendarViewProps {
   visibleToDoItems: ITodoItem[]
@@ -30,10 +32,17 @@ interface ICalendarViewProps {
 
 const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => {
   const [currentMonth, setCurrentMonth] = useState<Dayjs>(() => dayjs().startOf('month'))
+  const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const today = dayjs()
 
-  const goToPrevMonth = () => setCurrentMonth(prev => prev.subtract(1, 'month'))
-  const goToNextMonth = () => setCurrentMonth(prev => prev.add(1, 'month'))
+  const goToPrevMonth = () => {
+    setCurrentMonth(prev => prev.subtract(1, 'month'))
+    setSelectedDay(null)
+  }
+  const goToNextMonth = () => {
+    setCurrentMonth(prev => prev.add(1, 'month'))
+    setSelectedDay(null)
+  }
 
   const itemsWithDueDate = useMemo(
     () => visibleToDoItems.filter(item => item.dueDate != null),
@@ -59,15 +68,19 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
     return map
   }, [itemsWithDueDate])
 
+  const selectedDayTodos = useMemo(
+    () => (selectedDay ? (todosByDay.get(selectedDay) ?? []) : []),
+    [selectedDay, todosByDay]
+  )
+
   // Build the grid: pad the start with days from the previous month
   const calendarDays = useMemo(() => {
     const startOfMonth = currentMonth.startOf('month')
     const endOfMonth = currentMonth.endOf('month')
-    const startPad = startOfMonth.day() // 0 = Sun
+    const startPad = startOfMonth.day()
     const endPad = 6 - endOfMonth.day()
 
     const days: Dayjs[] = []
-
     for (let i = startPad - 1; i >= 0; i--) {
       days.push(startOfMonth.subtract(i + 1, 'day'))
     }
@@ -77,9 +90,14 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
     for (let i = 0; i < endPad; i++) {
       days.push(endOfMonth.add(i + 1, 'day'))
     }
-
     return days
   }, [currentMonth])
+
+  const handleDayClick = (day: Dayjs, isCurrentMonth: boolean) => {
+    if (!isCurrentMonth) return
+    const key = day.format('YYYY-MM-DD')
+    setSelectedDay(prev => (prev === key ? null : key))
+  }
 
   return (
     <Container>
@@ -104,29 +122,48 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
           const key = day.format('YYYY-MM-DD')
           const isCurrentMonth = day.month() === currentMonth.month()
           const isToday = day.isSame(today, 'day')
-          const dayTodos = todosByDay.get(key) ?? []
-          const visibleTodos = dayTodos.slice(0, MAX_VISIBLE_TODOS)
-          const remaining = dayTodos.length - visibleTodos.length
+          const isSelected = selectedDay === key
+          const count = todosByDay.get(key)?.length ?? 0
 
           return (
-            <DayCell key={index} isToday={isToday} isCurrentMonth={isCurrentMonth}>
-              <DayNumber isToday={isToday}>{day.date()}</DayNumber>
-              {visibleTodos.map(todo => (
-                <TodoChip key={todo.id} onClick={() => onItemClick(todo.id)}>{todo.name}</TodoChip>
-              ))}
-              {remaining > 0 && (
-                <MoreLabel>+{remaining} more</MoreLabel>
-              )}
+            <DayCell
+              key={index}
+              isToday={isToday}
+              isCurrentMonth={isCurrentMonth}
+              isSelected={isSelected}
+              onClick={() => handleDayClick(day, isCurrentMonth)}
+            >
+              <DayNumber isToday={isToday} isSelected={isSelected}>{day.date()}</DayNumber>
+              <TodoDot count={count}>{count > 0 ? count : ''}</TodoDot>
             </DayCell>
           )
         })}
       </CalendarGrid>
 
+      {selectedDay && (
+        <DayDetailPanel>
+          <DayDetailHeader>
+            {dayjs(selectedDay).format('dddd, D MMMM')}
+          </DayDetailHeader>
+          {selectedDayTodos.length === 0 ? (
+            <DayDetailEmpty>No tasks on this day</DayDetailEmpty>
+          ) : (
+            selectedDayTodos.map(todo => (
+              <DayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+                {todo.name}
+              </DayDetailItem>
+            ))
+          )}
+        </DayDetailPanel>
+      )}
+
       {itemsWithoutDueDate.length > 0 && (
         <NoDueDateSection>
           <NoDueDateHeader>📝 No Due Date</NoDueDateHeader>
           {itemsWithoutDueDate.map(item => (
-            <NoDueDateItem key={item.id} onClick={() => onItemClick(item.id)}>{item.name}</NoDueDateItem>
+            <NoDueDateItem key={item.id} onClick={() => onItemClick(item.id)}>
+              {item.name}
+            </NoDueDateItem>
           ))}
         </NoDueDateSection>
       )}
