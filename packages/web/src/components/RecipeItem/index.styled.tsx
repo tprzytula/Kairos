@@ -52,3 +52,14 @@ export const IngredientIcon = styled('img')({
   objectFit: 'contain',
   flexShrink: 0,
 })
+
+export const SelectableIngredientRow = styled(IngredientItemRow)<{ isDeselected?: boolean }>(({ isDeselected }) => ({
+  cursor: 'pointer',
+  opacity: isDeselected ? 0.4 : 1,
+  transition: 'opacity 0.15s ease',
+  borderRadius: '6px',
+  padding: '2px 4px',
+  '&:hover': {
+    background: 'rgba(102, 126, 234, 0.08)',
+  },
+}))

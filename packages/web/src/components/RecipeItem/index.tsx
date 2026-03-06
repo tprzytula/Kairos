@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { Typography, IconButton, Button, Chip, Tooltip, Box } from '@mui/material'
+import { Typography, IconButton, Button, Chip, Tooltip, Box, Checkbox } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
@@ -12,7 +12,7 @@ import { useProjectContext } from '../../providers/ProjectProvider'
 import { addGroceryItem } from '../../api/groceryList'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
-import { RecipeCard, RecipeCardHeader, RecipeCardActions, RecipeCoverImage, IngredientList, IngredientItemRow, IngredientIcon } from './index.styled'
+import { RecipeCard, RecipeCardHeader, RecipeCardActions, RecipeCoverImage, IngredientList, IngredientItemRow, IngredientIcon, SelectableIngredientRow } from './index.styled'
 
 interface RecipeItemProps {
   recipe: IRecipe
@@ -27,34 +27,59 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
   const { currentProject } = useProjectContext()
   const { dispatch } = useAppState()
   const [isAdding, setIsAdding] = useState(false)
+  const [isSelectingIngredients, setIsSelectingIngredients] = useState(false)
+  const [deselectedIndices, setDeselectedIndices] = useState<Set<number>>(new Set())
+
+  const handleToggleIngredient = useCallback((index: number) => {
+    setDeselectedIndices((prev) => {
+      const next = new Set(prev)
+      if (next.has(index)) {
+        next.delete(index)
+      } else {
+        next.add(index)
+      }
+      return next
+    })
+  }, [])
+
+  const handleCancelSelection = useCallback(() => {
+    setIsSelectingIngredients(false)
+    setDeselectedIndices(new Set())
+  }, [])
 
   const handleUseRecipe = useCallback(async () => {
     if (!currentProject || !shopId || shopId === 'all') return
 
+    const ingredientsToAdd = recipe.ingredients.filter((_, i) => !deselectedIndices.has(i))
+
     setIsAdding(true)
     try {
-      await Promise.all(
-        recipe.ingredients.map((ingredient) =>
-          addGroceryItem(
-            {
-              name: ingredient.name,
-              quantity: ingredient.quantity,
-              unit: ingredient.unit,
-              shopId,
-              imagePath: '',
-            },
-            currentProject.id
+      if (ingredientsToAdd.length > 0) {
+        await Promise.all(
+          ingredientsToAdd.map((ingredient) =>
+            addGroceryItem(
+              {
+                name: ingredient.name,
+                quantity: ingredient.quantity,
+                unit: ingredient.unit,
+                shopId,
+                imagePath: '',
+              },
+              currentProject.id
+            )
           )
         )
-      )
+      }
       showAlert({ description: `${recipe.name} ingredients added to your list!`, severity: 'success' }, dispatch)
+      setIsSelectingIngredients(false)
+      setDeselectedIndices(new Set())
       onUseRecipe()
     } catch (error) {
       showAlert({ description: 'Failed to add ingredients', severity: 'error' }, dispatch)
     } finally {
       setIsAdding(false)
     }
-  }, [currentProject, shopId, recipe, dispatch, onUseRecipe])
+  }, [currentProject, shopId, recipe, deselectedIndices, dispatch, onUseRecipe])
 
   const handleDelete = useCallback(async () => {
     try {
@@ -106,6 +131,24 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
         <IngredientList>
           {recipe.ingredients.map((ingredient, index) => {
             const icon = findItemIcon(ingredient.name, defaults)
+            const isDeselected = deselectedIndices.has(index)
+            if (isSelectingIngredients) {
+              return (
+                <SelectableIngredientRow key={index} isDeselected={isDeselected} onClick={() => handleToggleIngredient(index)}>
+                  <Checkbox
+                    checked={!isDeselected}
+                    size="small"
+                    sx={{ padding: '0 4px 0 0', color: '#667eea', '&.Mui-checked': { color: '#667eea' } }}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={() => handleToggleIngredient(index)}
+                  />
+                  {icon && <IngredientIcon src={icon} alt={ingredient.name} />}
+                  <Typography variant="caption" color="text.secondary">
+                    {ingredient.name} — {ingredient.quantity} {GroceryItemUnitLabelMap[ingredient.unit]}
+                  </Typography>
+                </SelectableIngredientRow>
+              )
+            }
             return (
               <IngredientItemRow key={index}>
                 {icon && <IngredientIcon src={icon} alt={ingredient.name} />}
@@ -150,16 +193,15 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
         </Box>
       )}
 
-      <Tooltip title={canUseRecipe ? `Add all ingredients to current shop's list` : 'Open a specific shop to use this recipe'}>
-        <span>
+      {isSelectingIngredients ? (
+        <Box sx={{ display: 'flex', gap: '0.5rem', mt: 0.5 }}>
           <Button
             variant="contained"
             size="small"
             startIcon={<AddShoppingCartIcon />}
             onClick={handleUseRecipe}
-            disabled={isAdding || !canUseRecipe}
+            disabled={isAdding}
             sx={{
-              mt: 0.5,
               borderRadius: '8px',
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               boxShadow: 'none',
@@ -167,10 +209,46 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
               '&:disabled': { background: 'rgba(0,0,0,0.12)' },
             }}
           >
-            {isAdding ? 'Adding...' : 'Use Recipe'}
+            {isAdding ? 'Adding...' : 'Add to List'}
           </Button>
-        </span>
-      </Tooltip>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={handleCancelSelection}
+            disabled={isAdding}
+            sx={{
+              borderRadius: '8px',
+              borderColor: 'rgba(102, 126, 234, 0.4)',
+              color: '#667eea',
+              '&:hover': { borderColor: '#667eea', background: 'rgba(102, 126, 234, 0.05)' },
+            }}
+          >
+            Cancel
+          </Button>
+        </Box>
+      ) : (
+        <Tooltip title={canUseRecipe ? `Select ingredients to add to your list` : 'Open a specific shop to use this recipe'}>
+          <span>
+            <Button
+              variant="contained"
+              size="small"
+              startIcon={<AddShoppingCartIcon />}
+              onClick={() => setIsSelectingIngredients(true)}
+              disabled={!canUseRecipe}
+              sx={{
+                mt: 0.5,
+                borderRadius: '8px',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                boxShadow: 'none',
+                '&:hover': { boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)' },
+                '&:disabled': { background: 'rgba(0,0,0,0.12)' },
+              }}
+            >
+              Use Recipe
+            </Button>
+          </span>
+        </Tooltip>
+      )}
     </RecipeCard>
   )
 }
