@@ -434,23 +434,6 @@ locals {
           todo_notifications = "none"
         }
       }
-    },
-    "get_recipe_upload_url" = {
-      environment_variables = {
-        UPLOAD_BUCKET_NAME = var.s3_kairos_web_bucket_name
-        CLOUDFRONT_DOMAIN  = var.s3_cloudfront_domain
-      }
-      permissions = {
-        database = {
-          push_subscriptions = "none"
-        }
-        s3 = {
-          recipe_uploads = "put-only"
-        }
-        sns = {
-          todo_notifications = "none"
-        }
-      }
     }
   }
 }

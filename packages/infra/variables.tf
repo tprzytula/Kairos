@@ -41,8 +41,3 @@ variable "ssh_allowed_cidrs" {
   default     = []
 }
 
-variable "cloudfront_domain" {
-  description = "CloudFront distribution domain name (e.g. abc123.cloudfront.net). Set this in the workspace after first deploy to enable recipe image uploads."
-  type        = string
-  default     = ""
-}
