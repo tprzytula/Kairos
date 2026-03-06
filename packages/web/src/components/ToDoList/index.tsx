@@ -11,6 +11,7 @@ import { groupTodosByTime } from './utils/timeGrouping';
 import { ToDoViewMode } from '../../enums/todoViewMode';
 import SimpleView from './SimpleView';
 import GroupedView from './GroupedView';
+import CalendarView from './CalendarView';
 import Placeholder from './Placeholder';
 import EmptyToDoList from './EmptyToDoList';
 import { IToDoListProps } from './types';
@@ -61,6 +62,12 @@ export const ToDoList = ({
 
   if (toDoList.length === 0) {
     return <EmptyToDoList />
+  }
+
+  if (viewMode === ToDoViewMode.CALENDAR) {
+    return (
+      <CalendarView visibleToDoItems={visibleToDoItems} />
+    );
   }
 
   if (viewMode === ToDoViewMode.SIMPLE) {
