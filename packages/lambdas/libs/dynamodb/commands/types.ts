@@ -7,6 +7,7 @@ import { ITodoItem } from "../types/todoList";
 import { IProject, IProjectMember } from "../types/projects";
 import { IPushSubscription } from "../types/pushSubscriptions";
 import { IShop } from "../types/shops";
+import { IRecipe } from "../types/recipes";
 
 export type TableResponseMap = {
     [DynamoDBTable.GROCERY_LIST]: IGroceryItem;
@@ -18,4 +19,5 @@ export type TableResponseMap = {
     [DynamoDBTable.PROJECT_MEMBERS]: IProjectMember;
     [DynamoDBTable.PUSH_SUBSCRIPTIONS]: IPushSubscription;
     [DynamoDBTable.SHOPS]: IShop;
+    [DynamoDBTable.RECIPES]: IRecipe;
 };
