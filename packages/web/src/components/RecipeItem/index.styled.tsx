@@ -25,13 +25,12 @@ export const RecipeCardActions = styled(Box)({
 })
 
 export const RecipeCoverImage = styled('img')({
-  width: '100%',
+  width: 'calc(100% + 2rem)',
   height: '120px',
   objectFit: 'cover',
   borderRadius: '10px 10px 0 0',
   margin: '-1rem -1rem 0',
   display: 'block',
-  width: 'calc(100% + 2rem)',
 })
 
 export const IngredientList = styled(Box)({
