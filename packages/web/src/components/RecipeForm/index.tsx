@@ -185,7 +185,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
     } finally {
       setIsSaving(false)
     }
-  }, [name, ingredients, instructions, imagePath, initialRecipe, addRecipe, updateRecipe, dispatch, onDone])
+  }, [name, externalLink, ingredients, instructions, imagePath, initialRecipe, addRecipe, updateRecipe, dispatch, onDone])
 
   return (
     <FormContainer>
