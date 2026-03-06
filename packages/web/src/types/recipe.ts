@@ -12,6 +12,7 @@ export interface IRecipe {
     name: string
     imagePath?: string
     ingredients: IRecipeIngredient[]
+    instructions?: string[]
     createdAt: string
     updatedAt: string
 }

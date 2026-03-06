@@ -23,6 +23,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
     const recipes = items.map((item) => ({
       ...item,
       ingredients: JSON.parse(item.ingredients || "[]"),
+      instructions: item.instructions ? JSON.parse(item.instructions) : undefined,
     }));
 
     return createResponse({

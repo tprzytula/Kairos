@@ -6,6 +6,7 @@ export const createRecipe = async (recipe: {
   projectId: string;
   name: string;
   ingredients: IRecipeIngredientBody[];
+  instructions?: string[];
   imagePath?: string;
 }): Promise<string> => {
   const id = randomUUID();
@@ -19,6 +20,10 @@ export const createRecipe = async (recipe: {
     createdAt: now,
     updatedAt: now,
   };
+
+  if (recipe.instructions && recipe.instructions.length > 0) {
+    item.instructions = JSON.stringify(recipe.instructions);
+  }
 
   if (recipe.imagePath) {
     item.imagePath = recipe.imagePath;

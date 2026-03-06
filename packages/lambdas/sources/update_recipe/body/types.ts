@@ -10,5 +10,6 @@ export interface IRequestBody {
     id: string;
     name?: string;
     ingredients?: IRecipeIngredientBody[];
+    instructions?: string[];
     imagePath?: string;
 }
