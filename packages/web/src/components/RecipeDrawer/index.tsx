@@ -19,10 +19,11 @@ const DRAG_CLOSE_THRESHOLD = 100
 interface RecipeDrawerProps {
   open: boolean
   onClose: () => void
+  onUseRecipe?: () => void
   shopId?: string
 }
 
-const RecipeDrawer = ({ open, onClose, shopId }: RecipeDrawerProps) => {
+const RecipeDrawer = ({ open, onClose, onUseRecipe, shopId }: RecipeDrawerProps) => {
   const [view, setView] = useState<'list' | 'form'>('list')
   const [editingRecipe, setEditingRecipe] = useState<IRecipe | null>(null)
   const [dragOffset, setDragOffset] = useState(0)
@@ -49,6 +50,11 @@ const RecipeDrawer = ({ open, onClose, shopId }: RecipeDrawerProps) => {
     setEditingRecipe(null)
     onClose()
   }, [onClose])
+
+  const handleUseRecipe = useCallback(() => {
+    handleClose()
+    onUseRecipe?.()
+  }, [handleClose, onUseRecipe])
 
   const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     isDragging.current = true
@@ -159,7 +165,7 @@ const RecipeDrawer = ({ open, onClose, shopId }: RecipeDrawerProps) => {
           {view === 'list' ? (
             <RecipeList
               onEditRecipe={handleEditRecipe}
-              onUseRecipe={handleClose}
+              onUseRecipe={handleUseRecipe}
               shopId={shopId}
             />
           ) : (

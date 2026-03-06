@@ -149,6 +149,7 @@ const GroceryListContent = () => {
       <RecipeDrawer
         open={recipeDrawerOpen}
         onClose={() => setRecipeDrawerOpen(false)}
+        onUseRecipe={refetchGroceryList}
         shopId={shopId}
       />
     </StandardLayout>
