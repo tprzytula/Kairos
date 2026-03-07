@@ -19,9 +19,10 @@ interface ImageCropModalProps {
   imageSrc: string
   onConfirm: (croppedAreaPixels: Area) => void
   onCancel: () => void
+  aspect?: number
 }
 
-const ImageCropModal = ({ imageSrc, onConfirm, onCancel }: ImageCropModalProps) => {
+const ImageCropModal = ({ imageSrc, onConfirm, onCancel, aspect }: ImageCropModalProps) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
@@ -39,7 +40,7 @@ const ImageCropModal = ({ imageSrc, onConfirm, onCancel }: ImageCropModalProps) 
             image={imageSrc}
             crop={crop}
             zoom={zoom}
-            aspect={CROP_ASPECT}
+            aspect={aspect ?? CROP_ASPECT}
             onCropChange={setCrop}
             onZoomChange={setZoom}
             onCropComplete={handleCropComplete}

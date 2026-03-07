@@ -364,6 +364,17 @@ data "aws_iam_policy_document" "lambda_policies" {
   }
 
   dynamic "statement" {
+    for_each = try(each.value.permissions.s3.shop_uploads, "none") == "put-only" ? [each.key] : []
+
+    content {
+      sid     = "S3PutShopUploads"
+      actions = ["s3:PutObject"]
+      effect  = "Allow"
+      resources = ["${var.s3_kairos_web_arn}/user-uploads/shops/*"]
+    }
+  }
+
+  dynamic "statement" {
     for_each = each.value.permissions.sns.todo_notifications == local.permissions.publish ? [each.key] : []
 
     content {

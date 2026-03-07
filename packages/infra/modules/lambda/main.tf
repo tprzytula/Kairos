@@ -64,12 +64,37 @@ resource "aws_iam_role" "get_recipe_upload_url_role" {
   assume_role_policy = data.aws_iam_policy_document.basic_lambda_role.json
 }
 
+resource "aws_iam_role" "get_shop_upload_url_role" {
+  name               = format("get_shop_upload_url_lambda_role_%s", var.random_name)
+  assume_role_policy = data.aws_iam_policy_document.basic_lambda_role.json
+}
+
 resource "aws_lambda_function" "get_recipe_upload_url" {
   function_name     = format("get_recipe_upload_url_%s", var.random_name)
   s3_bucket         = local.s3_bucket_name
   s3_key            = "get_recipe_upload_url/get_recipe_upload_url.zip"
   s3_object_version = data.aws_s3_object.get_recipe_upload_url_zip.version_id
   role              = aws_iam_role.get_recipe_upload_url_role.arn
+  handler           = "index.handler"
+  runtime           = "nodejs20.x"
+  memory_size       = "512"
+  publish           = true
+  timeout           = 5
+
+  environment {
+    variables = {
+      UPLOAD_BUCKET_NAME = var.s3_kairos_web_bucket_name
+      CLOUDFRONT_DOMAIN  = var.s3_cloudfront_domain
+    }
+  }
+}
+
+resource "aws_lambda_function" "get_shop_upload_url" {
+  function_name     = format("get_shop_upload_url_%s", var.random_name)
+  s3_bucket         = local.s3_bucket_name
+  s3_key            = "get_shop_upload_url/get_shop_upload_url.zip"
+  s3_object_version = data.aws_s3_object.get_shop_upload_url_zip.version_id
+  role              = aws_iam_role.get_shop_upload_url_role.arn
   handler           = "index.handler"
   runtime           = "nodejs20.x"
   memory_size       = "512"
