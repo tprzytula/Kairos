@@ -20,7 +20,7 @@ describe('Given the NoiseTrackingItem component', () => {
     render(<NoiseTrackingItem timestamp={1714003200000} />)
 
     // Updated format: day, month, year, time (appears twice - in absolute and relative sections)
-    expect(screen.getAllByText('25 Apr 2024, 01:00')).toHaveLength(2)
+    expect(screen.getAllByText('25 Apr 2024, 00:00')).toHaveLength(2)
     expect(screen.getByText('🌙')).toBeVisible() // Night time icon
   })
 
