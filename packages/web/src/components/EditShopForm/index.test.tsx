@@ -3,63 +3,97 @@ import EditShopForm from ".";
 
 const mockOnSubmit = jest.fn();
 const mockOnCancel = jest.fn();
+const mockGetShopUploadUrl = jest.fn();
+
+jest.mock('../../providers/ProjectProvider', () => ({
+  useProjectContext: () => ({ currentProject: { id: 'test-project-id' } })
+}));
+
+jest.mock('../../api/shops/getUploadUrl', () => ({
+  getShopUploadUrl: (...args: any[]) => mockGetShopUploadUrl(...args)
+}));
+
+jest.mock('../RecipeForm/ImageCropModal', () => {
+  const { useEffect } = require('react');
+  return {
+    __esModule: true,
+    default: ({ onConfirm }: any) => {
+      useEffect(() => {
+        onConfirm({ x: 0, y: 0, width: 100, height: 100 });
+      }, []);
+      return null;
+    }
+  };
+});
+
+jest.mock('../RecipeForm/cropUtils', () => ({
+  getCroppedBlob: jest.fn().mockResolvedValue(new Blob(['img'], { type: 'image/jpeg' }))
+}));
 
 describe("Given the EditShopForm component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    global.URL.createObjectURL = jest.fn().mockReturnValue('blob:mock-url');
   });
 
   it("should render form fields with initial values", () => {
     renderEditShopForm();
-    
+
     expect(screen.getByDisplayValue('Test Shop')).toBeVisible();
-    expect(screen.getByDisplayValue('https://example.com/icon.png')).toBeVisible();
+    expect(screen.getByLabelText(/upload shop icon/i)).toBeVisible();
     expect(screen.getByRole('button', { name: /save changes/i })).toBeVisible();
     expect(screen.getByRole('button', { name: /cancel/i })).toBeVisible();
   });
 
   it("should render initial icon in preview", () => {
     renderEditShopForm();
-    
+
     const iconImage = screen.getByAltText('Shop icon preview');
     expect(iconImage).toBeVisible();
     expect(iconImage).toHaveAttribute('src', 'https://example.com/icon.png');
   });
 
   describe("When shop has no initial icon", () => {
-    it("should render default storefront icon", () => {
+    it("should render upload box with placeholder text", () => {
       renderEditShopForm({ initialIcon: undefined });
-      
-      expect(screen.getByTestId('StorefrontIcon')).toBeVisible();
+
+      expect(screen.getByText(/add shop icon/i)).toBeVisible();
     });
   });
 
   describe("When user modifies shop name", () => {
     it("should enable save button", async () => {
       renderEditShopForm();
-      
+
       const saveButton = screen.getByRole('button', { name: /save changes/i });
       expect(saveButton).toBeDisabled(); // No changes initially
-      
+
       const nameInput = screen.getByDisplayValue('Test Shop');
       fireEvent.change(nameInput, { target: { value: 'Modified Shop' } });
-      
+
       await waitFor(() => {
         expect(saveButton).not.toBeDisabled();
       });
     });
   });
 
-  describe("When user modifies icon URL", () => {
-    it("should enable save button", async () => {
+  describe("When user uploads a new icon", () => {
+    it("should enable save button after upload", async () => {
+      mockGetShopUploadUrl.mockResolvedValue({
+        uploadUrl: 'https://s3.example.com/upload',
+        imagePath: 'https://cdn.example.com/shops/new.jpg'
+      });
+      fetchMock.mockResponseOnce('');
+
       renderEditShopForm();
-      
+
       const saveButton = screen.getByRole('button', { name: /save changes/i });
-      expect(saveButton).toBeDisabled(); // No changes initially
-      
-      const iconInput = screen.getByDisplayValue('https://example.com/icon.png');
-      fireEvent.change(iconInput, { target: { value: 'https://example.com/new-icon.png' } });
-      
+      expect(saveButton).toBeDisabled();
+
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      const file = new File(['img'], 'new-icon.jpg', { type: 'image/jpeg' });
+      fireEvent.change(fileInput, { target: { files: [file] } });
+
       await waitFor(() => {
         expect(saveButton).not.toBeDisabled();
       });
@@ -69,78 +103,83 @@ describe("Given the EditShopForm component", () => {
   describe("When form validation fails", () => {
     it("should show error for empty shop name", async () => {
       renderEditShopForm();
-      
+
       const nameInput = screen.getByDisplayValue('Test Shop');
       fireEvent.change(nameInput, { target: { value: '' } });
-      
+
       const submitButton = screen.getByRole('button', { name: /save changes/i });
       fireEvent.click(submitButton);
-      
+
       await waitFor(() => {
         expect(screen.getByText(/shop name is required/i)).toBeVisible();
       });
-      
+
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });
 
     it("should show error for shop name that's too short", async () => {
       renderEditShopForm();
-      
+
       const nameInput = screen.getByDisplayValue('Test Shop');
       fireEvent.change(nameInput, { target: { value: 'A' } });
-      
+
       const submitButton = screen.getByRole('button', { name: /save changes/i });
       fireEvent.click(submitButton);
-      
+
       await waitFor(() => {
         expect(screen.getByText(/shop name must be at least 2 characters/i)).toBeVisible();
       });
-      
+
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });
   });
 
   describe("When form is submitted with changes", () => {
-    it("should call onSubmit with updated values", async () => {
+    it("should call onSubmit with updated name and existing icon", async () => {
       mockOnSubmit.mockResolvedValue(undefined);
       renderEditShopForm();
-      
+
       const nameInput = screen.getByDisplayValue('Test Shop');
-      const iconInput = screen.getByDisplayValue('https://example.com/icon.png');
-      
       fireEvent.change(nameInput, { target: { value: 'Updated Shop' } });
-      fireEvent.change(iconInput, { target: { value: 'https://example.com/new-icon.png' } });
-      
+
       const submitButton = screen.getByRole('button', { name: /save changes/i });
       fireEvent.click(submitButton);
-      
+
       await waitFor(() => {
         expect(mockOnSubmit).toHaveBeenCalledWith(
           'shop-123',
           'Updated Shop',
-          'https://example.com/new-icon.png'
+          'https://example.com/icon.png'
         );
       });
     });
 
-    it("should call onSubmit with undefined icon when cleared", async () => {
+    it("should call onSubmit with new icon after upload", async () => {
       mockOnSubmit.mockResolvedValue(undefined);
+      mockGetShopUploadUrl.mockResolvedValue({
+        uploadUrl: 'https://s3.example.com/upload',
+        imagePath: 'https://cdn.example.com/shops/new.jpg'
+      });
+      fetchMock.mockResponseOnce('');
+
       renderEditShopForm();
-      
-      const nameInput = screen.getByDisplayValue('Test Shop');
-      const iconInput = screen.getByDisplayValue('https://example.com/icon.png');
-      
-      fireEvent.change(nameInput, { target: { value: 'Updated Shop' } });
-      fireEvent.change(iconInput, { target: { value: '' } });
-      
+
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      const file = new File(['img'], 'new-icon.jpg', { type: 'image/jpeg' });
+      fireEvent.change(fileInput, { target: { files: [file] } });
+
+      await waitFor(() => {
+        expect(mockGetShopUploadUrl).toHaveBeenCalled();
+      });
+
       const submitButton = screen.getByRole('button', { name: /save changes/i });
       fireEvent.click(submitButton);
-      
+
       await waitFor(() => {
         expect(mockOnSubmit).toHaveBeenCalledWith(
           'shop-123',
-          'Updated Shop',
-          undefined
+          'Test Shop',
+          'https://cdn.example.com/shops/new.jpg'
         );
       });
     });
@@ -149,7 +188,7 @@ describe("Given the EditShopForm component", () => {
   describe("When form has no changes", () => {
     it("should disable the save button", () => {
       renderEditShopForm();
-      
+
       const submitButton = screen.getByRole('button', { name: /save changes/i });
       expect(submitButton).toBeDisabled();
     });
@@ -159,13 +198,13 @@ describe("Given the EditShopForm component", () => {
     it("should display error message", async () => {
       mockOnSubmit.mockRejectedValue(new Error('Shop name already exists'));
       renderEditShopForm();
-      
+
       const nameInput = screen.getByDisplayValue('Test Shop');
       fireEvent.change(nameInput, { target: { value: 'Conflicting Shop' } });
-      
+
       const submitButton = screen.getByRole('button', { name: /save changes/i });
       fireEvent.click(submitButton);
-      
+
       await waitFor(() => {
         expect(screen.getByText(/shop name already exists/i)).toBeVisible();
       });
@@ -175,10 +214,10 @@ describe("Given the EditShopForm component", () => {
   describe("When cancel button is clicked", () => {
     it("should call onCancel", () => {
       renderEditShopForm();
-      
+
       const cancelButton = screen.getByRole('button', { name: /cancel/i });
       fireEvent.click(cancelButton);
-      
+
       expect(mockOnCancel).toHaveBeenCalled();
     });
   });
@@ -186,7 +225,7 @@ describe("Given the EditShopForm component", () => {
   describe("When form is submitting", () => {
     it("should show loading state", () => {
       renderEditShopForm({ isSubmitting: true });
-      
+
       expect(screen.getByText(/saving.../i)).toBeVisible();
       expect(screen.getByRole('button', { name: /saving.../i })).toBeDisabled();
       expect(screen.getByRole('button', { name: /cancel/i })).toBeDisabled();
@@ -196,7 +235,7 @@ describe("Given the EditShopForm component", () => {
   describe("When initial values change", () => {
     it("should reset form state", () => {
       const { rerender } = render(
-        <EditShopForm 
+        <EditShopForm
           shopId="shop-123"
           initialName="Original Shop"
           initialIcon="https://example.com/original.png"
@@ -204,10 +243,10 @@ describe("Given the EditShopForm component", () => {
           onCancel={mockOnCancel}
         />
       );
-      
+
       // Change the initial values
       rerender(
-        <EditShopForm 
+        <EditShopForm
           shopId="shop-123"
           initialName="New Shop"
           initialIcon="https://example.com/new.png"
@@ -215,9 +254,10 @@ describe("Given the EditShopForm component", () => {
           onCancel={mockOnCancel}
         />
       );
-      
+
       expect(screen.getByDisplayValue('New Shop')).toBeVisible();
-      expect(screen.getByDisplayValue('https://example.com/new.png')).toBeVisible();
+      const iconImage = screen.getByAltText('Shop icon preview');
+      expect(iconImage).toHaveAttribute('src', 'https://example.com/new.png');
     });
   });
 });
@@ -231,6 +271,6 @@ const renderEditShopForm = (props = {}) => {
     onCancel: mockOnCancel,
     ...props
   };
-  
+
   render(<EditShopForm {...defaultProps} />);
 };
