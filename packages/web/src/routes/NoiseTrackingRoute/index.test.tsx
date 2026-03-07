@@ -27,6 +27,20 @@ jest.mock('../../api/projects', () => ({
 }))
 
 describe('Given the NoiseTrackingRoute component', () => {
+  beforeAll(() => {
+    jest.spyOn(Date.prototype, 'toLocaleDateString').mockImplementation(function(
+      this: Date,
+      locale?: Intl.LocalesArgument,
+      options?: Intl.DateTimeFormatOptions
+    ) {
+      return new Intl.DateTimeFormat(locale as string | string[], { ...options, timeZone: 'UTC' }).format(this)
+    })
+  })
+
+  afterAll(() => {
+    jest.restoreAllMocks()
+  })
+
   it('should have the correct title', async () => {
     jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue([])
 

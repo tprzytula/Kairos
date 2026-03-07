@@ -12,6 +12,20 @@ jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
 })
 
 describe('Given the NoiseTrackingItem component', () => {
+  beforeAll(() => {
+    jest.spyOn(Date.prototype, 'toLocaleDateString').mockImplementation(function(
+      this: Date,
+      locale?: Intl.LocalesArgument,
+      options?: Intl.DateTimeFormatOptions
+    ) {
+      return new Intl.DateTimeFormat(locale as string | string[], { ...options, timeZone: 'UTC' }).format(this)
+    })
+  })
+
+  afterAll(() => {
+    jest.restoreAllMocks()
+  })
+
   beforeEach(() => {
     jest.clearAllMocks()
   })
