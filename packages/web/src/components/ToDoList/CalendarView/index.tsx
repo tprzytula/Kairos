@@ -1,9 +1,11 @@
 import { useState, useMemo } from 'react'
-import { IconButton } from '@mui/material'
+import { IconButton, Tooltip } from '@mui/material'
+import CakeIcon from '@mui/icons-material/Cake'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import dayjs, { Dayjs } from 'dayjs'
 import { ITodoItem } from '../../../api/toDoList/retrieve/types'
+import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
 import {
   Container,
   CalendarHeader,
@@ -24,6 +26,8 @@ import {
   NoDueDateHeader,
   NoDueDateItem,
   CompletedNoDueDateItem,
+  BirthdayCakeIcon,
+  BirthdayDayDetailItem,
 } from './index.styled'
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -31,9 +35,12 @@ const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 interface ICalendarViewProps {
   visibleToDoItems: ITodoItem[]
   onItemClick: (id: string) => void
+  birthdayItems?: IBirthdayItem[]
+  onBirthdayClick?: (id: string) => void
+  onAddBirthday?: () => void
 }
 
-const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => {
+const CalendarView = ({ visibleToDoItems, onItemClick, birthdayItems = [], onBirthdayClick, onAddBirthday }: ICalendarViewProps) => {
   const [currentMonth, setCurrentMonth] = useState<Dayjs>(() => dayjs().startOf('month'))
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const today = dayjs()
@@ -96,6 +103,28 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
     [selectedDay, completedTodosByDay]
   )
 
+  // Map "month-day" -> IBirthdayItem[] for current month display
+  const birthdaysByDay = useMemo(() => {
+    const map = new Map<string, IBirthdayItem[]>()
+    for (const item of birthdayItems) {
+      const key = `${item.month}-${item.day}`
+      const existing = map.get(key)
+      if (existing) {
+        existing.push(item)
+      } else {
+        map.set(key, [item])
+      }
+    }
+    return map
+  }, [birthdayItems])
+
+  const selectedDayBirthdays = useMemo(() => {
+    if (!selectedDay) return []
+    const d = dayjs(selectedDay)
+    const key = `${d.month() + 1}-${d.date()}`
+    return birthdaysByDay.get(key) ?? []
+  }, [selectedDay, birthdaysByDay])
+
   // Build the grid: pad the start with days from the previous month
   const calendarDays = useMemo(() => {
     const startOfMonth = currentMonth.startOf('month')
@@ -132,6 +161,13 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
         <IconButton size="small" onClick={goToNextMonth} aria-label="Next month">
           <ChevronRightIcon />
         </IconButton>
+        {onAddBirthday && (
+          <Tooltip title="Add birthday">
+            <IconButton size="small" onClick={onAddBirthday} aria-label="Add birthday">
+              <CakeIcon sx={{ color: '#db2777', fontSize: '1.2rem' }} />
+            </IconButton>
+          </Tooltip>
+        )}
       </CalendarHeader>
 
       <WeekDayHeader>
@@ -148,6 +184,8 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
           const isSelected = selectedDay === key
           const pendingCount = pendingTodosByDay.get(key)?.length ?? 0
           const completedCount = completedTodosByDay.get(key)?.length ?? 0
+          const birthdayKey = `${day.month() + 1}-${day.date()}`
+          const hasBirthday = isCurrentMonth && (birthdaysByDay.get(birthdayKey)?.length ?? 0) > 0
 
           return (
             <DayCell
@@ -160,6 +198,7 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
               <DayNumber isToday={isToday} isSelected={isSelected}>{day.date()}</DayNumber>
               <TodoDot count={pendingCount}>{pendingCount > 0 ? pendingCount : ''}</TodoDot>
               <CompletedTodoDot count={completedCount}>{completedCount > 0 ? completedCount : ''}</CompletedTodoDot>
+              {hasBirthday && <BirthdayCakeIcon />}
             </DayCell>
           )
         })}
@@ -186,6 +225,16 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
               ))}
             </>
           )}
+        {selectedDayBirthdays.length > 0 && (
+          <>
+            {selectedDayBirthdays.map(birthday => (
+              <BirthdayDayDetailItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
+                <CakeIcon sx={{ fontSize: '0.9rem', color: '#db2777', flexShrink: 0 }} />
+                {birthday.name}
+              </BirthdayDayDetailItem>
+            ))}
+          </>
+        )}
         </DayDetailPanel>
       )}
 
