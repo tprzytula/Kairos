@@ -32,7 +32,8 @@ variable "lambda_functions" {
       })
       s3 = optional(object({
         recipe_uploads = optional(string, "none")
-      }), { recipe_uploads = "none" })
+        shop_uploads   = optional(string, "none")
+      }), { recipe_uploads = "none", shop_uploads = "none" })
     })
   }))
 }
