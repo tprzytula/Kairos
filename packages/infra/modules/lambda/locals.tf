@@ -434,6 +434,54 @@ locals {
           todo_notifications = "none"
         }
       }
+    },
+    "get_birthdays" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          birthdays          = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "add_birthday" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          birthdays          = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "update_birthday" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          birthdays          = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "delete_birthday" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          birthdays          = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
     }
   }
 }

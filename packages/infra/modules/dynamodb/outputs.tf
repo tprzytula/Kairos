@@ -41,3 +41,7 @@ output "shops_arn" {
 output "recipes_arn" {
   value = aws_dynamodb_table.recipes.arn
 }
+
+output "birthdays_arn" {
+  value = aws_dynamodb_table.birthdays.arn
+}

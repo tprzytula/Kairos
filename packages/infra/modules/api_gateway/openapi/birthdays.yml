@@ -1,0 +1,216 @@
+openapi: 3.0.1
+info:
+  title: Birthdays
+  description: |
+    API for Birthdays
+  version: "1.0"
+paths:
+  /birthdays/items:
+    get:
+      security:
+        - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["get_birthdays"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Birthday items retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/birthdayItem"
+    put:
+      security:
+        - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/birthdayItem"
+        required: true
+      x-amazon-apigateway-request-validator: Validate body
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["add_birthday"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        201:
+          description: Birthday item added successfully
+        500:
+          description: Error adding birthday item
+    options:
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET, PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /birthdays/items/{id}:
+    patch:
+      security:
+        - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identifier of the birthday item to be updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                month:
+                  type: number
+                day:
+                  type: number
+                birthYear:
+                  type: number
+                notes:
+                  type: string
+              required:
+                - id
+        required: true
+      x-amazon-apigateway-request-validator: Validate body
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["update_birthday"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Birthday item updated successfully
+        400:
+          description: Incorrect birthday item details
+    delete:
+      security:
+        - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identifier of the birthday item to delete
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["delete_birthday"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Birthday item deleted
+        404:
+          description: Birthday item does not exist
+    options:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'PATCH, DELETE'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+components:
+  parameters:
+    ProjectIDHeader:
+      name: X-Project-ID
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Project ID for multi-tenancy data isolation
+  schemas:
+    birthdayItem:
+      title: Birthday Item
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        month:
+          type: number
+        day:
+          type: number
+        birthYear:
+          type: number
+        notes:
+          type: string
+  securitySchemes:
+    CognitoAuthorizer:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: cognito_user_pools
+      x-amazon-apigateway-authorizer:
+        type: cognito_user_pools
+        providerARNs:
+          - ${cognito_user_pool_arn}
+x-amazon-apigateway-request-validators:
+  Validate body:
+    validateRequestParameters: false
+    validateRequestBody: true

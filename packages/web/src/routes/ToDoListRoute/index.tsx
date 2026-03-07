@@ -1,5 +1,6 @@
 import StandardLayout from '../../layout/standardLayout'
 import { ToDoListProvider, useToDoListContext } from '../../providers/ToDoListProvider'
+import { BirthdayProvider } from '../../providers/BirthdayProvider'
 import ToDoList from '../../components/ToDoList'
 import ActionButtonsBar from '../../components/ActionButtonsBar'
 import ModernPageHeader from '../../components/ModernPageHeader'
@@ -133,7 +134,9 @@ const ToDoListContent = () => {
 export const ToDoListRoute = () => {
   return (
     <ToDoListProvider>
-      <ToDoListContent />
+      <BirthdayProvider>
+        <ToDoListContent />
+      </BirthdayProvider>
     </ToDoListProvider>
   )
 }

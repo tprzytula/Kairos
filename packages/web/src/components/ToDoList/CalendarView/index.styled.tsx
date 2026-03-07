@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Box, Typography } from '@mui/material'
+import CakeIcon from '@mui/icons-material/Cake'
 
 export const Container = styled('div')({
   display: 'flex',
@@ -223,5 +224,28 @@ export const CompletedNoDueDateItem = styled('div')({
   },
   '&:hover': {
     backgroundColor: '#e5e7eb',
+  },
+})
+
+export const BirthdayCakeIcon = styled(CakeIcon)({
+  fontSize: '0.85rem',
+  color: '#db2777',
+})
+
+export const BirthdayDayDetailItem = styled('div')({
+  fontSize: '0.9rem',
+  color: '#9d174d',
+  padding: '8px 10px',
+  borderBottom: '1px solid #fbcfe8',
+  cursor: 'pointer',
+  borderRadius: '4px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  '&:last-child': {
+    borderBottom: 'none',
+  },
+  '&:hover': {
+    backgroundColor: '#fce7f3',
   },
 })
