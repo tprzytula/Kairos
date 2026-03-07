@@ -96,12 +96,12 @@ const AddItemButton = () => {
     const navigate = useNavigate();
     const addItemRoute = useMemo<Route | undefined>(() => {
         const path = location.pathname;
-        
+
         // Check for grocery list pattern /groceries/:shopId
         if (path.match(/^\/groceries\/[^\/]+$/)) {
             return RouteToAddItemMapping[Route.GroceryList];
         }
-        
+
         // Check for exact matches
         const exactRoute = path as Route;
         return RouteToAddItemMapping[exactRoute];

@@ -20,6 +20,8 @@ export const CalendarHeader = styled(Box)({
 export const MonthLabel = styled(Typography)({
   fontWeight: 600,
   fontSize: '1rem',
+  flex: 1,
+  textAlign: 'center',
 })
 
 export const WeekDayHeader = styled('div')({

@@ -1,3 +1,7 @@
+import { useState, useCallback } from 'react'
+import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import ChecklistIcon from '@mui/icons-material/Checklist'
+import CakeIcon from '@mui/icons-material/Cake'
 import ItemForm from '../../components/ItemForm'
 import { FormFieldType } from '../../components/ItemForm/enums'
 import { IFormField } from '../../components/ItemForm/types'
@@ -6,18 +10,20 @@ import { validateFields } from './utils'
 import { useNavigate } from 'react-router'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
-import { useCallback } from 'react'
 import { useAuth } from 'react-oidc-context'
 import { AlertColor } from '@mui/material'
 import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
 import StandardLayout from '../../layout/standardLayout'
 import ModernPageHeader from '../../components/ModernPageHeader'
-import ChecklistIcon from '@mui/icons-material/Checklist'
 import { ToDoListProvider, useToDoListContext } from '../../providers/ToDoListProvider'
+import { BirthdayProvider, useBirthdayContext } from '../../providers/BirthdayProvider'
 import dayjs from 'dayjs'
+import BirthdayForm from './BirthdayForm'
 
-const FIELDS: Array<IFormField> = [
+type ItemType = 'task' | 'birthday'
+
+const TASK_FIELDS: Array<IFormField> = [
   {
     name: 'name',
     label: 'Name',
@@ -47,6 +53,7 @@ export const AddToDoItemContent = () => {
   const navigate = useNavigate()
   const { toDoList } = useToDoListContext()
   const { user } = useAuth()
+  const [itemType, setItemType] = useState<ItemType>('task')
 
   const createAlert = useCallback((description: string, severity: AlertColor) => {
     showAlert({ description, severity }, dispatch)
@@ -77,12 +84,11 @@ export const AddToDoItemContent = () => {
     }
   }, [createAlert, navigate, currentProject])
 
-  // Format current date parts with consistent lengths
   const today = new Date()
-  const currentDay = today.toLocaleDateString('en-US', { weekday: 'short' }) // Thu
-  const dayNumber = today.toLocaleDateString('en-US', { day: 'numeric' })   // 21
-  const monthName = today.toLocaleDateString('en-US', { month: 'short' })   // Aug
-  const yearNumber = today.toLocaleDateString('en-US', { year: 'numeric' }) // 2025
+  const currentDay = today.toLocaleDateString('en-US', { weekday: 'short' })
+  const dayNumber = today.toLocaleDateString('en-US', { day: 'numeric' })
+  const monthName = today.toLocaleDateString('en-US', { month: 'short' })
+  const yearNumber = today.toLocaleDateString('en-US', { year: 'numeric' })
 
   const stats = [
     { value: currentDay, label: 'Today' },
@@ -91,18 +97,56 @@ export const AddToDoItemContent = () => {
     { value: yearNumber, label: 'Year' }
   ]
 
+  const headerIcon = itemType === 'birthday' ? <CakeIcon /> : <ChecklistIcon />
+  const headerTitle = itemType === 'birthday' ? 'Add Birthday' : 'Add To-Do Item'
+
   return (
     <StandardLayout>
       <ModernPageHeader
-        title="Add To-Do Item"
-        icon={<ChecklistIcon />}
+        title={headerTitle}
+        icon={headerIcon}
         stats={stats}
       />
+      <Box sx={{ px: 2, pt: 1 }}>
+        <ToggleButtonGroup
+          value={itemType}
+          exclusive
+          onChange={(_, value) => { if (value) setItemType(value) }}
+          fullWidth
+          size="small"
+          sx={{
+            mb: 2,
+            '& .MuiToggleButton-root': {
+              borderRadius: '8px',
+              textTransform: 'none',
+              fontWeight: 500,
+              gap: 0.75,
+            },
+            '& .MuiToggleButton-root.Mui-selected': {
+              backgroundColor: itemType === 'birthday' ? '#fce7f3' : undefined,
+              color: itemType === 'birthday' ? '#db2777' : undefined,
+            },
+          }}
+        >
+          <ToggleButton value="task">
+            <ChecklistIcon fontSize="small" />
+            Task
+          </ToggleButton>
+          <ToggleButton value="birthday">
+            <CakeIcon fontSize="small" />
+            Birthday
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
+      {itemType === 'task' ? (
         <ItemForm
-          fields={FIELDS}
+          fields={TASK_FIELDS}
           onSubmit={onSubmit}
           hideImage={true}
         />
+      ) : (
+        <BirthdayForm />
+      )}
     </StandardLayout>
   )
 }
@@ -110,7 +154,9 @@ export const AddToDoItemContent = () => {
 export const AddToDoItemRoute = () => {
   return (
     <ToDoListProvider>
-      <AddToDoItemContent />
+      <BirthdayProvider>
+        <AddToDoItemContent />
+      </BirthdayProvider>
     </ToDoListProvider>
   )
 }
