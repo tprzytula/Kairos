@@ -102,7 +102,15 @@ const GroceryListContent = () => {
     <StandardLayout>
       <ModernPageHeader
         title={shopId === 'all' ? 'All Grocery Items' : (currentShop ? currentShop.name : "Grocery List")}
-        icon={<ShoppingCartIcon />}
+        icon={currentShop?.icon ? (
+          <img
+            src={currentShop.icon}
+            alt={`${currentShop.name} icon`}
+            style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '8px' }}
+          />
+        ) : (
+          <ShoppingCartIcon />
+        )}
         stats={stats}
         actionButton={{
           icon: <StorefrontIcon />,
