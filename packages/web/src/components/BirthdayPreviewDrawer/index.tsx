@@ -75,9 +75,18 @@ const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPrev
     ? `${item.day} ${MONTH_NAMES[item.month - 1]}`
     : ''
 
-  const age = item?.birthYear
-    ? dayjs().year() - item.birthYear
-    : null
+  const ageInfo = (() => {
+    if (!item?.birthYear) return null
+    const today = dayjs()
+    const thisYear = today.year()
+    const birthdayThisYear = dayjs(`${thisYear}-${String(item.month).padStart(2, '0')}-${String(item.day).padStart(2, '0')}`)
+    const isToday = birthdayThisYear.isSame(today, 'day')
+    const hasPassed = birthdayThisYear.isBefore(today, 'day')
+    const age = thisYear - item.birthYear
+    if (isToday) return { label: `${age} today! 🎉`, age }
+    if (hasPassed) return { label: `${age} years old`, age }
+    return { label: `turns ${age} in ${MONTH_NAMES[item.month - 1]}`, age }
+  })()
 
   return (
     <Drawer
@@ -157,9 +166,9 @@ const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPrev
           <MetaRow>
             <CalendarTodayIcon sx={{ fontSize: '1rem' }} />
             {birthdayDate}
-            {age !== null && (
+            {ageInfo !== null && (
               <span style={{ color: '#db2777', fontWeight: 600 }}>
-                · turns {age} this year
+                · {ageInfo.label}
               </span>
             )}
           </MetaRow>
