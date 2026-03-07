@@ -61,7 +61,7 @@ describe('PlannerSection component', () => {
         />
       )
       
-      expect(screen.getByText('To-Do Items')).toBeInTheDocument()
+      expect(screen.getByText('Planner')).toBeInTheDocument()
       expect(screen.getByText('0')).toBeInTheDocument()
     })
   })
@@ -111,7 +111,7 @@ describe('PlannerSection component', () => {
         />
       )
       
-      expect(screen.getByText('To-Do Items')).toBeInTheDocument()
+      expect(screen.getByText('Planner')).toBeInTheDocument()
       expect(screen.getByText('3')).toBeInTheDocument()
       expect(screen.getByText('Task 1')).toBeInTheDocument()
       expect(screen.getByText('Task 2')).toBeInTheDocument()

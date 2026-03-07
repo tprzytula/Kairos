@@ -146,7 +146,7 @@ describe('Given the AddPlannerItemContent component', () => {
           ])
         })
 
-        expect(navigateSpy).toHaveBeenCalledWith('/todo')
+        expect(navigateSpy).toHaveBeenCalledWith('/planner')
       })
     })
 

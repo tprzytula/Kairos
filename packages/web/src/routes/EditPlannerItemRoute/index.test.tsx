@@ -134,7 +134,7 @@ describe('Given the EditPlannerItemRoute component', () => {
         dueDate: expect.any(Number)
       })
       
-      expect(mockNavigate).toHaveBeenCalledWith('/todo')
+      expect(mockNavigate).toHaveBeenCalledWith('/planner')
     })
 
     it('should call updateToDoItemFields with only name when other fields are empty', async () => {

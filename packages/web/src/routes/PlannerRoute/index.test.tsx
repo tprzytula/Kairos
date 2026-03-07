@@ -54,7 +54,7 @@ describe('Given the PlannerRoute component', () => {
       renderComponent()
     })
 
-    expect(screen.getByText('To-Do List')).toBeVisible()
+    expect(screen.getByText('Planner')).toBeVisible()
   })
 
   it('should display stats for empty list', async () => {
@@ -157,7 +157,7 @@ describe('Given the PlannerRoute component', () => {
     })
 
     // The ChecklistIcon should be rendered
-    const headerContainer = screen.getByText('To-Do List').closest('div')
+    const headerContainer = screen.getByText('Planner').closest('div')
     expect(headerContainer).toBeInTheDocument()
   })
 
@@ -168,7 +168,7 @@ describe('Given the PlannerRoute component', () => {
 
     // The ActionButtonsBar should show status text when no items are selected
     await waitFor(() => {
-      expect(screen.getByText('Your to-do list is empty')).toBeInTheDocument()
+      expect(screen.getByText('Your planner is empty')).toBeInTheDocument()
     })
   })
 
@@ -203,7 +203,7 @@ describe('Given the PlannerRoute component', () => {
 
     // The ActionButtonsBar should show the action button when items are selected
     await waitFor(() => {
-      expect(screen.getByText('Mark To Do Items As Done')).toBeInTheDocument()
+      expect(screen.getByText('Mark Tasks As Done')).toBeInTheDocument()
     })
   })
 
@@ -214,7 +214,7 @@ describe('Given the PlannerRoute component', () => {
 
     // Verify the ToDoList component is rendered by checking for its container
     await waitFor(() => {
-      const container = screen.getByText('To-Do List').closest('div')
+      const container = screen.getByText('Planner').closest('div')
       expect(container).toBeInTheDocument()
     })
   })
