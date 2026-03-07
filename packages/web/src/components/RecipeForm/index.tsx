@@ -13,7 +13,24 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
 import { type Area } from 'react-easy-crop'
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { IRecipe, IRecipeIngredient } from '../../types/recipe'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import { useRecipeContext } from '../../providers/RecipeProvider'
@@ -30,10 +47,69 @@ interface RecipeFormProps {
   onDone: () => void
 }
 
+type IngredientWithId = IRecipeIngredient & { _id: string }
+
+const makeId = () => crypto.randomUUID()
+
 const DEFAULT_INGREDIENT: IRecipeIngredient = {
   name: '',
   quantity: 1,
   unit: GroceryItemUnit.UNIT,
+}
+
+function SortableIngredientRow({ id, children }: { id: string; children: React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
+  return (
+    <IngredientRow
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : undefined,
+        position: 'relative',
+        zIndex: isDragging ? 1 : undefined,
+      }}
+    >
+      <IconButton
+        size="small"
+        aria-label="Drag to reorder"
+        sx={{ cursor: 'grab', touchAction: 'none', color: 'text.disabled' }}
+        {...attributes}
+        {...listeners}
+      >
+        <DragIndicatorIcon fontSize="small" />
+      </IconButton>
+      {children}
+    </IngredientRow>
+  )
+}
+
+function SortableStepRow({ id, children }: { id: string; children: React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
+  return (
+    <IngredientRow
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : undefined,
+        position: 'relative',
+        zIndex: isDragging ? 1 : undefined,
+      }}
+      sx={{ gridTemplateColumns: '36px 1fr 36px' }}
+    >
+      <IconButton
+        size="small"
+        aria-label="Drag to reorder"
+        sx={{ cursor: 'grab', touchAction: 'none', color: 'text.disabled' }}
+        {...attributes}
+        {...listeners}
+      >
+        <DragIndicatorIcon fontSize="small" />
+      </IconButton>
+      {children}
+    </IngredientRow>
+  )
 }
 
 const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
@@ -42,11 +118,14 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   const { dispatch } = useAppState()
   const [name, setName] = useState(initialRecipe?.name ?? '')
   const [externalLink, setExternalLink] = useState(initialRecipe?.externalLink ?? '')
-  const [ingredients, setIngredients] = useState<IRecipeIngredient[]>(
-    initialRecipe?.ingredients ?? [{ ...DEFAULT_INGREDIENT }]
+  const [ingredients, setIngredients] = useState<IngredientWithId[]>(
+    (initialRecipe?.ingredients ?? [{ ...DEFAULT_INGREDIENT }]).map((ing) => ({ ...ing, _id: makeId() }))
   )
   const [instructions, setInstructions] = useState<string[]>(
     initialRecipe?.instructions ?? ['']
+  )
+  const [instructionIds, setInstructionIds] = useState<string[]>(
+    (initialRecipe?.instructions ?? ['']).map(() => makeId())
   )
   const [isSaving, setIsSaving] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
@@ -62,6 +141,11 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   const [pendingImageSrc, setPendingImageSrc] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
+  )
+
   const handleIngredientChange = useCallback(
     (index: number, field: keyof IRecipeIngredient, value: string | number) => {
       setIngredients((prev) =>
@@ -74,11 +158,21 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   )
 
   const handleAddIngredient = useCallback(() => {
-    setIngredients((prev) => [...prev, { ...DEFAULT_INGREDIENT }])
+    setIngredients((prev) => [...prev, { ...DEFAULT_INGREDIENT, _id: makeId() }])
   }, [])
 
   const handleRemoveIngredient = useCallback((index: number) => {
     setIngredients((prev) => prev.filter((_, i) => i !== index))
+  }, [])
+
+  const handleIngredientsReorder = useCallback((event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    setIngredients((prev) => {
+      const from = prev.findIndex((i) => i._id === active.id)
+      const to = prev.findIndex((i) => i._id === over.id)
+      return arrayMove(prev, from, to)
+    })
   }, [])
 
   const handleInstructionChange = useCallback((index: number, value: string) => {
@@ -87,10 +181,23 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
 
   const handleAddInstruction = useCallback(() => {
     setInstructions((prev) => [...prev, ''])
+    setInstructionIds((prev) => [...prev, makeId()])
   }, [])
 
   const handleRemoveInstruction = useCallback((index: number) => {
     setInstructions((prev) => prev.filter((_, i) => i !== index))
+    setInstructionIds((prev) => prev.filter((_, i) => i !== index))
+  }, [])
+
+  const handleInstructionsReorder = useCallback((event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    setInstructionIds((prev) => {
+      const from = prev.indexOf(String(active.id))
+      const to = prev.indexOf(String(over.id))
+      setInstructions((prevSteps) => arrayMove(prevSteps, from, to))
+      return arrayMove(prev, from, to)
+    })
   }, [])
 
   const handleImageClick = useCallback(() => {
@@ -160,7 +267,9 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
       return
     }
 
-    const validIngredients = ingredients.filter((ing) => ing.name.trim().length > 0)
+    const validIngredients = ingredients
+      .filter((ing) => ing.name.trim().length > 0)
+      .map(({ _id, ...rest }) => rest)
     if (validIngredients.length === 0) {
       showAlert({ description: 'At least one ingredient is required', severity: 'error' }, dispatch)
       return
@@ -243,47 +352,51 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           Ingredients
         </Typography>
 
-        {ingredients.map((ingredient, index) => (
-          <IngredientRow key={index}>
-            <TextField
-              label="Name"
-              value={ingredient.name}
-              onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
-              size="small"
-              placeholder="e.g. Milk"
-            />
-            <TextField
-              label="Qty"
-              type="number"
-              value={ingredient.quantity}
-              onChange={(e) => handleIngredientChange(index, 'quantity', Number(e.target.value))}
-              size="small"
-              inputProps={{ min: 0.1, step: 0.1 }}
-            />
-            <FormControl size="small">
-              <InputLabel>Unit</InputLabel>
-              <Select
-                label="Unit"
-                value={ingredient.unit}
-                onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
-              >
-                {Object.values(GroceryItemUnit).map((unit) => (
-                  <MenuItem key={unit} value={unit}>
-                    {GroceryItemUnitLabelMap[unit]}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <IconButton
-              size="small"
-              onClick={() => handleRemoveIngredient(index)}
-              disabled={ingredients.length === 1}
-              aria-label={`Remove ingredient ${index + 1}`}
-            >
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          </IngredientRow>
-        ))}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleIngredientsReorder}>
+          <SortableContext items={ingredients.map((i) => i._id)} strategy={verticalListSortingStrategy}>
+            {ingredients.map((ingredient, index) => (
+              <SortableIngredientRow key={ingredient._id} id={ingredient._id}>
+                <TextField
+                  label="Name"
+                  value={ingredient.name}
+                  onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
+                  size="small"
+                  placeholder="e.g. Milk"
+                />
+                <TextField
+                  label="Qty"
+                  type="number"
+                  value={ingredient.quantity}
+                  onChange={(e) => handleIngredientChange(index, 'quantity', Number(e.target.value))}
+                  size="small"
+                  inputProps={{ min: 0.1, step: 0.1 }}
+                />
+                <FormControl size="small">
+                  <InputLabel>Unit</InputLabel>
+                  <Select
+                    label="Unit"
+                    value={ingredient.unit}
+                    onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
+                  >
+                    {Object.values(GroceryItemUnit).map((unit) => (
+                      <MenuItem key={unit} value={unit}>
+                        {GroceryItemUnitLabelMap[unit]}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <IconButton
+                  size="small"
+                  onClick={() => handleRemoveIngredient(index)}
+                  disabled={ingredients.length === 1}
+                  aria-label={`Remove ingredient ${index + 1}`}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </SortableIngredientRow>
+            ))}
+          </SortableContext>
+        </DndContext>
 
         <Button
           variant="outlined"
@@ -301,26 +414,30 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           Instructions
         </Typography>
 
-        {instructions.map((step, index) => (
-          <IngredientRow key={index} sx={{ gridTemplateColumns: '1fr 36px' }}>
-            <TextField
-              label={`Step ${index + 1}`}
-              value={step}
-              onChange={(e) => handleInstructionChange(index, e.target.value)}
-              size="small"
-              multiline
-              placeholder={`Describe step ${index + 1}...`}
-            />
-            <IconButton
-              size="small"
-              onClick={() => handleRemoveInstruction(index)}
-              disabled={instructions.length === 1}
-              aria-label={`Remove step ${index + 1}`}
-            >
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          </IngredientRow>
-        ))}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleInstructionsReorder}>
+          <SortableContext items={instructionIds} strategy={verticalListSortingStrategy}>
+            {instructions.map((step, index) => (
+              <SortableStepRow key={instructionIds[index]} id={instructionIds[index]}>
+                <TextField
+                  label={`Step ${index + 1}`}
+                  value={step}
+                  onChange={(e) => handleInstructionChange(index, e.target.value)}
+                  size="small"
+                  multiline
+                  placeholder={`Describe step ${index + 1}...`}
+                />
+                <IconButton
+                  size="small"
+                  onClick={() => handleRemoveInstruction(index)}
+                  disabled={instructions.length === 1}
+                  aria-label={`Remove step ${index + 1}`}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </SortableStepRow>
+            ))}
+          </SortableContext>
+        </DndContext>
 
         <Button
           variant="outlined"

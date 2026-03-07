@@ -9,7 +9,7 @@ export const FormContainer = styled(Box)({
 
 export const IngredientRow = styled(Box)({
   display: 'grid',
-  gridTemplateColumns: '1fr 80px 100px 36px',
+  gridTemplateColumns: '36px 1fr 80px 100px 36px',
   gap: '0.5rem',
   alignItems: 'center',
 })
