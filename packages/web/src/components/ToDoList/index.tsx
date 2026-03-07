@@ -66,7 +66,7 @@ export const ToDoList = ({
 
   if (viewMode === ToDoViewMode.CALENDAR) {
     return (
-      <CalendarView visibleToDoItems={visibleToDoItems} onItemClick={handleEdit} />
+      <CalendarView visibleToDoItems={toDoList} onItemClick={handleEdit} />
     );
   }
 

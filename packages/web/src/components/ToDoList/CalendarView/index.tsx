@@ -14,13 +14,16 @@ import {
   DayCell,
   DayNumber,
   TodoDot,
+  CompletedTodoDot,
   DayDetailPanel,
   DayDetailHeader,
   DayDetailItem,
+  CompletedDayDetailItem,
   DayDetailEmpty,
   NoDueDateSection,
   NoDueDateHeader,
   NoDueDateItem,
+  CompletedNoDueDateItem,
 } from './index.styled'
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -53,10 +56,10 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
     [visibleToDoItems]
   )
 
-  // Map from "YYYY-MM-DD" -> ITodoItem[]
-  const todosByDay = useMemo(() => {
+  // Map from "YYYY-MM-DD" -> ITodoItem[] (pending only)
+  const pendingTodosByDay = useMemo(() => {
     const map = new Map<string, ITodoItem[]>()
-    for (const item of itemsWithDueDate) {
+    for (const item of itemsWithDueDate.filter(i => !i.isDone)) {
       const key = dayjs(item.dueDate!).format('YYYY-MM-DD')
       const existing = map.get(key)
       if (existing) {
@@ -68,9 +71,29 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
     return map
   }, [itemsWithDueDate])
 
-  const selectedDayTodos = useMemo(
-    () => (selectedDay ? (todosByDay.get(selectedDay) ?? []) : []),
-    [selectedDay, todosByDay]
+  // Map from "YYYY-MM-DD" -> ITodoItem[] (completed only)
+  const completedTodosByDay = useMemo(() => {
+    const map = new Map<string, ITodoItem[]>()
+    for (const item of itemsWithDueDate.filter(i => i.isDone)) {
+      const key = dayjs(item.dueDate!).format('YYYY-MM-DD')
+      const existing = map.get(key)
+      if (existing) {
+        existing.push(item)
+      } else {
+        map.set(key, [item])
+      }
+    }
+    return map
+  }, [itemsWithDueDate])
+
+  const selectedDayPendingTodos = useMemo(
+    () => (selectedDay ? (pendingTodosByDay.get(selectedDay) ?? []) : []),
+    [selectedDay, pendingTodosByDay]
+  )
+
+  const selectedDayCompletedTodos = useMemo(
+    () => (selectedDay ? (completedTodosByDay.get(selectedDay) ?? []) : []),
+    [selectedDay, completedTodosByDay]
   )
 
   // Build the grid: pad the start with days from the previous month
@@ -123,7 +146,8 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
           const isCurrentMonth = day.month() === currentMonth.month()
           const isToday = day.isSame(today, 'day')
           const isSelected = selectedDay === key
-          const count = todosByDay.get(key)?.length ?? 0
+          const pendingCount = pendingTodosByDay.get(key)?.length ?? 0
+          const completedCount = completedTodosByDay.get(key)?.length ?? 0
 
           return (
             <DayCell
@@ -134,7 +158,8 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
               onClick={() => handleDayClick(day, isCurrentMonth)}
             >
               <DayNumber isToday={isToday} isSelected={isSelected}>{day.date()}</DayNumber>
-              <TodoDot count={count}>{count > 0 ? count : ''}</TodoDot>
+              <TodoDot count={pendingCount}>{pendingCount > 0 ? pendingCount : ''}</TodoDot>
+              <CompletedTodoDot count={completedCount}>{completedCount > 0 ? completedCount : ''}</CompletedTodoDot>
             </DayCell>
           )
         })}
@@ -145,14 +170,21 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
           <DayDetailHeader>
             {dayjs(selectedDay).format('dddd, D MMMM')}
           </DayDetailHeader>
-          {selectedDayTodos.length === 0 ? (
+          {selectedDayPendingTodos.length === 0 && selectedDayCompletedTodos.length === 0 ? (
             <DayDetailEmpty>No tasks on this day</DayDetailEmpty>
           ) : (
-            selectedDayTodos.map(todo => (
-              <DayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
-                {todo.name}
-              </DayDetailItem>
-            ))
+            <>
+              {selectedDayPendingTodos.map(todo => (
+                <DayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+                  {todo.name}
+                </DayDetailItem>
+              ))}
+              {selectedDayCompletedTodos.map(todo => (
+                <CompletedDayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+                  {todo.name}
+                </CompletedDayDetailItem>
+              ))}
+            </>
           )}
         </DayDetailPanel>
       )}
@@ -161,9 +193,15 @@ const CalendarView = ({ visibleToDoItems, onItemClick }: ICalendarViewProps) => 
         <NoDueDateSection>
           <NoDueDateHeader>📝 No Due Date</NoDueDateHeader>
           {itemsWithoutDueDate.map(item => (
-            <NoDueDateItem key={item.id} onClick={() => onItemClick(item.id)}>
-              {item.name}
-            </NoDueDateItem>
+            item.isDone ? (
+              <CompletedNoDueDateItem key={item.id} onClick={() => onItemClick(item.id)}>
+                {item.name}
+              </CompletedNoDueDateItem>
+            ) : (
+              <NoDueDateItem key={item.id} onClick={() => onItemClick(item.id)}>
+                {item.name}
+              </NoDueDateItem>
+            )
           ))}
         </NoDueDateSection>
       )}

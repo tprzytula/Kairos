@@ -156,3 +156,72 @@ export const NoDueDateItem = styled('div')({
     backgroundColor: '#e5e7eb',
   },
 })
+
+export const CompletedTodoDot = styled('div')<{ count?: number }>(({ count = 0 }) => ({
+  width: count > 0 ? 'auto' : '0',
+  minWidth: count > 0 ? '18px' : '0',
+  height: count > 0 ? '16px' : '0',
+  padding: count > 0 ? '0 4px' : '0',
+  borderRadius: '8px',
+  backgroundColor: '#059669',
+  color: '#ffffff',
+  fontSize: '0.6rem',
+  fontWeight: 600,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  lineHeight: 1,
+  visibility: count > 0 ? 'visible' : 'hidden',
+}))
+
+export const CompletedDayDetailItem = styled('div')({
+  fontSize: '0.9rem',
+  color: '#6b7280',
+  textDecoration: 'line-through',
+  padding: '8px 10px',
+  borderBottom: '1px solid #dbeafe',
+  cursor: 'pointer',
+  borderRadius: '4px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  '&::before': {
+    content: '"✓"',
+    color: '#059669',
+    fontWeight: 700,
+    textDecoration: 'none',
+    flexShrink: 0,
+  },
+  '&:last-child': {
+    borderBottom: 'none',
+  },
+  '&:hover': {
+    backgroundColor: '#dbeafe',
+  },
+})
+
+export const CompletedNoDueDateItem = styled('div')({
+  fontSize: '0.9rem',
+  color: '#6b7280',
+  textDecoration: 'line-through',
+  padding: '8px 10px',
+  borderBottom: '1px solid #e5e7eb',
+  cursor: 'pointer',
+  borderRadius: '4px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  '&::before': {
+    content: '"✓"',
+    color: '#059669',
+    fontWeight: 700,
+    textDecoration: 'none',
+    flexShrink: 0,
+  },
+  '&:last-child': {
+    borderBottom: 'none',
+  },
+  '&:hover': {
+    backgroundColor: '#e5e7eb',
+  },
+})
