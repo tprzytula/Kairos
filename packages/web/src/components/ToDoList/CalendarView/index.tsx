@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { IconButton, Tooltip } from '@mui/material'
+import { IconButton } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
@@ -37,10 +37,9 @@ interface ICalendarViewProps {
   onItemClick: (id: string) => void
   birthdayItems?: IBirthdayItem[]
   onBirthdayClick?: (id: string) => void
-  onAddBirthday?: () => void
 }
 
-const CalendarView = ({ visibleToDoItems, onItemClick, birthdayItems = [], onBirthdayClick, onAddBirthday }: ICalendarViewProps) => {
+const CalendarView = ({ visibleToDoItems, onItemClick, birthdayItems = [], onBirthdayClick }: ICalendarViewProps) => {
   const [currentMonth, setCurrentMonth] = useState<Dayjs>(() => dayjs().startOf('month'))
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const today = dayjs()
@@ -161,13 +160,6 @@ const CalendarView = ({ visibleToDoItems, onItemClick, birthdayItems = [], onBir
         <IconButton size="small" onClick={goToNextMonth} aria-label="Next month">
           <ChevronRightIcon />
         </IconButton>
-        {onAddBirthday && (
-          <Tooltip title="Add birthday">
-            <IconButton size="small" onClick={onAddBirthday} aria-label="Add birthday">
-              <CakeIcon sx={{ color: '#db2777', fontSize: '1.2rem' }} />
-            </IconButton>
-          </Tooltip>
-        )}
       </CalendarHeader>
 
       <WeekDayHeader>

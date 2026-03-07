@@ -37,15 +37,15 @@ export const ToDoList = ({
   const [editingBirthday, setEditingBirthday] = useState<IBirthdayItem | null>(null);
   const { birthdays, removeBirthdayItem } = useBirthdayContext();
   const visibleToDoItems = useMemo(() => toDoList.filter(({ isDone }) => !isDone), [toDoList]);
-  
+
   const groupedToDoItems = useMemo(() => {
     return groupTodosByTime(visibleToDoItems);
   }, [visibleToDoItems]);
 
   const clearSelectedTodoItems = useCallback((id: string) => {
-    dispatch({ 
-      type: ActionName.CLEAR_SELECTED_TODO_ITEMS, 
-      payload: [ id ] 
+    dispatch({
+      type: ActionName.CLEAR_SELECTED_TODO_ITEMS,
+      payload: [ id ]
     })
   }, [dispatch])
 
@@ -84,11 +84,6 @@ export const ToDoList = ({
     await removeBirthdayItem(id);
   }, [removeBirthdayItem]);
 
-  const handleAddBirthday = useCallback(() => {
-    setEditingBirthday(null);
-    setBirthdayDialogOpen(true);
-  }, []);
-
   if (viewMode === ToDoViewMode.CALENDAR) {
     return (
       <>
@@ -98,7 +93,6 @@ export const ToDoList = ({
             onItemClick={handlePreview}
             birthdayItems={birthdays}
             onBirthdayClick={handleBirthdayPreview}
-            onAddBirthday={handleAddBirthday}
           />
         )}
         <ToDoItemPreviewDrawer
