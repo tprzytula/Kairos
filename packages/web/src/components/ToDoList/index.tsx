@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useToDoListContext } from '../../providers/ToDoListProvider';
 import { useProjectContext } from '../../providers/ProjectProvider';
@@ -9,11 +9,13 @@ import { showAlert } from '../../utils/alert';
 import { Route } from '../../enums/route';
 import { groupTodosByTime } from './utils/timeGrouping';
 import { ToDoViewMode } from '../../enums/todoViewMode';
+import { ITodoItem } from '../../api/toDoList/retrieve/types';
 import SimpleView from './SimpleView';
 import GroupedView from './GroupedView';
 import CalendarView from './CalendarView';
 import Placeholder from './Placeholder';
 import EmptyToDoList from './EmptyToDoList';
+import ToDoItemPreviewDrawer from '../ToDoItemPreviewDrawer';
 import { IToDoListProps } from './types';
 
 export const ToDoList = ({
@@ -25,6 +27,7 @@ export const ToDoList = ({
   const { toDoList, isLoading, removeFromToDoList } = useToDoListContext();
   const { currentProject } = useProjectContext();
   const navigate = useNavigate();
+  const [previewItem, setPreviewItem] = useState<ITodoItem | null>(null);
   const visibleToDoItems = useMemo(() => toDoList.filter(({ isDone }) => !isDone), [toDoList]);
   
   const groupedToDoItems = useMemo(() => {
@@ -56,6 +59,10 @@ export const ToDoList = ({
     navigate(Route.EditToDoItem.replace(':id', id))
   }, [navigate]);
 
+  const handlePreview = useCallback((id: string) => {
+    setPreviewItem(toDoList.find(item => item.id === id) ?? null)
+  }, [toDoList]);
+
   if (isLoading) {
     return <Placeholder />
   }
@@ -66,7 +73,14 @@ export const ToDoList = ({
 
   if (viewMode === ToDoViewMode.CALENDAR) {
     return (
-      <CalendarView visibleToDoItems={toDoList} onItemClick={handleEdit} />
+      <>
+        <CalendarView visibleToDoItems={toDoList} onItemClick={handlePreview} />
+        <ToDoItemPreviewDrawer
+          item={previewItem}
+          onClose={() => setPreviewItem(null)}
+          onEdit={handleEdit}
+        />
+      </>
     );
   }
 
