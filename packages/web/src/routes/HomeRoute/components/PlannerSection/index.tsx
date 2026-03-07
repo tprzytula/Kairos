@@ -8,7 +8,7 @@ import { IToDoSectionProps } from './types'
 import { formatDueDateRelative, getDueDateClass } from '../../../../utils/dateTime'
 import { CompactItemList, MoreItemsIndicator } from './index.styled'
 
-export const ToDoSection: React.FC<IToDoSectionProps> = ({
+export const PlannerSection: React.FC<IToDoSectionProps> = ({
   toDoStats,
   isLoading,
   isExpanded,
@@ -28,7 +28,7 @@ export const ToDoSection: React.FC<IToDoSectionProps> = ({
     }
 
     if (toDoStats.displayedItems.length === 0) {
-      return <EmptyState>No pending to-do items found</EmptyState>
+      return <EmptyState>No pending tasks found</EmptyState>
     }
 
     return (
@@ -64,7 +64,7 @@ export const ToDoSection: React.FC<IToDoSectionProps> = ({
   return (
     <SectionCard
       icon={ChecklistIcon}
-      title="To-Do Items"
+      title="Planner"
       count={toDoStats.pendingItems.length}
     >
       {renderContent()}
@@ -72,4 +72,4 @@ export const ToDoSection: React.FC<IToDoSectionProps> = ({
   )
 }
 
-export default ToDoSection
+export default PlannerSection

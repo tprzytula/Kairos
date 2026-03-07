@@ -13,11 +13,11 @@ export const initialState: IState = {
   updateToDoItemFields: async () => {},
 }
 
-export const ToDoListContext = createContext<IState>(initialState)
+export const PlannerContext = createContext<IState>(initialState)
 
-export const useToDoListContext = () => useContext(ToDoListContext)
+export const usePlannerContext = () => useContext(PlannerContext)
 
-export const ToDoListProvider = ({ children }: StateComponentProps) => {
+export const PlannerProvider = ({ children }: StateComponentProps) => {
   const { currentProject } = useProjectContext()
   const [toDoList, setToDoList] = useState<Array<ITodoItem>>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -92,8 +92,8 @@ export const ToDoListProvider = ({ children }: StateComponentProps) => {
   )
 
   return (
-    <ToDoListContext.Provider value={value}> 
+    <PlannerContext.Provider value={value}>
       {children}
-    </ToDoListContext.Provider>
+    </PlannerContext.Provider>
   )
 }

@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
-import ToDoListRoute from '.'
+import PlannerRoute from '.'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import * as ToDoAPI from '../../api/toDoList'
@@ -31,7 +31,7 @@ const MOCK_PROJECT: IProject = {
   createdAt: new Date().toISOString()
 }
 
-describe('Given the ToDoListRoute component', () => {
+describe('Given the PlannerRoute component', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
@@ -194,7 +194,7 @@ describe('Given the ToDoListRoute component', () => {
         <ThemeProvider theme={theme}>
           <AppStateProvider>
             <BrowserRouter>
-              <ToDoListRoute />
+              <PlannerRoute />
             </BrowserRouter>
           </AppStateProvider>
         </ThemeProvider>
@@ -286,7 +286,7 @@ const renderComponent = () => {
     <ThemeProvider theme={theme}>
       <AppStateProvider>
         <BrowserRouter>
-          <ToDoListRoute />
+          <PlannerRoute />
         </BrowserRouter>
       </AppStateProvider>
     </ThemeProvider>

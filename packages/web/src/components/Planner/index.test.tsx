@@ -1,13 +1,13 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import { BrowserRouter } from 'react-router'
-import ToDoList from "."
-import * as ToDoListProvider from '../../providers/ToDoListProvider'
+import Planner from "."
+import * as PlannerProvider from '../../providers/PlannerProvider'
 import * as ProjectProvider from '../../providers/ProjectProvider'
 import * as ReactRouter from 'react-router'
-import { IState } from "../../providers/ToDoListProvider/types"
+import { IState } from "../../providers/PlannerProvider/types"
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import * as ToDoAPI from '../../api/toDoList'
-import { ToDoViewMode } from '../../enums/todoViewMode'
+import { PlannerViewMode } from '../../enums/plannerViewMode'
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
@@ -16,7 +16,7 @@ jest.mock('react-router', () => ({
 
 jest.mock('../../providers/ProjectProvider')
 
-describe('Given the ToDoList component', () => {
+describe('Given the Planner component', () => {
   const mockNavigate = jest.fn()
 
   beforeEach(() => {
@@ -42,9 +42,9 @@ describe('Given the ToDoList component', () => {
     mockNavigate.mockClear()
   })
   it('should render only the not completed items grouped by time', () => {
-    jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
-    renderWithTheme(<ToDoList />)
+    renderWithTheme(<Planner />)
 
     expect(screen.getByText('Buy Groceries')).toBeVisible()
     expect(screen.getByText('Buy Bread')).toBeVisible()
@@ -54,9 +54,9 @@ describe('Given the ToDoList component', () => {
   })
 
   it('should pass edit and swipe functions to time sections', () => {
-    jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
-    renderWithTheme(<ToDoList />)
+    renderWithTheme(<Planner />)
 
     // The time sections should receive both onSwipeAction and onEditAction
     // This test ensures the edit navigation is properly set up
@@ -64,18 +64,18 @@ describe('Given the ToDoList component', () => {
   })
 
   it('should pass expand/collapse props to time sections when provided', () => {
-    jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
-    renderWithTheme(<ToDoList allExpanded={false} expandKey="test-key" />)
+    renderWithTheme(<Planner allExpanded={false} expandKey="test-key" />)
 
     // When allExpanded=false, sections should be collapsed (show expand button)
     expect(screen.getByRole('button', { name: /expand/i })).toBeInTheDocument()
   })
 
   it('should render in simple mode when viewMode is SIMPLE', () => {
-    jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
-    renderWithTheme(<ToDoList viewMode={ToDoViewMode.SIMPLE} />)
+    renderWithTheme(<Planner viewMode={PlannerViewMode.SIMPLE} />)
 
     // In simple mode, items should be rendered in one "All Tasks" section
     expect(screen.getByText('All Tasks')).toBeVisible()
@@ -87,9 +87,9 @@ describe('Given the ToDoList component', () => {
   })
 
   it('should render in grouped mode by default', () => {
-    jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
-    renderWithTheme(<ToDoList />)
+    renderWithTheme(<Planner />)
 
     // Should have time section headers in grouped mode
     expect(screen.getByText('Overdue (2)')).toBeVisible()
@@ -105,9 +105,9 @@ describe('Given the ToDoList component', () => {
       ]
     }
     
-    jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue(contextWithMixedItems)
+    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(contextWithMixedItems)
 
-    renderWithTheme(<ToDoList />)
+    renderWithTheme(<Planner />)
 
     expect(screen.getByText('Buy Groceries')).toBeVisible()
     expect(screen.getByText('Buy Bread')).toBeVisible()
@@ -127,9 +127,9 @@ describe('Given the ToDoList component', () => {
       ]
     }
     
-    jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue(contextWithDifferentDueDates)
+    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(contextWithDifferentDueDates)
 
-    renderWithTheme(<ToDoList />)
+    renderWithTheme(<Planner />)
 
     // Check section headers
     expect(screen.getByText('Due Today')).toBeVisible()
@@ -149,7 +149,7 @@ describe('Given the ToDoList component', () => {
 
   describe('When the to do list is empty', () => {
     it('should render the empty list icon and helpful text', () => {
-      jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue({
+      jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
         toDoList: [],
         isLoading: false,
         refetchToDoList: jest.fn(),
@@ -157,16 +157,16 @@ describe('Given the ToDoList component', () => {
         updateToDoItemFields: jest.fn(),
       })
 
-      renderWithTheme(<ToDoList />)
+      renderWithTheme(<Planner />)
 
-      expect(screen.getByLabelText('Empty to-do list')).toBeVisible()
-      expect(screen.getByText('No pending to-do items found')).toBeVisible()
+      expect(screen.getByLabelText('Empty planner')).toBeVisible()
+      expect(screen.getByText('No pending tasks found')).toBeVisible()
       expect(screen.getByText('Tap the + button to add your first task')).toBeVisible()
     })
 
     describe('Empty state layout behavior', () => {
       it('should center empty state vertically within available space', () => {
-        jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue({
+        jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
           toDoList: [],
           isLoading: false,
           refetchToDoList: jest.fn(),
@@ -174,9 +174,9 @@ describe('Given the ToDoList component', () => {
           updateToDoItemFields: jest.fn(),
         })
 
-        renderWithTheme(<ToDoList />)
+        renderWithTheme(<Planner />)
 
-        const emptyStateElement = screen.getByText('No pending to-do items found').parentElement
+        const emptyStateElement = screen.getByText('No pending tasks found').parentElement
         expect(emptyStateElement).toBeInTheDocument()
         
         const computedStyle = window.getComputedStyle(emptyStateElement as Element)
@@ -188,7 +188,7 @@ describe('Given the ToDoList component', () => {
       })
 
       it('should maintain proper spacing and opacity in empty state', () => {
-        jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue({
+        jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
           toDoList: [],
           isLoading: false,
           refetchToDoList: jest.fn(),
@@ -196,9 +196,9 @@ describe('Given the ToDoList component', () => {
           updateToDoItemFields: jest.fn(),
         })
 
-        renderWithTheme(<ToDoList />)
+        renderWithTheme(<Planner />)
 
-        const emptyStateElement = screen.getByText('No pending to-do items found').parentElement
+        const emptyStateElement = screen.getByText('No pending tasks found').parentElement
         const computedStyle = window.getComputedStyle(emptyStateElement as Element)
         
         expect(computedStyle.gap).toBe('12px')
@@ -210,7 +210,7 @@ describe('Given the ToDoList component', () => {
 
   describe('When the to do list is loading', () => {
     it('should render the loading placeholder', () => {
-      jest.spyOn(ToDoListProvider, 'useToDoListContext').mockReturnValue({
+      jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
         toDoList: [],
         isLoading: true,
         refetchToDoList: jest.fn(),
@@ -218,7 +218,7 @@ describe('Given the ToDoList component', () => {
         updateToDoItemFields: jest.fn(),
       })
 
-      renderWithTheme(<ToDoList />)
+      renderWithTheme(<Planner />)
 
       expect(screen.getByLabelText('Loading to-do items')).toBeInTheDocument()
       expect(screen.getAllByLabelText('To do item placeholder')).toHaveLength(18)

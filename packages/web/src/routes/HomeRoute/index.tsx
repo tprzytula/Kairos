@@ -1,6 +1,6 @@
 import React from 'react'
 import { useGroceryListContext, GroceryListProvider } from '../../providers/GroceryListProvider'
-import { useToDoListContext, ToDoListProvider } from '../../providers/ToDoListProvider'
+import { usePlannerContext, PlannerProvider } from '../../providers/PlannerProvider'
 import { useNoiseTrackingContext, NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
@@ -13,7 +13,7 @@ import AgentMessageButton from '../../components/AgentMessageButton'
 import GroceryItemPreviewPopup from '../../components/GroceryItemPreviewPopup'
 import GrocerySection from './components/GrocerySection'
 import NoiseSection from './components/NoiseSection'
-import ToDoSection from './components/ToDoSection'
+import PlannerSection from './components/PlannerSection'
 import { useHomeData } from '../../hooks/useHomeData'
 import { useHomeInteractions } from '../../hooks/useHomeInteractions'
 
@@ -21,7 +21,7 @@ import { Container } from './index.styled'
 
 const HomeDataContent = () => {
   const { groceryList, isLoading: isGroceryLoading } = useGroceryListContext()
-  const { toDoList, isLoading: isToDoLoading } = useToDoListContext()
+  const { toDoList, isLoading: isToDoLoading } = usePlannerContext()
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
   const { state: { purchasedItems } } = useAppState()
 
@@ -52,7 +52,7 @@ const HomeDataContent = () => {
           onNoiseViewChange={interactions.handleNoiseViewChange}
         />
 
-        <ToDoSection
+        <PlannerSection
           toDoStats={homeData.toDoStats}
           isLoading={isToDoLoading}
           isExpanded={interactions.isToDoItemsExpanded}
@@ -83,11 +83,11 @@ const HomeContent = () => {
         <AppInfoCard />
         <DashboardHeader />
         <GroceryListProvider key={`grocery-${currentProject?.id || 'no-project'}`}>
-          <ToDoListProvider key={`todo-${currentProject?.id || 'no-project'}`}>
+          <PlannerProvider key={`planner-${currentProject?.id || 'no-project'}`}>
             <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>
               <HomeDataContent />
             </NoiseTrackingProvider>
-          </ToDoListProvider>
+          </PlannerProvider>
         </GroceryListProvider>
       </StandardLayout>
       <AgentChatDrawer />

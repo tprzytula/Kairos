@@ -10,14 +10,14 @@ import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
 import StandardLayout from '../../layout/standardLayout'
 import ModernPageHeader from '../../components/ModernPageHeader'
-import { ToDoListProvider, useToDoListContext } from '../../providers/ToDoListProvider'
+import { PlannerProvider, usePlannerContext } from '../../providers/PlannerProvider'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import dayjs from 'dayjs'
 
-const EditToDoItemContent = () => {
+const EditPlannerItemContent = () => {
   const { dispatch } = useAppState()
-  const { toDoList, updateToDoItemFields } = useToDoListContext()
+  const { toDoList, updateToDoItemFields } = usePlannerContext()
   const navigate = useNavigate()
   const { id } = useParams()
   const [currentItem, setCurrentItem] = useState<ITodoItem | null>(null)
@@ -45,7 +45,7 @@ const EditToDoItemContent = () => {
       setCurrentItem(todoItem)
     } else if (!todoItem && toDoList.length > 0) {
       createAlert('Todo item not found', 'error')
-      navigate(Route.ToDoList)
+      navigate(Route.Planner)
     }
   }, [todoItem, toDoList])
 
@@ -92,7 +92,7 @@ const EditToDoItemContent = () => {
       await updateToDoItemFields(id!, updatedFields)
 
       createAlert(`${name.value} has been updated`, 'success')
-      navigate(Route.ToDoList)
+      navigate(Route.Planner)
     } catch (error) {
       console.error(error)
       createAlert('Error updating todo item', 'error')
@@ -110,7 +110,7 @@ const EditToDoItemContent = () => {
   return (
     <StandardLayout>
       <ModernPageHeader
-        title="Edit Todo Item"
+        title="Edit Task"
         icon={<ChecklistIcon />}
         stats={stats}
       />
@@ -125,12 +125,12 @@ const EditToDoItemContent = () => {
   )
 }
 
-export const EditToDoItemRoute = () => {
+export const EditPlannerItemRoute = () => {
   return (
-    <ToDoListProvider>
-      <EditToDoItemContent />
-    </ToDoListProvider>
+    <PlannerProvider>
+      <EditPlannerItemContent />
+    </PlannerProvider>
   )
 }
 
-export default EditToDoItemRoute
+export default EditPlannerItemRoute

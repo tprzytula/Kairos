@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useToDoListContext } from '../../providers/ToDoListProvider';
+import { usePlannerContext } from '../../providers/PlannerProvider';
 import { useProjectContext } from '../../providers/ProjectProvider';
 import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
@@ -8,7 +8,7 @@ import { updateToDoItems } from '../../api/toDoList';
 import { showAlert } from '../../utils/alert';
 import { Route } from '../../enums/route';
 import { groupTodosByTime } from './utils/timeGrouping';
-import { ToDoViewMode } from '../../enums/todoViewMode';
+import { PlannerViewMode } from '../../enums/plannerViewMode';
 import { ITodoItem } from '../../api/toDoList/retrieve/types';
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types';
 import { useBirthdayContext } from '../../providers/BirthdayProvider';
@@ -18,17 +18,17 @@ import SimpleView from './SimpleView';
 import GroupedView from './GroupedView';
 import CalendarView from './CalendarView';
 import Placeholder from './Placeholder';
-import EmptyToDoList from './EmptyToDoList';
+import EmptyPlanner from './EmptyPlanner';
 import ToDoItemPreviewDrawer from '../ToDoItemPreviewDrawer';
 import { IToDoListProps } from './types';
 
-export const ToDoList = ({
+export const Planner = ({
   allExpanded = true,
   expandKey = 0,
-  viewMode = ToDoViewMode.GROUPED
+  viewMode = PlannerViewMode.GROUPED
 }: IToDoListProps = {}) => {
   const { dispatch } = useAppState();
-  const { toDoList, isLoading, removeFromToDoList } = useToDoListContext();
+  const { toDoList, isLoading, removeFromToDoList } = usePlannerContext();
   const { currentProject } = useProjectContext();
   const navigate = useNavigate();
   const [previewItem, setPreviewItem] = useState<ITodoItem | null>(null);
@@ -64,7 +64,7 @@ export const ToDoList = ({
   }, [currentProject, dispatch, clearSelectedTodoItems, removeFromToDoList]);
 
   const handleEdit = useCallback((id: string) => {
-    navigate(Route.EditToDoItem.replace(':id', id))
+    navigate(Route.EditPlannerItem.replace(':id', id))
   }, [navigate]);
 
   const handlePreview = useCallback((id: string) => {
@@ -84,7 +84,7 @@ export const ToDoList = ({
     await removeBirthdayItem(id);
   }, [removeBirthdayItem]);
 
-  if (viewMode === ToDoViewMode.CALENDAR) {
+  if (viewMode === PlannerViewMode.CALENDAR) {
     return (
       <>
         {isLoading ? <Placeholder /> : (
@@ -120,10 +120,10 @@ export const ToDoList = ({
   }
 
   if (toDoList.length === 0) {
-    return <EmptyToDoList />
+    return <EmptyPlanner />
   }
 
-  if (viewMode === ToDoViewMode.SIMPLE) {
+  if (viewMode === PlannerViewMode.SIMPLE) {
     return (
       <SimpleView
         visibleToDoItems={visibleToDoItems}
@@ -146,4 +146,4 @@ export const ToDoList = ({
   );
 };
 
-export default ToDoList;
+export default Planner;

@@ -101,10 +101,10 @@ describe('Given the AddItemButton component', () => {
     })
   })
 
-  describe('When on the To-Do List page', () => {
+  describe('When on the Planner page', () => {
     beforeEach(() => {
       jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
-        pathname: Route.ToDoList,
+        pathname: Route.Planner,
         search: '',
         hash: '',
         state: null,
@@ -119,13 +119,13 @@ describe('Given the AddItemButton component', () => {
       expect(button).not.toBeDisabled()
     })
 
-    it('should navigate to Add To-Do Item route when clicked', () => {
+    it('should navigate to Add Planner Item route when clicked', () => {
       renderWithProviders(<AddItemButton />)
-      
+
       const button = screen.getByRole('button')
       fireEvent.click(button)
-      
-      expect(mockNavigate).toHaveBeenCalledWith(Route.AddToDoItem)
+
+      expect(mockNavigate).toHaveBeenCalledWith(Route.AddPlannerItem)
     })
   })
 

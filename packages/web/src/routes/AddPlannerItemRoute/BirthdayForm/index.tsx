@@ -170,7 +170,7 @@ const BirthdayForm = () => {
         ...(birthYear ? { birthYear: parseInt(birthYear) } : {}),
         ...(notes.trim() ? { notes: notes.trim() } : {}),
       })
-      navigate(Route.ToDoList)
+      navigate(Route.Planner)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save birthday')
     } finally {

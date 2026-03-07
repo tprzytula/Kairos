@@ -3,12 +3,12 @@ import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
-import { AddToDoItemContent } from '.'
+import { AddPlannerItemContent } from '.'
 import ItemForm from '../../components/ItemForm'
 import { addTodoItem } from '../../api/toDoList'
 import { FormFieldType } from '../../components/ItemForm/enums'
 import * as ReactRouter from 'react-router'
-import { useToDoListContext } from '../../providers/ToDoListProvider'
+import { usePlannerContext } from '../../providers/PlannerProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 
 jest.mock('react-router', () => ({  
@@ -18,7 +18,7 @@ jest.mock('react-router', () => ({
 
 jest.mock('../../api/toDoList');
 jest.mock('../../components/ItemForm');
-jest.mock('../../providers/ToDoListProvider');
+jest.mock('../../providers/PlannerProvider');
 jest.mock('../../providers/ProjectProvider');
 jest.mock('../../components/ModernPageHeader', () => ({ title }: any) => <div>{title}</div>);
 jest.mock('@mui/icons-material/Checklist', () => () => <div>ChecklistIcon</div>)
@@ -28,7 +28,7 @@ jest.mock('react-oidc-context', () => ({
   }))
 }))
 
-describe('Given the AddToDoItemContent component', () => {
+describe('Given the AddPlannerItemContent component', () => {
   const mockProject = {
     id: 'test-project-id',
     name: 'Test Project',
@@ -38,7 +38,7 @@ describe('Given the AddToDoItemContent component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    (useToDoListContext as jest.Mock).mockReturnValue({
+    (usePlannerContext as jest.Mock).mockReturnValue({
       toDoList: [],
       isLoading: false,
       refetchToDoList: jest.fn(),
@@ -60,7 +60,7 @@ describe('Given the AddToDoItemContent component', () => {
 
   it('should have the correct title', async () => {
     await renderComponent()
-    expect(screen.getByText('Add To-Do Item')).toBeVisible()
+    expect(screen.getByText('Add Task')).toBeVisible()
   })
 
   it('should render the ItemForm component', async () => {
@@ -110,7 +110,7 @@ describe('Given the AddToDoItemContent component', () => {
     })
 
     describe('And the createToDoItem call succeeds', () => {
-      it('should navigate to the to do list page', async () => {
+      it('should navigate to the planner page', async () => {
         const navigateSpy = jest.fn()
 
         jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
@@ -197,7 +197,7 @@ const renderComponent = () => {
     <ThemeProvider theme={theme}>
       <AppStateProvider>
         <BrowserRouter>
-          <AddToDoItemContent />
+          <AddPlannerItemContent />
         </BrowserRouter>
       </AppStateProvider>
     </ThemeProvider>

@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import theme from '../../../../theme'
-import { ToDoSection } from './index'
+import { PlannerSection } from './index'
 import { ITodoItem } from '../../../../api/toDoList/retrieve/types'
 import { IToDoStats } from '../../../../hooks/useHomeData/types'
 
@@ -31,7 +31,7 @@ const renderWithTheme = (component: React.ReactElement) => {
   )
 }
 
-describe('ToDoSection component', () => {
+describe('PlannerSection component', () => {
   const mockOnToggleExpansion = jest.fn()
   const mockOnItemToggle = jest.fn()
 
@@ -51,7 +51,7 @@ describe('ToDoSection component', () => {
       const toDoStats = createMockToDoStats()
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={true}
           isExpanded={false}
@@ -71,7 +71,7 @@ describe('ToDoSection component', () => {
       const toDoStats = createMockToDoStats()
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={false}
           isExpanded={false}
@@ -81,7 +81,7 @@ describe('ToDoSection component', () => {
         />
       )
       
-      expect(screen.getByText('No pending to-do items found')).toBeInTheDocument()
+      expect(screen.getByText('No pending tasks found')).toBeInTheDocument()
     })
   })
 
@@ -101,7 +101,7 @@ describe('ToDoSection component', () => {
       })
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={false}
           isExpanded={false}
@@ -134,7 +134,7 @@ describe('ToDoSection component', () => {
       })
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={false}
           isExpanded={false}
@@ -157,7 +157,7 @@ describe('ToDoSection component', () => {
       })
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={false}
           isExpanded={false}
@@ -187,7 +187,7 @@ describe('ToDoSection component', () => {
       })
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={false}
           isExpanded={false}
@@ -216,7 +216,7 @@ describe('ToDoSection component', () => {
       })
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={false}
           isExpanded={false}
@@ -245,7 +245,7 @@ describe('ToDoSection component', () => {
       })
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={false}
           isExpanded={false}
@@ -274,7 +274,7 @@ describe('ToDoSection component', () => {
       })
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={false}
           isExpanded={false}
@@ -300,7 +300,7 @@ describe('ToDoSection component', () => {
       })
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={false}
           isExpanded={true}
@@ -326,7 +326,7 @@ describe('ToDoSection component', () => {
       })
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={false}
           isExpanded={false}
@@ -358,7 +358,7 @@ describe('ToDoSection component', () => {
       })
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={false}
           isExpanded={false}
@@ -388,7 +388,7 @@ describe('ToDoSection component', () => {
       })
       
       renderWithTheme(
-        <ToDoSection
+        <PlannerSection
           toDoStats={toDoStats}
           isLoading={false}
           isExpanded={false}
