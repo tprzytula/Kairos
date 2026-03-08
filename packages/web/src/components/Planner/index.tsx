@@ -4,7 +4,7 @@ import { usePlannerContext } from '../../providers/PlannerProvider';
 import { useProjectContext } from '../../providers/ProjectProvider';
 import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
-import { updateToDoItems } from '../../api/toDoList';
+import { removeTodoItems, updateToDoItems } from '../../api/toDoList';
 import { showAlert } from '../../utils/alert';
 import { Route } from '../../enums/route';
 import { groupTodosByTime } from './utils/timeGrouping';
@@ -80,6 +80,17 @@ export const Planner = ({
     setBirthdayDialogOpen(true);
   }, []);
 
+  const handleDeleteTodo = useCallback(async (id: string) => {
+    try {
+      await removeTodoItems([id], currentProject!.id);
+      clearSelectedTodoItems(id);
+      removeFromToDoList(id);
+    } catch (error) {
+      console.error('Failed to delete todo item:', error);
+      showAlert({ description: 'Failed to delete task', severity: 'error' }, dispatch);
+    }
+  }, [currentProject, dispatch, clearSelectedTodoItems, removeFromToDoList]);
+
   const handleBirthdayDelete = useCallback(async (id: string) => {
     await removeBirthdayItem(id);
   }, [removeBirthdayItem]);
@@ -113,6 +124,7 @@ export const Planner = ({
           onEdit={handleEdit}
           onMarkDone={markToDoItemAsDone}
           onStepToggle={handleStepToggle}
+          onDelete={handleDeleteTodo}
         />
         <BirthdayPreviewDrawer
           item={previewBirthday}
