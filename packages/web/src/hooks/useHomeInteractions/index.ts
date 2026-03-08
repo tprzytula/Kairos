@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { IGroceryItem } from '../../providers/AppStateProvider/types'
+import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import { IUseHomeInteractions, NoiseView, IPopupPosition } from './types'
 
 export const useHomeInteractions = (): IUseHomeInteractions => {
@@ -8,7 +9,7 @@ export const useHomeInteractions = (): IUseHomeInteractions => {
   const [anchorPosition, setAnchorPosition] = useState<IPopupPosition | undefined>(undefined)
   const [isToDoItemsExpanded, setIsToDoItemsExpanded] = useState(false)
   const [noiseView, setNoiseView] = useState<NoiseView>('overview')
-  const [expandedToDoItems, setExpandedToDoItems] = useState<Set<string>>(new Set())
+  const [selectedToDoItem, setSelectedToDoItem] = useState<ITodoItem | null>(null)
 
   const calculatePopupPosition = useCallback((
     item: IGroceryItem, 
@@ -58,16 +59,12 @@ export const useHomeInteractions = (): IUseHomeInteractions => {
     setNoiseView(view)
   }, [])
 
-  const handleToDoItemToggle = useCallback((itemId: string) => {
-    setExpandedToDoItems(prev => {
-      const newExpandedItems = new Set(prev)
-      if (newExpandedItems.has(itemId)) {
-        newExpandedItems.delete(itemId)
-      } else {
-        newExpandedItems.add(itemId)
-      }
-      return newExpandedItems
-    })
+  const handleToDoItemSelect = useCallback((item: ITodoItem) => {
+    setSelectedToDoItem(item)
+  }, [])
+
+  const handleToDoItemDeselect = useCallback(() => {
+    setSelectedToDoItem(null)
   }, [])
 
   return {
@@ -76,12 +73,13 @@ export const useHomeInteractions = (): IUseHomeInteractions => {
     anchorPosition,
     isToDoItemsExpanded,
     noiseView,
-    expandedToDoItems,
+    selectedToDoItem,
     handleGroceryItemClick,
     handlePopupClose,
     handleToggleToDoItems,
     handleNoiseViewChange,
-    handleToDoItemToggle
+    handleToDoItemSelect,
+    handleToDoItemDeselect
   }
 }
 

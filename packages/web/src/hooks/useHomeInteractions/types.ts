@@ -1,4 +1,5 @@
 import { IGroceryItem } from '../../providers/AppStateProvider/types'
+import { ITodoItem } from '../../api/toDoList/retrieve/types'
 
 export type NoiseView = 'overview' | 'today' | 'last7days' | 'last30days'
 
@@ -14,7 +15,7 @@ export interface IHomeInteractionState {
   anchorPosition: IPopupPosition | undefined
   isToDoItemsExpanded: boolean
   noiseView: NoiseView
-  expandedToDoItems: Set<string>
+  selectedToDoItem: ITodoItem | null
 }
 
 export interface IHomeInteractionHandlers {
@@ -22,7 +23,8 @@ export interface IHomeInteractionHandlers {
   handlePopupClose: () => void
   handleToggleToDoItems: () => void
   handleNoiseViewChange: (view: NoiseView) => void
-  handleToDoItemToggle: (itemId: string) => void
+  handleToDoItemSelect: (item: ITodoItem) => void
+  handleToDoItemDeselect: () => void
 }
 
 export interface IUseHomeInteractions extends IHomeInteractionState, IHomeInteractionHandlers {}

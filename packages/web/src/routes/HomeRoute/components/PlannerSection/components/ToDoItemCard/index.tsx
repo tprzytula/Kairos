@@ -1,5 +1,4 @@
 import React from 'react'
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import { IToDoItemCardProps } from './types'
 import {
   CompactItemText,
@@ -8,33 +7,23 @@ import {
   CompactItemMeta,
   CompactDescription,
   DueDateText,
-  ExpandedToDoContent,
-  ExpandedDescription,
-  ExpandedMetadata,
-  MetadataRow,
-  MetadataIcon,
-  MetadataContent,
-  MetadataLabel,
-  MetadataValue,
-  DueDateChip
 } from './index.styled'
 
 export const ToDoItemCard: React.FC<IToDoItemCardProps> = ({
   item,
   dueDateText,
   dueDateClass,
-  isExpanded,
-  onToggle
+  onClick
 }) => {
   return (
-    <CompactItemText $isExpanded={isExpanded} onClick={onToggle}>
+    <CompactItemText onClick={onClick}>
       <CompactItemHeader>
         <CompactItemContent>
           {item.name}
-          {!isExpanded && item.description && (
+          {item.description && (
             <CompactDescription>
-              {item.description.length > 50 
-                ? `${item.description.substring(0, 50)}...` 
+              {item.description.length > 50
+                ? `${item.description.substring(0, 50)}...`
                 : item.description}
             </CompactDescription>
           )}
@@ -47,44 +36,6 @@ export const ToDoItemCard: React.FC<IToDoItemCardProps> = ({
           </CompactItemMeta>
         )}
       </CompactItemHeader>
-      {isExpanded && (
-        <ExpandedToDoContent>
-          {item.description && (
-            <ExpandedDescription>
-              {item.description}
-            </ExpandedDescription>
-          )}
-          {item.dueDate && (
-            <ExpandedMetadata>
-              <MetadataRow>
-                <MetadataIcon>
-                  <CalendarTodayIcon />
-                </MetadataIcon>
-                <MetadataContent>
-                  <MetadataLabel>Due Date</MetadataLabel>
-                  <MetadataValue>
-                    <DueDateChip 
-                      $isOverdue={dueDateClass === 'overdue'}
-                      $isToday={dueDateClass === 'today'}
-                      $isSoon={dueDateClass === 'soon'}
-                    >
-                      <CalendarTodayIcon />
-                      {new Date(item.dueDate).toLocaleDateString([], {
-                        weekday: 'short',
-                        month: 'short', 
-                        day: 'numeric'
-                      })} at {new Date(item.dueDate).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </DueDateChip>
-                  </MetadataValue>
-                </MetadataContent>
-              </MetadataRow>
-            </ExpandedMetadata>
-          )}
-        </ExpandedToDoContent>
-      )}
     </CompactItemText>
   )
 }
