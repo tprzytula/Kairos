@@ -99,6 +99,7 @@ export const Planner = ({
           item={previewItem}
           onClose={() => setPreviewItem(null)}
           onEdit={handleEdit}
+          onMarkDone={markToDoItemAsDone}
         />
         <BirthdayPreviewDrawer
           item={previewBirthday}

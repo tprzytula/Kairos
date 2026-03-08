@@ -77,13 +77,13 @@ export const DayNumber = styled(Typography)<{ isToday?: boolean; isSelected?: bo
   lineHeight: 1.2,
 }))
 
-export const TodoDot = styled('div')<{ count?: number }>(({ count = 0 }) => ({
+export const TodoDot = styled('div')<{ count?: number; isOverdue?: boolean }>(({ count = 0, isOverdue = false }) => ({
   width: count > 0 ? 'auto' : '0',
   minWidth: count > 0 ? '18px' : '0',
   height: count > 0 ? '16px' : '0',
   padding: count > 0 ? '0 4px' : '0',
   borderRadius: '8px',
-  backgroundColor: '#2563eb',
+  backgroundColor: isOverdue ? '#dc2626' : '#2563eb',
   color: '#ffffff',
   fontSize: '0.6rem',
   fontWeight: 600,
@@ -121,6 +121,21 @@ export const DayDetailItem = styled('div')({
   },
   '&:hover': {
     backgroundColor: '#dbeafe',
+  },
+})
+
+export const OverdueDayDetailItem = styled('div')({
+  fontSize: '0.9rem',
+  color: '#dc2626',
+  padding: '8px 10px',
+  borderBottom: '1px solid #fecaca',
+  cursor: 'pointer',
+  borderRadius: '4px',
+  '&:last-child': {
+    borderBottom: 'none',
+  },
+  '&:hover': {
+    backgroundColor: '#fee2e2',
   },
 })
 
