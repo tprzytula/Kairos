@@ -26,6 +26,8 @@ jest.mock('../../api/projects', () => ({
   retrieveUserProjects: jest.fn().mockResolvedValue([])
 }))
 
+const originalToLocaleDateString = Date.prototype.toLocaleDateString
+
 describe('Given the NoiseTrackingRoute component', () => {
   beforeAll(() => {
     jest.spyOn(Date.prototype, 'toLocaleDateString').mockImplementation(function(
@@ -33,7 +35,10 @@ describe('Given the NoiseTrackingRoute component', () => {
       locale?: Intl.LocalesArgument,
       options?: Intl.DateTimeFormatOptions
     ) {
-      return new Intl.DateTimeFormat(locale as string | string[], { ...options, timeZone: 'UTC' }).format(this)
+      if (options?.hour !== undefined || options?.minute !== undefined) {
+        return new Intl.DateTimeFormat(locale as string | string[], { ...options, timeZone: 'UTC' }).format(this)
+      }
+      return originalToLocaleDateString.call(this, locale as string, options)
     })
   })
 
