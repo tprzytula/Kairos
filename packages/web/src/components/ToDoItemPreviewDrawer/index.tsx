@@ -3,6 +3,7 @@ import { Box, Button, Checkbox, Chip, Drawer, FormControlLabel, Typography } fro
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import dayjs from 'dayjs'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
@@ -27,9 +28,10 @@ interface ToDoItemPreviewDrawerProps {
   onEdit: (id: string) => void
   onMarkDone?: (id: string) => void
   onStepToggle?: (todoId: string, stepId: string, isDone: boolean) => void
+  onDelete?: (id: string) => void
 }
 
-const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle }: ToDoItemPreviewDrawerProps) => {
+const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle, onDelete }: ToDoItemPreviewDrawerProps) => {
   const [dragOffset, setDragOffset] = useState(0)
   const isDragging = useRef(false)
   const dragStartY = useRef(0)
@@ -45,6 +47,12 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle
     onMarkDone?.(item.id)
     onClose()
   }, [item, onMarkDone, onClose])
+
+  const handleDelete = useCallback(() => {
+    if (!item) return
+    onDelete?.(item.id)
+    onClose()
+  }, [item, onDelete, onClose])
 
   const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     isDragging.current = true
@@ -249,6 +257,22 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle
             }}
           >
             Edit Task
+          </Button>
+          <Button
+            variant="outlined"
+            fullWidth
+            startIcon={<DeleteIcon />}
+            onClick={handleDelete}
+            color="error"
+            sx={{
+              borderRadius: '10px',
+              textTransform: 'none',
+              fontWeight: 600,
+              py: 1.25,
+              mt: 1,
+            }}
+          >
+            Delete Task
           </Button>
         </Footer>
       </Box>
