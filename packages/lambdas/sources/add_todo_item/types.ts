@@ -1,3 +1,9 @@
+export interface IStep {
+  id: string;
+  name: string;
+  isDone: boolean;
+}
+
 export interface TodoItem {
   id: string;
   projectId: string;
@@ -5,7 +11,7 @@ export interface TodoItem {
   description?: string;
   dueDate?: number;
   isDone: boolean;
-  [key: string]: string | number | boolean | undefined;
+  steps?: IStep[];
 }
 
 export interface TodoItemForNotification {
