@@ -131,7 +131,8 @@ describe('Given the EditPlannerItemRoute component', () => {
       expect(mockToDoListContext.updateToDoItemFields).toHaveBeenCalledWith('1', {
         name: 'Updated Todo',
         description: 'Updated description',
-        dueDate: expect.any(Number)
+        dueDate: expect.any(Number),
+        steps: [],
       })
       
       expect(mockNavigate).toHaveBeenCalledWith('/planner')
@@ -160,19 +161,20 @@ describe('Given the EditPlannerItemRoute component', () => {
         },
         {
           name: 'dueDate',
-          value: expect.any(String),
+          value: '2023-01-01T00:00:00.000Z',
           type: FormFieldType.DATE,
           required: true,
           label: 'Due Date'
         }
       ]
-      
+
       await props.onSubmit(mockFields)
-      
+
       expect(mockToDoListContext.updateToDoItemFields).toHaveBeenCalledWith('1', {
         name: 'Just Name',
         description: '',
-        dueDate: expect.any(Number)
+        dueDate: expect.any(Number),
+        steps: [],
       })
     })
 

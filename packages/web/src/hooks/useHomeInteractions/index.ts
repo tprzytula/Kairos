@@ -10,6 +10,7 @@ export const useHomeInteractions = (): IUseHomeInteractions => {
   const [isToDoItemsExpanded, setIsToDoItemsExpanded] = useState(false)
   const [noiseView, setNoiseView] = useState<NoiseView>('overview')
   const [selectedToDoItem, setSelectedToDoItem] = useState<ITodoItem | null>(null)
+  const [expandedToDoItems, setExpandedToDoItems] = useState<Set<string>>(new Set())
 
   const calculatePopupPosition = useCallback((
     item: IGroceryItem, 
@@ -67,6 +68,18 @@ export const useHomeInteractions = (): IUseHomeInteractions => {
     setSelectedToDoItem(null)
   }, [])
 
+  const handleToDoItemToggle = useCallback((id: string) => {
+    setExpandedToDoItems(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }, [])
+
   return {
     selectedGroceryItem,
     isPopupOpen,
@@ -74,12 +87,14 @@ export const useHomeInteractions = (): IUseHomeInteractions => {
     isToDoItemsExpanded,
     noiseView,
     selectedToDoItem,
+    expandedToDoItems,
     handleGroceryItemClick,
     handlePopupClose,
     handleToggleToDoItems,
     handleNoiseViewChange,
     handleToDoItemSelect,
-    handleToDoItemDeselect
+    handleToDoItemDeselect,
+    handleToDoItemToggle,
   }
 }
 

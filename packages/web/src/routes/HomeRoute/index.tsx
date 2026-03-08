@@ -92,7 +92,8 @@ const HomeDataContent = () => {
           isLoading={isToDoLoading}
           isExpanded={interactions.isToDoItemsExpanded}
           onToggleExpansion={interactions.handleToggleToDoItems}
-          onItemSelect={interactions.handleToDoItemSelect}
+          onItemToggle={interactions.handleToDoItemToggle}
+          expandedItems={interactions.expandedToDoItems}
         />
 
         <AgentMessageButton />
