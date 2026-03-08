@@ -12,9 +12,8 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
   toDoStats,
   isLoading,
   isExpanded,
-  expandedItems,
   onToggleExpansion,
-  onItemToggle
+  onItemSelect
 }) => {
   const renderContent = () => {
     if (isLoading) {
@@ -36,16 +35,14 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
         {toDoStats.displayedItems.map((item) => {
           const dueDateText = formatDueDateRelative(item.dueDate)
           const dueDateClass = getDueDateClass(item.dueDate)
-          const isItemExpanded = expandedItems.has(item.id)
-          
+
           return (
             <ToDoItemCard
               key={item.id}
               item={item}
               dueDateText={dueDateText}
               dueDateClass={dueDateClass}
-              isExpanded={isItemExpanded}
-              onToggle={() => onItemToggle(item.id)}
+              onClick={() => onItemSelect(item)}
             />
           )
         })}
