@@ -6,5 +6,6 @@ export interface IToDoSectionProps {
   isLoading: boolean
   isExpanded: boolean
   onToggleExpansion: () => void
-  onItemSelect: (item: ITodoItem) => void
+  onItemToggle: (id: string) => void
+  expandedItems: Set<string>
 }

@@ -5,5 +5,6 @@ export interface IToDoItemCardProps {
   item: ITodoItem
   dueDateText: string
   dueDateClass: DueDateClass
+  isExpanded: boolean
   onClick: () => void
 }

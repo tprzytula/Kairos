@@ -16,6 +16,7 @@ export interface IHomeInteractionState {
   isToDoItemsExpanded: boolean
   noiseView: NoiseView
   selectedToDoItem: ITodoItem | null
+  expandedToDoItems: Set<string>
 }
 
 export interface IHomeInteractionHandlers {
@@ -25,6 +26,7 @@ export interface IHomeInteractionHandlers {
   handleNoiseViewChange: (view: NoiseView) => void
   handleToDoItemSelect: (item: ITodoItem) => void
   handleToDoItemDeselect: () => void
+  handleToDoItemToggle: (id: string) => void
 }
 
 export interface IUseHomeInteractions extends IHomeInteractionState, IHomeInteractionHandlers {}

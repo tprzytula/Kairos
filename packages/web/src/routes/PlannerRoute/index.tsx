@@ -24,7 +24,7 @@ const PlannerContent = () => {
   const { currentProject } = useProjectContext()
   const [allExpanded, setAllExpanded] = useState(true)
   const [expandKey, setExpandKey] = useState(0)
-  const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.CALENDAR)
+  const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.GROUPED)
   
   const pendingItems = toDoList.filter(item => !item.isDone)
   const completedItems = toDoList.filter(item => item.isDone)

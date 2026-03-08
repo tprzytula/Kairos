@@ -13,7 +13,8 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
   isLoading,
   isExpanded,
   onToggleExpansion,
-  onItemSelect
+  onItemToggle,
+  expandedItems,
 }) => {
   const renderContent = () => {
     if (isLoading) {
@@ -42,7 +43,8 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
               item={item}
               dueDateText={dueDateText}
               dueDateClass={dueDateClass}
-              onClick={() => onItemSelect(item)}
+              isExpanded={expandedItems.has(item.id)}
+              onClick={() => onItemToggle(item.id)}
             />
           )
         })}
