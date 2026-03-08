@@ -16,6 +16,7 @@ import { ActionName } from '../../providers/AppStateProvider/enums'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { updateToDoItems } from '../../api/toDoList'
 import { PlannerViewMode } from '../../enums/plannerViewMode'
+import dayjs from 'dayjs'
 
 const PlannerContent = () => {
   const { toDoList, refetchToDoList } = usePlannerContext()
@@ -27,7 +28,15 @@ const PlannerContent = () => {
   
   const pendingItems = toDoList.filter(item => !item.isDone)
   const completedItems = toDoList.filter(item => item.isDone)
-  
+
+  const todayDayjs = dayjs()
+  const overdueItems = toDoList.filter(
+    item => !item.isDone && item.dueDate != null && dayjs(item.dueDate).isBefore(todayDayjs, 'day')
+  )
+  const noDateItems = toDoList.filter(
+    item => !item.isDone && item.dueDate == null
+  )
+
   // Format current date parts with consistent lengths
   const today = new Date()
   const currentDay = today.toLocaleDateString('en-US', { weekday: 'short' }) // Thu
@@ -35,13 +44,22 @@ const PlannerContent = () => {
   const monthName = today.toLocaleDateString('en-US', { month: 'short' })   // Aug
   const yearNumber = today.toLocaleDateString('en-US', { year: 'numeric' }) // 2025
 
-  const stats = [
+  const defaultStats = [
     { value: pendingItems.length, label: 'Pending' },
     { value: currentDay, label: 'Today' },
     { value: dayNumber, label: 'Day' },
     { value: monthName, label: 'Month' },
     { value: yearNumber, label: 'Year' }
   ]
+
+  const calendarStats = [
+    { value: pendingItems.length, label: 'Pending' },
+    { value: overdueItems.length, label: 'Overdue' },
+    { value: completedItems.length, label: 'Done' },
+    { value: noDateItems.length, label: 'No Date' },
+  ]
+
+  const stats = viewMode === PlannerViewMode.CALENDAR ? calendarStats : defaultStats
 
   const statusText = useMemo(() => {
     const totalItems = toDoList.length
