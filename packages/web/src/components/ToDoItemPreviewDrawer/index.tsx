@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react'
 import { Box, Button, Chip, Drawer } from '@mui/material'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import EditIcon from '@mui/icons-material/Edit'
 import dayjs from 'dayjs'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
@@ -24,9 +25,10 @@ interface ToDoItemPreviewDrawerProps {
   item: ITodoItem | null
   onClose: () => void
   onEdit: (id: string) => void
+  onMarkDone?: (id: string) => void
 }
 
-const ToDoItemPreviewDrawer = ({ item, onClose, onEdit }: ToDoItemPreviewDrawerProps) => {
+const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone }: ToDoItemPreviewDrawerProps) => {
   const [dragOffset, setDragOffset] = useState(0)
   const isDragging = useRef(false)
   const dragStartY = useRef(0)
@@ -36,6 +38,12 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit }: ToDoItemPreviewDrawerP
     onEdit(item.id)
     onClose()
   }, [item, onEdit, onClose])
+
+  const handleMarkDone = useCallback(() => {
+    if (!item) return
+    onMarkDone?.(item.id)
+    onClose()
+  }, [item, onMarkDone, onClose])
 
   const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     isDragging.current = true
@@ -156,6 +164,26 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit }: ToDoItemPreviewDrawerP
         </ContentContainer>
 
         <Footer>
+          {!item?.isDone && onMarkDone && (
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<CheckCircleIcon />}
+              onClick={handleMarkDone}
+              sx={{
+                background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                borderRadius: '10px',
+                textTransform: 'none',
+                fontWeight: 600,
+                py: 1.25,
+                boxShadow: 'none',
+                mb: 1,
+                '&:hover': { boxShadow: 'none', opacity: 0.9 },
+              }}
+            >
+              Mark as Complete
+            </Button>
+          )}
           <Button
             variant="contained"
             fullWidth

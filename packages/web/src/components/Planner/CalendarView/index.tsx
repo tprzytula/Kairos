@@ -20,6 +20,7 @@ import {
   DayDetailPanel,
   DayDetailHeader,
   DayDetailItem,
+  OverdueDayDetailItem,
   CompletedDayDetailItem,
   DayDetailEmpty,
   NoDueDateSection,
@@ -100,6 +101,11 @@ const CalendarView = ({ visibleToDoItems, onItemClick, birthdayItems = [], onBir
   const selectedDayCompletedTodos = useMemo(
     () => (selectedDay ? (completedTodosByDay.get(selectedDay) ?? []) : []),
     [selectedDay, completedTodosByDay]
+  )
+
+  const isSelectedDayOverdue = useMemo(
+    () => selectedDay ? dayjs(selectedDay).isBefore(today, 'day') : false,
+    [selectedDay, today]
   )
 
   // Map "month-day" -> IBirthdayItem[] for current month display
@@ -188,7 +194,7 @@ const CalendarView = ({ visibleToDoItems, onItemClick, birthdayItems = [], onBir
               onClick={() => handleDayClick(day, isCurrentMonth)}
             >
               <DayNumber isToday={isToday} isSelected={isSelected}>{day.date()}</DayNumber>
-              <TodoDot count={pendingCount}>{pendingCount > 0 ? pendingCount : ''}</TodoDot>
+              <TodoDot count={pendingCount} isOverdue={isCurrentMonth && day.isBefore(today, 'day')}>{pendingCount > 0 ? pendingCount : ''}</TodoDot>
               <CompletedTodoDot count={completedCount}>{completedCount > 0 ? completedCount : ''}</CompletedTodoDot>
               {hasBirthday && <BirthdayCakeIcon />}
             </DayCell>
@@ -206,9 +212,15 @@ const CalendarView = ({ visibleToDoItems, onItemClick, birthdayItems = [], onBir
           ) : (
             <>
               {selectedDayPendingTodos.map(todo => (
-                <DayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
-                  {todo.name}
-                </DayDetailItem>
+                isSelectedDayOverdue ? (
+                  <OverdueDayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+                    {todo.name}
+                  </OverdueDayDetailItem>
+                ) : (
+                  <DayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+                    {todo.name}
+                  </DayDetailItem>
+                )
               ))}
               {selectedDayCompletedTodos.map(todo => (
                 <CompletedDayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
