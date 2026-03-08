@@ -85,7 +85,7 @@ export type IRouteToAddItemMapping = {
 
 const RouteToAddItemMapping: IRouteToAddItemMapping = {
     [Route.GroceryList]: Route.AddGroceryItem,
-    [Route.ToDoList]: Route.AddToDoItem,
+    [Route.Planner]: Route.AddPlannerItem,
     [Route.Shops]: Route.Shops, // Special case: navigate to same route with mode parameter
 }
 

@@ -95,7 +95,7 @@ describe('Given the HomeRoute component', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Grocery List')).toBeVisible()
-      expect(screen.getByText('To-Do Items')).toBeVisible()
+      expect(screen.getByText('Planner')).toBeVisible()
       expect(screen.getByText('Noise Recordings')).toBeVisible()
     })
   })
@@ -107,7 +107,7 @@ describe('Given the HomeRoute component', () => {
 
     await waitFor(() => {
       expect(screen.getByText('No grocery items found')).toBeVisible()
-      expect(screen.getByText('No pending to-do items found')).toBeVisible()
+      expect(screen.getByText('No pending tasks found')).toBeVisible()
       expect(screen.getByText('No noise recordings found')).toBeVisible()
     })
   })

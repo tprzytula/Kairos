@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router'
 import { ThemeProvider } from '@mui/material/styles'
 import * as ReactRouter from 'react-router'
-import EditToDoItemRoute from '.'
+import EditPlannerItemRoute from '.'
 import { AppStateProvider } from '../../providers/AppStateProvider'
 import ItemForm from '../../components/ItemForm'
 import { FormFieldType } from '../../components/ItemForm/enums'
@@ -30,9 +30,9 @@ const mockToDoListContext = {
   updateToDoItemFields: jest.fn()
 }
 
-jest.mock('../../providers/ToDoListProvider', () => ({
-  ToDoListProvider: ({ children }: any) => children,
-  useToDoListContext: () => mockToDoListContext,
+jest.mock('../../providers/PlannerProvider', () => ({
+  PlannerProvider: ({ children }: any) => children,
+  usePlannerContext: () => mockToDoListContext,
 }))
 
 jest.mock('react-router', () => ({
@@ -46,14 +46,14 @@ const renderComponent = async () => {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <AppStateProvider>
-          <EditToDoItemRoute />
+          <EditPlannerItemRoute />
         </AppStateProvider>
       </BrowserRouter>
     </ThemeProvider>
   )
 }
 
-describe('Given the EditToDoItemRoute component', () => {
+describe('Given the EditPlannerItemRoute component', () => {
   beforeEach(() => {
     jest.mocked(ReactRouter.useNavigate).mockReturnValue(mockNavigate)
     jest.mocked(ReactRouter.useParams).mockReturnValue({ id: '1' })
@@ -63,7 +63,7 @@ describe('Given the EditToDoItemRoute component', () => {
 
   it('should have the correct title', async () => {
     await renderComponent()
-    expect(screen.getByText('Edit Todo Item')).toBeVisible()
+    expect(screen.getByText('Edit Task')).toBeVisible()
   })
 
   it('should render the ItemForm component with prefilled values', async () => {
@@ -134,7 +134,7 @@ describe('Given the EditToDoItemRoute component', () => {
         dueDate: expect.any(Number)
       })
       
-      expect(mockNavigate).toHaveBeenCalledWith('/todo')
+      expect(mockNavigate).toHaveBeenCalledWith('/planner')
     })
 
     it('should call updateToDoItemFields with only name when other fields are empty', async () => {

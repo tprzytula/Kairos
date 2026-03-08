@@ -17,7 +17,7 @@ import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
 import StandardLayout from '../../layout/standardLayout'
 import ModernPageHeader from '../../components/ModernPageHeader'
-import { ToDoListProvider, useToDoListContext } from '../../providers/ToDoListProvider'
+import { PlannerProvider, usePlannerContext } from '../../providers/PlannerProvider'
 import { BirthdayProvider } from '../../providers/BirthdayProvider'
 import dayjs from 'dayjs'
 import BirthdayForm from './BirthdayForm'
@@ -97,11 +97,11 @@ const Segment = styled(Box, {
       }),
 }))
 
-export const AddToDoItemContent = () => {
+export const AddPlannerItemContent = () => {
   const { dispatch } = useAppState()
   const { currentProject } = useProjectContext()
   const navigate = useNavigate()
-  const { toDoList } = useToDoListContext()
+  const { toDoList } = usePlannerContext()
   const { user } = useAuth()
   const [itemType, setItemType] = useState<ItemType>('task')
 
@@ -126,11 +126,11 @@ export const AddToDoItemContent = () => {
         dueDate: utcTimestamp,
       }, currentProject.id, user?.access_token)
 
-      createAlert(`${name.value} has been added to your to do list`, 'success')
-      navigate(Route.ToDoList)
+      createAlert(`${name.value} has been added to your planner`, 'success')
+      navigate(Route.Planner)
     } catch (error) {
       console.error(error)
-      createAlert('Error creating to do item', 'error')
+      createAlert('Error creating task', 'error')
     }
   }, [createAlert, navigate, currentProject])
 
@@ -148,7 +148,7 @@ export const AddToDoItemContent = () => {
   ]
 
   const headerIcon = itemType === 'birthday' ? <CakeIcon /> : <ChecklistIcon />
-  const headerTitle = itemType === 'birthday' ? 'Add Birthday' : 'Add To-Do Item'
+  const headerTitle = itemType === 'birthday' ? 'Add Birthday' : 'Add Task'
 
   return (
     <StandardLayout>
@@ -190,14 +190,14 @@ export const AddToDoItemContent = () => {
   )
 }
 
-export const AddToDoItemRoute = () => {
+export const AddPlannerItemRoute = () => {
   return (
-    <ToDoListProvider>
+    <PlannerProvider>
       <BirthdayProvider>
-        <AddToDoItemContent />
+        <AddPlannerItemContent />
       </BirthdayProvider>
-    </ToDoListProvider>
+    </PlannerProvider>
   )
 }
 
-export default AddToDoItemRoute
+export default AddPlannerItemRoute

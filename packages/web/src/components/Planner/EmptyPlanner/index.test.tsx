@@ -1,23 +1,23 @@
 import { render, screen } from '@testing-library/react';
-import EmptyToDoList from '.';
+import EmptyPlanner from '.';
 
-describe('Given the EmptyToDoList component', () => {
+describe('Given the EmptyPlanner component', () => {
   describe('When rendering with default props', () => {
     it('should display the empty to-do list icon', () => {
-      render(<EmptyToDoList />);
+      render(<EmptyPlanner />);
 
-      expect(screen.getByLabelText('Empty to-do list')).toBeInTheDocument();
+      expect(screen.getByLabelText('Empty planner')).toBeInTheDocument();
     });
 
     it('should display the default title and subtitle', () => {
-      render(<EmptyToDoList />);
+      render(<EmptyPlanner />);
 
-      expect(screen.getByText('No pending to-do items found')).toBeInTheDocument();
+      expect(screen.getByText('No pending tasks found')).toBeInTheDocument();
       expect(screen.getByText('Tap the + button to add your first task')).toBeInTheDocument();
     });
 
     it('should render the empty state component', () => {
-      const { container } = render(<EmptyToDoList />);
+      const { container } = render(<EmptyPlanner />);
 
       const emptyStateElement = container.firstChild;
       expect(emptyStateElement).toBeInTheDocument();
@@ -30,7 +30,7 @@ describe('Given the EmptyToDoList component', () => {
       const customSubtitle = 'Custom empty subtitle';
 
       render(
-        <EmptyToDoList 
+        <EmptyPlanner 
           title={customTitle} 
           subtitle={customSubtitle} 
         />
@@ -42,28 +42,28 @@ describe('Given the EmptyToDoList component', () => {
 
     it('should still display the checklist icon', () => {
       render(
-        <EmptyToDoList 
+        <EmptyPlanner 
           title="Custom title" 
           subtitle="Custom subtitle" 
         />
       );
 
-      expect(screen.getByLabelText('Empty to-do list')).toBeInTheDocument();
+      expect(screen.getByLabelText('Empty planner')).toBeInTheDocument();
     });
   });
 
   describe('When rendering with partial custom props', () => {
     it('should use custom title and default subtitle', () => {
-      render(<EmptyToDoList title="Custom title only" />);
+      render(<EmptyPlanner title="Custom title only" />);
 
       expect(screen.getByText('Custom title only')).toBeInTheDocument();
       expect(screen.getByText('Tap the + button to add your first task')).toBeInTheDocument();
     });
 
     it('should use default title and custom subtitle', () => {
-      render(<EmptyToDoList subtitle="Custom subtitle only" />);
+      render(<EmptyPlanner subtitle="Custom subtitle only" />);
 
-      expect(screen.getByText('No pending to-do items found')).toBeInTheDocument();
+      expect(screen.getByText('No pending tasks found')).toBeInTheDocument();
       expect(screen.getByText('Custom subtitle only')).toBeInTheDocument();
     });
   });

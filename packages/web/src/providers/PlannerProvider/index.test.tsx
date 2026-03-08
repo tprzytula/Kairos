@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen, renderHook, waitFor, act } from '@testing-library/react'
-import { useToDoListContext } from './index'
-import { ToDoListProvider } from './index'
+import { usePlannerContext } from './index'
+import { PlannerProvider } from './index'
 import * as API from '../../api/toDoList'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import { ProjectContext } from '../ProjectProvider'
@@ -18,10 +18,10 @@ jest.mock('../../api/projects', () => ({
   retrieveUserProjects: jest.fn().mockResolvedValue([])
 }))
 
-describe('Given the ToDoListProvider component', () => {
+describe('Given the PlannerProvider component', () => {
   it('should render the component', async () => {
     await act(async () => {
-      renderToDoListProvider()
+      renderPlannerProvider()
     })
 
     expect(screen.getByText('Test')).toBeVisible()
@@ -31,7 +31,7 @@ describe('Given the ToDoListProvider component', () => {
     jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
 
     await act(async () => {
-      renderToDoListProvider()
+      renderPlannerProvider()
     })
 
     await waitFor(() => expect(API.retrieveToDoList).toHaveBeenCalled())
@@ -43,7 +43,7 @@ describe('Given the ToDoListProvider component', () => {
       jest.spyOn(API, 'retrieveToDoList').mockRejectedValue(new Error('It is what it is'))
 
       await act(async () => {
-        renderToDoListProvider()
+        renderPlannerProvider()
       })
 
       await waitFor(() => {
@@ -53,17 +53,17 @@ describe('Given the ToDoListProvider component', () => {
   })
 })
 
-describe('Given the useToDoListContext hook', () => {
+describe('Given the usePlannerContext hook', () => {
   it('should return the todo list', async () => {
     jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
 
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
       <MockProjectProvider>
-        <ToDoListProvider>{children}</ToDoListProvider>
+        <PlannerProvider>{children}</PlannerProvider>
       </MockProjectProvider>
     )
 
-    const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
+    const { result } = await waitFor(() => renderHook(() => usePlannerContext(), {
       wrapper: Wrapper,
     }))
 
@@ -77,11 +77,11 @@ describe('Given the useToDoListContext hook', () => {
 
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
       <MockProjectProvider>
-        <ToDoListProvider>{children}</ToDoListProvider>
+        <PlannerProvider>{children}</PlannerProvider>
       </MockProjectProvider>
     )
 
-    const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
+    const { result } = await waitFor(() => renderHook(() => usePlannerContext(), {
       wrapper: Wrapper,
     }))
 
@@ -122,11 +122,11 @@ describe('Given the useToDoListContext hook', () => {
 
       const Wrapper = ({ children }: { children: React.ReactNode }) => (
         <MockProjectProvider>
-          <ToDoListProvider>{children}</ToDoListProvider>
+          <PlannerProvider>{children}</PlannerProvider>
         </MockProjectProvider>
       )
 
-      const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
+      const { result } = await waitFor(() => renderHook(() => usePlannerContext(), {
         wrapper: Wrapper,
       }))
 
@@ -141,11 +141,11 @@ describe('Given the useToDoListContext hook', () => {
 
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
       <MockProjectProvider>
-        <ToDoListProvider>{children}</ToDoListProvider>
+        <PlannerProvider>{children}</PlannerProvider>
       </MockProjectProvider>
     )
 
-    const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
+    const { result } = await waitFor(() => renderHook(() => usePlannerContext(), {
       wrapper: Wrapper,
     }))
 
@@ -169,11 +169,11 @@ describe('Given the useToDoListContext hook', () => {
 
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
       <MockProjectProvider>
-        <ToDoListProvider>{children}</ToDoListProvider>
+        <PlannerProvider>{children}</PlannerProvider>
       </MockProjectProvider>
     )
 
-    const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
+    const { result } = await waitFor(() => renderHook(() => usePlannerContext(), {
       wrapper: Wrapper,
     }))
 
@@ -199,11 +199,11 @@ describe('Given the useToDoListContext hook', () => {
 
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
       <MockProjectProvider>
-        <ToDoListProvider>{children}</ToDoListProvider>
+        <PlannerProvider>{children}</PlannerProvider>
       </MockProjectProvider>
     )
 
-    const { result } = await waitFor(() => renderHook(() => useToDoListContext(), {
+    const { result } = await waitFor(() => renderHook(() => usePlannerContext(), {
       wrapper: Wrapper,
     }))
 
@@ -231,11 +231,11 @@ describe('Given the useToDoListContext hook', () => {
 
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
       <MockProjectProvider>
-        <ToDoListProvider>{children}</ToDoListProvider>
+        <PlannerProvider>{children}</PlannerProvider>
       </MockProjectProvider>
     )
 
-    const { result } = renderHook(() => useToDoListContext(), {
+    const { result } = renderHook(() => usePlannerContext(), {
       wrapper: Wrapper,
     })
 
@@ -300,12 +300,12 @@ const MockProjectProvider = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-const renderToDoListProvider = () => {
+const renderPlannerProvider = () => {
   return render(
     <MockProjectProvider>
-      <ToDoListProvider>
+      <PlannerProvider>
         <div>Test</div>
-      </ToDoListProvider>
+      </PlannerProvider>
     </MockProjectProvider>
   )
 }

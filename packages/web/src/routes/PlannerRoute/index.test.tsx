@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
-import ToDoListRoute from '.'
+import PlannerRoute from '.'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import * as ToDoAPI from '../../api/toDoList'
@@ -31,7 +31,7 @@ const MOCK_PROJECT: IProject = {
   createdAt: new Date().toISOString()
 }
 
-describe('Given the ToDoListRoute component', () => {
+describe('Given the PlannerRoute component', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
@@ -54,7 +54,7 @@ describe('Given the ToDoListRoute component', () => {
       renderComponent()
     })
 
-    expect(screen.getByText('To-Do List')).toBeVisible()
+    expect(screen.getByText('Planner')).toBeVisible()
   })
 
   it('should display stats for empty list', async () => {
@@ -157,7 +157,7 @@ describe('Given the ToDoListRoute component', () => {
     })
 
     // The ChecklistIcon should be rendered
-    const headerContainer = screen.getByText('To-Do List').closest('div')
+    const headerContainer = screen.getByText('Planner').closest('div')
     expect(headerContainer).toBeInTheDocument()
   })
 
@@ -168,7 +168,7 @@ describe('Given the ToDoListRoute component', () => {
 
     // The ActionButtonsBar should show status text when no items are selected
     await waitFor(() => {
-      expect(screen.getByText('Your to-do list is empty')).toBeInTheDocument()
+      expect(screen.getByText('Your planner is empty')).toBeInTheDocument()
     })
   })
 
@@ -194,7 +194,7 @@ describe('Given the ToDoListRoute component', () => {
         <ThemeProvider theme={theme}>
           <AppStateProvider>
             <BrowserRouter>
-              <ToDoListRoute />
+              <PlannerRoute />
             </BrowserRouter>
           </AppStateProvider>
         </ThemeProvider>
@@ -203,7 +203,7 @@ describe('Given the ToDoListRoute component', () => {
 
     // The ActionButtonsBar should show the action button when items are selected
     await waitFor(() => {
-      expect(screen.getByText('Mark To Do Items As Done')).toBeInTheDocument()
+      expect(screen.getByText('Mark Tasks As Done')).toBeInTheDocument()
     })
   })
 
@@ -214,7 +214,7 @@ describe('Given the ToDoListRoute component', () => {
 
     // Verify the ToDoList component is rendered by checking for its container
     await waitFor(() => {
-      const container = screen.getByText('To-Do List').closest('div')
+      const container = screen.getByText('Planner').closest('div')
       expect(container).toBeInTheDocument()
     })
   })
@@ -286,7 +286,7 @@ const renderComponent = () => {
     <ThemeProvider theme={theme}>
       <AppStateProvider>
         <BrowserRouter>
-          <ToDoListRoute />
+          <PlannerRoute />
         </BrowserRouter>
       </AppStateProvider>
     </ThemeProvider>

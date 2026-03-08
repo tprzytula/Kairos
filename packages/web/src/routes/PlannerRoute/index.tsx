@@ -1,7 +1,7 @@
 import StandardLayout from '../../layout/standardLayout'
-import { ToDoListProvider, useToDoListContext } from '../../providers/ToDoListProvider'
+import { PlannerProvider, usePlannerContext } from '../../providers/PlannerProvider'
 import { BirthdayProvider } from '../../providers/BirthdayProvider'
-import ToDoList from '../../components/ToDoList'
+import Planner from '../../components/Planner'
 import ActionButtonsBar from '../../components/ActionButtonsBar'
 import ModernPageHeader from '../../components/ModernPageHeader'
 import ChecklistIcon from '@mui/icons-material/Checklist'
@@ -15,15 +15,15 @@ import { showAlert } from '../../utils/alert'
 import { ActionName } from '../../providers/AppStateProvider/enums'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { updateToDoItems } from '../../api/toDoList'
-import { ToDoViewMode } from '../../enums/todoViewMode'
+import { PlannerViewMode } from '../../enums/plannerViewMode'
 
-const ToDoListContent = () => {
-  const { toDoList, refetchToDoList } = useToDoListContext()
+const PlannerContent = () => {
+  const { toDoList, refetchToDoList } = usePlannerContext()
   const { state: { selectedTodoItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
   const [allExpanded, setAllExpanded] = useState(true)
   const [expandKey, setExpandKey] = useState(0)
-  const [viewMode, setViewMode] = useState<ToDoViewMode>(ToDoViewMode.CALENDAR)
+  const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.CALENDAR)
   
   const pendingItems = toDoList.filter(item => !item.isDone)
   const completedItems = toDoList.filter(item => item.isDone)
@@ -48,7 +48,7 @@ const ToDoListContent = () => {
     const selectedCount = selectedTodoItems.size
     
     if (totalItems === 0) {
-      return "Your to-do list is empty"
+      return "Your planner is empty"
     }
     
     if (selectedCount === 0) {
@@ -86,22 +86,22 @@ const ToDoListContent = () => {
 
   const toggleViewMode = useCallback(() => {
     setViewMode(prev => {
-      if (prev === ToDoViewMode.CALENDAR) return ToDoViewMode.GROUPED
-      if (prev === ToDoViewMode.GROUPED) return ToDoViewMode.SIMPLE
-      return ToDoViewMode.CALENDAR
+      if (prev === PlannerViewMode.CALENDAR) return PlannerViewMode.GROUPED
+      if (prev === PlannerViewMode.GROUPED) return PlannerViewMode.SIMPLE
+      return PlannerViewMode.CALENDAR
     })
   }, [])
 
-  const viewToggleIcon = viewMode === ToDoViewMode.CALENDAR
+  const viewToggleIcon = viewMode === PlannerViewMode.CALENDAR
     ? <CalendarMonthIcon />
-    : viewMode === ToDoViewMode.GROUPED
+    : viewMode === PlannerViewMode.GROUPED
       ? <ViewModuleIcon />
       : <ViewListIcon />
   
   return (
     <StandardLayout>
       <ModernPageHeader
-        title="To-Do List"
+        title="Planner"
         icon={<ChecklistIcon />}
         stats={stats}
       />
@@ -110,12 +110,12 @@ const ToDoListContent = () => {
           expandCollapseButton={{
             isExpanded: allExpanded,
             onToggle: toggleAll,
-            disabled: pendingItems.length === 0 || viewMode === ToDoViewMode.CALENDAR,
+            disabled: pendingItems.length === 0 || viewMode === PlannerViewMode.CALENDAR,
           }}
           actionButton={{
             isEnabled: selectedTodoItems.size > 0,
             onClick: markToDoItemsAsDone,
-            children: "Mark To Do Items As Done",
+            children: "Mark Tasks As Done",
             statusText: statusText,
           }}
           viewToggleButton={{
@@ -124,21 +124,21 @@ const ToDoListContent = () => {
           }}
         />
         <ScrollableContainer>
-          <ToDoList allExpanded={allExpanded} expandKey={expandKey} viewMode={viewMode} />
+          <Planner allExpanded={allExpanded} expandKey={expandKey} viewMode={viewMode} />
         </ScrollableContainer>
       </Container>
     </StandardLayout>
   )
 }
 
-export const ToDoListRoute = () => {
+export const PlannerRoute = () => {
   return (
-    <ToDoListProvider>
+    <PlannerProvider>
       <BirthdayProvider>
-        <ToDoListContent />
+        <PlannerContent />
       </BirthdayProvider>
-    </ToDoListProvider>
+    </PlannerProvider>
   )
 }
 
-export default ToDoListRoute
+export default PlannerRoute

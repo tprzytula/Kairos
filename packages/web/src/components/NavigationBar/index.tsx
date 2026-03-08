@@ -50,7 +50,7 @@ const NavigationBar = () => {
         <NavigationButton
           SelectedIcon={ChecklistIcon}
           UnselectedIcon={ChecklistOutlinedIcon}
-          route={Route.ToDoList}
+          route={Route.Planner}
         />
       </ItemsContainer>
     </Container>

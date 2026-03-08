@@ -1,7 +1,7 @@
-import { ToDoViewMode } from '../../enums/todoViewMode';
+import { PlannerViewMode } from '../../enums/plannerViewMode';
 
 export interface IToDoListProps {
   allExpanded?: boolean;
   expandKey?: string | number;
-  viewMode?: ToDoViewMode;
+  viewMode?: PlannerViewMode;
 };

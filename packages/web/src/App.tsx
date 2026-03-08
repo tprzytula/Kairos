@@ -6,9 +6,9 @@ import EditGroceryItemRoute from './routes/EditGroceryItemRoute'
 import ShopListRoute from './routes/ShopListRoute'
 import { Route as RouteEnum } from './enums/route'
 import NoiseTrackingRoute from './routes/NoiseTrackingRoute'
-import ToDoListRoute from './routes/ToDoListRoute'
-import AddToDoItemRoute from './routes/AddToDoItemRoute'
-import EditToDoItemRoute from './routes/EditToDoItemRoute'
+import PlannerRoute from './routes/PlannerRoute'
+import AddPlannerItemRoute from './routes/AddPlannerItemRoute'
+import EditPlannerItemRoute from './routes/EditPlannerItemRoute'
 import HomeRoute from './routes/HomeRoute'
 import AuthCallback from './components/AuthCallback'
 import SilentCallback from './components/SilentCallback'
@@ -53,19 +53,19 @@ export const App = () => {
             <NoiseTrackingRoute />
           </ProtectedContent>
         } />
-        <Route path={RouteEnum.ToDoList} element={
+        <Route path={RouteEnum.Planner} element={
           <ProtectedContent>
-            <ToDoListRoute />
+            <PlannerRoute />
           </ProtectedContent>
         } />
-        <Route path={RouteEnum.AddToDoItem} element={
+        <Route path={RouteEnum.AddPlannerItem} element={
           <ProtectedContent>
-            <AddToDoItemRoute />
+            <AddPlannerItemRoute />
           </ProtectedContent>
         } />
-        <Route path={RouteEnum.EditToDoItem} element={
+        <Route path={RouteEnum.EditPlannerItem} element={
           <ProtectedContent>
-            <EditToDoItemRoute />
+            <EditPlannerItemRoute />
           </ProtectedContent>
         } />
       </Routes>
