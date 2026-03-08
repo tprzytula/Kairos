@@ -5,4 +5,5 @@ export type GroceryItemUpdateFields = {
   quantity?: number
   unit?: GroceryItemUnit
   imagePath?: string
+  shopId?: string
 }

@@ -25,6 +25,13 @@ describe('validateFields', () => {
         required: true,
         value: 'kg',
       },
+      {
+        name: 'shopId',
+        label: 'Shop',
+        type: FormFieldType.SELECT,
+        required: true,
+        value: 'shop-1',
+      },
     ]
 
     const result = validateFields(fields)
@@ -33,6 +40,7 @@ describe('validateFields', () => {
       expect.objectContaining({ name: 'name', value: 'Test Item' }),
       expect.objectContaining({ name: 'quantity', value: 2 }),
       expect.objectContaining({ name: 'unit', value: 'kg' }),
+      expect.objectContaining({ name: 'shopId', value: 'shop-1' }),
     ])
   })
 
@@ -73,6 +81,13 @@ describe('validateFields', () => {
         required: true,
         value: 'kg',
       },
+      {
+        name: 'shopId',
+        label: 'Shop',
+        type: FormFieldType.SELECT,
+        required: true,
+        value: 'shop-1',
+      },
     ]
 
     expect(() => validateFields(fields)).toThrow('Fields cannot be empty')
@@ -100,6 +115,13 @@ describe('validateFields', () => {
         type: FormFieldType.SELECT,
         required: true,
         value: 'kg',
+      },
+      {
+        name: 'shopId',
+        label: 'Shop',
+        type: FormFieldType.SELECT,
+        required: true,
+        value: 'shop-1',
       },
     ]
 
