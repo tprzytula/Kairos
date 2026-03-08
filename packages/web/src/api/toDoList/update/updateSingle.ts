@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../../index'
-import { ITodoItem } from '../retrieve/types'
+import { IStep } from '../retrieve/types'
 import { createFetchOptions } from '../../../utils/api'
 
 export type ToDoItemUpdateFields = {
@@ -7,6 +7,7 @@ export type ToDoItemUpdateFields = {
   description?: string
   dueDate?: number
   isDone?: boolean
+  steps?: IStep[]
 }
 
 export const updateToDoItemFields = async (id: string, fields: ToDoItemUpdateFields, projectId?: string): Promise<void> => {

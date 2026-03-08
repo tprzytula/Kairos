@@ -28,7 +28,7 @@ export const Planner = ({
   viewMode = PlannerViewMode.GROUPED
 }: IToDoListProps = {}) => {
   const { dispatch } = useAppState();
-  const { toDoList, isLoading, removeFromToDoList } = usePlannerContext();
+  const { toDoList, isLoading, removeFromToDoList, updateToDoItemFields } = usePlannerContext();
   const { currentProject } = useProjectContext();
   const navigate = useNavigate();
   const [previewItem, setPreviewItem] = useState<ITodoItem | null>(null);
@@ -84,6 +84,18 @@ export const Planner = ({
     await removeBirthdayItem(id);
   }, [removeBirthdayItem]);
 
+  const handleStepToggle = useCallback(async (todoId: string, stepId: string, isDone: boolean) => {
+    const item = toDoList.find(t => t.id === todoId)
+    if (!item?.steps) return
+    const updatedSteps = item.steps.map(s => s.id === stepId ? { ...s, isDone } : s)
+    setPreviewItem({ ...item, steps: updatedSteps })
+    try {
+      await updateToDoItemFields(todoId, { steps: updatedSteps })
+    } catch (error) {
+      console.error('Failed to update step:', error)
+    }
+  }, [toDoList, updateToDoItemFields])
+
   if (viewMode === PlannerViewMode.CALENDAR) {
     return (
       <>
@@ -100,6 +112,7 @@ export const Planner = ({
           onClose={() => setPreviewItem(null)}
           onEdit={handleEdit}
           onMarkDone={markToDoItemAsDone}
+          onStepToggle={handleStepToggle}
         />
         <BirthdayPreviewDrawer
           item={previewBirthday}

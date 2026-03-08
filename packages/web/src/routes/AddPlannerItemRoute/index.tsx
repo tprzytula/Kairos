@@ -21,6 +21,8 @@ import { PlannerProvider, usePlannerContext } from '../../providers/PlannerProvi
 import { BirthdayProvider } from '../../providers/BirthdayProvider'
 import dayjs from 'dayjs'
 import BirthdayForm from './BirthdayForm'
+import StepsEditor from '../../components/StepsEditor'
+import { IStep } from '../../api/toDoList/retrieve/types'
 
 type ItemType = 'task' | 'birthday'
 
@@ -104,6 +106,7 @@ export const AddPlannerItemContent = () => {
   const { toDoList } = usePlannerContext()
   const { user } = useAuth()
   const [itemType, setItemType] = useState<ItemType>('task')
+  const [steps, setSteps] = useState<IStep[]>([])
 
   const createAlert = useCallback((description: string, severity: AlertColor) => {
     showAlert({ description, severity }, dispatch)
@@ -120,10 +123,13 @@ export const AddPlannerItemContent = () => {
 
       const utcTimestamp = dueDate ? dayjs(dueDate.value).valueOf() : undefined
 
+      const filteredSteps = steps.filter(s => s.name.trim() !== '')
+
       await addTodoItem({
         name: name.value,
         description: description.value,
         dueDate: utcTimestamp,
+        steps: filteredSteps.length > 0 ? filteredSteps : undefined,
       }, currentProject.id, user?.access_token)
 
       createAlert(`${name.value} has been added to your planner`, 'success')
@@ -132,7 +138,7 @@ export const AddPlannerItemContent = () => {
       console.error(error)
       createAlert('Error creating task', 'error')
     }
-  }, [createAlert, navigate, currentProject])
+  }, [createAlert, navigate, currentProject, steps])
 
   const today = new Date()
   const currentDay = today.toLocaleDateString('en-US', { weekday: 'short' })
@@ -178,11 +184,16 @@ export const AddPlannerItemContent = () => {
         </SegmentedControl>
       </Box>
       {itemType === 'task' ? (
-        <ItemForm
-          fields={TASK_FIELDS}
-          onSubmit={onSubmit}
-          hideImage={true}
-        />
+        <>
+          <ItemForm
+            fields={TASK_FIELDS}
+            onSubmit={onSubmit}
+            hideImage={true}
+          />
+          <Box sx={{ px: 2, width: '100%', boxSizing: 'border-box' }}>
+            <StepsEditor steps={steps} onChange={setSteps} />
+          </Box>
+        </>
       ) : (
         <BirthdayForm />
       )}

@@ -26,7 +26,7 @@ import { Container } from './index.styled'
 
 const HomeDataContent = () => {
   const { groceryList, isLoading: isGroceryLoading } = useGroceryListContext()
-  const { toDoList, isLoading: isToDoLoading, removeFromToDoList } = usePlannerContext()
+  const { toDoList, isLoading: isToDoLoading, removeFromToDoList, updateToDoItemFields } = usePlannerContext()
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
@@ -56,6 +56,19 @@ const HomeDataContent = () => {
   const handleEditTask = useCallback((id: string) => {
     navigate(Route.EditPlannerItem.replace(':id', id))
   }, [navigate])
+
+  const handleStepToggle = useCallback(async (todoId: string, stepId: string, isDone: boolean) => {
+    const item = toDoList.find(t => t.id === todoId)
+    if (!item?.steps) return
+    const updatedSteps = item.steps.map(s => s.id === stepId ? { ...s, isDone } : s)
+    interactions.handleToDoItemSelect({ ...item, steps: updatedSteps })
+    try {
+      await updateToDoItemFields(todoId, { steps: updatedSteps })
+    } catch (error) {
+      console.error('Failed to update step:', error)
+      showAlert({ description: 'Failed to update step', severity: 'error' }, dispatch)
+    }
+  }, [toDoList, updateToDoItemFields, interactions.handleToDoItemSelect, dispatch])
 
   return (
     <>
@@ -97,6 +110,7 @@ const HomeDataContent = () => {
         onClose={interactions.handleToDoItemDeselect}
         onEdit={handleEditTask}
         onMarkDone={handleMarkDone}
+        onStepToggle={handleStepToggle}
       />
     </>
   )
@@ -127,4 +141,4 @@ export const HomeRoute = () => {
   return <HomeContent />
 }
 
-export default HomeRoute 
+export default HomeRoute

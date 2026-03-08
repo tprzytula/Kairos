@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { Box, Button, Chip, Drawer } from '@mui/material'
+import { Box, Button, Checkbox, Chip, Drawer, FormControlLabel, Typography } from '@mui/material'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -26,9 +26,10 @@ interface ToDoItemPreviewDrawerProps {
   onClose: () => void
   onEdit: (id: string) => void
   onMarkDone?: (id: string) => void
+  onStepToggle?: (todoId: string, stepId: string, isDone: boolean) => void
 }
 
-const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone }: ToDoItemPreviewDrawerProps) => {
+const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle }: ToDoItemPreviewDrawerProps) => {
   const [dragOffset, setDragOffset] = useState(0)
   const isDragging = useRef(false)
   const dragStartY = useRef(0)
@@ -67,6 +68,8 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone }: ToDoItemPr
     isDragging.current = false
     setDragOffset(0)
   }, [onClose])
+
+  const steps = item?.steps ?? []
 
   return (
     <Drawer
@@ -160,6 +163,52 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone }: ToDoItemPr
             <DescriptionText>{item.description}</DescriptionText>
           ) : (
             <NoDescriptionText>No description</NoDescriptionText>
+          )}
+
+          {steps.length > 0 && (
+            <Box sx={{ mt: 2 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ fontWeight: 600, mb: 1, color: 'text.secondary', letterSpacing: 0.5, textTransform: 'uppercase', fontSize: '0.75rem' }}
+              >
+                Sub-steps
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                {steps.map(step => (
+                  <FormControlLabel
+                    key={step.id}
+                    control={
+                      <Checkbox
+                        checked={step.isDone}
+                        onChange={() => onStepToggle?.(item!.id, step.id, !step.isDone)}
+                        size="small"
+                        sx={{
+                          color: 'rgba(102, 126, 234, 0.5)',
+                          '&.Mui-checked': { color: '#667eea' },
+                        }}
+                      />
+                    }
+                    label={
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          textDecoration: step.isDone ? 'line-through' : 'none',
+                          color: step.isDone ? 'text.disabled' : 'text.primary',
+                        }}
+                      >
+                        {step.name}
+                      </Typography>
+                    }
+                    sx={{
+                      mx: 0,
+                      borderRadius: '8px',
+                      px: 1,
+                      '&:hover': { background: 'rgba(102, 126, 234, 0.05)' },
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
           )}
         </ContentContainer>
 
