@@ -1,17 +1,25 @@
-import { Container, ActionArea, Content, Media, Name, ActionContainer, DeleteButtonIcon, QuantityDisplay, QuantityText, UnitText } from './index.styled'
+import { Container, ActionArea, Content, Media, Name, ActionContainer, DeleteButtonIcon, QuantityDisplay, QuantityText, UnitText, ShopIndicatorBadge } from './index.styled'
 import { IGroceryItemProps } from './types'
 import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
 import { useMemo, useCallback, memo } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
+import { useShopContext } from '../../providers/ShopProvider';
 import { ActionButton } from '../ActionButton';
 
-const GroceryItem = memo(({ id, name, quantity, imagePath, unit }: IGroceryItemProps) => {
+const GroceryItem = memo(({ id, name, quantity, imagePath, unit, shopId }: IGroceryItemProps) => {
   const { state: { purchasedItems }, dispatch } = useAppState()
   const isPurchased = useMemo(() => purchasedItems.has(id), [purchasedItems, id])
-  const { updateGroceryItem } = useGroceryListContext()
+  const { updateGroceryItem, isAllItemsView } = useGroceryListContext()
+  const { shops } = useShopContext()
+
+  const shopForBadge = useMemo(() => {
+    if (!isAllItemsView || !shopId) return null
+    return shops.find(shop => shop.id === shopId) ?? null
+  }, [isAllItemsView, shopId, shops])
 
   const markAsPurchased = useCallback(  () => {
     dispatch({
@@ -55,9 +63,21 @@ const GroceryItem = memo(({ id, name, quantity, imagePath, unit }: IGroceryItemP
       <ActionArea
         onClick={handleClick}
       >  
-        <Media 
-          image={imagePath}
-        />
+        <Media image={imagePath}>
+          {shopForBadge && (
+            <ShopIndicatorBadge>
+              {shopForBadge.icon ? (
+                <img
+                  src={shopForBadge.icon}
+                  alt={shopForBadge.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%' }}
+                />
+              ) : (
+                <StorefrontIcon sx={{ fontSize: '12px', color: 'rgba(0,0,0,0.5)' }} />
+              )}
+            </ShopIndicatorBadge>
+          )}
+        </Media>
         <Content>
           <Name>{name}</Name>
         </Content>

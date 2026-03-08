@@ -9,6 +9,7 @@ import { useProjectContext } from '../ProjectProvider'
 export const initialState: IState = {
   groceryList: [],
   isLoading: false,
+  isAllItemsView: false,
   viewMode: GroceryViewMode.CATEGORIZED,
   refetchGroceryList: async () => {},
   removeGroceryItem: async (id: string) => {},
@@ -122,10 +123,13 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
     }
   }, [currentProject, fetchGroceryList])
 
+  const isAllItemsView = shopId === 'all'
+
   const value = useMemo(
     () => ({
       groceryList,
       isLoading,
+      isAllItemsView,
       viewMode,
       refetchGroceryList,
       removeGroceryItem,
@@ -133,7 +137,7 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
       updateGroceryItemFields: updateGroceryItemWithFields,
       setViewMode: handleSetViewMode,
     }),
-    [groceryList, isLoading, viewMode, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields, handleSetViewMode]
+    [groceryList, isLoading, isAllItemsView, viewMode, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields, handleSetViewMode]
   )
 
   return (

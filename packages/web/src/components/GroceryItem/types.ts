@@ -6,5 +6,6 @@ export interface IGroceryItemProps {
     quantity: number;
     imagePath?: string;
     unit: GroceryItemUnit;
+    shopId?: string;
 }
   

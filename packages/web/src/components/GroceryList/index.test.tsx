@@ -64,6 +64,7 @@ describe('Given the GroceryList component', () => {
       jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
         groceryList: [],
         isLoading: false,
+        isAllItemsView: false,
         viewMode: GroceryViewMode.CATEGORIZED,
         refetchGroceryList: jest.fn(),
         removeGroceryItem: jest.fn(),
@@ -84,6 +85,7 @@ describe('Given the GroceryList component', () => {
         jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
           groceryList: [],
           isLoading: false,
+          isAllItemsView: false,
           viewMode: GroceryViewMode.CATEGORIZED,
           refetchGroceryList: jest.fn(),
           removeGroceryItem: jest.fn(),
@@ -109,6 +111,7 @@ describe('Given the GroceryList component', () => {
         jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
           groceryList: [],
           isLoading: false,
+          isAllItemsView: false,
           viewMode: GroceryViewMode.CATEGORIZED,
           refetchGroceryList: jest.fn(),
           removeGroceryItem: jest.fn(),
@@ -134,6 +137,7 @@ describe('Given the GroceryList component', () => {
       jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
         groceryList: [],
         isLoading: true,
+        isAllItemsView: false,
         viewMode: GroceryViewMode.CATEGORIZED,
         refetchGroceryList: jest.fn(),
         removeGroceryItem: jest.fn(),
@@ -180,6 +184,7 @@ const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
     },
   ],
   isLoading: false,
+  isAllItemsView: false,
   viewMode: GroceryViewMode.CATEGORIZED,
   refetchGroceryList: jest.fn(),
   removeGroceryItem: jest.fn(),
