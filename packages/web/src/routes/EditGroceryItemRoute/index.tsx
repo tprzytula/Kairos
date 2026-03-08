@@ -28,7 +28,7 @@ const EditGroceryItemContent = () => {
   const { defaults } = useItemDefaults({
     fetchMethod: retrieveGroceryListDefaults
   })
-  
+
   const currentShop = shops.find(shop => shop.id === shopId)
 
   const groceryItem = useMemo(() => {
@@ -80,7 +80,18 @@ const EditGroceryItemContent = () => {
         value: key,
       })),
     },
-  ], [currentItem])
+    {
+      name: 'shopId',
+      label: 'Shop',
+      type: FormFieldType.SELECT,
+      required: true,
+      value: currentItem?.shopId || shopId || '',
+      options: shops.map((shop) => ({
+        label: shop.name,
+        value: shop.id,
+      })),
+    },
+  ], [currentItem, shops, shopId])
 
   const createAlert = useCallback((description: string, severity: AlertColor) => {
     showAlert({ description, severity }, dispatch)
@@ -88,19 +99,20 @@ const EditGroceryItemContent = () => {
 
   const onSubmit = useCallback(async (fields: Array<IFormField>, imagePath?: string) => {
     try {
-      const [name, quantity, unit] = validateFields(fields)
+      const [name, quantity, unit, shopField] = validateFields(fields)
 
       const updatedFields = {
         name: name.value,
         quantity: quantity.value,
         unit: unit.value as GroceryItemUnit,
         imagePath: imagePath || currentItem?.imagePath,
+        shopId: shopField.value,
       }
 
       await updateGroceryItemFields(id!, updatedFields)
 
       createAlert(`${name.value} has been updated`, 'success')
-      navigate(Route.GroceryList.replace(':shopId', shopId || ''))
+      navigate(Route.GroceryList.replace(':shopId', shopField.value || shopId || ''))
     } catch (error) {
       console.error(error)
       createAlert('Error updating grocery item', 'error')
@@ -136,7 +148,7 @@ const EditGroceryItemContent = () => {
 
 export const EditGroceryItemRoute = () => {
   const { shopId } = useParams<{ shopId: string }>()
-  
+
   return (
     <GroceryListProvider shopId={shopId}>
       <EditGroceryItemContent />
