@@ -6,12 +6,12 @@ import { handler } from "./index";
 
 jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
     ...jest.requireActual("@kairos-lambdas-libs/dynamodb"),
-    deleteItem: jest.fn(),
+    deleteItems: jest.fn(),
 }));
 
 describe('Given the delete_todo_item lambda handler', () => {
     it('should require project ID', async () => {
-        const result = await runHandler({ pathParameters: { id: '1714003200000' } });
+        const result = await runHandler({ body: { ids: ["1", "2"] } });
 
         expect(result.statusCode).toBe(400);
         expect(result.body).toBe("Project ID is required");
@@ -20,20 +20,18 @@ describe('Given the delete_todo_item lambda handler', () => {
     it('should make a delete request to the todo list table', async () => {
         const deleteSpy = mockDelete();
 
-        await runHandler({ pathParameters: { id: '1714003200000' } }, true);
+        await runHandler({ body: { ids: ["1", "2"] } }, true);
 
         expect(deleteSpy).toHaveBeenCalledWith({
-            key: {
-                id: "1714003200000",
-            },
             tableName: DynamoDBTable.TODO_LIST,
+            ids: ["1", "2"],
         });
     });
 
     it('should return status 200', async () => {
         mockDelete();
 
-        const result = await runHandler({ pathParameters: { id: '1714003200000' } }, true);
+        const result = await runHandler({ body: { ids: ["1", "2"] } }, true);
 
         expect(result.statusCode).toBe(200);
     });
@@ -45,7 +43,7 @@ describe('Given the delete_todo_item lambda handler', () => {
             const deleteSpy = mockDelete();
             deleteSpy.mockRejectedValue(new Error('Delete failed'));
 
-            await runHandler({ pathParameters: { id: '1714003200000' } }, true);
+            await runHandler({ body: { ids: ["1", "2"] } }, true);
 
             expect(logSpy).toHaveBeenCalledWith('Handler Threw Exception:', new Error('Delete failed'));
         });
@@ -54,7 +52,7 @@ describe('Given the delete_todo_item lambda handler', () => {
             const deleteSpy = mockDelete();
             deleteSpy.mockRejectedValue(new Error('Delete failed'));
 
-            const result = await runHandler({ pathParameters: { id: '1714003200000' } }, true);
+            const result = await runHandler({ body: { ids: ["1", "2"] } }, true);
 
             expect(result).toEqual({
                 body: "Internal Server Error",
@@ -69,14 +67,14 @@ describe('Given the delete_todo_item lambda handler', () => {
     });
 });
 
-const mockDelete = () => jest.spyOn(DynamoDB, 'deleteItem');
+const mockDelete = () => jest.spyOn(DynamoDB, 'deleteItems');
 
 interface IAPIGatewayProxyEvent {
-    pathParameters: { id?: unknown };
+    body: { ids?: Array<string> };
 }
 
-const runHandler = async ({ pathParameters }: IAPIGatewayProxyEvent, includeProjectId: boolean = false) => {
-    const event = { pathParameters } as any;
+const runHandler = async ({ body }: IAPIGatewayProxyEvent, includeProjectId: boolean = false) => {
+    const event = { body: JSON.stringify(body) } as any;
     if (includeProjectId) {
         event.headers = { "X-Project-ID": "test-project" };
     }
