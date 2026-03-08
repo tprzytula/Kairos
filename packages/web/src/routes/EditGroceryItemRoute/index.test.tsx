@@ -30,6 +30,7 @@ const mockGroceryItem = {
   name: 'Test Item',
   quantity: 2,
   unit: GroceryItemUnit.KILOGRAM,
+  shopId: 'test-shop-1',
   imagePath: '/test.png',
   toBeRemoved: false,
 }
@@ -90,19 +91,22 @@ describe('Given the EditGroceryItemRoute component', () => {
     const [firstCall] = jest.mocked(ItemForm).mock.calls
     const props = firstCall[0]
     
-    expect(props.fields).toHaveLength(3)
-    
+    expect(props.fields).toHaveLength(4)
+
     const nameField = props.fields.find((field: any) => field.name === 'name')
     const quantityField = props.fields.find((field: any) => field.name === 'quantity')
     const unitField = props.fields.find((field: any) => field.name === 'unit')
-    
+    const shopField = props.fields.find((field: any) => field.name === 'shopId')
+
     expect(nameField).toBeDefined()
     expect(quantityField).toBeDefined()
     expect(unitField).toBeDefined()
-    
+    expect(shopField).toBeDefined()
+
     expect(nameField!.value).toBe('Test Item')
     expect(quantityField!.value).toBe(2)
     expect(unitField!.value).toBe(GroceryItemUnit.KILOGRAM)
+    expect(shopField!.value).toBe('test-shop-1')
   })
 
 
@@ -138,6 +142,12 @@ describe('Given the EditGroceryItemRoute component', () => {
                 required: true,
                 value: GroceryItemUnit.UNIT,
               },
+              {
+                name: 'shopId',
+                type: FormFieldType.SELECT,
+                required: true,
+                value: 'test-shop-1',
+              },
             ])
           })
 
@@ -146,6 +156,7 @@ describe('Given the EditGroceryItemRoute component', () => {
             quantity: 3,
             unit: GroceryItemUnit.UNIT,
             imagePath: '/test.png',
+            shopId: 'test-shop-1',
           })
 
           expect(mockNavigate).toHaveBeenCalledWith('/groceries/test-shop-1')
