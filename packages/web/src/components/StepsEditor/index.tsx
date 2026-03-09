@@ -7,9 +7,10 @@ import { IStep } from '../../api/toDoList/retrieve/types'
 interface StepsEditorProps {
   steps: IStep[]
   onChange: (steps: IStep[]) => void
+  embedded?: boolean
 }
 
-const StepsEditor = ({ steps, onChange }: StepsEditorProps) => {
+const StepsEditor = ({ steps, onChange, embedded = false }: StepsEditorProps) => {
   const addStep = useCallback(() => {
     onChange([...steps, { id: crypto.randomUUID(), name: '', isDone: false }])
   }, [steps, onChange])
@@ -21,6 +22,74 @@ const StepsEditor = ({ steps, onChange }: StepsEditorProps) => {
   const updateStepName = useCallback((id: string, name: string) => {
     onChange(steps.map(s => s.id === id ? { ...s, name } : s))
   }, [steps, onChange])
+
+  if (embedded) {
+    return (
+      <Box>
+        <Typography
+          variant="subtitle2"
+          sx={{ fontWeight: 600, mb: 1.5, color: 'text.secondary', letterSpacing: 0.5, textTransform: 'uppercase', fontSize: '0.75rem' }}
+        >
+          Sub-steps
+        </Typography>
+
+        {steps.map((step, index) => (
+          <Box
+            key={step.id}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              mb: 1,
+              borderRadius: '10px',
+              border: '1.5px solid',
+              borderColor: 'rgba(102, 126, 234, 0.25)',
+              px: 1.5,
+              py: 0.5,
+              background: 'rgba(102, 126, 234, 0.04)',
+            }}
+          >
+            <Typography sx={{ color: 'text.disabled', fontSize: '0.85rem', minWidth: 20, textAlign: 'center' }}>
+              {index + 1}.
+            </Typography>
+            <InputBase
+              value={step.name}
+              onChange={e => updateStepName(step.id, e.target.value)}
+              placeholder="Step name"
+              fullWidth
+              inputProps={{ 'aria-label': `Sub-step ${index + 1} name` }}
+              sx={{ fontSize: '0.9375rem' }}
+            />
+            <IconButton
+              size="small"
+              onClick={() => removeStep(step.id)}
+              aria-label={`Remove step ${index + 1}`}
+              sx={{ color: 'text.disabled', '&:hover': { color: 'error.main' } }}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Box>
+        ))}
+
+        <Button
+          startIcon={<AddIcon />}
+          onClick={addStep}
+          size="small"
+          sx={{
+            mt: steps.length > 0 ? 1 : 0,
+            textTransform: 'none',
+            fontWeight: 600,
+            color: '#667eea',
+            borderRadius: '8px',
+            px: 1.5,
+            '&:hover': { background: 'rgba(102, 126, 234, 0.08)' },
+          }}
+        >
+          Add step
+        </Button>
+      </Box>
+    )
+  }
 
   return (
     <Box

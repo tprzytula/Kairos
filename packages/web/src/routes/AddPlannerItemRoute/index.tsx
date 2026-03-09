@@ -184,16 +184,13 @@ export const AddPlannerItemContent = () => {
         </SegmentedControl>
       </Box>
       {itemType === 'task' ? (
-        <>
-          <ItemForm
-            fields={TASK_FIELDS}
-            onSubmit={onSubmit}
-            hideImage={true}
-          />
-          <Box sx={{ px: 2, width: '100%', boxSizing: 'border-box' }}>
-            <StepsEditor steps={steps} onChange={setSteps} />
-          </Box>
-        </>
+        <ItemForm
+          fields={TASK_FIELDS}
+          onSubmit={onSubmit}
+          hideImage={true}
+        >
+          <StepsEditor steps={steps} onChange={setSteps} embedded />
+        </ItemForm>
       ) : (
         <BirthdayForm />
       )}

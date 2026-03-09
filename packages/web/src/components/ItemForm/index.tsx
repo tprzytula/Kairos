@@ -1,4 +1,4 @@
-import { Stack, CircularProgress, Alert } from "@mui/material";
+import { Stack, CircularProgress, Alert, Divider } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
 import { IItemFormProps, IFormField } from "./types";
 import { useForm } from "./hooks/useForm";
@@ -6,7 +6,7 @@ import ItemImage from "./components/ItemImage";
 import FormField from "./components/FormField";
 import { FormContainer, FormCard, FormContent, FormFieldsContainer, SubmitButton, ImageContainer } from "./index.styled";
 
-const ItemForm = ({ defaults, fields, hideImage, initialImagePath, onSubmit, submitButtonText = 'Add Item', submittingButtonText = 'Adding Item...' }: IItemFormProps) => {
+const ItemForm = ({ defaults, fields, hideImage, initialImagePath, onSubmit, submitButtonText = 'Add Item', submittingButtonText = 'Adding Item...', children }: IItemFormProps) => {
     const [itemName, setItemName] = useState<string | undefined>();
     const [imagePath, setImagePath] = useState<string | undefined>();
 
@@ -64,7 +64,13 @@ const ItemForm = ({ defaults, fields, hideImage, initialImagePath, onSubmit, sub
                             <FormFieldsContainer>
                                 {formFieldsComponents}
                             </FormFieldsContainer>
-                            <SubmitButton 
+                            {children && (
+                                <>
+                                    <Divider sx={{ borderColor: 'rgba(102, 126, 234, 0.15)' }} />
+                                    {children}
+                                </>
+                            )}
+                            <SubmitButton
                                 type="submit" 
                                 variant="contained" 
                                 disabled={isSubmitting}
