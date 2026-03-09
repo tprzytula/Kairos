@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
+import { createContext, useContext, useState, useCallback, useLayoutEffect, useMemo } from 'react'
 import { StateComponentProps } from '../AppStateProvider/types'
 import { IState } from './types'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
@@ -40,13 +40,9 @@ export const PlannerProvider = ({ children }: StateComponentProps) => {
     }
   }, [currentProject])
 
-  const removeFromToDoList = useCallback(async (id: string) => {
-    try {
-      setToDoList((prev) => prev.filter((item) => item.id !== id))
-    } catch (error) {
-      console.error('Failed to remove to do item:', error)
-    }
-  }, [toDoList])
+  const removeFromToDoList = useCallback((id: string) => {
+    setToDoList((prev) => prev.filter((item) => item.id !== id))
+  }, [])
 
   const refetchToDoList = useCallback(async () => {
     await fetchToDoList()
