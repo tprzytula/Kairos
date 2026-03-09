@@ -44,7 +44,7 @@ describe('Given the Planner component', () => {
   it('should render only the not completed items grouped by time', () => {
     jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
-    renderWithTheme(<Planner />)
+    renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
     expect(screen.getByText('Buy Groceries')).toBeVisible()
     expect(screen.getByText('Buy Bread')).toBeVisible()
@@ -66,30 +66,16 @@ describe('Given the Planner component', () => {
   it('should pass expand/collapse props to time sections when provided', () => {
     jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
-    renderWithTheme(<Planner allExpanded={false} expandKey="test-key" />)
+    renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} allExpanded={false} expandKey="test-key" />)
 
     // When allExpanded=false, sections should be collapsed (show expand button)
     expect(screen.getByRole('button', { name: /expand/i })).toBeInTheDocument()
   })
 
-  it('should render in simple mode when viewMode is SIMPLE', () => {
+  it('should render in grouped mode when viewMode is GROUPED', () => {
     jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
-    renderWithTheme(<Planner viewMode={PlannerViewMode.SIMPLE} />)
-
-    // In simple mode, items should be rendered in one "All Tasks" section
-    expect(screen.getByText('All Tasks')).toBeVisible()
-    expect(screen.getByText('Buy Groceries')).toBeVisible()
-    expect(screen.getByText('Buy Bread')).toBeVisible()
-    expect(screen.getByText('✅')).toBeVisible() // Should show the checkmark emoji
-    // Should not have time section headers
-    expect(screen.queryByText('Overdue (2)')).not.toBeInTheDocument()
-  })
-
-  it('should render in grouped mode by default', () => {
-    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
-
-    renderWithTheme(<Planner />)
+    renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
     // Should have time section headers in grouped mode
     expect(screen.getByText('Overdue (2)')).toBeVisible()
@@ -104,10 +90,10 @@ describe('Given the Planner component', () => {
         { id: '3', name: 'Completed Item', isDone: true, description: '', dueDate: undefined }
       ]
     }
-    
+
     jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(contextWithMixedItems)
 
-    renderWithTheme(<Planner />)
+    renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
     expect(screen.getByText('Buy Groceries')).toBeVisible()
     expect(screen.getByText('Buy Bread')).toBeVisible()
@@ -129,7 +115,7 @@ describe('Given the Planner component', () => {
     
     jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(contextWithDifferentDueDates)
 
-    renderWithTheme(<Planner />)
+    renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
     // Check section headers
     expect(screen.getByText('Due Today')).toBeVisible()
@@ -157,7 +143,7 @@ describe('Given the Planner component', () => {
         updateToDoItemFields: jest.fn(),
       })
 
-      renderWithTheme(<Planner />)
+      renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
       expect(screen.getByLabelText('Empty planner')).toBeVisible()
       expect(screen.getByText('No pending tasks found')).toBeVisible()
@@ -174,7 +160,7 @@ describe('Given the Planner component', () => {
           updateToDoItemFields: jest.fn(),
         })
 
-        renderWithTheme(<Planner />)
+        renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
         const emptyStateElement = screen.getByText('No pending tasks found').parentElement
         expect(emptyStateElement).toBeInTheDocument()
@@ -196,7 +182,7 @@ describe('Given the Planner component', () => {
           updateToDoItemFields: jest.fn(),
         })
 
-        renderWithTheme(<Planner />)
+        renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
         const emptyStateElement = screen.getByText('No pending tasks found').parentElement
         const computedStyle = window.getComputedStyle(emptyStateElement as Element)
