@@ -7,7 +7,6 @@ import ModernPageHeader from '../../components/ModernPageHeader'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import ViewModuleIcon from '@mui/icons-material/ViewModule'
-import ViewListIcon from '@mui/icons-material/ViewList'
 import { Container, ScrollableContainer } from './index.styled'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useCallback, useMemo, useState } from 'react'
@@ -24,7 +23,7 @@ const PlannerContent = () => {
   const { currentProject } = useProjectContext()
   const [allExpanded, setAllExpanded] = useState(true)
   const [expandKey, setExpandKey] = useState(0)
-  const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.GROUPED)
+  const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.CALENDAR)
   
   const pendingItems = toDoList.filter(item => !item.isDone)
   const completedItems = toDoList.filter(item => item.isDone)
@@ -103,18 +102,14 @@ const PlannerContent = () => {
   }, [allExpanded])
 
   const toggleViewMode = useCallback(() => {
-    setViewMode(prev => {
-      if (prev === PlannerViewMode.CALENDAR) return PlannerViewMode.GROUPED
-      if (prev === PlannerViewMode.GROUPED) return PlannerViewMode.SIMPLE
-      return PlannerViewMode.CALENDAR
-    })
+    setViewMode(prev =>
+      prev === PlannerViewMode.CALENDAR ? PlannerViewMode.GROUPED : PlannerViewMode.CALENDAR
+    )
   }, [])
 
   const viewToggleIcon = viewMode === PlannerViewMode.CALENDAR
     ? <CalendarMonthIcon />
-    : viewMode === PlannerViewMode.GROUPED
-      ? <ViewModuleIcon />
-      : <ViewListIcon />
+    : <ViewModuleIcon />
   
   return (
     <StandardLayout>

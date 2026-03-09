@@ -65,12 +65,10 @@ describe('Given the PlannerRoute component', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText('0')).toBeInTheDocument() // Only Pending should show 0
       expect(screen.getByText('Pending')).toBeInTheDocument()
-      expect(screen.getByText('Today')).toBeInTheDocument()
-      expect(screen.getByText('Day')).toBeInTheDocument()
-      expect(screen.getByText('Month')).toBeInTheDocument()
-      expect(screen.getByText('Year')).toBeInTheDocument()
+      expect(screen.getByText('Overdue')).toBeInTheDocument()
+      expect(screen.getByText('Done')).toBeInTheDocument()
+      expect(screen.getByText('No Date')).toBeInTheDocument()
     })
   })
 
@@ -95,12 +93,11 @@ describe('Given the PlannerRoute component', () => {
       expect(pendingStatElements.length).toBeGreaterThan(0) // Should find the pending count
       expect(screen.getByText('Pending')).toBeInTheDocument()
     })
-    
-    // Then verify all date stats are present
-    expect(screen.getByText('Today')).toBeInTheDocument()
-    expect(screen.getByText('Day')).toBeInTheDocument()
-    expect(screen.getByText('Month')).toBeInTheDocument()
-    expect(screen.getByText('Year')).toBeInTheDocument()
+
+    // Then verify all calendar stats are present
+    expect(screen.getByText('Overdue')).toBeInTheDocument()
+    expect(screen.getByText('Done')).toBeInTheDocument()
+    expect(screen.getByText('No Date')).toBeInTheDocument()
   })
 
   it('should display correct stats with only pending items', async () => {
@@ -121,12 +118,11 @@ describe('Given the PlannerRoute component', () => {
       expect(pendingStatElements.length).toBeGreaterThan(0) // Should find the pending count
       expect(screen.getByText('Pending')).toBeInTheDocument()
     })
-    
-    // Then verify all date stats are present
-    expect(screen.getByText('Today')).toBeInTheDocument()
-    expect(screen.getByText('Day')).toBeInTheDocument()
-    expect(screen.getByText('Month')).toBeInTheDocument()
-    expect(screen.getByText('Year')).toBeInTheDocument()
+
+    // Then verify all calendar stats are present
+    expect(screen.getByText('Overdue')).toBeInTheDocument()
+    expect(screen.getByText('Done')).toBeInTheDocument()
+    expect(screen.getByText('No Date')).toBeInTheDocument()
   })
 
   it('should display correct stats with only completed items', async () => {
@@ -142,12 +138,10 @@ describe('Given the PlannerRoute component', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText('0')).toBeInTheDocument() // 0 pending items (all completed)
       expect(screen.getByText('Pending')).toBeInTheDocument()
-      expect(screen.getByText('Today')).toBeInTheDocument()
-      expect(screen.getByText('Day')).toBeInTheDocument()
-      expect(screen.getByText('Month')).toBeInTheDocument()
-      expect(screen.getByText('Year')).toBeInTheDocument()
+      expect(screen.getByText('Overdue')).toBeInTheDocument()
+      expect(screen.getByText('Done')).toBeInTheDocument()
+      expect(screen.getByText('No Date')).toBeInTheDocument()
     })
   })
 
@@ -219,7 +213,7 @@ describe('Given the PlannerRoute component', () => {
     })
   })
 
-  it('should render the expand/collapse button when there are pending items', async () => {
+  it('should render the expand/collapse button (disabled in calendar view)', async () => {
     const mockTodoItems = [
       { id: '1', name: 'Task 1', isDone: false, description: '', dueDate: undefined },
       { id: '2', name: 'Task 2', isDone: false, description: '', dueDate: undefined },
@@ -231,9 +225,10 @@ describe('Given the PlannerRoute component', () => {
       renderComponent()
     })
 
-    // The expand/collapse button should be rendered and enabled when there are pending items
+    // The expand/collapse button should be rendered but disabled in the default calendar view
     await waitFor(() => {
-      expect(screen.getByLabelText('Collapse all')).toBeInTheDocument() // Default is expanded
+      expect(screen.getByLabelText('Collapse all')).toBeInTheDocument()
+      expect(screen.getByLabelText('Collapse all')).toBeDisabled()
     })
   })
 
