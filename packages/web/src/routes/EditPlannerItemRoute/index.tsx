@@ -5,7 +5,7 @@ import { validateFields } from './utils'
 import { useNavigate, useParams } from 'react-router'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useCallback, useEffect, useState, useMemo } from 'react'
-import { AlertColor, Box } from '@mui/material'
+import { AlertColor } from '@mui/material'
 import { Route } from '../../enums/route'
 import { showAlert } from '../../utils/alert'
 import StandardLayout from '../../layout/standardLayout'
@@ -126,10 +126,9 @@ const EditPlannerItemContent = () => {
         hideImage={true}
         submitButtonText="Update Item"
         submittingButtonText="Updating Item..."
-      />
-      <Box sx={{ px: 2, width: '100%', boxSizing: 'border-box' }}>
-        <StepsEditor steps={steps} onChange={setSteps} />
-      </Box>
+      >
+        <StepsEditor steps={steps} onChange={setSteps} embedded />
+      </ItemForm>
     </StandardLayout>
   )
 }

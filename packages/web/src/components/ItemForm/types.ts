@@ -1,3 +1,4 @@
+import React from "react";
 import { FormFieldType } from "./enums";
 import { IItemDefault } from "../../hooks/useItemDefaults/types";
 
@@ -19,6 +20,7 @@ export interface IItemFormProps {
     onSubmit: (fields: Array<IFormField>, icon?: string) => Promise<void>;
     submitButtonText?: string;
     submittingButtonText?: string;
+    children?: React.ReactNode;
 }
 
 export interface IHandleChangeParams {
