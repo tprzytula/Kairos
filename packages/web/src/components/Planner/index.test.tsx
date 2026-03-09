@@ -15,6 +15,20 @@ jest.mock('react-router', () => ({
 }))
 
 jest.mock('../../providers/ProjectProvider')
+jest.mock('../../api/toDoList')
+
+jest.mock('./CalendarView', () => ({
+  __esModule: true,
+  default: ({ visibleToDoItems, onItemClick }: { visibleToDoItems: Array<{ id: string; name: string }>, onItemClick: (id: string) => void }) => (
+    <div data-testid="calendar-view">
+      {visibleToDoItems.map((item) => (
+        <button key={item.id} data-testid={`task-${item.id}`} onClick={() => onItemClick(item.id)}>
+          {item.name}
+        </button>
+      ))}
+    </div>
+  ),
+}))
 
 describe('Given the Planner component', () => {
   const mockNavigate = jest.fn()
@@ -208,6 +222,47 @@ describe('Given the Planner component', () => {
 
       expect(screen.getByLabelText('Loading to-do items')).toBeInTheDocument()
       expect(screen.getAllByLabelText('To do item placeholder')).toHaveLength(18)
+    })
+  })
+
+  describe('When the user deletes a todo item', () => {
+    it('should call removeTodoItems API and removeFromToDoList on successful deletion', async () => {
+      const removeFromToDoListMock = jest.fn()
+      const removeTodoItemsSpy = jest.mocked(ToDoAPI.removeTodoItems).mockResolvedValue(undefined)
+
+      jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
+        ...EXAMPLE_TO_DO_LIST_CONTEXT,
+        removeFromToDoList: removeFromToDoListMock,
+      })
+
+      renderWithTheme(<Planner />)
+
+      fireEvent.click(screen.getByTestId('task-1'))
+      fireEvent.click(screen.getByText('Delete Task'))
+
+      await waitFor(() => {
+        expect(removeTodoItemsSpy).toHaveBeenCalledWith(['1'], 'test-project-id')
+        expect(removeFromToDoListMock).toHaveBeenCalledWith('1')
+      })
+    })
+
+    it('should not call removeFromToDoList when the API call fails', async () => {
+      const removeFromToDoListMock = jest.fn()
+      jest.mocked(ToDoAPI.removeTodoItems).mockRejectedValue(new Error('API error'))
+
+      jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
+        ...EXAMPLE_TO_DO_LIST_CONTEXT,
+        removeFromToDoList: removeFromToDoListMock,
+      })
+
+      renderWithTheme(<Planner />)
+
+      fireEvent.click(screen.getByTestId('task-1'))
+      fireEvent.click(screen.getByText('Delete Task'))
+
+      await waitFor(() => {
+        expect(removeFromToDoListMock).not.toHaveBeenCalled()
+      })
     })
   })
 })
