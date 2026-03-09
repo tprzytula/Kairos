@@ -14,7 +14,6 @@ import { IBirthdayItem } from '../../api/birthdays/retrieve/types';
 import { useBirthdayContext } from '../../providers/BirthdayProvider';
 import BirthdayPreviewDrawer from '../BirthdayPreviewDrawer';
 import BirthdayFormDialog from '../BirthdayFormDialog';
-import SimpleView from './SimpleView';
 import GroupedView from './GroupedView';
 import CalendarView from './CalendarView';
 import Placeholder from './Placeholder';
@@ -25,7 +24,7 @@ import { IToDoListProps } from './types';
 export const Planner = ({
   allExpanded = true,
   expandKey = 0,
-  viewMode = PlannerViewMode.GROUPED
+  viewMode = PlannerViewMode.CALENDAR
 }: IToDoListProps = {}) => {
   const { dispatch } = useAppState();
   const { toDoList, isLoading, removeFromToDoList, updateToDoItemFields } = usePlannerContext();
@@ -147,18 +146,6 @@ export const Planner = ({
 
   if (toDoList.length === 0) {
     return <EmptyPlanner />
-  }
-
-  if (viewMode === PlannerViewMode.SIMPLE) {
-    return (
-      <SimpleView
-        visibleToDoItems={visibleToDoItems}
-        allExpanded={allExpanded}
-        expandKey={expandKey}
-        onSwipeAction={markToDoItemAsDone}
-        onEditAction={handleEdit}
-      />
-    );
   }
 
   return (
