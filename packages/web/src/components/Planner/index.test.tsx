@@ -14,6 +14,10 @@ jest.mock('react-router', () => ({
   useNavigate: jest.fn(),
 }))
 
+jest.mock('react-oidc-context', () => ({
+  useAuth: jest.fn(() => ({ user: { access_token: 'test-access-token' } })),
+}))
+
 jest.mock('../../providers/ProjectProvider')
 jest.mock('../../api/toDoList')
 
@@ -241,7 +245,7 @@ describe('Given the Planner component', () => {
       fireEvent.click(screen.getByText('Delete Task'))
 
       await waitFor(() => {
-        expect(removeTodoItemsSpy).toHaveBeenCalledWith(['1'], 'test-project-id')
+        expect(removeTodoItemsSpy).toHaveBeenCalledWith(['1'], 'test-project-id', 'test-access-token')
         expect(removeFromToDoListMock).toHaveBeenCalledWith('1')
       })
     })

@@ -21,6 +21,10 @@ jest.mock('../../providers/ProjectProvider', () => ({
 
 jest.mock('../../api/toDoList')
 
+jest.mock('react-oidc-context', () => ({
+  useAuth: jest.fn(() => ({ user: { access_token: 'test-access-token' } })),
+}))
+
 const MOCK_PROJECT: IProject = {
   id: 'test-project-id',
   name: 'Test Project',

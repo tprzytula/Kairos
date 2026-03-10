@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useAuth } from 'react-oidc-context';
 import { usePlannerContext } from '../../providers/PlannerProvider';
 import { useProjectContext } from '../../providers/ProjectProvider';
 import { useAppState } from '../../providers/AppStateProvider';
@@ -27,6 +28,7 @@ export const Planner = ({
   viewMode = PlannerViewMode.CALENDAR
 }: IToDoListProps = {}) => {
   const { dispatch } = useAppState();
+  const { user } = useAuth();
   const { toDoList, isLoading, removeFromToDoList, updateToDoItemFields } = usePlannerContext();
   const { currentProject } = useProjectContext();
   const navigate = useNavigate();
@@ -81,14 +83,14 @@ export const Planner = ({
 
   const handleDeleteTodo = useCallback(async (id: string) => {
     try {
-      await removeTodoItems([id], currentProject!.id);
+      await removeTodoItems([id], currentProject!.id, user?.access_token);
       clearSelectedTodoItems(id);
       removeFromToDoList(id);
     } catch (error) {
       console.error('Failed to delete todo item:', error);
       showAlert({ description: 'Failed to delete task', severity: 'error' }, dispatch);
     }
-  }, [currentProject, dispatch, clearSelectedTodoItems, removeFromToDoList]);
+  }, [currentProject, user, dispatch, clearSelectedTodoItems, removeFromToDoList]);
 
   const handleBirthdayDelete = useCallback(async (id: string) => {
     await removeBirthdayItem(id);
