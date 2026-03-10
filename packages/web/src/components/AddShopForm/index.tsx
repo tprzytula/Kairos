@@ -152,6 +152,7 @@ const AddShopForm = ({ onSubmit, onCancel, isSubmitting = false }: IAddShopFormP
           <form onSubmit={handleSubmit} noValidate>
             <FormFieldsContainer>
               <StyledTextField
+                autoFocus
                 fullWidth
                 label="Shop Name"
                 value={name}
