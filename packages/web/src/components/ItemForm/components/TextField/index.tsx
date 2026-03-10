@@ -15,10 +15,10 @@ export const TextField = ({
     errors,
     isSubmitting
 }: ITextFieldProps) => {
-    const { name, label, type, required } = field
+    const { name, label, type, required, autoFocus } = field
 
     return (
-        <StyledTextField 
+        <StyledTextField
             key={name}
             fullWidth
             label={label}
@@ -27,6 +27,7 @@ export const TextField = ({
             error={!!errors[name]}
             helperText={errors[name]}
             required={required}
+            autoFocus={autoFocus}
             disabled={isSubmitting}
             aria-label={label}
             aria-required={required}

@@ -24,6 +24,7 @@ const FIELDS: Array<IFormField> = [
     label: 'Name',
     type: FormFieldType.TEXT,
     required: true,
+    autoFocus: true,
     value: '',
   },
   {

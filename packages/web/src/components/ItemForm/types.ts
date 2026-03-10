@@ -8,6 +8,7 @@ export interface IFormField<T extends string | number | undefined = string | num
     label: string;
     value: T;
     required?: boolean;
+    autoFocus?: boolean;
     validate?: (value: T) => string | undefined;
     options?: Array<{ label: string; value: string }>;
 }

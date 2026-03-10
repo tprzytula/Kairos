@@ -335,6 +335,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
         fullWidth
         size="small"
         placeholder="e.g. Pasta Carbonara"
+        autoFocus={!initialRecipe}
       />
 
       <TextField
