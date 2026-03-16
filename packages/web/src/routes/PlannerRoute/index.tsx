@@ -1,9 +1,12 @@
 import StandardLayout from '../../layout/standardLayout'
 import { PlannerProvider, usePlannerContext } from '../../providers/PlannerProvider'
 import { BirthdayProvider } from '../../providers/BirthdayProvider'
+import { RecipeProvider } from '../../providers/RecipeProvider'
+import { MealPlanProvider, useMealPlanContext } from '../../providers/MealPlanProvider'
 import Planner from '../../components/Planner'
 import ActionButtonsBar from '../../components/ActionButtonsBar'
 import ModernPageHeader from '../../components/ModernPageHeader'
+import MealPlanDrawer from '../../components/MealPlanDrawer'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import ViewModuleIcon from '@mui/icons-material/ViewModule'
@@ -15,6 +18,7 @@ import { ActionName } from '../../providers/AppStateProvider/enums'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { updateToDoItems } from '../../api/toDoList'
 import { PlannerViewMode } from '../../enums/plannerViewMode'
+import { IMealPlan } from '../../types/mealPlan'
 import dayjs from 'dayjs'
 
 const PlannerContent = () => {
@@ -24,7 +28,12 @@ const PlannerContent = () => {
   const [allExpanded, setAllExpanded] = useState(true)
   const [expandKey, setExpandKey] = useState(0)
   const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.CALENDAR)
-  
+  const { mealPlans, addMealPlan, updateMealPlan, removeMealPlan } = useMealPlanContext()
+
+  const [mealDrawerOpen, setMealDrawerOpen] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [editingMealPlan, setEditingMealPlan] = useState<IMealPlan | undefined>(undefined)
+
   const pendingItems = toDoList.filter(item => !item.isDone)
   const completedItems = toDoList.filter(item => item.isDone)
 
@@ -63,22 +72,22 @@ const PlannerContent = () => {
   const statusText = useMemo(() => {
     const totalItems = toDoList.length
     const selectedCount = selectedTodoItems.size
-    
+
     if (totalItems === 0) {
       return "Your planner is empty"
     }
-    
+
     if (selectedCount === 0) {
       return "Tap items to mark as done"
     }
-    
+
     return `${selectedCount} of ${totalItems} item${totalItems === 1 ? '' : 's'} selected`
   }, [toDoList.length, selectedTodoItems.size])
 
   const clearSelectedTodoItems = useCallback((selectedTodoItems: Set<string>) => {
-    dispatch({ 
-      type: ActionName.CLEAR_SELECTED_TODO_ITEMS, 
-      payload: Array.from(selectedTodoItems) 
+    dispatch({
+      type: ActionName.CLEAR_SELECTED_TODO_ITEMS,
+      payload: Array.from(selectedTodoItems)
     })
   }, [dispatch])
 
@@ -107,10 +116,46 @@ const PlannerContent = () => {
     )
   }, [])
 
+  const handleAddMealPlan = useCallback((date: string) => {
+    setSelectedDate(date)
+    setEditingMealPlan(undefined)
+    setMealDrawerOpen(true)
+  }, [])
+
+  const handleMealPlanClick = useCallback((mealPlan: IMealPlan) => {
+    setSelectedDate(mealPlan.date)
+    setEditingMealPlan(mealPlan)
+    setMealDrawerOpen(true)
+  }, [])
+
+  const handleMealPlanSave = useCallback(async (date: string, recipeName: string, recipeId?: string) => {
+    try {
+      if (editingMealPlan) {
+        await updateMealPlan(editingMealPlan.id, { date, recipeName, recipeId: recipeId ?? null })
+      } else {
+        await addMealPlan(date, recipeName, recipeId)
+      }
+      setMealDrawerOpen(false)
+    } catch (error) {
+      console.error('Failed to save meal plan:', error)
+      showAlert({ description: 'Failed to save meal plan', severity: 'error' }, dispatch)
+    }
+  }, [editingMealPlan, addMealPlan, updateMealPlan, dispatch])
+
+  const handleMealPlanDelete = useCallback(async (id: string) => {
+    try {
+      await removeMealPlan(id)
+      setMealDrawerOpen(false)
+    } catch (error) {
+      console.error('Failed to delete meal plan:', error)
+      showAlert({ description: 'Failed to delete meal plan', severity: 'error' }, dispatch)
+    }
+  }, [removeMealPlan, dispatch])
+
   const viewToggleIcon = viewMode === PlannerViewMode.CALENDAR
     ? <CalendarMonthIcon />
     : <ViewModuleIcon />
-  
+
   return (
     <StandardLayout>
       <ModernPageHeader
@@ -137,9 +182,24 @@ const PlannerContent = () => {
           }}
         />
         <ScrollableContainer>
-          <Planner allExpanded={allExpanded} expandKey={expandKey} viewMode={viewMode} />
+          <Planner
+            allExpanded={allExpanded}
+            expandKey={expandKey}
+            viewMode={viewMode}
+            mealPlans={mealPlans}
+            onAddMealPlan={handleAddMealPlan}
+            onMealPlanClick={handleMealPlanClick}
+          />
         </ScrollableContainer>
       </Container>
+      <MealPlanDrawer
+        open={mealDrawerOpen}
+        date={selectedDate}
+        mealPlan={editingMealPlan}
+        onClose={() => setMealDrawerOpen(false)}
+        onSave={handleMealPlanSave}
+        onDelete={handleMealPlanDelete}
+      />
     </StandardLayout>
   )
 }
@@ -148,7 +208,11 @@ export const PlannerRoute = () => {
   return (
     <PlannerProvider>
       <BirthdayProvider>
-        <PlannerContent />
+        <RecipeProvider>
+          <MealPlanProvider>
+            <PlannerContent />
+          </MealPlanProvider>
+        </RecipeProvider>
       </BirthdayProvider>
     </PlannerProvider>
   )

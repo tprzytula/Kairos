@@ -25,7 +25,10 @@ import { IToDoListProps } from './types';
 export const Planner = ({
   allExpanded = true,
   expandKey = 0,
-  viewMode = PlannerViewMode.CALENDAR
+  viewMode = PlannerViewMode.CALENDAR,
+  mealPlans = [],
+  onAddMealPlan,
+  onMealPlanClick,
 }: IToDoListProps = {}) => {
   const { dispatch } = useAppState();
   const { user } = useAuth();
@@ -117,6 +120,9 @@ export const Planner = ({
             onItemClick={handlePreview}
             birthdayItems={birthdays}
             onBirthdayClick={handleBirthdayPreview}
+            mealPlans={mealPlans}
+            onAddMealPlan={onAddMealPlan}
+            onMealPlanClick={onMealPlanClick}
           />
         )}
         <ToDoItemPreviewDrawer

@@ -518,6 +518,54 @@ locals {
           todo_notifications = "none"
         }
       }
+    },
+    "add_meal_plan" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          meal_plans         = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "get_meal_plans" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          meal_plans         = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "update_meal_plan" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          meal_plans         = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "delete_meal_plan" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          meal_plans         = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
     }
   }
 }

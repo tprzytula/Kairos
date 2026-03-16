@@ -3,9 +3,12 @@ import { IconButton } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import AddIcon from '@mui/icons-material/Add'
+import LinkIcon from '@mui/icons-material/Link'
 import dayjs, { Dayjs } from 'dayjs'
 import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
+import { IMealPlan } from '../../../types/mealPlan'
 import {
   Container,
   CalendarHeader,
@@ -29,6 +32,10 @@ import {
   CompletedNoDueDateItem,
   BirthdayCakeIcon,
   BirthdayDayDetailItem,
+  MealPlanIcon,
+  MealDayDetailItem,
+  AddMealButton,
+  MealsSectionHeader,
 } from './index.styled'
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -38,9 +45,20 @@ interface ICalendarViewProps {
   onItemClick: (id: string) => void
   birthdayItems?: IBirthdayItem[]
   onBirthdayClick?: (id: string) => void
+  mealPlans?: IMealPlan[]
+  onAddMealPlan?: (date: string) => void
+  onMealPlanClick?: (mealPlan: IMealPlan) => void
 }
 
-const CalendarView = ({ visibleToDoItems, onItemClick, birthdayItems = [], onBirthdayClick }: ICalendarViewProps) => {
+const CalendarView = ({
+  visibleToDoItems,
+  onItemClick,
+  birthdayItems = [],
+  onBirthdayClick,
+  mealPlans = [],
+  onAddMealPlan,
+  onMealPlanClick,
+}: ICalendarViewProps) => {
   const [currentMonth, setCurrentMonth] = useState<Dayjs>(() => dayjs().startOf('month'))
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const today = dayjs()
@@ -130,6 +148,25 @@ const CalendarView = ({ visibleToDoItems, onItemClick, birthdayItems = [], onBir
     return birthdaysByDay.get(key) ?? []
   }, [selectedDay, birthdaysByDay])
 
+  // Map from "YYYY-MM-DD" -> IMealPlan[]
+  const mealPlansByDay = useMemo(() => {
+    const map = new Map<string, IMealPlan[]>()
+    for (const plan of mealPlans) {
+      const existing = map.get(plan.date)
+      if (existing) {
+        existing.push(plan)
+      } else {
+        map.set(plan.date, [plan])
+      }
+    }
+    return map
+  }, [mealPlans])
+
+  const selectedDayMealPlans = useMemo(
+    () => (selectedDay ? (mealPlansByDay.get(selectedDay) ?? []) : []),
+    [selectedDay, mealPlansByDay]
+  )
+
   // Build the grid: pad the start with days from the previous month
   const calendarDays = useMemo(() => {
     const startOfMonth = currentMonth.startOf('month')
@@ -184,6 +221,7 @@ const CalendarView = ({ visibleToDoItems, onItemClick, birthdayItems = [], onBir
           const completedCount = completedTodosByDay.get(key)?.length ?? 0
           const birthdayKey = `${day.month() + 1}-${day.date()}`
           const hasBirthday = isCurrentMonth && (birthdaysByDay.get(birthdayKey)?.length ?? 0) > 0
+          const hasMealPlan = isCurrentMonth && (mealPlansByDay.get(key)?.length ?? 0) > 0
 
           return (
             <DayCell
@@ -197,6 +235,7 @@ const CalendarView = ({ visibleToDoItems, onItemClick, birthdayItems = [], onBir
               <TodoDot count={pendingCount} isOverdue={isCurrentMonth && day.isBefore(today, 'day')}>{pendingCount > 0 ? pendingCount : ''}</TodoDot>
               <CompletedTodoDot count={completedCount}>{completedCount > 0 ? completedCount : ''}</CompletedTodoDot>
               {hasBirthday && <BirthdayCakeIcon />}
+              {hasMealPlan && <MealPlanIcon />}
             </DayCell>
           )
         })}
@@ -229,16 +268,28 @@ const CalendarView = ({ visibleToDoItems, onItemClick, birthdayItems = [], onBir
               ))}
             </>
           )}
-        {selectedDayBirthdays.length > 0 && (
-          <>
-            {selectedDayBirthdays.map(birthday => (
-              <BirthdayDayDetailItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
-                <CakeIcon sx={{ fontSize: '0.9rem', color: '#db2777', flexShrink: 0 }} />
-                {birthday.name}
-              </BirthdayDayDetailItem>
-            ))}
-          </>
-        )}
+          {selectedDayBirthdays.length > 0 && (
+            <>
+              {selectedDayBirthdays.map(birthday => (
+                <BirthdayDayDetailItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
+                  <CakeIcon sx={{ fontSize: '0.9rem', color: '#db2777', flexShrink: 0 }} />
+                  {birthday.name}
+                </BirthdayDayDetailItem>
+              ))}
+            </>
+          )}
+          <MealsSectionHeader>Meals</MealsSectionHeader>
+          {selectedDayMealPlans.map(plan => (
+            <MealDayDetailItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
+              <MealPlanIcon sx={{ fontSize: '0.9rem', flexShrink: 0 }} />
+              {plan.recipeName}
+              {plan.recipeId && <LinkIcon sx={{ fontSize: '0.75rem', color: '#d97706', marginLeft: 'auto', flexShrink: 0 }} />}
+            </MealDayDetailItem>
+          ))}
+          <AddMealButton onClick={() => onAddMealPlan?.(selectedDay)}>
+            <AddIcon sx={{ fontSize: '0.9rem' }} />
+            Add meal
+          </AddMealButton>
         </DayDetailPanel>
       )}
 
