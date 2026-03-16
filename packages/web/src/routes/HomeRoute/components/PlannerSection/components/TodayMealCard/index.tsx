@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import { ITodayMealItem } from '../../types'
 import { MEAL_TYPE_ORDER } from '../../../../../../enums/mealType'
 import {
@@ -8,6 +9,7 @@ import {
   CarouselSlide,
   CarouselDots,
   CarouselDot,
+  MealPlanBadge,
   HeroWrapper,
   HeroImage,
   HeroPlaceholder,
@@ -27,10 +29,27 @@ interface ITodayMealCardProps {
 
 const sortedMeals = (meals: ITodayMealItem[]): ITodayMealItem[] =>
   [...meals].sort((a, b) => {
+    if (a.date !== b.date) return a.date.localeCompare(b.date)
     const ai = a.mealType ? MEAL_TYPE_ORDER.indexOf(a.mealType) : MEAL_TYPE_ORDER.length
     const bi = b.mealType ? MEAL_TYPE_ORDER.indexOf(b.mealType) : MEAL_TYPE_ORDER.length
     return ai - bi
   })
+
+const getTodayString = (): string => {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+}
+
+const getDayLabel = (dateStr: string): string => {
+  const todayStr = getTodayString()
+  if (dateStr === todayStr) return 'Today'
+  const diff = Math.round(
+    (new Date(`${dateStr}T00:00:00`).getTime() - new Date(`${todayStr}T00:00:00`).getTime()) /
+    86400000
+  )
+  if (diff === 1) return 'Tomorrow'
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString('en-US', { weekday: 'long' })
+}
 
 export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals, onMealClick }) => {
   const meals = sortedMeals(todayMeals)
@@ -102,9 +121,15 @@ export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals, onMea
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
+      <MealPlanBadge>
+        <CalendarTodayIcon />
+        Meal Plan
+      </MealPlanBadge>
+
       <CarouselTrack offset={activeIndex}>
         {meals.map((meal) => {
           const seed = meal.recipeName.charCodeAt(0)
+          const dayLabel = getDayLabel(meal.date)
           return (
             <CarouselSlide key={meal.id}>
               <HeroWrapper
@@ -122,7 +147,7 @@ export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals, onMea
                 <HeroOverlay>
                   <HeroLabel>
                     <RestaurantIcon />
-                    {meal.mealType ?? 'Meal'}
+                    {dayLabel}{meal.mealType ? ` · ${meal.mealType}` : ''}
                   </HeroLabel>
                   <HeroTitle>{meal.recipeName}</HeroTitle>
                 </HeroOverlay>
