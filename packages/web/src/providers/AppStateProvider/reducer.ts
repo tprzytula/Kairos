@@ -57,6 +57,12 @@ export const reducer = (state: State, action: Action): State => {
         selectedTodoItems: removeFromSet(state.selectedTodoItems, ...action.payload),
       }
     }
+    case ActionName.SET_SELECTED_CALENDAR_DATE: {
+      return {
+        ...state,
+        selectedCalendarDate: action.payload,
+      }
+    }
     default: {
       return state
     }

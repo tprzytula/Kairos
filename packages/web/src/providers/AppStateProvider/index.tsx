@@ -6,6 +6,7 @@ export const initialState: State = {
   alerts: new Map(),
   purchasedItems: new Set(),
   selectedTodoItems: new Set(),
+  selectedCalendarDate: null,
 }
 
 export const AppState = createContext<Context>({
