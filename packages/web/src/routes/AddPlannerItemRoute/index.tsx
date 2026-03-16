@@ -3,6 +3,7 @@ import { Box } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import CakeIcon from '@mui/icons-material/Cake'
+import RestaurantIcon from '@mui/icons-material/Restaurant'
 import ItemForm from '../../components/ItemForm'
 import { FormFieldType } from '../../components/ItemForm/enums'
 import { IFormField } from '../../components/ItemForm/types'
@@ -19,12 +20,15 @@ import StandardLayout from '../../layout/standardLayout'
 import ModernPageHeader from '../../components/ModernPageHeader'
 import { PlannerProvider, usePlannerContext } from '../../providers/PlannerProvider'
 import { BirthdayProvider } from '../../providers/BirthdayProvider'
+import { MealPlanProvider } from '../../providers/MealPlanProvider'
+import { RecipeProvider } from '../../providers/RecipeProvider'
 import dayjs from 'dayjs'
 import BirthdayForm from './BirthdayForm'
+import MealForm from './MealForm'
 import StepsEditor from '../../components/StepsEditor'
 import { IStep } from '../../api/toDoList/retrieve/types'
 
-type ItemType = 'task' | 'birthday'
+type ItemType = 'task' | 'birthday' | 'meal'
 
 const TASK_FIELDS: Array<IFormField> = [
   {
@@ -62,7 +66,7 @@ const SegmentedControl = styled(Box)({
 
 interface ISegmentProps {
   active: boolean
-  variant: 'task' | 'birthday'
+  variant: 'task' | 'birthday' | 'meal'
 }
 
 const Segment = styled(Box, {
@@ -84,10 +88,14 @@ const Segment = styled(Box, {
     ? {
         background: variant === 'birthday'
           ? 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)'
+          : variant === 'meal'
+          ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)'
           : '#ffffff',
-        color: variant === 'birthday' ? '#db2777' : '#667eea',
+        color: variant === 'birthday' ? '#db2777' : variant === 'meal' ? '#92400e' : '#667eea',
         boxShadow: variant === 'birthday'
           ? '0 2px 8px rgba(219, 39, 119, 0.2), 0 1px 3px rgba(0,0,0,0.08)'
+          : variant === 'meal'
+          ? '0 2px 8px rgba(217, 119, 6, 0.2), 0 1px 3px rgba(0,0,0,0.08)'
           : '0 2px 8px rgba(102, 126, 234, 0.15), 0 1px 3px rgba(0,0,0,0.08)',
       }
     : {
@@ -154,8 +162,8 @@ export const AddPlannerItemContent = () => {
     { value: yearNumber, label: 'Year' }
   ]
 
-  const headerIcon = itemType === 'birthday' ? <CakeIcon /> : <ChecklistIcon />
-  const headerTitle = itemType === 'birthday' ? 'Add Birthday' : 'Add Task'
+  const headerIcon = itemType === 'birthday' ? <CakeIcon /> : itemType === 'meal' ? <RestaurantIcon /> : <ChecklistIcon />
+  const headerTitle = itemType === 'birthday' ? 'Add Birthday' : itemType === 'meal' ? 'Add Meal' : 'Add Task'
 
   return (
     <StandardLayout>
@@ -182,6 +190,14 @@ export const AddPlannerItemContent = () => {
             <CakeIcon sx={{ fontSize: '1.1rem' }} />
             Birthday
           </Segment>
+          <Segment
+            active={itemType === 'meal'}
+            variant="meal"
+            onClick={() => setItemType('meal')}
+          >
+            <RestaurantIcon sx={{ fontSize: '1.1rem' }} />
+            Meal
+          </Segment>
         </SegmentedControl>
       </Box>
       {itemType === 'task' ? (
@@ -192,8 +208,10 @@ export const AddPlannerItemContent = () => {
         >
           <StepsEditor steps={steps} onChange={setSteps} embedded />
         </ItemForm>
-      ) : (
+      ) : itemType === 'birthday' ? (
         <BirthdayForm />
+      ) : (
+        <MealForm />
       )}
     </StandardLayout>
   )
@@ -203,7 +221,11 @@ export const AddPlannerItemRoute = () => {
   return (
     <PlannerProvider>
       <BirthdayProvider>
-        <AddPlannerItemContent />
+        <RecipeProvider>
+          <MealPlanProvider>
+            <AddPlannerItemContent />
+          </MealPlanProvider>
+        </RecipeProvider>
       </BirthdayProvider>
     </PlannerProvider>
   )
