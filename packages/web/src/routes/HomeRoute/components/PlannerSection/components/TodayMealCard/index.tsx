@@ -1,6 +1,18 @@
 import React from 'react'
+import RestaurantIcon from '@mui/icons-material/Restaurant'
 import { ITodayMealItem } from '../../types'
-import { MealRow, MealThumbnail, MealThumbnailPlaceholder, MealName, AdditionalMeals } from './index.styled'
+import {
+  HeroWrapper,
+  HeroImage,
+  HeroPlaceholder,
+  HeroPlaceholderInitial,
+  HeroOverlay,
+  HeroLabel,
+  HeroTitle,
+  AdditionalMeals,
+  AdditionalMealPill,
+  EmptyState,
+} from './index.styled'
 
 interface ITodayMealCardProps {
   todayMeals: ITodayMealItem[]
@@ -8,26 +20,37 @@ interface ITodayMealCardProps {
 
 export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals }) => {
   if (todayMeals.length === 0) {
-    return <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #888)' }}>No meal planned</span>
+    return <EmptyState>No meal planned for today</EmptyState>
   }
 
   const [first, ...rest] = todayMeals
+  const seed = first.recipeName.charCodeAt(0)
 
   return (
-    <>
-      <MealRow>
-        {first.imagePath
-          ? <MealThumbnail src={first.imagePath} alt={first.recipeName} />
-          : <MealThumbnailPlaceholder seed={first.recipeName.charCodeAt(0)}>
-              {first.recipeName.charAt(0).toUpperCase()}
-            </MealThumbnailPlaceholder>
-        }
-        <MealName>{first.recipeName}</MealName>
-      </MealRow>
-      {rest.length > 0 && (
-        <AdditionalMeals>+{rest.length} more</AdditionalMeals>
-      )}
-    </>
+    <HeroWrapper>
+      {first.imagePath
+        ? <HeroImage src={first.imagePath} alt={first.recipeName} />
+        : (
+          <HeroPlaceholder seed={seed}>
+            <HeroPlaceholderInitial>{first.recipeName.charAt(0).toUpperCase()}</HeroPlaceholderInitial>
+          </HeroPlaceholder>
+        )
+      }
+      <HeroOverlay>
+        <HeroLabel>
+          <RestaurantIcon />
+          Dinner Tonight
+        </HeroLabel>
+        <HeroTitle>{first.recipeName}</HeroTitle>
+        {rest.length > 0 && (
+          <AdditionalMeals>
+            {rest.map((meal) => (
+              <AdditionalMealPill key={meal.id}>{meal.recipeName}</AdditionalMealPill>
+            ))}
+          </AdditionalMeals>
+        )}
+      </HeroOverlay>
+    </HeroWrapper>
   )
 }
 

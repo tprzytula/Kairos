@@ -1,6 +1,5 @@
 import React from 'react'
 import ChecklistIcon from '@mui/icons-material/Checklist'
-import RestaurantIcon from '@mui/icons-material/Restaurant'
 import CakeIcon from '@mui/icons-material/Cake'
 import { IToDoSectionProps } from './types'
 import TodayTasksCard from './components/TodayTasksCard'
@@ -16,6 +15,7 @@ import {
   MiniCardBody,
 } from './index.styled'
 
+
 export const PlannerSection: React.FC<IToDoSectionProps> = ({
   toDoStats,
   birthdays,
@@ -23,19 +23,11 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
 }) => {
   return (
     <MiniCardsGrid>
-      <MiniCard sx={{ gridColumn: 1, gridRow: '1 / 3' }}>
-        <MiniCardContent>
-          <MiniCardHeader>
-            <MiniCardIcon><RestaurantIcon /></MiniCardIcon>
-            <MiniCardTitle>Dinner Tonight</MiniCardTitle>
-          </MiniCardHeader>
-          <MiniCardBody>
-            <TodayMealCard todayMeals={todayMeals} />
-          </MiniCardBody>
-        </MiniCardContent>
+      <MiniCard sx={{ gridColumn: '1 / 3', gridRow: 1, minHeight: 'unset' }}>
+        <TodayMealCard todayMeals={todayMeals} />
       </MiniCard>
 
-      <MiniCard sx={{ gridColumn: 2, gridRow: 1 }}>
+      <MiniCard sx={{ gridColumn: 1, gridRow: 2 }}>
         <MiniCardContent>
           <MiniCardHeader>
             <MiniCardIcon><ChecklistIcon /></MiniCardIcon>
