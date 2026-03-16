@@ -63,7 +63,7 @@ const GroceryItem = memo(({ id, name, quantity, imagePath, unit, shopId }: IGroc
       <ActionArea
         onClick={handleClick}
       >  
-        <Media image={imagePath}>
+        <Media image={imagePath} sx={imagePath ? { backgroundImage: `url(${imagePath})` } : undefined}>
           {shopForBadge && (
             <ShopIndicatorBadge>
               {shopForBadge.icon ? (

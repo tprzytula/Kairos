@@ -35,7 +35,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       name,
       quantity,
       unit: unit as GroceryItemUnit,
-      imagePath: imagePath || "",
+      imagePath,
       category,
     });
 

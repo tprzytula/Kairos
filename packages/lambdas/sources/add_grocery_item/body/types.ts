@@ -5,6 +5,6 @@ export interface IRequestBody {
     quantity: number;
     unit: string;
     shopId: string;
-    imagePath?: string;
+    imagePath: string;
     category?: GroceryItemCategory;
 }
