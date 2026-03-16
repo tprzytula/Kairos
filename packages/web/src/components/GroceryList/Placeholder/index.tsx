@@ -1,22 +1,16 @@
 import GroceryItemPlaceholder from '../../GroceryItem/Placeholder';
-import CollapsibleSectionPlaceholder from '../../CollapsibleSectionPlaceholder';
-import { Container, PlaceholdersWrapper } from './index.styled';
+import GroupedListPlaceholder from '../../GroupedListPlaceholder';
+import { Container } from './index.styled';
 import { IPlaceholderProps } from './types';
 
-const Placeholder = ({ numberOfGroups = 5 }: IPlaceholderProps) => {
-  return (
-    <Container>
-      <PlaceholdersWrapper aria-label="Loading grocery items">
-        {Array.from({ length: numberOfGroups }).map((_, groupIndex) => (
-          <CollapsibleSectionPlaceholder key={groupIndex}>
-            {Array.from({ length: 2 + groupIndex }).map((_, itemIndex) => (
-              <GroceryItemPlaceholder key={itemIndex} />
-            ))}
-          </CollapsibleSectionPlaceholder>
-        ))}
-      </PlaceholdersWrapper>
-    </Container>
-  );
-};
+const Placeholder = ({ numberOfGroups = 5 }: IPlaceholderProps) => (
+  <Container>
+    <GroupedListPlaceholder
+      ItemPlaceholder={GroceryItemPlaceholder}
+      ariaLabel="Loading grocery items"
+      numberOfGroups={numberOfGroups}
+    />
+  </Container>
+);
 
 export default Placeholder;
