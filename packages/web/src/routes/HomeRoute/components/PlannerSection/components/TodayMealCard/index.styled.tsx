@@ -17,17 +17,17 @@ export const MealRow = styled('div')({
 })
 
 export const MealThumbnail = styled('img')({
-  width: '36px',
-  height: '36px',
-  borderRadius: '6px',
+  width: '48px',
+  height: '48px',
+  borderRadius: '8px',
   objectFit: 'cover',
   flexShrink: 0,
 })
 
 export const MealThumbnailPlaceholder = styled(Box)<{ seed: number }>(({ seed }) => ({
-  width: '36px',
-  height: '36px',
-  borderRadius: '6px',
+  width: '48px',
+  height: '48px',
+  borderRadius: '8px',
   flexShrink: 0,
   background: GRADIENTS[seed % GRADIENTS.length],
   display: 'flex',
