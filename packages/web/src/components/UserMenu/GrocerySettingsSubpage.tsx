@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Divider, CircularProgress, Button, TextField, Select, MenuItem, FormControl, InputLabel, Collapse } from '@mui/material'
-import { ArrowBack as ArrowBackIcon, Add as AddIcon } from '@mui/icons-material'
+import { Divider, CircularProgress, Button, TextField, Select, MenuItem, FormControl, InputLabel, Collapse, IconButton, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material'
+import { ArrowBack as ArrowBackIcon, Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material'
 import { type Area } from 'react-easy-crop'
 import * as Styled from './index.styled'
-import { retrieveGroceryListDefaults, addGroceryItemDefault, getGroceryDefaultUploadUrl } from '../../api/groceryList'
+import { retrieveGroceryListDefaults, addGroceryItemDefault, getGroceryDefaultUploadUrl, deleteGroceryItemDefault, updateGroceryItemDefault } from '../../api/groceryList'
+import { IUpdateGroceryItemDefaultPayload } from '../../api/groceryList/updateDefault'
 import { IDBGroceryItemDefault } from '../../api/groceryList/retrieve/types'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 import { useProjectContext } from '../../providers/ProjectProvider'
@@ -29,6 +30,8 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
   const { currentProject } = useProjectContext()
   const [defaults, setDefaults] = useState<Array<IDBGroceryItemDefault>>([])
   const [isLoading, setIsLoading] = useState(true)
+
+  // Add form state
   const [showAddForm, setShowAddForm] = useState(false)
   const [name, setName] = useState('')
   const [unit, setUnit] = useState<GroceryItemUnit | ''>('')
@@ -41,6 +44,22 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
   const [formError, setFormError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Edit form state
+  const [editingItem, setEditingItem] = useState<IDBGroceryItemDefault | null>(null)
+  const [editUnit, setEditUnit] = useState<GroceryItemUnit | ''>('')
+  const [editCategory, setEditCategory] = useState('')
+  const [editIconPath, setEditIconPath] = useState('')
+  const [editIconPreview, setEditIconPreview] = useState('')
+  const [editPendingImageSrc, setEditPendingImageSrc] = useState<string | null>(null)
+  const [isEditUploading, setIsEditUploading] = useState(false)
+  const [isEditSubmitting, setIsEditSubmitting] = useState(false)
+  const [editFormError, setEditFormError] = useState('')
+  const editFileInputRef = useRef<HTMLInputElement>(null)
+
+  // Delete confirmation state
+  const [deletingItemName, setDeletingItemName] = useState<string | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+
   const fetchDefaults = () => {
     setIsLoading(true)
     retrieveGroceryListDefaults()
@@ -52,6 +71,7 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
     fetchDefaults()
   }, [])
 
+  // Add form handlers
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -123,6 +143,115 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
       setFormError('Failed to save. Please try again.')
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  // Edit form handlers
+  const handleEditClick = (item: IDBGroceryItemDefault) => {
+    setEditingItem(item)
+    setEditUnit(item.unit || '')
+    setEditCategory(item.category || '')
+    setEditIconPath(item.icon || '')
+    setEditIconPreview(item.icon || '')
+    setEditFormError('')
+  }
+
+  const handleEditCancel = () => {
+    setEditingItem(null)
+    setEditUnit('')
+    setEditCategory('')
+    setEditIconPath('')
+    setEditIconPreview('')
+    setEditPendingImageSrc(null)
+    setEditFormError('')
+  }
+
+  const handleEditSubmit = async () => {
+    if (!editingItem) return
+
+    const payload: IUpdateGroceryItemDefaultPayload = {
+      ...(editUnit && { unit: editUnit }),
+      ...(editCategory && { category: editCategory }),
+      ...(editIconPath && { icon: editIconPath }),
+    }
+
+    if (Object.keys(payload).length === 0) {
+      setEditFormError('Please change at least one field.')
+      return
+    }
+
+    setIsEditSubmitting(true)
+    setEditFormError('')
+
+    try {
+      await updateGroceryItemDefault(editingItem.name, payload, currentProject?.id)
+      handleEditCancel()
+      fetchDefaults()
+    } catch {
+      setEditFormError('Failed to save. Please try again.')
+    } finally {
+      setIsEditSubmitting(false)
+    }
+  }
+
+  const handleEditFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setEditPendingImageSrc(URL.createObjectURL(file))
+    e.target.value = ''
+  }
+
+  const handleEditCropConfirm = async (croppedAreaPixels: Area) => {
+    if (!editPendingImageSrc) return
+
+    const previousPreview = editIconPreview
+    const previousPath = editIconPath
+
+    try {
+      const croppedBlob = await getCroppedBlob(editPendingImageSrc, croppedAreaPixels)
+      setEditIconPreview(URL.createObjectURL(croppedBlob))
+      setEditPendingImageSrc(null)
+      setIsEditUploading(true)
+      setEditFormError('')
+
+      const { uploadUrl, imagePath } = await getGroceryDefaultUploadUrl('jpg', currentProject?.id)
+      await fetch(uploadUrl, {
+        method: 'PUT',
+        body: croppedBlob,
+        headers: { 'Content-Type': 'image/jpeg' },
+      })
+      setEditIconPath(imagePath)
+    } catch {
+      setEditFormError('Failed to upload image. Please try again.')
+      setEditIconPreview(previousPreview)
+      setEditIconPath(previousPath)
+      setEditPendingImageSrc(null)
+    } finally {
+      setIsEditUploading(false)
+    }
+  }
+
+  const handleEditCropCancel = () => {
+    setEditPendingImageSrc(null)
+  }
+
+  // Delete handlers
+  const handleDeleteClick = (itemName: string) => {
+    setDeletingItemName(itemName)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingItemName) return
+
+    setIsDeleting(true)
+    try {
+      await deleteGroceryItemDefault(deletingItemName, currentProject?.id)
+      setDeletingItemName(null)
+      fetchDefaults()
+    } catch {
+      setDeletingItemName(null)
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -261,6 +390,15 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
         />
       )}
 
+      {editPendingImageSrc && (
+        <ImageCropModal
+          imageSrc={editPendingImageSrc}
+          aspect={1}
+          onConfirm={handleEditCropConfirm}
+          onCancel={handleEditCropCancel}
+        />
+      )}
+
       {!isLoading && sortedCategories.map(cat => (
         <div key={cat}>
           <Styled.SectionTitle>{cat}</Styled.SectionTitle>
@@ -274,7 +412,9 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
                   alignItems: 'center',
                   gap: '4px',
                   width: '60px',
+                  position: 'relative',
                 }}
+                className="grocery-default-tile"
               >
                 <div
                   style={{
@@ -311,11 +451,145 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
                 >
                   {item.name}
                 </span>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '2px',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <IconButton
+                    size="small"
+                    onClick={() => handleEditClick(item)}
+                    sx={{ padding: '2px', color: '#6b7280' }}
+                    title="Edit"
+                  >
+                    <EditIcon sx={{ fontSize: '12px' }} />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleDeleteClick(item.name)}
+                    sx={{ padding: '2px', color: '#6b7280' }}
+                    title="Delete"
+                  >
+                    <DeleteIcon sx={{ fontSize: '12px' }} />
+                  </IconButton>
+                </div>
               </div>
             ))}
           </div>
+
+          {editingItem && groupedByCategory[cat].some(i => i.name === editingItem.name) && (
+            <div style={{ border: '1px solid #e5e7eb', borderRadius: '8px', padding: '10px', marginBottom: '8px', marginTop: '4px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 500, color: '#374151', marginBottom: '8px' }}>
+                Editing: {editingItem.name}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <FormControl size="small" fullWidth>
+                  <InputLabel>Category</InputLabel>
+                  <Select
+                    value={editCategory}
+                    label="Category"
+                    onChange={e => setEditCategory(e.target.value)}
+                  >
+                    <MenuItem value=""><em>None</em></MenuItem>
+                    {BACKEND_CATEGORIES.map(c => (
+                      <MenuItem key={c} value={c}>{c}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl size="small" fullWidth>
+                  <InputLabel>Unit</InputLabel>
+                  <Select
+                    value={editUnit}
+                    label="Unit"
+                    onChange={e => setEditUnit(e.target.value as GroceryItemUnit)}
+                  >
+                    <MenuItem value=""><em>None</em></MenuItem>
+                    {Object.values(GroceryItemUnit).map(u => (
+                      <MenuItem key={u} value={u}>{u}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <input
+                    ref={editFileInputRef}
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={handleEditFileChange}
+                  />
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => editFileInputRef.current?.click()}
+                    disabled={isEditUploading}
+                    sx={{ textTransform: 'none', fontSize: '12px', flexShrink: 0 }}
+                  >
+                    {isEditUploading ? <CircularProgress size={14} sx={{ mr: 1 }} /> : null}
+                    {isEditUploading ? 'Uploading…' : 'Change icon'}
+                  </Button>
+                  {editIconPreview && (
+                    <img
+                      src={editIconPreview}
+                      alt="icon preview"
+                      style={{ width: '36px', height: '36px', objectFit: 'contain', borderRadius: '6px', background: '#f3f4f6' }}
+                    />
+                  )}
+                </div>
+
+                {editFormError && (
+                  <div style={{ fontSize: '12px', color: '#dc2626' }}>{editFormError}</div>
+                )}
+
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    onClick={handleEditSubmit}
+                    disabled={isEditSubmitting || isEditUploading}
+                    sx={{ textTransform: 'none', fontSize: '12px' }}
+                  >
+                    {isEditSubmitting ? <CircularProgress size={14} sx={{ mr: 1, color: 'white' }} /> : null}
+                    Save
+                  </Button>
+                  <Button
+                    size="small"
+                    onClick={handleEditCancel}
+                    sx={{ textTransform: 'none', fontSize: '12px' }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       ))}
+
+      <Dialog open={!!deletingItemName} onClose={() => setDeletingItemName(null)}>
+        <DialogContent>
+          <DialogContentText>
+            Delete &quot;{deletingItemName}&quot;? This cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeletingItemName(null)} sx={{ textTransform: 'none' }}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            color="error"
+            disabled={isDeleting}
+            sx={{ textTransform: 'none' }}
+          >
+            {isDeleting ? <CircularProgress size={14} sx={{ mr: 1 }} /> : null}
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }
