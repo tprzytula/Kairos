@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { Box } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import ChecklistIcon from '@mui/icons-material/Checklist'
@@ -30,29 +30,6 @@ import { IStep } from '../../api/toDoList/retrieve/types'
 
 type ItemType = 'task' | 'birthday' | 'meal'
 
-const TASK_FIELDS: Array<IFormField> = [
-  {
-    name: 'name',
-    label: 'Name',
-    type: FormFieldType.TEXT,
-    required: true,
-    value: '',
-  },
-  {
-    name: 'description',
-    label: 'Description',
-    type: FormFieldType.TEXTAREA,
-    required: false,
-    value: '',
-  },
-  {
-    name: 'dueDate',
-    label: 'Due Date',
-    type: FormFieldType.DATE,
-    required: true,
-    value: dayjs().toISOString(),
-  },
-]
 
 const SegmentedControl = styled(Box)({
   display: 'flex',
@@ -108,13 +85,37 @@ const Segment = styled(Box, {
 }))
 
 export const AddPlannerItemContent = () => {
-  const { dispatch } = useAppState()
+  const { state: { selectedCalendarDate }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
   const navigate = useNavigate()
   const { toDoList } = usePlannerContext()
   const { user } = useAuth()
   const [itemType, setItemType] = useState<ItemType>('task')
   const [steps, setSteps] = useState<IStep[]>([])
+
+  const taskFields = useMemo<Array<IFormField>>(() => [
+    {
+      name: 'name',
+      label: 'Name',
+      type: FormFieldType.TEXT,
+      required: true,
+      value: '',
+    },
+    {
+      name: 'description',
+      label: 'Description',
+      type: FormFieldType.TEXTAREA,
+      required: false,
+      value: '',
+    },
+    {
+      name: 'dueDate',
+      label: 'Due Date',
+      type: FormFieldType.DATE,
+      required: true,
+      value: (selectedCalendarDate ? dayjs(selectedCalendarDate) : dayjs()).toISOString(),
+    },
+  ], [selectedCalendarDate])
 
   const createAlert = useCallback((description: string, severity: AlertColor) => {
     showAlert({ description, severity }, dispatch)
@@ -201,7 +202,7 @@ export const AddPlannerItemContent = () => {
       </Box>
       {itemType === 'task' ? (
         <ItemForm
-          fields={TASK_FIELDS}
+          fields={taskFields}
           onSubmit={onSubmit}
           hideImage={true}
         >

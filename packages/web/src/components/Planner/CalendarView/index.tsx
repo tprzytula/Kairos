@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react'
+import { useAppState } from '../../../providers/AppStateProvider'
+import { ActionName } from '../../../providers/AppStateProvider/enums'
 import { IconButton } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
@@ -57,6 +59,7 @@ const CalendarView = ({
   onAddMealPlan,
   onMealPlanClick,
 }: ICalendarViewProps) => {
+  const { dispatch } = useAppState()
   const [currentMonth, setCurrentMonth] = useState<Dayjs>(() => dayjs().startOf('month'))
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const today = dayjs()
@@ -188,7 +191,11 @@ const CalendarView = ({
   const handleDayClick = (day: Dayjs, isCurrentMonth: boolean) => {
     if (!isCurrentMonth) return
     const key = day.format('YYYY-MM-DD')
-    setSelectedDay(prev => (prev === key ? null : key))
+    setSelectedDay(prev => {
+      const next = prev === key ? null : key
+      dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: next })
+      return next
+    })
   }
 
   return (
