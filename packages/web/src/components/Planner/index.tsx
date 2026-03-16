@@ -17,6 +17,7 @@ import BirthdayPreviewDrawer from '../BirthdayPreviewDrawer';
 import BirthdayFormDialog from '../BirthdayFormDialog';
 import GroupedView from './GroupedView';
 import CalendarView from './CalendarView';
+import WeeklyView from './WeeklyView';
 import Placeholder from './Placeholder';
 import EmptyPlanner from './EmptyPlanner';
 import ToDoItemPreviewDrawer from '../ToDoItemPreviewDrawer';
@@ -111,6 +112,30 @@ export const Planner = ({
     }
   }, [toDoList, updateToDoItemFields])
 
+  const drawers = (
+    <>
+      <ToDoItemPreviewDrawer
+        item={previewItem}
+        onClose={() => setPreviewItem(null)}
+        onEdit={handleEdit}
+        onMarkDone={markToDoItemAsDone}
+        onStepToggle={handleStepToggle}
+        onDelete={handleDeleteTodo}
+      />
+      <BirthdayPreviewDrawer
+        item={previewBirthday}
+        onClose={() => setPreviewBirthday(null)}
+        onEdit={handleBirthdayEdit}
+        onDelete={handleBirthdayDelete}
+      />
+      <BirthdayFormDialog
+        open={birthdayDialogOpen}
+        onClose={() => { setBirthdayDialogOpen(false); setEditingBirthday(null); }}
+        initialBirthday={editingBirthday}
+      />
+    </>
+  );
+
   if (viewMode === PlannerViewMode.CALENDAR) {
     return (
       <>
@@ -125,25 +150,26 @@ export const Planner = ({
             onMealPlanClick={onMealPlanClick}
           />
         )}
-        <ToDoItemPreviewDrawer
-          item={previewItem}
-          onClose={() => setPreviewItem(null)}
-          onEdit={handleEdit}
-          onMarkDone={markToDoItemAsDone}
-          onStepToggle={handleStepToggle}
-          onDelete={handleDeleteTodo}
-        />
-        <BirthdayPreviewDrawer
-          item={previewBirthday}
-          onClose={() => setPreviewBirthday(null)}
-          onEdit={handleBirthdayEdit}
-          onDelete={handleBirthdayDelete}
-        />
-        <BirthdayFormDialog
-          open={birthdayDialogOpen}
-          onClose={() => { setBirthdayDialogOpen(false); setEditingBirthday(null); }}
-          initialBirthday={editingBirthday}
-        />
+        {drawers}
+      </>
+    );
+  }
+
+  if (viewMode === PlannerViewMode.WEEKLY) {
+    return (
+      <>
+        {isLoading ? <Placeholder /> : (
+          <WeeklyView
+            visibleToDoItems={toDoList}
+            onItemClick={handlePreview}
+            birthdayItems={birthdays}
+            onBirthdayClick={handleBirthdayPreview}
+            mealPlans={mealPlans}
+            onAddMealPlan={onAddMealPlan}
+            onMealPlanClick={onMealPlanClick}
+          />
+        )}
+        {drawers}
       </>
     );
   }
