@@ -1,6 +1,63 @@
 import { styled } from '@mui/material/styles'
 import { Box, Typography, TextField, Button, ToggleButtonGroup } from '@mui/material'
 
+export const RecipeItemRow = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
+  padding: '8px 10px',
+  cursor: 'pointer',
+  backgroundColor: selected ? '#eff6ff' : 'transparent',
+  borderBottom: '1px solid #f3f4f6',
+  '&:last-child': {
+    borderBottom: 'none',
+  },
+  '&:hover': {
+    backgroundColor: selected ? '#dbeafe' : '#f9fafb',
+  },
+}))
+
+export const RecipeThumbnail = styled('img')({
+  width: '40px',
+  height: '40px',
+  borderRadius: '6px',
+  objectFit: 'cover',
+  flexShrink: 0,
+})
+
+const GRADIENTS = [
+  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+  'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+  'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+  'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+  'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+]
+
+export const RecipeThumbnailPlaceholder = styled(Box)<{ seed: number }>(({ seed }) => ({
+  width: '40px',
+  height: '40px',
+  borderRadius: '6px',
+  flexShrink: 0,
+  background: GRADIENTS[seed % GRADIENTS.length],
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'rgba(255,255,255,0.85)',
+  fontWeight: 700,
+  fontSize: '1rem',
+  userSelect: 'none',
+}))
+
+export const RecipeItemName = styled(Typography)({
+  flex: 1,
+  fontSize: '0.9rem',
+  color: '#374151',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+})
+
 export const DrawerContent = styled(Box)({
   padding: '1.25em',
   display: 'flex',
