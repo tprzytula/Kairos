@@ -13,6 +13,10 @@ const validateBody = (body: any): body is IRequestBody => {
     return false;
   }
 
+  if (body.mealType !== undefined && typeof body.mealType !== 'string') {
+    return false;
+  }
+
   return true;
 };
 

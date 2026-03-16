@@ -6,6 +6,7 @@ export const createMealPlan = async (mealPlan: {
   date: string;
   recipeName: string;
   recipeId?: string;
+  mealType?: string;
 }): Promise<string> => {
   const id = randomUUID();
   const now = new Date().toISOString();
@@ -21,6 +22,10 @@ export const createMealPlan = async (mealPlan: {
 
   if (mealPlan.recipeId) {
     item.recipeId = mealPlan.recipeId;
+  }
+
+  if (mealPlan.mealType) {
+    item.mealType = mealPlan.mealType;
   }
 
   await putItem({

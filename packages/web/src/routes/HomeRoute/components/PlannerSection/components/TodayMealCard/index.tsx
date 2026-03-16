@@ -1,7 +1,13 @@
-import React from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import { ITodayMealItem } from '../../types'
+import { MEAL_TYPE_ORDER } from '../../../../../../enums/mealType'
 import {
+  CarouselContainer,
+  CarouselTrack,
+  CarouselSlide,
+  CarouselDots,
+  CarouselDot,
   HeroWrapper,
   HeroImage,
   HeroPlaceholder,
@@ -9,48 +15,119 @@ import {
   HeroOverlay,
   HeroLabel,
   HeroTitle,
-  AdditionalMeals,
-  AdditionalMealPill,
   EmptyState,
 } from './index.styled'
+
+const AUTO_SCROLL_MS = 4000
 
 interface ITodayMealCardProps {
   todayMeals: ITodayMealItem[]
 }
 
+const sortedMeals = (meals: ITodayMealItem[]): ITodayMealItem[] =>
+  [...meals].sort((a, b) => {
+    const ai = a.mealType ? MEAL_TYPE_ORDER.indexOf(a.mealType) : MEAL_TYPE_ORDER.length
+    const bi = b.mealType ? MEAL_TYPE_ORDER.indexOf(b.mealType) : MEAL_TYPE_ORDER.length
+    return ai - bi
+  })
+
 export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals }) => {
-  if (todayMeals.length === 0) {
-    return <EmptyState>No meal planned for today</EmptyState>
+  const meals = sortedMeals(todayMeals)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const touchStartX = useRef(0)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const next = useCallback(() => {
+    setActiveIndex(i => (i + 1) % meals.length)
+  }, [meals.length])
+
+  const prev = useCallback(() => {
+    setActiveIndex(i => (i - 1 + meals.length) % meals.length)
+  }, [meals.length])
+
+  const resetTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    if (meals.length > 1) {
+      timerRef.current = setInterval(next, AUTO_SCROLL_MS)
+    }
+  }, [meals.length, next])
+
+  useEffect(() => {
+    resetTimer()
+    return () => { if (timerRef.current) clearInterval(timerRef.current) }
+  }, [resetTimer])
+
+  // Reset index when meal list changes
+  useEffect(() => {
+    setActiveIndex(0)
+  }, [meals.length])
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
   }
 
-  const [first, ...rest] = todayMeals
-  const seed = first.recipeName.charCodeAt(0)
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) next()
+      else prev()
+      resetTimer()
+    }
+  }
+
+  const handleDotClick = (index: number) => {
+    setActiveIndex(index)
+    resetTimer()
+  }
+
+  if (meals.length === 0) {
+    return <EmptyState>No meal planned</EmptyState>
+  }
 
   return (
-    <HeroWrapper>
-      {first.imagePath
-        ? <HeroImage src={first.imagePath} alt={first.recipeName} />
-        : (
-          <HeroPlaceholder seed={seed}>
-            <HeroPlaceholderInitial>{first.recipeName.charAt(0).toUpperCase()}</HeroPlaceholderInitial>
-          </HeroPlaceholder>
-        )
-      }
-      <HeroOverlay>
-        <HeroLabel>
-          <RestaurantIcon />
-          Dinner Tonight
-        </HeroLabel>
-        <HeroTitle>{first.recipeName}</HeroTitle>
-        {rest.length > 0 && (
-          <AdditionalMeals>
-            {rest.map((meal) => (
-              <AdditionalMealPill key={meal.id}>{meal.recipeName}</AdditionalMealPill>
-            ))}
-          </AdditionalMeals>
-        )}
-      </HeroOverlay>
-    </HeroWrapper>
+    <CarouselContainer
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      <CarouselTrack offset={activeIndex}>
+        {meals.map((meal) => {
+          const seed = meal.recipeName.charCodeAt(0)
+          return (
+            <CarouselSlide key={meal.id}>
+              <HeroWrapper>
+                {meal.imagePath
+                  ? <HeroImage src={meal.imagePath} alt={meal.recipeName} />
+                  : (
+                    <HeroPlaceholder seed={seed}>
+                      <HeroPlaceholderInitial>{meal.recipeName.charAt(0).toUpperCase()}</HeroPlaceholderInitial>
+                    </HeroPlaceholder>
+                  )
+                }
+                <HeroOverlay>
+                  <HeroLabel>
+                    <RestaurantIcon />
+                    {meal.mealType ?? 'Meal'}
+                  </HeroLabel>
+                  <HeroTitle>{meal.recipeName}</HeroTitle>
+                </HeroOverlay>
+              </HeroWrapper>
+            </CarouselSlide>
+          )
+        })}
+      </CarouselTrack>
+
+      {meals.length > 1 && (
+        <CarouselDots>
+          {meals.map((_, i) => (
+            <CarouselDot
+              key={i}
+              active={i === activeIndex}
+              onClick={() => handleDotClick(i)}
+            />
+          ))}
+        </CarouselDots>
+      )}
+    </CarouselContainer>
   )
 }
 

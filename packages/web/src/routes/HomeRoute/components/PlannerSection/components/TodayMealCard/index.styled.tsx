@@ -10,12 +10,59 @@ const GRADIENTS = [
   'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
 ]
 
+// Carousel outer container — clips slides
+export const CarouselContainer = styled(Box)({
+  position: 'relative',
+  width: '100%',
+  overflow: 'hidden',
+  borderRadius: '16px',
+  height: '200px',
+  cursor: 'grab',
+  '&:active': { cursor: 'grabbing' },
+})
+
+// Sliding track
+export const CarouselTrack = styled(Box)<{ offset: number }>(({ offset }) => ({
+  display: 'flex',
+  height: '100%',
+  transform: `translateX(-${offset * 100}%)`,
+  transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+}))
+
+// Each slide takes full width
+export const CarouselSlide = styled(Box)({
+  flexShrink: 0,
+  width: '100%',
+  height: '100%',
+  position: 'relative',
+})
+
+export const CarouselDots = styled(Box)({
+  position: 'absolute',
+  bottom: '10px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  display: 'flex',
+  gap: '5px',
+  zIndex: 3,
+})
+
+export const CarouselDot = styled('button')<{ active: boolean }>(({ active }) => ({
+  width: active ? '18px' : '6px',
+  height: '6px',
+  borderRadius: '3px',
+  border: 'none',
+  padding: 0,
+  cursor: 'pointer',
+  background: active ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.45)',
+  transition: 'all 0.25s ease',
+  flexShrink: 0,
+}))
+
 export const HeroWrapper = styled(Box)({
   position: 'relative',
   width: '100%',
-  height: '200px',
-  borderRadius: '16px',
-  overflow: 'hidden',
+  height: '100%',
 })
 
 export const HeroImage = styled('img')({
@@ -80,67 +127,8 @@ export const HeroTitle = styled('div')({
   textShadow: '0 1px 4px rgba(0,0,0,0.3)',
 })
 
-export const AdditionalMeals = styled('div')({
-  display: 'flex',
-  gap: '0.4rem',
-  flexWrap: 'wrap',
-  paddingTop: '0.1rem',
-})
-
-export const AdditionalMealPill = styled('span')({
-  fontSize: '0.65rem',
-  fontWeight: 600,
-  color: 'rgba(255,255,255,0.85)',
-  background: 'rgba(255,255,255,0.18)',
-  backdropFilter: 'blur(6px)',
-  borderRadius: '20px',
-  padding: '0.15rem 0.55rem',
-  border: '1px solid rgba(255,255,255,0.22)',
-})
-
 export const EmptyState = styled('div')(({ theme }) => ({
   fontSize: '0.75rem',
   color: theme.palette.text.secondary,
   padding: '1.2rem',
-}))
-
-// Legacy exports kept to avoid breaking any residual imports
-export const MealRow = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.4rem',
-})
-
-export const MealThumbnail = styled('img')({
-  width: '48px',
-  height: '48px',
-  borderRadius: '8px',
-  objectFit: 'cover',
-  flexShrink: 0,
-})
-
-export const MealThumbnailPlaceholder = styled(Box)<{ seed: number }>(({ seed }) => ({
-  width: '48px',
-  height: '48px',
-  borderRadius: '8px',
-  flexShrink: 0,
-  background: GRADIENTS[seed % GRADIENTS.length],
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: 'rgba(255,255,255,0.85)',
-  fontWeight: 700,
-  fontSize: '0.85rem',
-  userSelect: 'none',
-}))
-
-export const MealName = styled('div')(({ theme }) => ({
-  fontSize: '0.75rem',
-  fontWeight: 500,
-  color: theme.palette.text.primary,
-  lineHeight: '1.3',
-  overflow: 'hidden',
-  display: '-webkit-box',
-  WebkitLineClamp: 2,
-  WebkitBoxOrient: 'vertical',
 }))

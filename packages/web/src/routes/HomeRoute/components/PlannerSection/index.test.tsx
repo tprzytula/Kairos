@@ -77,7 +77,7 @@ describe('PlannerSection component', () => {
       renderWithTheme(<PlannerSection {...defaultProps} />)
 
       expect(screen.getByText("Today's Tasks")).toBeInTheDocument()
-      expect(screen.getByText('Dinner Tonight')).toBeInTheDocument()
+      expect(screen.getByText('No meal planned')).toBeInTheDocument()
       expect(screen.getByText('Birthdays')).toBeInTheDocument()
     })
   })
@@ -133,7 +133,7 @@ describe('PlannerSection component', () => {
     })
   })
 
-  describe('Dinner Tonight card', () => {
+  describe('Today\'s Meals card', () => {
     it('should show empty state when no meal planned today', () => {
       renderWithTheme(<PlannerSection {...defaultProps} />)
 
@@ -148,7 +148,7 @@ describe('PlannerSection component', () => {
       expect(screen.getByText('Chicken Alfredo')).toBeInTheDocument()
     })
 
-    it('should show +N more when there are additional meals', () => {
+    it('should show all meals in the carousel when there are multiple meals', () => {
       const meals = [
         createMockMealPlan({ id: '1', recipeName: 'Breakfast Dish' }),
         createMockMealPlan({ id: '2', recipeName: 'Lunch Dish' }),
@@ -158,7 +158,8 @@ describe('PlannerSection component', () => {
       renderWithTheme(<PlannerSection {...defaultProps} todayMeals={meals} />)
 
       expect(screen.getByText('Breakfast Dish')).toBeInTheDocument()
-      expect(screen.getByText('+2 more')).toBeInTheDocument()
+      expect(screen.getByText('Lunch Dish')).toBeInTheDocument()
+      expect(screen.getByText('Dinner Dish')).toBeInTheDocument()
     })
   })
 

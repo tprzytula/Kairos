@@ -94,6 +94,17 @@ const HomeDataContent = () => {
   return (
     <>
       <Container>
+        <PlannerSection
+          toDoStats={homeData.toDoStats}
+          birthdays={birthdays}
+          todayMeals={todayMeals}
+          isLoading={isToDoLoading}
+          isExpanded={interactions.isToDoItemsExpanded}
+          onToggleExpansion={interactions.handleToggleToDoItems}
+          onItemToggle={interactions.handleToDoItemToggle}
+          expandedItems={interactions.expandedToDoItems}
+        />
+
         <GrocerySection
           groceryStats={homeData.groceryStats}
           isLoading={isGroceryLoading}
@@ -106,17 +117,6 @@ const HomeDataContent = () => {
           isLoading={isNoiseLoading}
           noiseView={interactions.noiseView}
           onNoiseViewChange={interactions.handleNoiseViewChange}
-        />
-
-        <PlannerSection
-          toDoStats={homeData.toDoStats}
-          birthdays={birthdays}
-          todayMeals={todayMeals}
-          isLoading={isToDoLoading}
-          isExpanded={interactions.isToDoItemsExpanded}
-          onToggleExpansion={interactions.handleToggleToDoItems}
-          onItemToggle={interactions.handleToDoItemToggle}
-          expandedItems={interactions.expandedToDoItems}
         />
 
         <AgentMessageButton />
