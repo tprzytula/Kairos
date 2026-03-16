@@ -23,19 +23,7 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
 }) => {
   return (
     <MiniCardsGrid>
-      <MiniCard>
-        <MiniCardContent>
-          <MiniCardHeader>
-            <MiniCardIcon><ChecklistIcon /></MiniCardIcon>
-            <MiniCardTitle>Today's Tasks</MiniCardTitle>
-          </MiniCardHeader>
-          <MiniCardBody>
-            <TodayTasksCard sortedItems={toDoStats.sortedItems} />
-          </MiniCardBody>
-        </MiniCardContent>
-      </MiniCard>
-
-      <MiniCard>
+      <MiniCard sx={{ gridColumn: 1, gridRow: '1 / 3' }}>
         <MiniCardContent>
           <MiniCardHeader>
             <MiniCardIcon><RestaurantIcon /></MiniCardIcon>
@@ -47,7 +35,19 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
         </MiniCardContent>
       </MiniCard>
 
-      <MiniCard>
+      <MiniCard sx={{ gridColumn: 2, gridRow: 1 }}>
+        <MiniCardContent>
+          <MiniCardHeader>
+            <MiniCardIcon><ChecklistIcon /></MiniCardIcon>
+            <MiniCardTitle>Today's Tasks</MiniCardTitle>
+          </MiniCardHeader>
+          <MiniCardBody>
+            <TodayTasksCard sortedItems={toDoStats.sortedItems} />
+          </MiniCardBody>
+        </MiniCardContent>
+      </MiniCard>
+
+      <MiniCard sx={{ gridColumn: 2, gridRow: 2 }}>
         <MiniCardContent>
           <MiniCardHeader>
             <MiniCardIcon><CakeIcon /></MiniCardIcon>
