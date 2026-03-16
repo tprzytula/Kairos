@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
+import { useAppState } from '../../../providers/AppStateProvider'
 import {
   Alert,
   CircularProgress,
@@ -144,10 +145,10 @@ const MealFormCard = styled(FormCard)({
 const MealForm = () => {
   const { addMealPlan } = useMealPlanContext()
   const { recipes } = useRecipeContext()
+  const { state: { selectedCalendarDate } } = useAppState()
   const navigate = useNavigate()
 
-  const today = dayjs().format('YYYY-MM-DD')
-  const [date, setDate] = useState(today)
+  const [date, setDate] = useState(selectedCalendarDate ?? dayjs().format('YYYY-MM-DD'))
   const [mode, setMode] = useState<Mode>('recipe')
   const [customName, setCustomName] = useState('')
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | undefined>(undefined)
