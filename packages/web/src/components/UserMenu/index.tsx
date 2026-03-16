@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useAuth } from 'react-oidc-context'
 import { Divider, ListItemIcon, ListItemText } from '@mui/material'
-import { Settings as SettingsIcon, Notifications as NotificationsIcon } from '@mui/icons-material'
+import { Settings as SettingsIcon, Notifications as NotificationsIcon, ShoppingCart as ShoppingCartIcon } from '@mui/icons-material'
 import * as Styled from './index.styled'
 import { getPostLogoutRedirectUri, oidcConfig } from '../../config/oidc'
 import { useProjectContext } from '../../providers/ProjectProvider'
@@ -10,8 +10,9 @@ import CreateProjectDialog from '../CreateProjectDialog'
 import JoinProjectDialog from '../JoinProjectDialog'
 import ProjectSettingsSubpage from './ProjectSettingsSubpage'
 import NotificationSettingsSubpage from './NotificationSettingsSubpage'
+import GrocerySettingsSubpage from './GrocerySettingsSubpage'
 
-type SubpageView = 'main' | 'projects' | 'notifications'
+type SubpageView = 'main' | 'projects' | 'notifications' | 'grocery'
 
 const UserMenu: React.FC = () => {
   const auth = useAuth()
@@ -65,6 +66,10 @@ const UserMenu: React.FC = () => {
 
   const handleShowNotificationSettings = () => {
     setCurrentView('notifications')
+  }
+
+  const handleShowGrocerySettings = () => {
+    setCurrentView('grocery')
   }
 
   const handleBackToMain = () => {
@@ -168,6 +173,13 @@ const UserMenu: React.FC = () => {
                   <ListItemText primary="Notification Settings" />
                 </Styled.MainMenuItem>
 
+                <Styled.MainMenuItem onClick={handleShowGrocerySettings}>
+                  <ListItemIcon>
+                    <ShoppingCartIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="Grocery Settings" />
+                </Styled.MainMenuItem>
+
                 <Divider sx={{ my: 1 }} />
                 
                 <Styled.LogoutButton onClick={handleLogout}>
@@ -187,6 +199,12 @@ const UserMenu: React.FC = () => {
 
             {currentView === 'notifications' && (
               <NotificationSettingsSubpage
+                onBack={handleBackToMain}
+              />
+            )}
+
+            {currentView === 'grocery' && (
+              <GrocerySettingsSubpage
                 onBack={handleBackToMain}
               />
             )}
