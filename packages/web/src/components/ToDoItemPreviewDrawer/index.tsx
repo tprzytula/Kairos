@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback } from 'react'
 import { Box, Button, Checkbox, Chip, Drawer, FormControlLabel, Typography } from '@mui/material'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import dayjs from 'dayjs'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
+import { useDragToClose } from '../../hooks/useDragToClose'
 import {
   ContentContainer,
   DescriptionText,
@@ -20,8 +21,6 @@ import {
   NoDescriptionText,
 } from './index.styled'
 
-const DRAG_CLOSE_THRESHOLD = 100
-
 interface ToDoItemPreviewDrawerProps {
   item: ITodoItem | null
   onClose: () => void
@@ -32,9 +31,7 @@ interface ToDoItemPreviewDrawerProps {
 }
 
 const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle, onDelete }: ToDoItemPreviewDrawerProps) => {
-  const [dragOffset, setDragOffset] = useState(0)
-  const isDragging = useRef(false)
-  const dragStartY = useRef(0)
+  const { dragOffset, isDragging, onPointerDown, onPointerMove, onPointerUp } = useDragToClose({ onClose })
 
   const handleEdit = useCallback(() => {
     if (!item) return
@@ -53,29 +50,6 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle
     onDelete?.(item.id)
     onClose()
   }, [item, onDelete, onClose])
-
-  const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    isDragging.current = true
-    dragStartY.current = e.clientY
-    e.currentTarget.setPointerCapture(e.pointerId)
-  }, [])
-
-  const onPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging.current) return
-    const offset = Math.max(0, e.clientY - dragStartY.current)
-    setDragOffset(offset)
-  }, [])
-
-  const onPointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (isDragging.current) {
-      const finalOffset = Math.max(0, e.clientY - dragStartY.current)
-      if (finalOffset >= DRAG_CLOSE_THRESHOLD) {
-        onClose()
-      }
-    }
-    isDragging.current = false
-    setDragOffset(0)
-  }, [onClose])
 
   const steps = item?.steps ?? []
 

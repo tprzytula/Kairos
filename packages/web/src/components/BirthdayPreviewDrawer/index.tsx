@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback } from 'react'
 import { Box, Button, Drawer } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import EditIcon from '@mui/icons-material/Edit'
@@ -6,6 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import dayjs from 'dayjs'
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types'
+import { useDragToClose } from '../../hooks/useDragToClose'
 import {
   ContentContainer,
   DrawerHeader,
@@ -19,8 +20,6 @@ import {
   PersonName,
 } from './index.styled'
 
-const DRAG_CLOSE_THRESHOLD = 100
-
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December']
 
@@ -32,9 +31,7 @@ interface BirthdayPreviewDrawerProps {
 }
 
 const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPreviewDrawerProps) => {
-  const [dragOffset, setDragOffset] = useState(0)
-  const isDragging = useRef(false)
-  const dragStartY = useRef(0)
+  const { dragOffset, isDragging, onPointerDown, onPointerMove, onPointerUp } = useDragToClose({ onClose })
 
   const handleEdit = useCallback(() => {
     if (!item) return
@@ -47,29 +44,6 @@ const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPrev
     onDelete(item.id)
     onClose()
   }, [item, onDelete, onClose])
-
-  const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    isDragging.current = true
-    dragStartY.current = e.clientY
-    e.currentTarget.setPointerCapture(e.pointerId)
-  }, [])
-
-  const onPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging.current) return
-    const offset = Math.max(0, e.clientY - dragStartY.current)
-    setDragOffset(offset)
-  }, [])
-
-  const onPointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (isDragging.current) {
-      const finalOffset = Math.max(0, e.clientY - dragStartY.current)
-      if (finalOffset >= DRAG_CLOSE_THRESHOLD) {
-        onClose()
-      }
-    }
-    isDragging.current = false
-    setDragOffset(0)
-  }, [onClose])
 
   const birthdayDate = item
     ? `${item.day} ${MONTH_NAMES[item.month - 1]}`
