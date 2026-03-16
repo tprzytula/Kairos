@@ -7,6 +7,8 @@ import HomeRoute from '.'
 import * as GroceryAPI from '../../api/groceryList'
 import * as ToDoAPI from '../../api/toDoList'
 import * as NoiseAPI from '../../api/noiseTracking'
+import * as BirthdayAPI from '../../api/birthdays/retrieve'
+import * as MealPlanAPI from '../../api/mealPlans'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 import { useAppState } from '../../providers/AppStateProvider'
 import { ProjectProvider, useProjectContext } from '../../providers/ProjectProvider'
@@ -25,6 +27,8 @@ jest.mock('../../providers/ProjectProvider', () => ({
 jest.mock('../../api/groceryList')
 jest.mock('../../api/toDoList')
 jest.mock('../../api/noiseTracking')
+jest.mock('../../api/birthdays/retrieve')
+jest.mock('../../api/mealPlans')
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(() => jest.fn()),
@@ -68,6 +72,8 @@ describe('Given the HomeRoute component', () => {
     jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
     jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
     jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+    jest.spyOn(BirthdayAPI, 'retrieveBirthdays').mockResolvedValue([])
+    jest.spyOn(MealPlanAPI, 'getMealPlans').mockResolvedValue([])
   })
 
   afterEach(() => {
@@ -95,7 +101,9 @@ describe('Given the HomeRoute component', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Grocery List')).toBeVisible()
-      expect(screen.getByText('Planner')).toBeVisible()
+      expect(screen.getByText("Today's Tasks")).toBeVisible()
+      expect(screen.getByText('Dinner Tonight')).toBeVisible()
+      expect(screen.getByText('Birthdays')).toBeVisible()
       expect(screen.getByText('Noise Recordings')).toBeVisible()
     })
   })
@@ -107,7 +115,9 @@ describe('Given the HomeRoute component', () => {
 
     await waitFor(() => {
       expect(screen.getByText('No grocery items found')).toBeVisible()
-      expect(screen.getByText('No pending tasks found')).toBeVisible()
+      expect(screen.getByText('No tasks for today')).toBeVisible()
+      expect(screen.getByText('No meal planned')).toBeVisible()
+      expect(screen.getByText('No birthdays saved')).toBeVisible()
       expect(screen.getByText('No noise recordings found')).toBeVisible()
     })
   })
@@ -266,14 +276,13 @@ describe('Given the HomeRoute component', () => {
     })
   })
 
-  it('should display top three pending to-do items sorted by due date', async () => {
-    const now = Date.now()
+  it('should display tasks due today in the Today\'s Tasks card', async () => {
+    const now = new Date()
+    const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     const mockToDoList = [
-      { id: '1', name: 'Completed Task', description: 'Done', isDone: true, dueDate: now + 86400000 },
-      { id: '2', name: 'Task 1', description: 'Description 1', isDone: false, dueDate: now + 4 * 86400000 }, // 4 days from now
-      { id: '3', name: 'Task 2', description: 'Description 2', isDone: false, dueDate: now + 2 * 86400000 }, // 2 days from now  
-      { id: '4', name: 'Task 3', description: 'Description 3', isDone: false, dueDate: now + 86400000 }, // 1 day from now
-      { id: '5', name: 'Task 4', description: 'Description 4', isDone: false, dueDate: now + 3 * 86400000 }, // 3 days from now
+      { id: '1', name: 'Completed Task', isDone: true, dueDate: todayMidnight.getTime() + 2 * 3600000 },
+      { id: '2', name: 'Today Task', isDone: false, dueDate: todayMidnight.getTime() + 3 * 3600000 },
+      { id: '3', name: 'Future Task', isDone: false, dueDate: todayMidnight.getTime() + 2 * 86400000 },
     ]
 
     jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockToDoList)
@@ -283,79 +292,26 @@ describe('Given the HomeRoute component', () => {
     })
 
     await waitFor(() => {
-      // Should show tasks sorted by earliest due date first (Task 3, Task 2, Task 4)
-      expect(screen.getByText('Task 3')).toBeVisible() // Due tomorrow  
-      expect(screen.getByText('Task 2')).toBeVisible() // Due in 2 days
-      expect(screen.getByText('Task 4')).toBeVisible() // Due in 3 days
-      expect(screen.getByText('+1 more items')).toBeVisible() // Task 1 is not shown
-      expect(screen.queryByText('Task 1')).not.toBeInTheDocument() // Task 1 due later not shown
+      expect(screen.getByText('Today Task')).toBeVisible()
+      expect(screen.queryByText('Future Task')).not.toBeInTheDocument()
       expect(screen.queryByText('Completed Task')).not.toBeInTheDocument()
     })
   })
 
-  it('should expand and collapse to-do items when clicking more items indicator', async () => {
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    const twoDaysLater = new Date()
-    twoDaysLater.setDate(twoDaysLater.getDate() + 2)
-    const threeDaysLater = new Date()
-    threeDaysLater.setDate(threeDaysLater.getDate() + 3)
-    const fourDaysLater = new Date()
-    fourDaysLater.setDate(fourDaysLater.getDate() + 4)
+  it('should display today\'s meal from meal plan', async () => {
+    const today = new Date()
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
 
-    const mockToDoList = [
-      { id: '1', name: 'Task 1', isDone: false, dueDate: fourDaysLater.getTime() },
-      { id: '2', name: 'Task 2', isDone: false, dueDate: twoDaysLater.getTime() },
-      { id: '3', name: 'Task 3', isDone: false, dueDate: tomorrow.getTime() },
-      { id: '4', name: 'Task 4', isDone: false, dueDate: threeDaysLater.getTime() },
-      { id: '5', name: 'Completed Task', isDone: true }
-    ]
-
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockToDoList)
+    jest.spyOn(MealPlanAPI, 'getMealPlans').mockResolvedValue([
+      { id: '1', projectId: 'test-project-id', date: todayStr, recipeName: 'Spaghetti Bolognese', createdAt: '', updatedAt: '' }
+    ])
 
     await act(async () => {
       renderComponent()
     })
 
-    // Initially should show only first 3 items
     await waitFor(() => {
-      expect(screen.getByText('Task 3')).toBeVisible()
-      expect(screen.getByText('Task 2')).toBeVisible() 
-      expect(screen.getByText('Task 4')).toBeVisible()
-      expect(screen.queryByText('Task 1')).not.toBeInTheDocument()
-      expect(screen.getByText('+1 more items')).toBeVisible()
-    })
-
-    // Click expand
-    const moreItemsButton = screen.getByText('+1 more items')
-    await act(async () => {
-      fireEvent.click(moreItemsButton)
-    })
-
-    // Should now show all items and "Show less"
-    await waitFor(() => {
-      expect(screen.getByText('Task 3')).toBeVisible()
-      expect(screen.getByText('Task 2')).toBeVisible()
-      expect(screen.getByText('Task 4')).toBeVisible()
-      expect(screen.getByText('Task 1')).toBeVisible() // Now visible
-      expect(screen.getByText('Show less')).toBeVisible()
-      expect(screen.queryByText('+1 more items')).not.toBeInTheDocument()
-    })
-
-    // Click collapse
-    const showLessButton = screen.getByText('Show less')
-    await act(async () => {
-      fireEvent.click(showLessButton)
-    })
-
-    // Should be back to original state
-    await waitFor(() => {
-      expect(screen.getByText('Task 3')).toBeVisible()
-      expect(screen.getByText('Task 2')).toBeVisible()
-      expect(screen.getByText('Task 4')).toBeVisible()
-      expect(screen.queryByText('Task 1')).not.toBeInTheDocument()
-      expect(screen.getByText('+1 more items')).toBeVisible()
-      expect(screen.queryByText('Show less')).not.toBeInTheDocument()
+      expect(screen.getByText('Spaghetti Bolognese')).toBeVisible()
     })
   })
 
@@ -413,20 +369,20 @@ describe('Given the HomeRoute component', () => {
     })
   })
 
-  it('should display to-do items with descriptions', async () => {
-    const mockToDoList = [
-      { id: '1', name: 'Buy groceries', description: 'Milk and bread', isDone: false },
-    ]
+  it('should display upcoming birthdays in the Birthdays card', async () => {
+    const today = new Date()
+    const nextMonth = today.getMonth() + 2 // +1 for 0-index, +1 for next month
 
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockToDoList)
+    jest.spyOn(BirthdayAPI, 'retrieveBirthdays').mockResolvedValue([
+      { id: '1', name: 'John Doe', month: nextMonth > 12 ? nextMonth - 12 : nextMonth, day: 1 }
+    ])
 
     await act(async () => {
       renderComponent()
     })
 
     await waitFor(() => {
-      expect(screen.getByText('Buy groceries')).toBeVisible()
-      expect(screen.getByText('Milk and bread')).toBeVisible()
+      expect(screen.getByText('John Doe')).toBeVisible()
     })
   })
 
@@ -494,7 +450,7 @@ describe('Given the HomeRoute component', () => {
       jest.useRealTimers()
     })
 
-    it('should display overdue items correctly', async () => {
+    it('should show overdue badge for overdue items', async () => {
       const overdueItem = {
         id: '1',
         name: 'Overdue Task',
@@ -512,11 +468,11 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByText('overdue by 5 days')).toBeInTheDocument()
+        expect(screen.getByText('1 overdue')).toBeInTheDocument()
       })
     })
 
-    it('should display items due today correctly', async () => {
+    it('should display tasks due today in Today\'s Tasks card', async () => {
       const todayItem = {
         id: '2',
         name: 'Today Task',
@@ -534,11 +490,11 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByText(/due today/i)).toBeInTheDocument()
+        expect(screen.getByText('Today Task')).toBeInTheDocument()
       })
     })
 
-    it('should display items due tomorrow correctly', async () => {
+    it('should not show tasks due tomorrow in Today\'s Tasks card', async () => {
       const tomorrowItem = {
         id: '3',
         name: 'Tomorrow Task',
@@ -556,11 +512,12 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByText('due tomorrow')).toBeInTheDocument()
+        expect(screen.queryByText('Tomorrow Task')).not.toBeInTheDocument()
+        expect(screen.getByText('No tasks for today')).toBeInTheDocument()
       })
     })
 
-    it('should display items due in weeks correctly', async () => {
+    it('should not show tasks due in weeks in Today\'s Tasks card', async () => {
       const weekItem = {
         id: '4',
         name: 'Week Task',
@@ -578,11 +535,12 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByText('in 2 weeks')).toBeInTheDocument()
+        expect(screen.queryByText('Week Task')).not.toBeInTheDocument()
+        expect(screen.getByText('No tasks for today')).toBeInTheDocument()
       })
     })
 
-    it('should display items due in months correctly', async () => {
+    it('should not show tasks due in months in Today\'s Tasks card', async () => {
       const monthItem = {
         id: '5',
         name: 'Month Task',
@@ -600,7 +558,8 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByText('in 2 months')).toBeInTheDocument()
+        expect(screen.queryByText('Month Task')).not.toBeInTheDocument()
+        expect(screen.getByText('No tasks for today')).toBeInTheDocument()
       })
     })
 
@@ -622,10 +581,9 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByText('No Date Task')).toBeInTheDocument()
-        // Should not display specific due date text
-        expect(screen.queryByText('due today')).not.toBeInTheDocument()
-        expect(screen.queryByText('overdue by')).not.toBeInTheDocument()
+        // Tasks without due dates don't appear in Today's Tasks
+        expect(screen.queryByText('No Date Task')).not.toBeInTheDocument()
+        expect(screen.getByText('No tasks for today')).toBeInTheDocument()
       })
     })
   })
@@ -747,21 +705,18 @@ describe('Given the HomeRoute component', () => {
     })
   })
 
-  describe('todo item expansion', () => {
-    it('should expand todo item on click and show detailed information', async () => {
-      const tomorrow = new Date()
-      tomorrow.setDate(tomorrow.getDate() + 1)
-      tomorrow.setHours(14, 30, 0, 0) // 2:30 PM tomorrow
-      
-      const todoItem = {
-        id: 'test-todo-1',
-        name: 'Test Todo Item',
-        description: 'This is a longer description that provides more details about the task that needs to be completed.',
-        isDone: false,
-        dueDate: tomorrow.getTime()
-      }
+  describe('planner mini-cards data', () => {
+    it('should show multiple overdue tasks as a single badge count', async () => {
+      jest.useFakeTimers()
+      jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
 
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([todoItem])
+      const overdueTasks = [
+        { id: '1', name: 'Old Task 1', isDone: false, dueDate: new Date('2024-01-10T12:00:00Z').getTime() },
+        { id: '2', name: 'Old Task 2', isDone: false, dueDate: new Date('2024-01-11T12:00:00Z').getTime() },
+        { id: '3', name: 'Old Task 3', isDone: false, dueDate: new Date('2024-01-12T12:00:00Z').getTime() },
+      ]
+
+      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(overdueTasks)
       jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
       jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
 
@@ -769,104 +724,45 @@ describe('Given the HomeRoute component', () => {
         renderComponent()
       })
 
-      // Should show todo item initially
       await waitFor(() => {
-        expect(screen.getByText('Test Todo Item')).toBeVisible()
+        expect(screen.getByText('3 overdue')).toBeInTheDocument()
       })
 
-      // Click on the todo item to expand it
-      const todoElement = screen.getByText('Test Todo Item').closest('li')
-      expect(todoElement).not.toBeNull()
-      
-      await act(async () => {
-        fireEvent.click(todoElement!)
-      })
-
-      // Should show expanded content with full description
-      await waitFor(() => {
-        expect(screen.getByText('This is a longer description that provides more details about the task that needs to be completed.')).toBeVisible()
-        expect(screen.getByText('Due Date')).toBeVisible()
-      })
+      jest.useRealTimers()
     })
 
-    it('should collapse todo item on second click', async () => {
-      const tomorrow = new Date()
-      tomorrow.setDate(tomorrow.getDate() + 1)
-      tomorrow.setHours(14, 30, 0, 0) // 2:30 PM tomorrow
-      
-      const todoItem = {
-        id: 'test-todo-2',
-        name: 'Test Todo Item 2',
-        description: 'Another test description.',
-        isDone: false,
-        dueDate: tomorrow.getTime()
-      }
+    it('should show birthday that is today', async () => {
+      jest.useFakeTimers()
+      jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
 
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([todoItem])
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+      jest.spyOn(BirthdayAPI, 'retrieveBirthdays').mockResolvedValue([
+        { id: '1', name: 'Happy Person', month: 1, day: 15 }
+      ])
 
       await act(async () => {
         renderComponent()
       })
 
-      const todoElement = screen.getByText('Test Todo Item 2').closest('li')
-      
-      // Click to expand
-      await act(async () => {
-        fireEvent.click(todoElement!)
-      })
-
       await waitFor(() => {
-        expect(screen.getByText('Due Date')).toBeVisible()
+        expect(screen.getByText('Happy Person')).toBeInTheDocument()
+        expect(screen.getByText('Today!')).toBeInTheDocument()
       })
 
-      // Click again to collapse
-      await act(async () => {
-        fireEvent.click(todoElement!)
-      })
-
-      await waitFor(() => {
-        expect(screen.queryByText('Due Date')).not.toBeInTheDocument()
-      })
+      jest.useRealTimers()
     })
 
-    it('should handle todo items without descriptions', async () => {
-      const todoItem = {
-        id: 'test-todo-3',
-        name: 'Simple Todo',
-        description: undefined,
-        isDone: false,
-        dueDate: undefined
-      }
-
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([todoItem])
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+    it('should not show a meal for a different day', async () => {
+      jest.spyOn(MealPlanAPI, 'getMealPlans').mockResolvedValue([
+        { id: '1', projectId: 'test-project-id', date: '2020-01-01', recipeName: 'Old Meal', createdAt: '', updatedAt: '' }
+      ])
 
       await act(async () => {
         renderComponent()
       })
 
-      const todoElement = screen.getByText('Simple Todo').closest('li')
-      
-      await act(async () => {
-        fireEvent.click(todoElement!)
-      })
-
-      // Should show expanded state but no additional content since there's no description or due date
       await waitFor(() => {
-        expect(screen.queryByText('Due Date')).not.toBeInTheDocument() // No due date
-        expect(screen.getByText('Simple Todo')).toBeVisible() // Main title still visible
-      })
-
-      // Verify we can collapse it again
-      await act(async () => {
-        fireEvent.click(todoElement!)
-      })
-
-      await waitFor(() => {
-        expect(screen.getByText('Simple Todo')).toBeVisible() // Still visible in collapsed state
+        expect(screen.queryByText('Old Meal')).not.toBeInTheDocument()
+        expect(screen.getByText('No meal planned')).toBeInTheDocument()
       })
     })
   })
