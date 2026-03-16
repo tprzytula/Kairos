@@ -99,6 +99,18 @@ locals {
         }
       }
     },
+    "add_grocery_item_default" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          grocery_items_defaults = "read-write"
+          push_subscriptions     = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
     "add_todo_item" = {
       environment_variables = {
         TODO_NOTIFICATIONS_TOPIC_ARN = var.todo_notifications_topic_arn
