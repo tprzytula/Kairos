@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Drawer, ToggleButton, InputAdornment } from '@mui/material'
+import { Drawer, ToggleButton, InputAdornment, Dialog, DialogContent, DialogTitle, IconButton, Box, Typography } from '@mui/material'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import SearchIcon from '@mui/icons-material/Search'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 import dayjs from 'dayjs'
 import { IMealPlan } from '../../types/mealPlan'
+import { IRecipe } from '../../types/recipe'
 import { useRecipeContext } from '../../providers/RecipeProvider'
+import { GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import {
   DrawerContent,
   DrawerHeader,
@@ -16,6 +19,10 @@ import {
   SaveButton,
   DeleteButton,
   SearchField,
+  RecipeItemRow,
+  RecipeThumbnail,
+  RecipeThumbnailPlaceholder,
+  RecipeItemName,
 } from './index.styled'
 
 type Mode = 'recipe' | 'custom'
@@ -35,6 +42,7 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
   const [customName, setCustomName] = useState('')
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | undefined>(undefined)
   const [search, setSearch] = useState('')
+  const [previewRecipe, setPreviewRecipe] = useState<IRecipe | null>(null)
 
   useEffect(() => {
     if (open) {
@@ -84,6 +92,7 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
   const displayDate = date ? dayjs(date).format('dddd, D MMMM YYYY') : ''
 
   return (
+    <>
     <Drawer
       anchor="bottom"
       open={open}
@@ -130,13 +139,27 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
                 </RecipeItem>
               ) : (
                 filteredRecipes.map(recipe => (
-                  <RecipeItem
+                  <RecipeItemRow
                     key={recipe.id}
                     selected={selectedRecipeId === recipe.id}
                     onClick={() => setSelectedRecipeId(recipe.id)}
                   >
-                    {recipe.name}
-                  </RecipeItem>
+                    {recipe.imagePath ? (
+                      <RecipeThumbnail src={recipe.imagePath} alt={recipe.name} />
+                    ) : (
+                      <RecipeThumbnailPlaceholder seed={recipe.name.charCodeAt(0)}>
+                        {recipe.name.charAt(0).toUpperCase()}
+                      </RecipeThumbnailPlaceholder>
+                    )}
+                    <RecipeItemName>{recipe.name}</RecipeItemName>
+                    <IconButton
+                      size="small"
+                      onClick={(e) => { e.stopPropagation(); setPreviewRecipe(recipe) }}
+                      sx={{ color: '#9ca3af', flexShrink: 0, '&:hover': { color: '#1d4ed8' } }}
+                    >
+                      <VisibilityIcon sx={{ fontSize: '1rem' }} />
+                    </IconButton>
+                  </RecipeItemRow>
                 ))
               )}
             </RecipeList>
@@ -173,6 +196,67 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
         )}
       </DrawerContent>
     </Drawer>
+
+    <Dialog
+      open={previewRecipe !== null}
+      onClose={() => setPreviewRecipe(null)}
+      fullWidth
+      maxWidth="sm"
+      PaperProps={{ sx: { borderRadius: '12px', m: 2 } }}
+    >
+      {previewRecipe && (
+        <>
+          <DialogTitle sx={{ pb: 1, fontWeight: 700, color: '#1d4ed8' }}>
+            {previewRecipe.name}
+          </DialogTitle>
+          <DialogContent>
+            {previewRecipe.imagePath && (
+              <Box
+                component="img"
+                src={previewRecipe.imagePath}
+                alt={previewRecipe.name}
+                sx={{ width: '100%', borderRadius: '8px', mb: 2, maxHeight: '200px', objectFit: 'cover', display: 'block' }}
+              />
+            )}
+            {previewRecipe.ingredients.length > 0 && (
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle2" fontWeight={600} mb={0.5}>Ingredients</Typography>
+                {previewRecipe.ingredients.map((ing, i) => (
+                  <Typography key={i} variant="body2" color="text.secondary">
+                    • {ing.name} — {ing.quantity} {GroceryItemUnitLabelMap[ing.unit]}
+                  </Typography>
+                ))}
+              </Box>
+            )}
+            {previewRecipe.instructions && previewRecipe.instructions.length > 0 && (
+              <Box>
+                <Typography variant="subtitle2" fontWeight={600} mb={0.5}>Instructions</Typography>
+                {previewRecipe.instructions.map((step, i) => (
+                  <Typography key={i} variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                    {i + 1}. {step}
+                  </Typography>
+                ))}
+              </Box>
+            )}
+            {previewRecipe.externalLink && (
+              <Box mt={2}>
+                <Typography
+                  component="a"
+                  href={previewRecipe.externalLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="body2"
+                  sx={{ color: '#1d4ed8' }}
+                >
+                  View original recipe ↗
+                </Typography>
+              </Box>
+            )}
+          </DialogContent>
+        </>
+      )}
+    </Dialog>
+    </>
   )
 }
 
