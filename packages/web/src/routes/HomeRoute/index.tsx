@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useGroceryListContext, GroceryListProvider } from '../../providers/GroceryListProvider'
 import { usePlannerContext, PlannerProvider } from '../../providers/PlannerProvider'
@@ -9,6 +9,7 @@ import { useRecipeContext, RecipeProvider } from '../../providers/RecipeProvider
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { AgentChatProvider } from '../../providers/AgentChatProvider'
+import { IRecipe } from '../../types/recipe'
 import { updateToDoItems } from '../../api/toDoList'
 import { showAlert } from '../../utils/alert'
 import { Route } from '../../enums/route'
@@ -19,6 +20,7 @@ import AgentChatDrawer from '../../components/AgentChatDrawer'
 import AgentMessageButton from '../../components/AgentMessageButton'
 import GroceryItemPreviewPopup from '../../components/GroceryItemPreviewPopup'
 import ToDoItemPreviewDrawer from '../../components/ToDoItemPreviewDrawer'
+import RecipeDetailDrawer from '../../components/RecipeDetailDrawer'
 import GrocerySection from './components/GrocerySection'
 import NoiseSection from './components/NoiseSection'
 import PlannerSection from './components/PlannerSection'
@@ -47,6 +49,7 @@ const HomeDataContent = () => {
   const navigate = useNavigate()
 
   const interactions = useHomeInteractions()
+  const [selectedRecipe, setSelectedRecipe] = useState<IRecipe | null>(null)
 
   const homeData = useHomeData({
     groceryList,
@@ -73,6 +76,12 @@ const HomeDataContent = () => {
       showAlert({ description: 'Failed to mark task as done', severity: 'error' }, dispatch)
     }
   }, [currentProject, removeFromToDoList, interactions.handleToDoItemDeselect, dispatch])
+
+  const handleMealClick = useCallback((meal: { recipeId?: string }) => {
+    if (!meal.recipeId) return
+    const recipe = recipes.find(r => r.id === meal.recipeId)
+    if (recipe) setSelectedRecipe(recipe)
+  }, [recipes])
 
   const handleEditTask = useCallback((id: string) => {
     navigate(Route.EditPlannerItem.replace(':id', id))
@@ -103,6 +112,7 @@ const HomeDataContent = () => {
           onToggleExpansion={interactions.handleToggleToDoItems}
           onItemToggle={interactions.handleToDoItemToggle}
           expandedItems={interactions.expandedToDoItems}
+          onMealClick={handleMealClick}
         />
 
         <GrocerySection
@@ -135,6 +145,12 @@ const HomeDataContent = () => {
         onEdit={handleEditTask}
         onMarkDone={handleMarkDone}
         onStepToggle={handleStepToggle}
+      />
+
+      <RecipeDetailDrawer
+        open={selectedRecipe !== null}
+        onClose={() => setSelectedRecipe(null)}
+        recipe={selectedRecipe}
       />
     </>
   )

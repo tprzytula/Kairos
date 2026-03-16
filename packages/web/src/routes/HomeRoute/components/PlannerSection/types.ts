@@ -15,4 +15,5 @@ export interface IToDoSectionProps {
   onToggleExpansion: () => void
   onItemToggle: (id: string) => void
   expandedItems: Set<string>
+  onMealClick?: (meal: ITodayMealItem) => void
 }

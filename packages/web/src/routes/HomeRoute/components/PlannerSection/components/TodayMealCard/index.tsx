@@ -22,6 +22,7 @@ const AUTO_SCROLL_MS = 4000
 
 interface ITodayMealCardProps {
   todayMeals: ITodayMealItem[]
+  onMealClick?: (meal: ITodayMealItem) => void
 }
 
 const sortedMeals = (meals: ITodayMealItem[]): ITodayMealItem[] =>
@@ -31,10 +32,11 @@ const sortedMeals = (meals: ITodayMealItem[]): ITodayMealItem[] =>
     return ai - bi
   })
 
-export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals }) => {
+export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals, onMealClick }) => {
   const meals = sortedMeals(todayMeals)
   const [activeIndex, setActiveIndex] = useState(0)
   const touchStartX = useRef(0)
+  const didSwipe = useRef(false)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const next = useCallback(() => {
@@ -72,7 +74,18 @@ export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals }) => 
       if (diff > 0) next()
       else prev()
       resetTimer()
+      didSwipe.current = true
+    } else {
+      didSwipe.current = false
     }
+  }
+
+  const handleMealClick = (meal: ITodayMealItem) => {
+    if (didSwipe.current) {
+      didSwipe.current = false
+      return
+    }
+    onMealClick?.(meal)
   }
 
   const handleDotClick = (index: number) => {
@@ -94,7 +107,10 @@ export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals }) => 
           const seed = meal.recipeName.charCodeAt(0)
           return (
             <CarouselSlide key={meal.id}>
-              <HeroWrapper>
+              <HeroWrapper
+                onClick={() => handleMealClick(meal)}
+                sx={meal.recipeId ? { cursor: 'pointer' } : undefined}
+              >
                 {meal.imagePath
                   ? <HeroImage src={meal.imagePath} alt={meal.recipeName} />
                   : (
