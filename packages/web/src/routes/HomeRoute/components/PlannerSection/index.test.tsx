@@ -154,7 +154,7 @@ describe('PlannerSection component', () => {
 
       renderWithTheme(<PlannerSection {...defaultProps} todayMeals={[meal]} />)
 
-      expect(screen.getByText('Breakfast')).toBeInTheDocument()
+      expect(screen.getByText('Today · Breakfast')).toBeInTheDocument()
     })
 
     it('should show Meal as fallback label when no meal type is set', () => {
@@ -162,7 +162,7 @@ describe('PlannerSection component', () => {
 
       renderWithTheme(<PlannerSection {...defaultProps} todayMeals={[meal]} />)
 
-      expect(screen.getByText('Meal')).toBeInTheDocument()
+      expect(screen.getByText('Today')).toBeInTheDocument()
     })
 
     it('should show all meals in the carousel when there are multiple meals', () => {
