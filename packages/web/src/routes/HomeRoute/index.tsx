@@ -5,6 +5,7 @@ import { usePlannerContext, PlannerProvider } from '../../providers/PlannerProvi
 import { useNoiseTrackingContext, NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
 import { useBirthdayContext, BirthdayProvider } from '../../providers/BirthdayProvider'
 import { useMealPlanContext, MealPlanProvider } from '../../providers/MealPlanProvider'
+import { useRecipeContext, RecipeProvider } from '../../providers/RecipeProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { AgentChatProvider } from '../../providers/AgentChatProvider'
@@ -40,6 +41,7 @@ const HomeDataContent = () => {
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
   const { birthdays } = useBirthdayContext()
   const { mealPlans } = useMealPlanContext()
+  const { recipes } = useRecipeContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
   const navigate = useNavigate()
@@ -54,7 +56,12 @@ const HomeDataContent = () => {
     isToDoItemsExpanded: interactions.isToDoItemsExpanded
   })
 
-  const todayMeals = mealPlans.filter(plan => plan.date === getTodayString())
+  const todayMeals = mealPlans
+    .filter(plan => plan.date === getTodayString())
+    .map(plan => {
+      const recipe = plan.recipeId ? recipes.find(r => r.id === plan.recipeId) : undefined
+      return { ...plan, imagePath: recipe?.imagePath }
+    })
 
   const handleMarkDone = useCallback(async (id: string) => {
     try {
@@ -146,7 +153,9 @@ const HomeContent = () => {
             <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>
               <BirthdayProvider key={`birthday-${currentProject?.id || 'no-project'}`}>
                 <MealPlanProvider key={`meal-${currentProject?.id || 'no-project'}`}>
-                  <HomeDataContent />
+                  <RecipeProvider>
+                    <HomeDataContent />
+                  </RecipeProvider>
                 </MealPlanProvider>
               </BirthdayProvider>
             </NoiseTrackingProvider>

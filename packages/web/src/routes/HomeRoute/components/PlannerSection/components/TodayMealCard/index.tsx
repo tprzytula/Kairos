@@ -1,9 +1,9 @@
 import React from 'react'
-import { IMealPlan } from '../../../../../../types/mealPlan'
-import { MealName, AdditionalMeals } from './index.styled'
+import { ITodayMealItem } from '../../types'
+import { MealRow, MealThumbnail, MealThumbnailPlaceholder, MealName, AdditionalMeals } from './index.styled'
 
 interface ITodayMealCardProps {
-  todayMeals: IMealPlan[]
+  todayMeals: ITodayMealItem[]
 }
 
 export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals }) => {
@@ -15,7 +15,15 @@ export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals }) => 
 
   return (
     <>
-      <MealName>{first.recipeName}</MealName>
+      <MealRow>
+        {first.imagePath
+          ? <MealThumbnail src={first.imagePath} alt={first.recipeName} />
+          : <MealThumbnailPlaceholder seed={first.recipeName.charCodeAt(0)}>
+              {first.recipeName.charAt(0).toUpperCase()}
+            </MealThumbnailPlaceholder>
+        }
+        <MealName>{first.recipeName}</MealName>
+      </MealRow>
       {rest.length > 0 && (
         <AdditionalMeals>+{rest.length} more</AdditionalMeals>
       )}
