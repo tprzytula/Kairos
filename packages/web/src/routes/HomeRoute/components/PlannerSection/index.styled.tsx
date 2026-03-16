@@ -3,7 +3,7 @@ import { Box, Card, CardContent } from '@mui/material'
 
 export const MiniCardsGrid = styled(Box)({
   display: 'grid',
-  gridTemplateColumns: '3fr 2fr',
+  gridTemplateColumns: '1fr 1fr',
   gridTemplateRows: 'auto auto',
   gap: '0.6rem',
   width: '100%',
