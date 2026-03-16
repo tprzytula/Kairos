@@ -1,73 +1,64 @@
 import React from 'react'
-import SectionCard from '../../../../components/SectionCard'
-import HomeToDoItemPlaceholder from '../HomeToDoItemPlaceholder'
-import ToDoItemCard from './components/ToDoItemCard'
-import EmptyState from '../shared/EmptyState'
 import ChecklistIcon from '@mui/icons-material/Checklist'
+import RestaurantIcon from '@mui/icons-material/Restaurant'
+import CakeIcon from '@mui/icons-material/Cake'
 import { IToDoSectionProps } from './types'
-import { formatDueDateRelative, getDueDateClass } from '../../../../utils/dateTime'
-import { CompactItemList, MoreItemsIndicator } from './index.styled'
+import TodayTasksCard from './components/TodayTasksCard'
+import TodayMealCard from './components/TodayMealCard'
+import UpcomingBirthdaysCard from './components/UpcomingBirthdaysCard'
+import {
+  MiniCardsGrid,
+  MiniCard,
+  MiniCardContent,
+  MiniCardHeader,
+  MiniCardIcon,
+  MiniCardTitle,
+  MiniCardBody,
+} from './index.styled'
 
 export const PlannerSection: React.FC<IToDoSectionProps> = ({
   toDoStats,
-  isLoading,
-  isExpanded,
-  onToggleExpansion,
-  onItemToggle,
-  expandedItems,
+  birthdays,
+  todayMeals,
 }) => {
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <CompactItemList>
-          {Array.from({ length: 3 }).map((_, index) => (
-            <HomeToDoItemPlaceholder key={index} />
-          ))}
-        </CompactItemList>
-      )
-    }
-
-    if (toDoStats.displayedItems.length === 0) {
-      return <EmptyState>No pending tasks found</EmptyState>
-    }
-
-    return (
-      <CompactItemList>
-        {toDoStats.displayedItems.map((item) => {
-          const dueDateText = formatDueDateRelative(item.dueDate)
-          const dueDateClass = getDueDateClass(item.dueDate)
-
-          return (
-            <ToDoItemCard
-              key={item.id}
-              item={item}
-              dueDateText={dueDateText}
-              dueDateClass={dueDateClass}
-              isExpanded={expandedItems.has(item.id)}
-              onClick={() => onItemToggle(item.id)}
-            />
-          )
-        })}
-        {toDoStats.hasMoreItems && (
-          <MoreItemsIndicator onClick={onToggleExpansion}>
-            {isExpanded 
-              ? 'Show less'
-              : `+${toDoStats.pendingItems.length - 3} more items`
-            }
-          </MoreItemsIndicator>
-        )}
-      </CompactItemList>
-    )
-  }
-
   return (
-    <SectionCard
-      icon={ChecklistIcon}
-      title="Planner"
-      count={toDoStats.pendingItems.length}
-    >
-      {renderContent()}
-    </SectionCard>
+    <MiniCardsGrid>
+      <MiniCard>
+        <MiniCardContent>
+          <MiniCardHeader>
+            <MiniCardIcon><ChecklistIcon /></MiniCardIcon>
+            <MiniCardTitle>Today's Tasks</MiniCardTitle>
+          </MiniCardHeader>
+          <MiniCardBody>
+            <TodayTasksCard sortedItems={toDoStats.sortedItems} />
+          </MiniCardBody>
+        </MiniCardContent>
+      </MiniCard>
+
+      <MiniCard>
+        <MiniCardContent>
+          <MiniCardHeader>
+            <MiniCardIcon><RestaurantIcon /></MiniCardIcon>
+            <MiniCardTitle>Dinner Tonight</MiniCardTitle>
+          </MiniCardHeader>
+          <MiniCardBody>
+            <TodayMealCard todayMeals={todayMeals} />
+          </MiniCardBody>
+        </MiniCardContent>
+      </MiniCard>
+
+      <MiniCard>
+        <MiniCardContent>
+          <MiniCardHeader>
+            <MiniCardIcon><CakeIcon /></MiniCardIcon>
+            <MiniCardTitle>Birthdays</MiniCardTitle>
+          </MiniCardHeader>
+          <MiniCardBody>
+            <UpcomingBirthdaysCard birthdays={birthdays} />
+          </MiniCardBody>
+        </MiniCardContent>
+      </MiniCard>
+    </MiniCardsGrid>
   )
 }
 

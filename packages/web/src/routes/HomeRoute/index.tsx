@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router'
 import { useGroceryListContext, GroceryListProvider } from '../../providers/GroceryListProvider'
 import { usePlannerContext, PlannerProvider } from '../../providers/PlannerProvider'
 import { useNoiseTrackingContext, NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
+import { useBirthdayContext, BirthdayProvider } from '../../providers/BirthdayProvider'
+import { useMealPlanContext, MealPlanProvider } from '../../providers/MealPlanProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { AgentChatProvider } from '../../providers/AgentChatProvider'
@@ -24,10 +26,20 @@ import { useHomeInteractions } from '../../hooks/useHomeInteractions'
 
 import { Container } from './index.styled'
 
+const getTodayString = (): string => {
+  const now = new Date()
+  const yyyy = now.getFullYear()
+  const mm = String(now.getMonth() + 1).padStart(2, '0')
+  const dd = String(now.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
 const HomeDataContent = () => {
   const { groceryList, isLoading: isGroceryLoading } = useGroceryListContext()
   const { toDoList, isLoading: isToDoLoading, removeFromToDoList, updateToDoItemFields } = usePlannerContext()
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
+  const { birthdays } = useBirthdayContext()
+  const { mealPlans } = useMealPlanContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
   const navigate = useNavigate()
@@ -41,6 +53,8 @@ const HomeDataContent = () => {
     purchasedItems,
     isToDoItemsExpanded: interactions.isToDoItemsExpanded
   })
+
+  const todayMeals = mealPlans.filter(plan => plan.date === getTodayString())
 
   const handleMarkDone = useCallback(async (id: string) => {
     try {
@@ -89,6 +103,8 @@ const HomeDataContent = () => {
 
         <PlannerSection
           toDoStats={homeData.toDoStats}
+          birthdays={birthdays}
+          todayMeals={todayMeals}
           isLoading={isToDoLoading}
           isExpanded={interactions.isToDoItemsExpanded}
           onToggleExpansion={interactions.handleToggleToDoItems}
@@ -128,7 +144,11 @@ const HomeContent = () => {
         <GroceryListProvider key={`grocery-${currentProject?.id || 'no-project'}`}>
           <PlannerProvider key={`planner-${currentProject?.id || 'no-project'}`}>
             <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>
-              <HomeDataContent />
+              <BirthdayProvider key={`birthday-${currentProject?.id || 'no-project'}`}>
+                <MealPlanProvider key={`meal-${currentProject?.id || 'no-project'}`}>
+                  <HomeDataContent />
+                </MealPlanProvider>
+              </BirthdayProvider>
             </NoiseTrackingProvider>
           </PlannerProvider>
         </GroceryListProvider>
