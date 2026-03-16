@@ -184,7 +184,7 @@ const MealForm = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [canSave, mode, selectedRecipe, customName, date, addMealPlan, navigate])
+  }, [canSave, mode, selectedRecipe, customName, date, mealType, addMealPlan, navigate])
 
   return (
     <FormContainer>
