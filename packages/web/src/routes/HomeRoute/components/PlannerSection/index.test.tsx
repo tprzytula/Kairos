@@ -7,6 +7,7 @@ import { ITodoItem } from '../../../../api/toDoList/retrieve/types'
 import { IToDoStats } from '../../../../hooks/useHomeData/types'
 import { IBirthdayItem } from '../../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../../types/mealPlan'
+import { MealType } from '../../../../enums/mealType'
 
 const createMockTodoItem = (overrides: Partial<ITodoItem> = {}): ITodoItem => ({
   id: 'todo-1',
@@ -146,6 +147,22 @@ describe('PlannerSection component', () => {
       renderWithTheme(<PlannerSection {...defaultProps} todayMeals={[meal]} />)
 
       expect(screen.getByText('Chicken Alfredo')).toBeInTheDocument()
+    })
+
+    it('should show the specific meal type label instead of generic Meal', () => {
+      const meal = createMockMealPlan({ recipeName: 'Eggs Benedict', mealType: MealType.Breakfast })
+
+      renderWithTheme(<PlannerSection {...defaultProps} todayMeals={[meal]} />)
+
+      expect(screen.getByText('Breakfast')).toBeInTheDocument()
+    })
+
+    it('should show Meal as fallback label when no meal type is set', () => {
+      const meal = createMockMealPlan({ recipeName: 'Chicken Alfredo' })
+
+      renderWithTheme(<PlannerSection {...defaultProps} todayMeals={[meal]} />)
+
+      expect(screen.getByText('Meal')).toBeInTheDocument()
     })
 
     it('should show all meals in the carousel when there are multiple meals', () => {
