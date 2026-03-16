@@ -53,7 +53,7 @@ interface IDayCellProps {
 }
 
 export const DayCell = styled('div')<IDayCellProps>(({ isToday, isCurrentMonth, isSelected }) => ({
-  minHeight: '48px',
+  height: '80px',
   padding: '4px',
   borderRadius: '6px',
   backgroundColor: isSelected ? '#dbeafe' : isToday ? '#ecfdf5' : isCurrentMonth ? '#ffffff' : '#f9fafb',
@@ -63,6 +63,7 @@ export const DayCell = styled('div')<IDayCellProps>(({ isToday, isCurrentMonth, 
   alignItems: 'center',
   gap: '4px',
   boxSizing: 'border-box',
+  overflow: 'hidden',
   opacity: isCurrentMonth ? 1 : 0.4,
   cursor: 'pointer',
   userSelect: 'none',
