@@ -291,21 +291,6 @@ export const MealDayDetailItem = styled('div')({
   },
 })
 
-export const AddMealButton = styled('div')({
-  fontSize: '0.85rem',
-  color: '#d97706',
-  padding: '8px 10px',
-  cursor: 'pointer',
-  borderRadius: '4px',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '4px',
-  fontWeight: 500,
-  '&:hover': {
-    backgroundColor: '#fef3c7',
-  },
-})
-
 export const MealsSectionHeader = styled(Typography)({
   fontSize: '0.75rem',
   fontWeight: 600,
