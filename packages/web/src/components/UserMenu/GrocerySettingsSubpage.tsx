@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Divider, CircularProgress, Button, TextField, Select, MenuItem, FormControl, InputLabel, Collapse, IconButton, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material'
+import { Divider, CircularProgress, Button, TextField, Select, MenuItem, FormControl, InputLabel, Collapse, Menu, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material'
 import { ArrowBack as ArrowBackIcon, Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material'
 import { type Area } from 'react-easy-crop'
 import * as Styled from './index.styled'
@@ -55,6 +55,10 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
   const [isEditSubmitting, setIsEditSubmitting] = useState(false)
   const [editFormError, setEditFormError] = useState('')
   const editFileInputRef = useRef<HTMLInputElement>(null)
+
+  // Tile popover menu state
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null)
+  const [menuItem, setMenuItem] = useState<IDBGroceryItemDefault | null>(null)
 
   // Delete confirmation state
   const [deletingItemName, setDeletingItemName] = useState<string | null>(null)
@@ -235,6 +239,26 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
     setEditPendingImageSrc(null)
   }
 
+  const handleTileClick = (e: React.MouseEvent<HTMLElement>, item: IDBGroceryItemDefault) => {
+    setMenuAnchor(e.currentTarget)
+    setMenuItem(item)
+  }
+
+  const handleMenuClose = () => {
+    setMenuAnchor(null)
+    setMenuItem(null)
+  }
+
+  const handleMenuEdit = () => {
+    if (menuItem) handleEditClick(menuItem)
+    handleMenuClose()
+  }
+
+  const handleMenuDelete = () => {
+    if (menuItem) setDeletingItemName(menuItem.name)
+    handleMenuClose()
+  }
+
   // Delete handlers
   const handleDeleteClick = (itemName: string) => {
     setDeletingItemName(itemName)
@@ -406,15 +430,20 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
             {groupedByCategory[cat].map(item => (
               <div
                 key={item.name}
+                onClick={e => handleTileClick(e, item)}
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: '4px',
                   width: '60px',
-                  position: 'relative',
+                  cursor: 'pointer',
+                  borderRadius: '10px',
+                  padding: '4px',
+                  transition: 'background 0.15s',
                 }}
-                className="grocery-default-tile"
+                onMouseEnter={e => (e.currentTarget.style.background = '#f3f4f6')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
               >
                 <div
                   style={{
@@ -451,30 +480,6 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
                 >
                   {item.name}
                 </span>
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: '2px',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <IconButton
-                    size="small"
-                    onClick={() => handleEditClick(item)}
-                    sx={{ padding: '2px', color: '#6b7280' }}
-                    title="Edit"
-                  >
-                    <EditIcon sx={{ fontSize: '12px' }} />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    onClick={() => handleDeleteClick(item.name)}
-                    sx={{ padding: '2px', color: '#6b7280' }}
-                    title="Delete"
-                  >
-                    <DeleteIcon sx={{ fontSize: '12px' }} />
-                  </IconButton>
-                </div>
               </div>
             ))}
           </div>
@@ -568,6 +573,20 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
           )}
         </div>
       ))}
+
+      <Menu
+        anchorEl={menuAnchor}
+        open={!!menuAnchor}
+        onClose={handleMenuClose}
+        slotProps={{ paper: { sx: { minWidth: 120 } } }}
+      >
+        <MenuItem onClick={handleMenuEdit} sx={{ fontSize: '14px', gap: 1 }}>
+          <EditIcon sx={{ fontSize: '16px' }} /> Edit
+        </MenuItem>
+        <MenuItem onClick={handleMenuDelete} sx={{ fontSize: '14px', gap: 1, color: '#dc2626' }}>
+          <DeleteIcon sx={{ fontSize: '16px' }} /> Delete
+        </MenuItem>
+      </Menu>
 
       <Dialog open={!!deletingItemName} onClose={() => setDeletingItemName(null)}>
         <DialogContent>
