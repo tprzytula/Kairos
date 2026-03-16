@@ -32,9 +32,10 @@ variable "lambda_functions" {
         todo_notifications = optional(string, "none")
       })
       s3 = optional(object({
-        recipe_uploads = optional(string, "none")
-        shop_uploads   = optional(string, "none")
-      }), { recipe_uploads = "none", shop_uploads = "none" })
+        recipe_uploads          = optional(string, "none")
+        shop_uploads            = optional(string, "none")
+        grocery_default_uploads = optional(string, "none")
+      }), { recipe_uploads = "none", shop_uploads = "none", grocery_default_uploads = "none" })
     })
   }))
 }

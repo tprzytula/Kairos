@@ -97,11 +97,14 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
       setFormError('')
 
       const { uploadUrl, imagePath } = await getGroceryDefaultUploadUrl('jpg', currentProject?.id)
-      await fetch(uploadUrl, {
+      const uploadResponse = await fetch(uploadUrl, {
         method: 'PUT',
         body: croppedBlob,
         headers: { 'Content-Type': 'image/jpeg' },
       })
+      if (!uploadResponse.ok) {
+        throw new Error('Upload failed')
+      }
       setIconPath(imagePath)
     } catch {
       setFormError('Failed to upload image. Please try again.')
@@ -219,11 +222,14 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
       setEditFormError('')
 
       const { uploadUrl, imagePath } = await getGroceryDefaultUploadUrl('jpg', currentProject?.id)
-      await fetch(uploadUrl, {
+      const uploadResponse = await fetch(uploadUrl, {
         method: 'PUT',
         body: croppedBlob,
         headers: { 'Content-Type': 'image/jpeg' },
       })
+      if (!uploadResponse.ok) {
+        throw new Error('Upload failed')
+      }
       setEditIconPath(imagePath)
     } catch {
       setEditFormError('Failed to upload image. Please try again.')
