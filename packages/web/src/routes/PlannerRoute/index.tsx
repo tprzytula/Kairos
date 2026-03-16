@@ -9,6 +9,7 @@ import ModernPageHeader from '../../components/ModernPageHeader'
 import MealPlanDrawer from '../../components/MealPlanDrawer'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
+import ViewWeekIcon from '@mui/icons-material/ViewWeek'
 import ViewModuleIcon from '@mui/icons-material/ViewModule'
 import { Container, ScrollableContainer } from './index.styled'
 import { useAppState } from '../../providers/AppStateProvider'
@@ -67,7 +68,7 @@ const PlannerContent = () => {
     { value: noDateItems.length, label: 'No Date' },
   ]
 
-  const stats = viewMode === PlannerViewMode.CALENDAR ? calendarStats : defaultStats
+  const stats = viewMode === PlannerViewMode.GROUPED ? defaultStats : calendarStats
 
   const statusText = useMemo(() => {
     const totalItems = toDoList.length
@@ -111,9 +112,11 @@ const PlannerContent = () => {
   }, [allExpanded])
 
   const toggleViewMode = useCallback(() => {
-    setViewMode(prev =>
-      prev === PlannerViewMode.CALENDAR ? PlannerViewMode.GROUPED : PlannerViewMode.CALENDAR
-    )
+    setViewMode(prev => {
+      if (prev === PlannerViewMode.CALENDAR) return PlannerViewMode.WEEKLY
+      if (prev === PlannerViewMode.WEEKLY) return PlannerViewMode.GROUPED
+      return PlannerViewMode.CALENDAR
+    })
   }, [])
 
   const handleAddMealPlan = useCallback((date: string) => {
@@ -152,9 +155,10 @@ const PlannerContent = () => {
     }
   }, [removeMealPlan, dispatch])
 
-  const viewToggleIcon = viewMode === PlannerViewMode.CALENDAR
-    ? <CalendarMonthIcon />
-    : <ViewModuleIcon />
+  const viewToggleIcon =
+    viewMode === PlannerViewMode.CALENDAR ? <CalendarMonthIcon /> :
+    viewMode === PlannerViewMode.WEEKLY ? <ViewWeekIcon /> :
+    <ViewModuleIcon />
 
   return (
     <StandardLayout>
@@ -168,7 +172,7 @@ const PlannerContent = () => {
           expandCollapseButton={{
             isExpanded: allExpanded,
             onToggle: toggleAll,
-            disabled: pendingItems.length === 0 || viewMode === PlannerViewMode.CALENDAR,
+            disabled: pendingItems.length === 0 || viewMode !== PlannerViewMode.GROUPED,
           }}
           actionButton={{
             isEnabled: selectedTodoItems.size > 0,
