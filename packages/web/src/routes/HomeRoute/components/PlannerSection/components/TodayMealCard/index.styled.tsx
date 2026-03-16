@@ -127,6 +127,29 @@ export const HeroTitle = styled('div')({
   textShadow: '0 1px 4px rgba(0,0,0,0.3)',
 })
 
+export const MealPlanBadge = styled(Box)({
+  position: 'absolute',
+  top: '10px',
+  left: '10px',
+  zIndex: 4,
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.3rem',
+  fontSize: '0.6rem',
+  fontWeight: 700,
+  color: 'white',
+  background: 'rgba(0,0,0,0.42)',
+  backdropFilter: 'blur(8px)',
+  WebkitBackdropFilter: 'blur(8px)',
+  borderRadius: '20px',
+  padding: '0.25rem 0.6rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  '& .MuiSvgIcon-root': {
+    fontSize: '0.7rem',
+  },
+})
+
 export const EmptyState = styled('div')(({ theme }) => ({
   fontSize: '0.75rem',
   color: theme.palette.text.secondary,

@@ -29,12 +29,20 @@ import { useHomeInteractions } from '../../hooks/useHomeInteractions'
 
 import { Container } from './index.styled'
 
-const getTodayString = (): string => {
-  const now = new Date()
-  const yyyy = now.getFullYear()
-  const mm = String(now.getMonth() + 1).padStart(2, '0')
-  const dd = String(now.getDate()).padStart(2, '0')
+const toDateString = (date: Date): string => {
+  const yyyy = date.getFullYear()
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
   return `${yyyy}-${mm}-${dd}`
+}
+
+const getUpcomingDateStrings = (days = 7): string[] => {
+  const now = new Date()
+  return Array.from({ length: days }, (_, i) => {
+    const d = new Date(now)
+    d.setDate(d.getDate() + i)
+    return toDateString(d)
+  })
 }
 
 const HomeDataContent = () => {
@@ -59,8 +67,9 @@ const HomeDataContent = () => {
     isToDoItemsExpanded: interactions.isToDoItemsExpanded
   })
 
+  const upcomingDates = new Set(getUpcomingDateStrings())
   const todayMeals = mealPlans
-    .filter(plan => plan.date === getTodayString())
+    .filter(plan => upcomingDates.has(plan.date))
     .map(plan => {
       const recipe = plan.recipeId ? recipes.find(r => r.id === plan.recipeId) : undefined
       return { ...plan, imagePath: recipe?.imagePath }
