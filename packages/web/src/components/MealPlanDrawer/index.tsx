@@ -1,11 +1,12 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Drawer, ToggleButton, InputAdornment, Dialog, DialogContent, DialogTitle, IconButton, Box, Typography } from '@mui/material'
+import { Drawer, ToggleButton, InputAdornment, Dialog, DialogContent, DialogTitle, IconButton, Box, Typography, MenuItem } from '@mui/material'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import SearchIcon from '@mui/icons-material/Search'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import dayjs from 'dayjs'
 import { IMealPlan } from '../../types/mealPlan'
 import { IRecipe } from '../../types/recipe'
+import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import { GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import {
@@ -32,7 +33,7 @@ interface IMealPlanDrawerProps {
   date: string | null
   mealPlan?: IMealPlan
   onClose: () => void
-  onSave: (date: string, recipeName: string, recipeId?: string) => void
+  onSave: (date: string, recipeName: string, recipeId?: string, mealType?: MealType) => void
   onDelete?: (id: string) => void
 }
 
@@ -43,6 +44,7 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | undefined>(undefined)
   const [search, setSearch] = useState('')
   const [previewRecipe, setPreviewRecipe] = useState<IRecipe | null>(null)
+  const [mealType, setMealType] = useState<MealType>(MealType.Dinner)
 
   useEffect(() => {
     if (open) {
@@ -56,10 +58,12 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
           setCustomName(mealPlan.recipeName)
           setSelectedRecipeId(undefined)
         }
+        setMealType(mealPlan.mealType ?? MealType.Dinner)
       } else {
         setMode('recipe')
         setCustomName('')
         setSelectedRecipeId(undefined)
+        setMealType(MealType.Dinner)
       }
       setSearch('')
     }
@@ -83,9 +87,9 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
     if (!date) return
 
     if (mode === 'recipe' && selectedRecipe) {
-      onSave(date, selectedRecipe.name, selectedRecipe.id)
+      onSave(date, selectedRecipe.name, selectedRecipe.id, mealType)
     } else if (mode === 'custom' && customName.trim()) {
-      onSave(date, customName.trim(), undefined)
+      onSave(date, customName.trim(), undefined, mealType)
     }
   }
 
@@ -106,6 +110,19 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
         </DrawerHeader>
 
         <DateLabel>{displayDate}</DateLabel>
+
+        <StyledTextField
+          select
+          size="small"
+          label="Meal type"
+          value={mealType}
+          onChange={(e) => setMealType(e.target.value as MealType)}
+          fullWidth
+        >
+          {MEAL_TYPE_ORDER.map(type => (
+            <MenuItem key={type} value={type}>{type}</MenuItem>
+          ))}
+        </StyledTextField>
 
         <ModeToggle
           value={mode}

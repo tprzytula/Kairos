@@ -3,7 +3,7 @@ import { createFetchOptions } from '../../../utils/api'
 
 export const updateMealPlan = async (
   id: string,
-  fields: { date?: string; recipeName?: string; recipeId?: string | null },
+  fields: { date?: string; recipeName?: string; recipeId?: string | null; mealType?: string | null },
   projectId?: string
 ): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/meal-plans/${id}`, createFetchOptions({

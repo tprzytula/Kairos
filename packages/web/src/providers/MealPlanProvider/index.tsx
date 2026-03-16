@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useLayoutEffect, useMemo } from 'react'
 import { IMealPlan } from '../../types/mealPlan'
+import { MealType } from '../../enums/mealType'
 import { getMealPlans, addMealPlan as addMealPlanApi, updateMealPlan as updateMealPlanApi, deleteMealPlan } from '../../api/mealPlans'
 import { IState, IMealPlanProviderProps } from './types'
 import { useProjectContext } from '../ProjectProvider'
@@ -37,21 +38,22 @@ export const MealPlanProvider = ({ children }: IMealPlanProviderProps) => {
     }
   }, [currentProject])
 
-  const addMealPlan = useCallback(async (date: string, recipeName: string, recipeId?: string) => {
+  const addMealPlan = useCallback(async (date: string, recipeName: string, recipeId?: string, mealType?: MealType) => {
     if (!currentProject) return
 
-    const result = await addMealPlanApi({ date, recipeName, recipeId }, currentProject.id)
+    const result = await addMealPlanApi({ date, recipeName, recipeId, mealType }, currentProject.id)
     const newMealPlan: IMealPlan = {
       ...result,
       date,
       recipeName,
       recipeId,
+      mealType,
       projectId: currentProject.id,
     }
     setMealPlans((prev) => [...prev, newMealPlan])
   }, [currentProject])
 
-  const updateMealPlan = useCallback(async (id: string, fields: { date?: string; recipeName?: string; recipeId?: string | null }) => {
+  const updateMealPlan = useCallback(async (id: string, fields: { date?: string; recipeName?: string; recipeId?: string | null; mealType?: MealType | null }) => {
     if (!currentProject) return
 
     await updateMealPlanApi(id, fields, currentProject.id)

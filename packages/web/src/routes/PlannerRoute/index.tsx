@@ -20,6 +20,7 @@ import { useProjectContext } from '../../providers/ProjectProvider'
 import { updateToDoItems } from '../../api/toDoList'
 import { PlannerViewMode } from '../../enums/plannerViewMode'
 import { IMealPlan } from '../../types/mealPlan'
+import { MealType } from '../../enums/mealType'
 import dayjs from 'dayjs'
 
 const PlannerContent = () => {
@@ -131,12 +132,12 @@ const PlannerContent = () => {
     setMealDrawerOpen(true)
   }, [])
 
-  const handleMealPlanSave = useCallback(async (date: string, recipeName: string, recipeId?: string) => {
+  const handleMealPlanSave = useCallback(async (date: string, recipeName: string, recipeId?: string, mealType?: MealType) => {
     try {
       if (editingMealPlan) {
-        await updateMealPlan(editingMealPlan.id, { date, recipeName, recipeId: recipeId ?? null })
+        await updateMealPlan(editingMealPlan.id, { date, recipeName, recipeId: recipeId ?? null, mealType: mealType ?? null })
       } else {
-        await addMealPlan(date, recipeName, recipeId)
+        await addMealPlan(date, recipeName, recipeId, mealType)
       }
       setMealDrawerOpen(false)
     } catch (error) {

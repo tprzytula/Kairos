@@ -1,11 +1,13 @@
 import { IMealPlan } from '../../types/mealPlan'
 
+import { MealType } from '../../enums/mealType'
+
 export interface IState {
   mealPlans: IMealPlan[]
   isLoading: boolean
   fetchMealPlans: () => Promise<void>
-  addMealPlan: (date: string, recipeName: string, recipeId?: string) => Promise<void>
-  updateMealPlan: (id: string, fields: { date?: string; recipeName?: string; recipeId?: string | null }) => Promise<void>
+  addMealPlan: (date: string, recipeName: string, recipeId?: string, mealType?: MealType) => Promise<void>
+  updateMealPlan: (id: string, fields: { date?: string; recipeName?: string; recipeId?: string | null; mealType?: MealType | null }) => Promise<void>
   removeMealPlan: (id: string) => Promise<void>
 }
 

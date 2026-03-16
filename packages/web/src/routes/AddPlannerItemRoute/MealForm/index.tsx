@@ -8,12 +8,14 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   InputAdornment,
+  MenuItem,
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import SearchIcon from '@mui/icons-material/Search'
 import { useNavigate } from 'react-router'
 import { Route } from '../../../enums/route'
+import { MealType, MEAL_TYPE_ORDER } from '../../../enums/mealType'
 import { useMealPlanContext } from '../../../providers/MealPlanProvider'
 import { useRecipeContext } from '../../../providers/RecipeProvider'
 import {
@@ -150,6 +152,7 @@ const MealForm = () => {
   const [customName, setCustomName] = useState('')
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | undefined>(undefined)
   const [search, setSearch] = useState('')
+  const [mealType, setMealType] = useState<MealType>(MealType.Dinner)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -171,9 +174,9 @@ const MealForm = () => {
     setIsLoading(true)
     try {
       if (mode === 'recipe' && selectedRecipe) {
-        await addMealPlan(date, selectedRecipe.name, selectedRecipe.id)
+        await addMealPlan(date, selectedRecipe.name, selectedRecipe.id, mealType)
       } else if (mode === 'custom' && customName.trim()) {
-        await addMealPlan(date, customName.trim(), undefined)
+        await addMealPlan(date, customName.trim(), undefined, mealType)
       }
       navigate(Route.Planner)
     } catch (err) {
@@ -198,6 +201,19 @@ const MealForm = () => {
                 disabled={isLoading}
                 InputLabelProps={{ shrink: true }}
               />
+
+              <MealTextField
+                select
+                fullWidth
+                label="Meal type"
+                value={mealType}
+                onChange={e => setMealType(e.target.value as MealType)}
+                disabled={isLoading}
+              >
+                {MEAL_TYPE_ORDER.map(type => (
+                  <MenuItem key={type} value={type}>{type}</MenuItem>
+                ))}
+              </MealTextField>
 
               <MealModeToggle
                 value={mode}
