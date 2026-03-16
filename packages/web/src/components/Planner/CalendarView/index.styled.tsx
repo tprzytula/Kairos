@@ -1,6 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { Box, Typography } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
+import RestaurantIcon from '@mui/icons-material/Restaurant'
 
 export const Container = styled('div')({
   display: 'flex',
@@ -265,4 +266,52 @@ export const BirthdayDayDetailItem = styled('div')({
   '&:hover': {
     backgroundColor: '#fce7f3',
   },
+})
+
+export const MealPlanIcon = styled(RestaurantIcon)({
+  fontSize: '0.85rem',
+  color: '#d97706',
+})
+
+export const MealDayDetailItem = styled('div')({
+  fontSize: '0.9rem',
+  color: '#92400e',
+  padding: '8px 10px',
+  borderBottom: '1px solid #fde68a',
+  cursor: 'pointer',
+  borderRadius: '4px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  '&:last-child': {
+    borderBottom: 'none',
+  },
+  '&:hover': {
+    backgroundColor: '#fef3c7',
+  },
+})
+
+export const AddMealButton = styled('div')({
+  fontSize: '0.85rem',
+  color: '#d97706',
+  padding: '8px 10px',
+  cursor: 'pointer',
+  borderRadius: '4px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px',
+  fontWeight: 500,
+  '&:hover': {
+    backgroundColor: '#fef3c7',
+  },
+})
+
+export const MealsSectionHeader = styled(Typography)({
+  fontSize: '0.75rem',
+  fontWeight: 600,
+  color: '#d97706',
+  marginTop: '0.5em',
+  marginBottom: '0.25em',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
 })

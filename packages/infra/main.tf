@@ -70,6 +70,7 @@ module "policies" {
   dynamodb_shops_arn                  = module.dynamodb.shops_arn
   dynamodb_recipes_arn                = module.dynamodb.recipes_arn
   dynamodb_birthdays_arn              = module.dynamodb.birthdays_arn
+  dynamodb_meal_plans_arn             = module.dynamodb.meal_plans_arn
   sns_todo_notifications_arn          = module.sns.todo_notifications_topic_arn
   s3_kairos_web_arn                   = module.s3.kairos_web_arn
   s3_kairos_lambdas_arn               = module.s3.kairos_lambdas_arn

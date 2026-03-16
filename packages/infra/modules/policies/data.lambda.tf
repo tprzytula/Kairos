@@ -353,6 +353,34 @@ data "aws_iam_policy_document" "lambda_policies" {
   }
 
   dynamic "statement" {
+    for_each = each.value.permissions.database.meal_plans == local.permissions.read_only ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadOnlyMealPlans"
+      actions = local.database_read_only_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_meal_plans_arn,
+        "${var.dynamodb_meal_plans_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = each.value.permissions.database.meal_plans == local.permissions.read_write ? [each.key] : []
+
+    content {
+      sid     = "DatabaseReadWriteMealPlans"
+      actions = local.database_read_write_actions
+      effect  = "Allow"
+      resources = [
+        var.dynamodb_meal_plans_arn,
+        "${var.dynamodb_meal_plans_arn}/index/*",
+      ]
+    }
+  }
+
+  dynamic "statement" {
     for_each = try(each.value.permissions.s3.recipe_uploads, "none") == "put-only" ? [each.key] : []
 
     content {

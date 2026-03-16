@@ -11,6 +11,7 @@ export enum DynamoDBTable {
   SHOPS = "Shops",
   RECIPES = "Recipes",
   BIRTHDAYS = "Birthdays",
+  MEAL_PLANS = "MealPlans",
 }
 
 export enum DynamoDBIndex {
@@ -26,6 +27,7 @@ export enum DynamoDBIndex {
   SHOPS_PROJECT = "ProjectShopsIndex",
   RECIPES_PROJECT = "ProjectRecipesIndex",
   BIRTHDAYS_PROJECT = "ProjectBirthdaysIndex",
+  MEAL_PLANS_PROJECT = "ProjectMealPlansIndex",
 }
 
 export enum GroceryItemUnit {
