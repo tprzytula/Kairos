@@ -3,7 +3,6 @@ import { IconButton } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import AddIcon from '@mui/icons-material/Add'
 import LinkIcon from '@mui/icons-material/Link'
 import dayjs, { Dayjs } from 'dayjs'
 import { ITodoItem } from '../../../api/toDoList/retrieve/types'
@@ -34,7 +33,6 @@ import {
   BirthdayDayDetailItem,
   MealPlanIcon,
   MealDayDetailItem,
-  AddMealButton,
   MealsSectionHeader,
 } from './index.styled'
 
@@ -286,10 +284,6 @@ const CalendarView = ({
               {plan.recipeId && <LinkIcon sx={{ fontSize: '0.75rem', color: '#d97706', marginLeft: 'auto', flexShrink: 0 }} />}
             </MealDayDetailItem>
           ))}
-          <AddMealButton onClick={() => onAddMealPlan?.(selectedDay)}>
-            <AddIcon sx={{ fontSize: '0.9rem' }} />
-            Add meal
-          </AddMealButton>
         </DayDetailPanel>
       )}
 
