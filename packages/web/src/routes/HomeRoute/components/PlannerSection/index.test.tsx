@@ -1,10 +1,12 @@
 import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import theme from '../../../../theme'
 import { PlannerSection } from './index'
 import { ITodoItem } from '../../../../api/toDoList/retrieve/types'
 import { IToDoStats } from '../../../../hooks/useHomeData/types'
+import { IBirthdayItem } from '../../../../api/birthdays/retrieve/types'
+import { IMealPlan } from '../../../../types/mealPlan'
 
 const createMockTodoItem = (overrides: Partial<ITodoItem> = {}): ITodoItem => ({
   id: 'todo-1',
@@ -23,6 +25,24 @@ const createMockToDoStats = (overrides: Partial<IToDoStats> = {}): IToDoStats =>
   ...overrides
 })
 
+const createMockBirthday = (overrides: Partial<IBirthdayItem> = {}): IBirthdayItem => ({
+  id: 'birthday-1',
+  name: 'Alice',
+  month: 6,
+  day: 15,
+  ...overrides
+})
+
+const createMockMealPlan = (overrides: Partial<IMealPlan> = {}): IMealPlan => ({
+  id: 'meal-1',
+  projectId: 'project-1',
+  date: '2024-01-15',
+  recipeName: 'Pasta',
+  createdAt: '',
+  updatedAt: '',
+  ...overrides
+})
+
 const renderWithTheme = (component: React.ReactElement) => {
   return render(
     <ThemeProvider theme={theme}>
@@ -31,13 +51,19 @@ const renderWithTheme = (component: React.ReactElement) => {
   )
 }
 
-describe('PlannerSection component', () => {
-  const mockOnToggleExpansion = jest.fn()
-  const mockOnItemToggle = jest.fn()
+const defaultProps = {
+  toDoStats: createMockToDoStats(),
+  birthdays: [],
+  todayMeals: [],
+  isLoading: false,
+  isExpanded: false,
+  expandedItems: new Set<string>(),
+  onToggleExpansion: jest.fn(),
+  onItemToggle: jest.fn(),
+}
 
+describe('PlannerSection component', () => {
   beforeEach(() => {
-    mockOnToggleExpansion.mockClear()
-    mockOnItemToggle.mockClear()
     jest.useFakeTimers()
     jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
   })
@@ -46,360 +72,152 @@ describe('PlannerSection component', () => {
     jest.useRealTimers()
   })
 
-  describe('when loading', () => {
-    it('should show loading placeholders', () => {
-      const toDoStats = createMockToDoStats()
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={true}
-          isExpanded={false}
-          expandedItems={new Set()}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
-      )
-      
-      expect(screen.getByText('Planner')).toBeInTheDocument()
-      expect(screen.getByText('0')).toBeInTheDocument()
+  describe('card titles', () => {
+    it('should render three section cards', () => {
+      renderWithTheme(<PlannerSection {...defaultProps} />)
+
+      expect(screen.getByText("Today's Tasks")).toBeInTheDocument()
+      expect(screen.getByText('Dinner Tonight')).toBeInTheDocument()
+      expect(screen.getByText('Birthdays')).toBeInTheDocument()
     })
   })
 
-  describe('when no todo items exist', () => {
-    it('should show empty state message', () => {
-      const toDoStats = createMockToDoStats()
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={false}
-          isExpanded={false}
-          expandedItems={new Set()}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
+  describe('Today\'s Tasks card', () => {
+    it('should show empty state when no tasks for today', () => {
+      renderWithTheme(<PlannerSection {...defaultProps} />)
+
+      expect(screen.getByText('No tasks for today')).toBeInTheDocument()
+    })
+
+    it('should show tasks due today', () => {
+      const todayDate = new Date('2024-01-15T15:00:00Z').getTime()
+      const item = createMockTodoItem({ id: '1', name: 'Today Task', dueDate: todayDate })
+      const toDoStats = createMockToDoStats({ sortedItems: [item] })
+
+      renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
+
+      expect(screen.getByText('Today Task')).toBeInTheDocument()
+    })
+
+    it('should show overdue badge when there are overdue tasks', () => {
+      const pastDate = new Date('2024-01-10T12:00:00Z').getTime()
+      const item = createMockTodoItem({ id: '1', name: 'Old Task', dueDate: pastDate })
+      const toDoStats = createMockToDoStats({ sortedItems: [item] })
+
+      renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
+
+      expect(screen.getByText('1 overdue')).toBeInTheDocument()
+    })
+
+    it('should not show tasks due in the future in Today card', () => {
+      const futureDate = new Date('2024-01-20T12:00:00Z').getTime()
+      const item = createMockTodoItem({ id: '1', name: 'Future Task', dueDate: futureDate })
+      const toDoStats = createMockToDoStats({ sortedItems: [item] })
+
+      renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
+
+      expect(screen.queryByText('Future Task')).not.toBeInTheDocument()
+      expect(screen.getByText('No tasks for today')).toBeInTheDocument()
+    })
+
+    it('should show +N more when more than 3 tasks today', () => {
+      const todayDate = new Date('2024-01-15T15:00:00Z').getTime()
+      const items = Array.from({ length: 5 }, (_, i) =>
+        createMockTodoItem({ id: `${i}`, name: `Task ${i}`, dueDate: todayDate + i * 1000 })
       )
-      
-      expect(screen.getByText('No pending tasks found')).toBeInTheDocument()
+      const toDoStats = createMockToDoStats({ sortedItems: items })
+
+      renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
+
+      expect(screen.getByText('+2 more')).toBeInTheDocument()
     })
   })
 
-  describe('when todo items exist', () => {
-    it('should display todo items', () => {
-      const items = [
-        createMockTodoItem({ id: '1', name: 'Task 1' }),
-        createMockTodoItem({ id: '2', name: 'Task 2' }),
-        createMockTodoItem({ id: '3', name: 'Task 3' })
+  describe('Dinner Tonight card', () => {
+    it('should show empty state when no meal planned today', () => {
+      renderWithTheme(<PlannerSection {...defaultProps} />)
+
+      expect(screen.getByText('No meal planned')).toBeInTheDocument()
+    })
+
+    it('should show today\'s meal name', () => {
+      const meal = createMockMealPlan({ recipeName: 'Chicken Alfredo' })
+
+      renderWithTheme(<PlannerSection {...defaultProps} todayMeals={[meal]} />)
+
+      expect(screen.getByText('Chicken Alfredo')).toBeInTheDocument()
+    })
+
+    it('should show +N more when there are additional meals', () => {
+      const meals = [
+        createMockMealPlan({ id: '1', recipeName: 'Breakfast Dish' }),
+        createMockMealPlan({ id: '2', recipeName: 'Lunch Dish' }),
+        createMockMealPlan({ id: '3', recipeName: 'Dinner Dish' }),
       ]
-      
-      const toDoStats = createMockToDoStats({
-        pendingItems: items,
-        sortedItems: items,
-        displayedItems: items,
-        hasMoreItems: false
-      })
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={false}
-          isExpanded={false}
-          expandedItems={new Set()}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
-      )
-      
-      expect(screen.getByText('Planner')).toBeInTheDocument()
-      expect(screen.getByText('3')).toBeInTheDocument()
-      expect(screen.getByText('Task 1')).toBeInTheDocument()
-      expect(screen.getByText('Task 2')).toBeInTheDocument()
-      expect(screen.getByText('Task 3')).toBeInTheDocument()
-    })
 
-    it('should show due date information', () => {
-      const tomorrowDate = new Date('2024-01-16T12:00:00Z').getTime()
-      const item = createMockTodoItem({ 
-        id: '1', 
-        name: 'Task with due date',
-        dueDate: tomorrowDate
-      })
-      
-      const toDoStats = createMockToDoStats({
-        pendingItems: [item],
-        sortedItems: [item],
-        displayedItems: [item],
-        hasMoreItems: false
-      })
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={false}
-          isExpanded={false}
-          expandedItems={new Set()}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
-      )
-      
-      expect(screen.getByText('due tomorrow')).toBeInTheDocument()
-    })
+      renderWithTheme(<PlannerSection {...defaultProps} todayMeals={meals} />)
 
-    it('should handle item clicks', () => {
-      const item = createMockTodoItem({ id: '1', name: 'Clickable Task' })
-      const toDoStats = createMockToDoStats({
-        pendingItems: [item],
-        sortedItems: [item],
-        displayedItems: [item],
-        hasMoreItems: false
-      })
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={false}
-          isExpanded={false}
-          expandedItems={new Set()}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
-      )
-      
-      fireEvent.click(screen.getByText('Clickable Task'))
-      expect(mockOnItemToggle).toHaveBeenCalledWith('1')
-    })
-
-    it('should show truncated description when not expanded', () => {
-      const longDescription = 'This is a very long description that should be truncated when the item is not expanded'
-      const item = createMockTodoItem({ 
-        id: '1', 
-        name: 'Task with long description',
-        description: longDescription
-      })
-      
-      const toDoStats = createMockToDoStats({
-        pendingItems: [item],
-        sortedItems: [item],
-        displayedItems: [item],
-        hasMoreItems: false
-      })
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={false}
-          isExpanded={false}
-          expandedItems={new Set()}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
-      )
-      
-      expect(screen.getByText('This is a very long description that should be tru...')).toBeInTheDocument()
-      expect(screen.queryByText(longDescription)).not.toBeInTheDocument()
-    })
-
-    it('should show full description when item is expanded', () => {
-      const item = createMockTodoItem({ 
-        id: '1', 
-        name: 'Expanded Task',
-        description: 'Full task description'
-      })
-      
-      const toDoStats = createMockToDoStats({
-        pendingItems: [item],
-        sortedItems: [item],
-        displayedItems: [item],
-        hasMoreItems: false
-      })
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={false}
-          isExpanded={false}
-          expandedItems={new Set(['1'])}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
-      )
-      
-      expect(screen.getByText('Full task description')).toBeInTheDocument()
-    })
-
-    it('should show expanded due date details when item is expanded', () => {
-      const tomorrowDate = new Date('2024-01-16T14:30:00Z').getTime()
-      const item = createMockTodoItem({ 
-        id: '1', 
-        name: 'Task with expanded date',
-        dueDate: tomorrowDate
-      })
-      
-      const toDoStats = createMockToDoStats({
-        pendingItems: [item],
-        sortedItems: [item],
-        displayedItems: [item],
-        hasMoreItems: false
-      })
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={false}
-          isExpanded={false}
-          expandedItems={new Set(['1'])}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
-      )
-      
-      expect(screen.getByText('Due Date')).toBeInTheDocument()
-      expect(screen.getByText(/Tue, Jan 16 at 02:30 PM/)).toBeInTheDocument()
+      expect(screen.getByText('Breakfast Dish')).toBeInTheDocument()
+      expect(screen.getByText('+2 more')).toBeInTheDocument()
     })
   })
 
-  describe('expansion functionality', () => {
-    it('should show "show more" indicator when there are more than 3 items', () => {
-      const items = Array.from({ length: 5 }, (_, i) => 
-        createMockTodoItem({ id: `${i + 1}`, name: `Task ${i + 1}` })
-      )
-      
-      const toDoStats = createMockToDoStats({
-        pendingItems: items,
-        sortedItems: items,
-        displayedItems: items.slice(0, 3),
-        hasMoreItems: true
-      })
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={false}
-          isExpanded={false}
-          expandedItems={new Set()}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
-      )
-      
-      expect(screen.getByText('+2 more items')).toBeInTheDocument()
+  describe('Birthdays card', () => {
+    it('should show empty state when no birthdays saved', () => {
+      renderWithTheme(<PlannerSection {...defaultProps} />)
+
+      expect(screen.getByText('No birthdays saved')).toBeInTheDocument()
     })
 
-    it('should show "show less" when expanded', () => {
-      const items = Array.from({ length: 5 }, (_, i) => 
-        createMockTodoItem({ id: `${i + 1}`, name: `Task ${i + 1}` })
-      )
-      
-      const toDoStats = createMockToDoStats({
-        pendingItems: items,
-        sortedItems: items,
-        displayedItems: items,
-        hasMoreItems: true
-      })
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={false}
-          isExpanded={true}
-          expandedItems={new Set()}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
-      )
-      
-      expect(screen.getByText('Show less')).toBeInTheDocument()
+    it('should show upcoming birthday names', () => {
+      const birthday = createMockBirthday({ id: '1', name: 'Bob', month: 2, day: 1 })
+
+      renderWithTheme(<PlannerSection {...defaultProps} birthdays={[birthday]} />)
+
+      expect(screen.getByText('Bob')).toBeInTheDocument()
     })
 
-    it('should handle expansion toggle clicks', () => {
-      const items = Array.from({ length: 5 }, (_, i) => 
-        createMockTodoItem({ id: `${i + 1}`, name: `Task ${i + 1}` })
-      )
-      
-      const toDoStats = createMockToDoStats({
-        pendingItems: items,
-        sortedItems: items,
-        displayedItems: items.slice(0, 3),
-        hasMoreItems: true
-      })
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={false}
-          isExpanded={false}
-          expandedItems={new Set()}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
-      )
-      
-      fireEvent.click(screen.getByText('+2 more items'))
-      expect(mockOnToggleExpansion).toHaveBeenCalledTimes(1)
-    })
-  })
+    it('should show "Today!" for a birthday today', () => {
+      // System time is 2024-01-15
+      const birthday = createMockBirthday({ id: '1', name: 'Charlie', month: 1, day: 15 })
 
-  describe('due date styling', () => {
-    it('should apply correct styling for overdue tasks', () => {
-      const yesterdayDate = new Date('2024-01-14T12:00:00Z').getTime()
-      const item = createMockTodoItem({ 
-        id: '1', 
-        name: 'Overdue task',
-        dueDate: yesterdayDate
-      })
-      
-      const toDoStats = createMockToDoStats({
-        pendingItems: [item],
-        sortedItems: [item],
-        displayedItems: [item],
-        hasMoreItems: false
-      })
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={false}
-          isExpanded={false}
-          expandedItems={new Set()}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
-      )
-      
-      const dueDateElement = screen.getByText('overdue by 1 day')
-      expect(dueDateElement).toHaveClass('overdue')
+      renderWithTheme(<PlannerSection {...defaultProps} birthdays={[birthday]} />)
+
+      expect(screen.getByText('Today!')).toBeInTheDocument()
     })
 
-    it('should apply correct styling for tasks due today', () => {
-      const todayDate = new Date('2024-01-15T12:00:00Z').getTime()
-      const item = createMockTodoItem({ 
-        id: '1', 
-        name: 'Today task',
-        dueDate: todayDate
-      })
-      
-      const toDoStats = createMockToDoStats({
-        pendingItems: [item],
-        sortedItems: [item],
-        displayedItems: [item],
-        hasMoreItems: false
-      })
-      
-      renderWithTheme(
-        <PlannerSection
-          toDoStats={toDoStats}
-          isLoading={false}
-          isExpanded={false}
-          expandedItems={new Set()}
-          onToggleExpansion={mockOnToggleExpansion}
-          onItemToggle={mockOnItemToggle}
-        />
-      )
-      
-      const dueDateElement = screen.getByText('due today')
-      expect(dueDateElement).toHaveClass('today')
+    it('should show "Tomorrow" for a birthday tomorrow', () => {
+      // System time is 2024-01-15
+      const birthday = createMockBirthday({ id: '1', name: 'Diana', month: 1, day: 16 })
+
+      renderWithTheme(<PlannerSection {...defaultProps} birthdays={[birthday]} />)
+
+      expect(screen.getByText('Tomorrow')).toBeInTheDocument()
+    })
+
+    it('should show days until for a birthday in the future', () => {
+      // System time is 2024-01-15
+      const birthday = createMockBirthday({ id: '1', name: 'Eve', month: 1, day: 25 })
+
+      renderWithTheme(<PlannerSection {...defaultProps} birthdays={[birthday]} />)
+
+      expect(screen.getByText('in 10d')).toBeInTheDocument()
+    })
+
+    it('should show only the next 3 upcoming birthdays', () => {
+      const birthdays = [
+        createMockBirthday({ id: '1', name: 'Person 1', month: 1, day: 16 }),
+        createMockBirthday({ id: '2', name: 'Person 2', month: 1, day: 17 }),
+        createMockBirthday({ id: '3', name: 'Person 3', month: 1, day: 18 }),
+        createMockBirthday({ id: '4', name: 'Person 4', month: 1, day: 19 }),
+      ]
+
+      renderWithTheme(<PlannerSection {...defaultProps} birthdays={birthdays} />)
+
+      expect(screen.getByText('Person 1')).toBeInTheDocument()
+      expect(screen.getByText('Person 2')).toBeInTheDocument()
+      expect(screen.getByText('Person 3')).toBeInTheDocument()
+      expect(screen.queryByText('Person 4')).not.toBeInTheDocument()
     })
   })
 })

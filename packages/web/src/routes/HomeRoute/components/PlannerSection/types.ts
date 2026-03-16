@@ -1,8 +1,11 @@
-import { ITodoItem } from '../../../../api/toDoList/retrieve/types'
 import { IToDoStats } from '../../../../hooks/useHomeData/types'
+import { IBirthdayItem } from '../../../../api/birthdays/retrieve/types'
+import { IMealPlan } from '../../../../types/mealPlan'
 
 export interface IToDoSectionProps {
   toDoStats: IToDoStats
+  birthdays: IBirthdayItem[]
+  todayMeals: IMealPlan[]
   isLoading: boolean
   isExpanded: boolean
   onToggleExpansion: () => void
