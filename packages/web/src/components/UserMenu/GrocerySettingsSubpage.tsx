@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Divider, CircularProgress, Button, TextField, Select, MenuItem, FormControl, InputLabel, Collapse } from '@mui/material'
 import { ArrowBack as ArrowBackIcon, Add as AddIcon } from '@mui/icons-material'
+import { type Area } from 'react-easy-crop'
 import * as Styled from './index.styled'
 import { retrieveGroceryListDefaults, addGroceryItemDefault, getGroceryDefaultUploadUrl } from '../../api/groceryList'
 import { IDBGroceryItemDefault } from '../../api/groceryList/retrieve/types'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 import { useProjectContext } from '../../providers/ProjectProvider'
+import ImageCropModal from '../RecipeForm/ImageCropModal'
+import { getCroppedBlob } from '../RecipeForm/cropUtils'
 
 interface GrocerySettingsSubpageProps {
   onBack: () => void
@@ -32,6 +35,7 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
   const [category, setCategory] = useState('')
   const [iconPath, setIconPath] = useState('')
   const [iconPreview, setIconPreview] = useState('')
+  const [pendingImageSrc, setPendingImageSrc] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formError, setFormError] = useState('')
@@ -48,29 +52,45 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
     fetchDefaults()
   }, [])
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    setPendingImageSrc(URL.createObjectURL(file))
+    e.target.value = ''
+  }
 
-    setIconPreview(URL.createObjectURL(file))
-    setIsUploading(true)
-    setFormError('')
+  const handleCropConfirm = async (croppedAreaPixels: Area) => {
+    if (!pendingImageSrc) return
+
+    const previousPreview = iconPreview
+    const previousPath = iconPath
 
     try {
+      const croppedBlob = await getCroppedBlob(pendingImageSrc, croppedAreaPixels)
+      setIconPreview(URL.createObjectURL(croppedBlob))
+      setPendingImageSrc(null)
+      setIsUploading(true)
+      setFormError('')
+
       const { uploadUrl, imagePath } = await getGroceryDefaultUploadUrl('jpg', currentProject?.id)
       await fetch(uploadUrl, {
         method: 'PUT',
-        body: file,
-        headers: { 'Content-Type': file.type || 'image/jpeg' },
+        body: croppedBlob,
+        headers: { 'Content-Type': 'image/jpeg' },
       })
       setIconPath(imagePath)
     } catch {
       setFormError('Failed to upload image. Please try again.')
-      setIconPreview('')
+      setIconPreview(previousPreview)
+      setIconPath(previousPath)
+      setPendingImageSrc(null)
     } finally {
       setIsUploading(false)
-      e.target.value = ''
     }
+  }
+
+  const handleCropCancel = () => {
+    setPendingImageSrc(null)
   }
 
   const handleSubmit = async () => {
@@ -230,6 +250,15 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
         <div style={{ fontSize: '13px', color: '#6b7280', textAlign: 'center', padding: '16px 0' }}>
           No default items configured.
         </div>
+      )}
+
+      {pendingImageSrc && (
+        <ImageCropModal
+          imageSrc={pendingImageSrc}
+          aspect={1}
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
       )}
 
       {!isLoading && sortedCategories.map(cat => (
