@@ -97,6 +97,7 @@ export const NoiseSection: React.FC<INoiseSectionProps> = ({
       icon={VolumeUpIcon}
       title="Noise Recordings"
       count={noiseCounts.totalCount}
+      accentGradient="linear-gradient(135deg, #f7971e 0%, #ffd200 100%)"
     >
       {renderContent()}
     </SectionCard>

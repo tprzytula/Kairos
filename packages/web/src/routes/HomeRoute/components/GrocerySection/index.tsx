@@ -16,6 +16,7 @@ export const GrocerySection: React.FC<IGrocerySectionProps> = ({
       icon={ShoppingCartIcon}
       title="Grocery List"
       count={groceryStats.totalItems}
+      accentGradient="linear-gradient(135deg, #11998e 0%, #38ef7d 100%)"
     >
       {isLoading ? (
         <HomeGroceryItemPlaceholder />

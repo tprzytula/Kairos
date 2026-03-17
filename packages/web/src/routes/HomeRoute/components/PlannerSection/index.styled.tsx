@@ -30,15 +30,11 @@ export const MiniCard = styled(Card)({
     right: 0,
     height: '3px',
     background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-    opacity: 0,
-    transition: 'opacity 0.3s ease',
+    opacity: 1,
   },
   '&:hover': {
     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
     transform: 'translateY(-2px)',
-    '&:before': {
-      opacity: 1,
-    },
   },
 })
 

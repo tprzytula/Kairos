@@ -1,11 +1,15 @@
 import { styled } from '@mui/material/styles'
 import { Card, CardContent, Box } from '@mui/material'
 
+const DEFAULT_ACCENT = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+
 export const FullWidthSection = styled(Box)({
   gridColumn: 'auto',
 })
 
-export const SectionCard = styled(Card)(({ theme }) => ({
+export const SectionCard = styled(Card, {
+  shouldForwardProp: (prop) => prop !== 'accentGradient',
+})<{ accentGradient?: string }>(({ accentGradient }) => ({
   borderRadius: '16px',
   boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
   border: 'none',
@@ -26,16 +30,12 @@ export const SectionCard = styled(Card)(({ theme }) => ({
     left: 0,
     right: 0,
     height: '3px',
-    background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-    opacity: 0,
-    transition: 'opacity 0.3s ease',
+    background: accentGradient || DEFAULT_ACCENT,
+    opacity: 1,
   },
   '&:hover': {
     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
     transform: 'translateY(-2px)',
-    '&:before': {
-      opacity: 1,
-    },
   },
 }))
 
@@ -56,15 +56,17 @@ export const HeaderContent = styled('div')({
   gap: '0.5rem',
 })
 
-export const StyledIcon = styled('div')({
+export const StyledIcon = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'accentGradient',
+})<{ accentGradient?: string }>(({ accentGradient }) => ({
   '& .MuiSvgIcon-root': {
     fontSize: '1.1rem',
     padding: '0.25rem',
     borderRadius: '6px',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    background: accentGradient || DEFAULT_ACCENT,
     color: 'white',
   },
-})
+}))
 
 export const ItemCount = styled('span')(({ theme }) => ({
   fontSize: '0.75rem',

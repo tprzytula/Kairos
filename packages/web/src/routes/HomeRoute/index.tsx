@@ -14,8 +14,7 @@ import { updateToDoItems } from '../../api/toDoList'
 import { showAlert } from '../../utils/alert'
 import { Route } from '../../enums/route'
 import StandardLayout from '../../layout/standardLayout'
-import AppInfoCard from '../../components/AppInfoCard'
-import DashboardHeader from '../../components/DashboardHeader'
+import HomeHeader from '../../components/HomeHeader'
 import AgentChatDrawer from '../../components/AgentChatDrawer'
 import AgentMessageButton from '../../components/AgentMessageButton'
 import GroceryItemPreviewPopup from '../../components/GroceryItemPreviewPopup'
@@ -171,8 +170,7 @@ const HomeContent = () => {
   return (
     <AgentChatProvider>
       <StandardLayout>
-        <AppInfoCard />
-        <DashboardHeader />
+        <HomeHeader />
         <GroceryListProvider key={`grocery-${currentProject?.id || 'no-project'}`}>
           <PlannerProvider key={`planner-${currentProject?.id || 'no-project'}`}>
             <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>

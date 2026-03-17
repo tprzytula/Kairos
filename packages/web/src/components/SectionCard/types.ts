@@ -6,4 +6,5 @@ export interface SectionCardProps {
   title: string
   count: number
   children: ReactNode
+  accentGradient?: string
 }
