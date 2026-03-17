@@ -120,7 +120,6 @@ const GroceryListContent = () => {
           onClick: handleBackToShops,
           tooltip: "Back to Shops",
           ariaLabel: "Navigate back to shops list",
-          label: "Switch Shop",
         }}
         secondaryActionButton={{
           icon: <MenuBookIcon />,
