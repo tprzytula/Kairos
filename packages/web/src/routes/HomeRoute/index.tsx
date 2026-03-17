@@ -54,7 +54,7 @@ const HomeDataContent = () => {
   const { recipes } = useRecipeContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
-  const { currentShop } = useShopContext()
+  const { currentShop, shops } = useShopContext()
   const navigate = useNavigate()
 
   const interactions = useHomeInteractions()
@@ -139,6 +139,7 @@ const HomeDataContent = () => {
 
         <GrocerySection
           groceryStats={homeData.groceryStats}
+          shops={shops}
           isLoading={isGroceryLoading}
           onGroceryItemClick={interactions.handleGroceryItemClick}
           onNavigate={handleGroceryNavigate}

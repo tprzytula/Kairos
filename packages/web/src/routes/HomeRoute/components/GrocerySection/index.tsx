@@ -9,6 +9,7 @@ import { SECTION_GRADIENTS } from '../../../../constants/sectionColors'
 
 export const GrocerySection: React.FC<IGrocerySectionProps> = ({
   groceryStats,
+  shops,
   isLoading,
   onGroceryItemClick,
   onNavigate
@@ -29,6 +30,7 @@ export const GrocerySection: React.FC<IGrocerySectionProps> = ({
           {groceryStats.totalItems > 0 ? (
             <GroceryStatsGrid
               groceryStats={groceryStats}
+              shops={shops}
               onGroceryItemClick={onGroceryItemClick}
             />
           ) : (
