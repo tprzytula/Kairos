@@ -1,16 +1,14 @@
 import { useState, useMemo } from 'react'
-import { createPortal } from 'react-dom'
 import { useAppState } from '../../../providers/AppStateProvider'
 import { ActionName } from '../../../providers/AppStateProvider/enums'
 import { IconButton } from '@mui/material'
-import CakeIcon from '@mui/icons-material/Cake'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import LinkIcon from '@mui/icons-material/Link'
 import dayjs, { Dayjs } from 'dayjs'
 import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../types/mealPlan'
+import DayPreviewDrawer from '../../DayPreviewDrawer'
 import {
   Container,
   CalendarHeader,
@@ -22,26 +20,12 @@ import {
   DayNumber,
   TodoDot,
   CompletedTodoDot,
-  DrawerOverlay,
-  BottomDrawer,
-  DrawerHandle,
-  DayDetailHeaderWrapper,
-  DayDetailDayOfWeek,
-  DayDetailDateLabel,
-  DayDetailItem,
-  OverdueDayDetailItem,
-  CompletedDayDetailItem,
-  DayDetailEmpty,
   NoDueDateSection,
   NoDueDateHeader,
   NoDueDateItem,
   CompletedNoDueDateItem,
   BirthdayCakeIcon,
-  BirthdayDayDetailItem,
   MealPlanIcon,
-  MealDayDetailItem,
-  MealsSectionHeader,
-  MealsAddButton,
 } from './index.styled'
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -252,67 +236,23 @@ const CalendarView = ({
         })}
       </CalendarGrid>
 
-      {selectedDay && createPortal(
-        <>
-          <DrawerOverlay onClick={() => {
-            setSelectedDay(null)
-            dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: null })
-          }} />
-          <BottomDrawer>
-            <DrawerHandle />
-            <DayDetailHeaderWrapper>
-              <DayDetailDayOfWeek>{dayjs(selectedDay).format('dddd')}</DayDetailDayOfWeek>
-              <DayDetailDateLabel>{dayjs(selectedDay).format('D MMMM')}</DayDetailDateLabel>
-            </DayDetailHeaderWrapper>
-            {selectedDayPendingTodos.length === 0 && selectedDayCompletedTodos.length === 0 ? (
-              <DayDetailEmpty>No tasks on this day</DayDetailEmpty>
-            ) : (
-              <>
-                {selectedDayPendingTodos.map(todo => (
-                  isSelectedDayOverdue ? (
-                    <OverdueDayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
-                      {todo.name}
-                    </OverdueDayDetailItem>
-                  ) : (
-                    <DayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
-                      {todo.name}
-                    </DayDetailItem>
-                  )
-                ))}
-                {selectedDayCompletedTodos.map(todo => (
-                  <CompletedDayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
-                    {todo.name}
-                  </CompletedDayDetailItem>
-                ))}
-              </>
-            )}
-            {selectedDayBirthdays.length > 0 && (
-              <>
-                {selectedDayBirthdays.map(birthday => (
-                  <BirthdayDayDetailItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
-                    <CakeIcon sx={{ fontSize: '0.9rem', color: '#db2777', flexShrink: 0 }} />
-                    {birthday.name}
-                  </BirthdayDayDetailItem>
-                ))}
-              </>
-            )}
-            <MealsSectionHeader>
-              <span>Meals</span>
-              {onAddMealPlan && selectedDay && (
-                <MealsAddButton onClick={(e) => { e.stopPropagation(); onAddMealPlan(selectedDay) }}>+</MealsAddButton>
-              )}
-            </MealsSectionHeader>
-            {selectedDayMealPlans.map(plan => (
-              <MealDayDetailItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
-                <MealPlanIcon sx={{ fontSize: '0.9rem', flexShrink: 0 }} />
-                {plan.recipeName}
-                {plan.recipeId && <LinkIcon sx={{ fontSize: '0.75rem', color: '#d97706', marginLeft: 'auto', flexShrink: 0 }} />}
-              </MealDayDetailItem>
-            ))}
-          </BottomDrawer>
-        </>,
-        document.body
-      )}
+      <DayPreviewDrawer
+        open={selectedDay !== null}
+        selectedDay={selectedDay}
+        pendingTodos={selectedDayPendingTodos}
+        completedTodos={selectedDayCompletedTodos}
+        isOverdue={isSelectedDayOverdue}
+        birthdays={selectedDayBirthdays}
+        mealPlans={selectedDayMealPlans}
+        onClose={() => {
+          setSelectedDay(null)
+          dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: null })
+        }}
+        onTodoClick={onItemClick}
+        onBirthdayClick={onBirthdayClick}
+        onAddMealPlan={onAddMealPlan}
+        onMealPlanClick={onMealPlanClick}
+      />
 
       {itemsWithoutDueDate.length > 0 && (
         <NoDueDateSection>
