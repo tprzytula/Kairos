@@ -184,20 +184,20 @@ export const AddPlannerItemContent = () => {
             Task
           </Segment>
           <Segment
-            active={itemType === 'birthday'}
-            variant="birthday"
-            onClick={() => setItemType('birthday')}
-          >
-            <CakeIcon sx={{ fontSize: '1.1rem' }} />
-            Birthday
-          </Segment>
-          <Segment
             active={itemType === 'meal'}
             variant="meal"
             onClick={() => setItemType('meal')}
           >
             <RestaurantIcon sx={{ fontSize: '1.1rem' }} />
             Meal
+          </Segment>
+          <Segment
+            active={itemType === 'birthday'}
+            variant="birthday"
+            onClick={() => setItemType('birthday')}
+          >
+            <CakeIcon sx={{ fontSize: '1.1rem' }} />
+            Birthday
           </Segment>
         </SegmentedControl>
       </Box>
