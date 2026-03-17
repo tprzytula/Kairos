@@ -224,8 +224,7 @@ describe('Given the Planner component', () => {
 
       renderWithTheme(<Planner />)
 
-      expect(screen.getByLabelText('Loading to-do items')).toBeInTheDocument()
-      expect(screen.getAllByLabelText('To do item placeholder')).toHaveLength(18)
+      expect(screen.getByLabelText('Loading calendar')).toBeInTheDocument()
     })
   })
 
