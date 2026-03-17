@@ -2,8 +2,11 @@ import { styled } from '@mui/material/styles';
 import { IconButton } from '@mui/material';
 
 export const StyledNavigationButton = styled(IconButton, {
-  shouldForwardProp: (prop) => prop !== 'isSelected',
-})<{ isSelected: boolean }>(({ theme, isSelected }) => ({
+  shouldForwardProp: (prop) => prop !== 'isSelected' && prop !== 'accentGradient' && prop !== 'accentRgb',
+})<{ isSelected: boolean; accentGradient?: string; accentRgb?: string }>(({ theme, isSelected, accentGradient, accentRgb }) => {
+  const gradient = accentGradient ?? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  const rgb = accentRgb ?? '102, 126, 234';
+  return ({
   width: '48px',
   height: '48px',
   minWidth: '48px',
@@ -18,11 +21,11 @@ export const StyledNavigationButton = styled(IconButton, {
   
   ...(isSelected
     ? {
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: gradient,
         color: 'white',
         boxShadow: `
-          0 2px 8px rgba(102, 126, 234, 0.3),
-          0 4px 16px rgba(118, 75, 162, 0.2),
+          0 2px 8px rgba(${rgb}, 0.3),
+          0 4px 16px rgba(${rgb}, 0.2),
           inset 0 1px 0 rgba(255, 255, 255, 0.2)
         `,
         '&::before': {
@@ -36,11 +39,11 @@ export const StyledNavigationButton = styled(IconButton, {
           borderRadius: '16px',
         },
         '&:hover': {
-          background: 'linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%)',
+          background: gradient,
           transform: 'translateY(-1px)',
           boxShadow: `
-            0 4px 12px rgba(102, 126, 234, 0.4),
-            0 8px 24px rgba(118, 75, 162, 0.3),
+            0 4px 12px rgba(${rgb}, 0.4),
+            0 8px 24px rgba(${rgb}, 0.3),
             inset 0 1px 0 rgba(255, 255, 255, 0.2)
           `,
         },
@@ -52,7 +55,7 @@ export const StyledNavigationButton = styled(IconButton, {
         background: 'transparent',
         color: theme.palette.text.secondary,
         '&:hover': {
-          background: 'rgba(102, 126, 234, 0.08)',
+          background: `rgba(${rgb}, 0.08)`,
           color: theme.palette.primary.main,
           transform: 'translateY(-1px)',
         },
@@ -61,4 +64,4 @@ export const StyledNavigationButton = styled(IconButton, {
         }
       }
   ),
-}));
+})});

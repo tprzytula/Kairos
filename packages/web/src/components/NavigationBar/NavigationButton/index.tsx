@@ -8,9 +8,11 @@ export interface INavigationButtonProps {
     UnselectedIcon: React.ElementType<any>;
     route: Route;
     isDisabled?: boolean;
+    accentGradient?: string;
+    accentRgb?: string;
 }
 
-const NavigationButton = ({ SelectedIcon, UnselectedIcon, route, isDisabled }: INavigationButtonProps) => {
+const NavigationButton = ({ SelectedIcon, UnselectedIcon, route, isDisabled, accentGradient, accentRgb }: INavigationButtonProps) => {
     const location = useLocation();
     const navigate = useNavigate();
     const onClick = useCallback(() => {
@@ -20,7 +22,7 @@ const NavigationButton = ({ SelectedIcon, UnselectedIcon, route, isDisabled }: I
     const isSelected = location.pathname === route;
 
     return (
-        <StyledNavigationButton onClick={onClick} disabled={isDisabled} isSelected={isSelected}>
+        <StyledNavigationButton onClick={onClick} disabled={isDisabled} isSelected={isSelected} accentGradient={accentGradient} accentRgb={accentRgb}>
             {isSelected ? <SelectedIcon fontSize="large"/> : <UnselectedIcon fontSize="large"/>}
         </StyledNavigationButton>
     );
