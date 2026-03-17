@@ -108,23 +108,25 @@ export const BottomDrawer = styled('div')({
   bottom: 0,
   left: 0,
   right: 0,
-  backgroundColor: '#eff6ff',
-  borderRadius: '16px 16px 0 0',
-  border: '1px solid #bfdbfe',
+  background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+  borderRadius: '20px 20px 0 0',
+  border: '1px solid rgba(226, 232, 240, 0.8)',
   borderBottom: 'none',
-  boxShadow: '0 -4px 24px rgba(0, 0, 0, 0.12)',
+  boxShadow: '0 -8px 40px rgba(0, 0, 0, 0.18), 0 -2px 8px rgba(0, 0, 0, 0.06)',
   zIndex: 1001,
-  maxHeight: '50vh',
+  maxHeight: '60vh',
   overflowY: 'auto',
-  padding: '0.75em',
+  padding: '0 12px',
+  paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
 })
 
 export const DrawerHandle = styled('div')({
-  width: '40px',
-  height: '4px',
-  backgroundColor: '#bfdbfe',
-  borderRadius: '2px',
-  margin: '0 auto 0.75em',
+  width: '48px',
+  height: '5px',
+  backgroundColor: '#94a3b8',
+  borderRadius: '3px',
+  margin: '10px auto 14px',
+  flexShrink: 0,
 })
 
 export const DayDetailPanel = styled('div')({
@@ -135,6 +137,31 @@ export const DayDetailPanel = styled('div')({
   border: '1px solid #bfdbfe',
 })
 
+export const DayDetailHeaderWrapper = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1px',
+  paddingBottom: '10px',
+  marginBottom: '8px',
+  borderBottom: '1px solid rgba(226, 232, 240, 0.9)',
+})
+
+export const DayDetailDayOfWeek = styled(Typography)({
+  fontSize: '0.72rem',
+  fontWeight: 600,
+  color: '#94a3b8',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  lineHeight: 1,
+})
+
+export const DayDetailDateLabel = styled(Typography)({
+  fontSize: '1.1rem',
+  fontWeight: 700,
+  color: '#0f172a',
+  lineHeight: 1.2,
+})
+
 export const DayDetailHeader = styled(Typography)({
   fontSize: '0.85rem',
   fontWeight: 600,
@@ -143,39 +170,50 @@ export const DayDetailHeader = styled(Typography)({
 })
 
 export const DayDetailItem = styled('div')({
-  fontSize: '0.9rem',
-  color: '#374151',
-  padding: '8px 10px',
-  borderBottom: '1px solid #dbeafe',
+  fontSize: '0.875rem',
+  color: '#1e3a5f',
+  padding: '8px 10px 8px 12px',
+  borderRadius: '8px',
+  borderLeft: '3px solid #3b82f6',
+  backgroundColor: '#f0f6ff',
   cursor: 'pointer',
-  borderRadius: '4px',
+  marginBottom: '4px',
+  transition: 'all 0.12s ease',
   '&:last-child': {
-    borderBottom: 'none',
+    marginBottom: 0,
   },
   '&:hover': {
     backgroundColor: '#dbeafe',
+    color: '#1d4ed8',
   },
 })
 
 export const OverdueDayDetailItem = styled('div')({
-  fontSize: '0.9rem',
-  color: '#dc2626',
-  padding: '8px 10px',
-  borderBottom: '1px solid #fecaca',
+  fontSize: '0.875rem',
+  color: '#7f1d1d',
+  padding: '8px 10px 8px 12px',
+  borderRadius: '8px',
+  borderLeft: '3px solid #ef4444',
+  backgroundColor: '#fff5f5',
   cursor: 'pointer',
-  borderRadius: '4px',
+  marginBottom: '4px',
+  transition: 'all 0.12s ease',
   '&:last-child': {
-    borderBottom: 'none',
+    marginBottom: 0,
   },
   '&:hover': {
     backgroundColor: '#fee2e2',
+    color: '#991b1b',
   },
 })
 
 export const DayDetailEmpty = styled(Typography)({
-  fontSize: '0.85rem',
-  color: '#6b7280',
+  fontSize: '0.875rem',
+  color: '#94a3b8',
   fontStyle: 'italic',
+  textAlign: 'center',
+  padding: '20px 16px',
+  display: 'block',
 })
 
 export const NoDueDateSection = styled('div')({
@@ -226,34 +264,40 @@ export const CompletedTodoDot = styled('div')<{ count?: number }>(({ count = 0 }
 }))
 
 export const CompletedDayDetailItem = styled('div')({
-  fontSize: '0.9rem',
-  color: '#6b7280',
+  fontSize: '0.875rem',
+  color: '#94a3b8',
   textDecoration: 'line-through',
-  padding: '8px 10px',
-  borderBottom: '1px solid #dbeafe',
+  padding: '8px 10px 8px 12px',
+  borderRadius: '8px',
+  borderLeft: '3px solid #cbd5e1',
+  backgroundColor: '#f9fafb',
   cursor: 'pointer',
-  borderRadius: '4px',
+  marginBottom: '4px',
+  opacity: 0.85,
+  transition: 'all 0.12s ease',
   display: 'flex',
   alignItems: 'center',
   gap: '6px',
   '&::before': {
     content: '"✓"',
-    color: '#059669',
+    color: '#10b981',
     fontWeight: 700,
+    fontSize: '0.75rem',
     textDecoration: 'none',
     flexShrink: 0,
   },
   '&:last-child': {
-    borderBottom: 'none',
+    marginBottom: 0,
   },
   '&:hover': {
-    backgroundColor: '#dbeafe',
+    opacity: 1,
+    backgroundColor: '#f1f5f9',
   },
 })
 
 export const CompletedNoDueDateItem = styled('div')({
-  fontSize: '0.9rem',
-  color: '#6b7280',
+  fontSize: '0.875rem',
+  color: '#94a3b8',
   textDecoration: 'line-through',
   padding: '8px 10px',
   borderBottom: '1px solid #e5e7eb',
@@ -264,8 +308,9 @@ export const CompletedNoDueDateItem = styled('div')({
   gap: '6px',
   '&::before': {
     content: '"✓"',
-    color: '#059669',
+    color: '#10b981',
     fontWeight: 700,
+    fontSize: '0.75rem',
     textDecoration: 'none',
     flexShrink: 0,
   },
@@ -283,17 +328,20 @@ export const BirthdayCakeIcon = styled(CakeIcon)({
 })
 
 export const BirthdayDayDetailItem = styled('div')({
-  fontSize: '0.9rem',
-  color: '#9d174d',
-  padding: '8px 10px',
-  borderBottom: '1px solid #fbcfe8',
+  fontSize: '0.875rem',
+  color: '#831843',
+  padding: '8px 10px 8px 12px',
+  borderRadius: '8px',
+  borderLeft: '3px solid #ec4899',
+  backgroundColor: '#fdf2f8',
   cursor: 'pointer',
-  borderRadius: '4px',
+  marginBottom: '4px',
+  transition: 'all 0.12s ease',
   display: 'flex',
   alignItems: 'center',
   gap: '6px',
   '&:last-child': {
-    borderBottom: 'none',
+    marginBottom: 0,
   },
   '&:hover': {
     backgroundColor: '#fce7f3',
@@ -306,17 +354,20 @@ export const MealPlanIcon = styled(RestaurantIcon)({
 })
 
 export const MealDayDetailItem = styled('div')({
-  fontSize: '0.9rem',
-  color: '#92400e',
-  padding: '8px 10px',
-  borderBottom: '1px solid #fde68a',
+  fontSize: '0.875rem',
+  color: '#78350f',
+  padding: '8px 10px 8px 12px',
+  borderRadius: '8px',
+  borderLeft: '3px solid #f59e0b',
+  backgroundColor: '#fffbeb',
   cursor: 'pointer',
-  borderRadius: '4px',
+  marginBottom: '4px',
+  transition: 'all 0.12s ease',
   display: 'flex',
   alignItems: 'center',
   gap: '6px',
   '&:last-child': {
-    borderBottom: 'none',
+    marginBottom: 0,
   },
   '&:hover': {
     backgroundColor: '#fef3c7',
@@ -324,11 +375,34 @@ export const MealDayDetailItem = styled('div')({
 })
 
 export const MealsSectionHeader = styled(Typography)({
-  fontSize: '0.75rem',
-  fontWeight: 600,
-  color: '#d97706',
-  marginTop: '0.5em',
-  marginBottom: '0.25em',
+  fontSize: '0.7rem',
+  fontWeight: 700,
+  color: '#b45309',
+  marginTop: '12px',
+  marginBottom: '6px',
+  paddingTop: '12px',
+  borderTop: '1px solid rgba(226, 232, 240, 0.9)',
   textTransform: 'uppercase',
-  letterSpacing: '0.05em',
+  letterSpacing: '0.08em',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+})
+
+export const MealsAddButton = styled('span')({
+  fontSize: '0.85rem',
+  fontWeight: 700,
+  color: '#b45309',
+  backgroundColor: 'rgba(245, 158, 11, 0.12)',
+  border: '1.5px dashed #f59e0b',
+  borderRadius: '6px',
+  padding: '1px 8px',
+  cursor: 'pointer',
+  marginLeft: 'auto',
+  transition: 'all 0.12s ease',
+  lineHeight: 1.4,
+  '&:hover': {
+    backgroundColor: 'rgba(245, 158, 11, 0.22)',
+    borderStyle: 'solid',
+  },
 })
