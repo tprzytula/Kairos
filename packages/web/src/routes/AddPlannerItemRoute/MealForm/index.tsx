@@ -30,6 +30,15 @@ import dayjs from 'dayjs'
 
 type Mode = 'recipe' | 'custom'
 
+const GRADIENTS = [
+  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+  'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+  'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+  'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+  'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+]
+
 const MealTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
     borderRadius: '12px',
@@ -67,6 +76,7 @@ const MealTextField = styled(TextField)({
 
 const MealModeToggle = styled(ToggleButtonGroup)({
   width: '100%',
+  gap: '8px',
   '& .MuiToggleButton-root': {
     flex: 1,
     textTransform: 'none',
@@ -92,10 +102,11 @@ const RecipeListBox = styled(Box)({
 })
 
 const RecipeItem = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
-  padding: '10px 14px',
+  padding: '8px 12px',
   cursor: 'pointer',
-  fontSize: '0.9rem',
-  fontWeight: 500,
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
   color: selected ? '#92400e' : '#374151',
   backgroundColor: selected ? '#fef3c7' : 'transparent',
   borderBottom: '1px solid rgba(217, 119, 6, 0.08)',
@@ -107,6 +118,109 @@ const RecipeItem = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
     backgroundColor: selected ? '#fde68a' : '#fffbeb',
   },
 }))
+
+const RecipeThumbnail = styled('img')({
+  width: '36px',
+  height: '36px',
+  borderRadius: '8px',
+  objectFit: 'cover',
+  flexShrink: 0,
+})
+
+const RecipeThumbnailPlaceholder = styled(Box)<{ seed: number }>(({ seed }) => ({
+  width: '36px',
+  height: '36px',
+  borderRadius: '8px',
+  background: GRADIENTS[seed % GRADIENTS.length],
+  flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '0.85rem',
+  fontWeight: 700,
+  color: 'rgba(255,255,255,0.85)',
+}))
+
+const RecipeItemName = styled('span')({
+  fontSize: '0.9rem',
+  fontWeight: 500,
+  flex: 1,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+})
+
+// Recipe photo preview card (mirrors TodayMealCard hero style)
+const RecipePreview = styled(Box)({
+  position: 'relative',
+  width: '100%',
+  height: '160px',
+  borderRadius: '14px',
+  overflow: 'hidden',
+  boxShadow: '0 4px 20px rgba(0,0,0,0.14)',
+})
+
+const RecipePreviewImage = styled('img')({
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  display: 'block',
+})
+
+const RecipePreviewPlaceholder = styled(Box)<{ seed: number }>(({ seed }) => ({
+  width: '100%',
+  height: '100%',
+  background: GRADIENTS[seed % GRADIENTS.length],
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}))
+
+const RecipePreviewPlaceholderInitial = styled('span')({
+  fontSize: '3.5rem',
+  fontWeight: 800,
+  color: 'rgba(255,255,255,0.6)',
+  userSelect: 'none',
+  lineHeight: 1,
+})
+
+const RecipePreviewOverlay = styled(Box)({
+  position: 'absolute',
+  inset: 0,
+  background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.18) 55%, transparent 100%)',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-end',
+  padding: '0.875rem 1rem',
+  gap: '0.2rem',
+})
+
+const RecipePreviewLabel = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.3rem',
+  fontSize: '0.62rem',
+  fontWeight: 700,
+  color: 'rgba(255,255,255,0.7)',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  '& .MuiSvgIcon-root': {
+    fontSize: '0.75rem',
+  },
+})
+
+const RecipePreviewTitle = styled('div')({
+  fontSize: '1.15rem',
+  fontWeight: 700,
+  color: '#fff',
+  lineHeight: '1.25',
+  letterSpacing: '-0.01em',
+  overflow: 'hidden',
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+  textShadow: '0 1px 4px rgba(0,0,0,0.3)',
+})
 
 const SubmitButton = styled(Button)({
   background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
@@ -252,17 +366,50 @@ const MealForm = () => {
                         {search ? 'No recipes found' : 'No recipes yet'}
                       </RecipeItem>
                     ) : (
-                      filteredRecipes.map(recipe => (
-                        <RecipeItem
-                          key={recipe.id}
-                          selected={selectedRecipeId === recipe.id}
-                          onClick={() => setSelectedRecipeId(recipe.id)}
-                        >
-                          {recipe.name}
-                        </RecipeItem>
-                      ))
+                      filteredRecipes.map(recipe => {
+                        const seed = recipe.name.charCodeAt(0)
+                        return (
+                          <RecipeItem
+                            key={recipe.id}
+                            selected={selectedRecipeId === recipe.id}
+                            onClick={() => setSelectedRecipeId(recipe.id)}
+                          >
+                            {recipe.imagePath
+                              ? <RecipeThumbnail src={recipe.imagePath} alt={recipe.name} />
+                              : (
+                                <RecipeThumbnailPlaceholder seed={seed}>
+                                  {recipe.name.charAt(0).toUpperCase()}
+                                </RecipeThumbnailPlaceholder>
+                              )
+                            }
+                            <RecipeItemName>{recipe.name}</RecipeItemName>
+                          </RecipeItem>
+                        )
+                      })
                     )}
                   </RecipeListBox>
+
+                  {selectedRecipe && (
+                    <RecipePreview>
+                      {selectedRecipe.imagePath
+                        ? <RecipePreviewImage src={selectedRecipe.imagePath} alt={selectedRecipe.name} />
+                        : (
+                          <RecipePreviewPlaceholder seed={selectedRecipe.name.charCodeAt(0)}>
+                            <RecipePreviewPlaceholderInitial>
+                              {selectedRecipe.name.charAt(0).toUpperCase()}
+                            </RecipePreviewPlaceholderInitial>
+                          </RecipePreviewPlaceholder>
+                        )
+                      }
+                      <RecipePreviewOverlay>
+                        <RecipePreviewLabel>
+                          <RestaurantIcon />
+                          {mealType}
+                        </RecipePreviewLabel>
+                        <RecipePreviewTitle>{selectedRecipe.name}</RecipePreviewTitle>
+                      </RecipePreviewOverlay>
+                    </RecipePreview>
+                  )}
                 </>
               ) : (
                 <MealTextField
