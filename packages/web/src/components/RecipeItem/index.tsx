@@ -294,7 +294,10 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
               >
                 {shops.map((shop) => (
                   <MenuItem key={shop.id} value={shop.id}>
-                    {shop.icon ? `${shop.icon} ` : ''}{shop.name}
+                    {shop.icon && (
+                      <Box component="img" src={shop.icon} alt="" sx={{ width: 20, height: 20, objectFit: 'contain', mr: 1 }} />
+                    )}
+                    {shop.name}
                   </MenuItem>
                 ))}
               </Select>
