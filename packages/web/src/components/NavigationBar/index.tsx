@@ -8,6 +8,7 @@ import ChecklistIcon from '@mui/icons-material/Checklist';
 import NavigationButton from './NavigationButton';
 import { Route } from '../../enums/route';
 import { Container, Divider, ItemsContainer } from './index.styled';
+import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors';
 import AddItemButton from './AddItemButton';
 import { useShopContext } from '../../providers/ShopProvider';
 import { useCallback } from 'react';
@@ -38,7 +39,7 @@ const NavigationBar = () => {
           UnselectedIcon={HomeOutlinedIcon}
           route={Route.Home}
         />
-        <StyledNavigationButton onClick={handleShoppingCartClick} isSelected={isShoppingCartSelected}>
+        <StyledNavigationButton onClick={handleShoppingCartClick} isSelected={isShoppingCartSelected} accentGradient={SECTION_GRADIENTS.grocery} accentRgb={SECTION_ACCENT_RGB.grocery}>
           <ShoppingCartIcon fontSize="large" />
         </StyledNavigationButton>
         <AddItemButton />
@@ -46,6 +47,8 @@ const NavigationBar = () => {
           SelectedIcon={VolumeUpIcon}
           UnselectedIcon={VolumeUpOutlinedIcon}
           route={Route.NoiseTracking}
+          accentGradient={SECTION_GRADIENTS.noise}
+          accentRgb={SECTION_ACCENT_RGB.noise}
         />
         <NavigationButton
           SelectedIcon={ChecklistIcon}
