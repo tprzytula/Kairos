@@ -1,9 +1,11 @@
 import React from 'react'
+import { Collapse } from '@mui/material'
 import { IBirthdayItem } from '../../../../../../api/birthdays/retrieve/types'
-import { BirthdayRow, BirthdayName, DaysUntil } from './index.styled'
+import { BirthdayRow, BirthdayName, DaysUntil, BirthdaySubLine, MoreCount } from './index.styled'
 
 interface IUpcomingBirthdaysCardProps {
   birthdays: IBirthdayItem[]
+  isExpanded?: boolean
 }
 
 const getNextBirthdayDate = (birthday: IBirthdayItem): Date => {
@@ -27,7 +29,37 @@ const getDaysUntilLabel = (nextDate: Date): { label: string; isToday: boolean } 
   return { label: `in ${diffDays}d`, isToday: false }
 }
 
-export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ birthdays }) => {
+const getAgeLabel = (birthday: IBirthdayItem): string | null => {
+  if (!birthday.birthYear) return null
+  const today = new Date()
+  const thisYear = today.getFullYear()
+  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+  const birthdayThisYear = new Date(thisYear, birthday.month - 1, birthday.day)
+  const age = thisYear - birthday.birthYear
+  if (birthdayThisYear.getTime() === todayMidnight.getTime()) return `${age} today! 🎉`
+  if (birthdayThisYear.getTime() < todayMidnight.getTime()) return `${age} years old`
+  return `turns ${age}`
+}
+
+type SortedBirthday = IBirthdayItem & { nextDate: Date }
+
+const BirthdayEntry: React.FC<{ b: SortedBirthday; showDetails: boolean }> = ({ b, showDetails }) => {
+  const { label, isToday } = getDaysUntilLabel(b.nextDate)
+  const ageLabel = getAgeLabel(b)
+  const subLine = [ageLabel, b.notes].filter(Boolean).join(' · ')
+
+  return (
+    <div>
+      <BirthdayRow>
+        <BirthdayName>{b.name}</BirthdayName>
+        <DaysUntil $isToday={isToday}>{label}</DaysUntil>
+      </BirthdayRow>
+      {showDetails && subLine && <BirthdaySubLine>{subLine}</BirthdaySubLine>}
+    </div>
+  )
+}
+
+export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ birthdays, isExpanded = false }) => {
   if (birthdays.length === 0) {
     return <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #888)' }}>No birthdays saved</span>
   }
@@ -35,19 +67,25 @@ export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ b
   const sorted = [...birthdays]
     .map(b => ({ ...b, nextDate: getNextBirthdayDate(b) }))
     .sort((a, b) => a.nextDate.getTime() - b.nextDate.getTime())
-    .slice(0, 3)
+
+  const top3 = sorted.slice(0, 3)
+  const rest = sorted.slice(3)
 
   return (
     <>
-      {sorted.map(b => {
-        const { label, isToday } = getDaysUntilLabel(b.nextDate)
-        return (
-          <BirthdayRow key={b.id}>
-            <BirthdayName>{b.name}</BirthdayName>
-            <DaysUntil $isToday={isToday}>{label}</DaysUntil>
-          </BirthdayRow>
-        )
-      })}
+      {top3.map(b => (
+        <BirthdayEntry key={b.id} b={b} showDetails={isExpanded} />
+      ))}
+      {rest.length > 0 && (
+        <>
+          <Collapse in={isExpanded} timeout={150}>
+            {rest.map(b => (
+              <BirthdayEntry key={b.id} b={b} showDetails={isExpanded} />
+            ))}
+          </Collapse>
+          {!isExpanded && <MoreCount>+{rest.length} more</MoreCount>}
+        </>
+      )}
     </>
   )
 }
