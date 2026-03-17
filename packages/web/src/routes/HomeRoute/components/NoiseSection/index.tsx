@@ -8,6 +8,7 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import { INoiseSectionProps } from './types'
 import { formatNoiseTimestamp } from '../../../../utils/dateTime'
 import { INoiseTrackingItem } from '../../../../api/noiseTracking'
+import { SECTION_GRADIENTS } from '../../../../constants/sectionColors'
 
 const getFilteredNoiseItems = (noiseTrackingItems: INoiseTrackingItem[], view: string) => {
   const now = new Date()
@@ -97,7 +98,7 @@ export const NoiseSection: React.FC<INoiseSectionProps> = ({
       icon={VolumeUpIcon}
       title="Noise Recordings"
       count={noiseCounts.totalCount}
-      accentGradient="linear-gradient(135deg, #f7971e 0%, #ffd200 100%)"
+      accentGradient={SECTION_GRADIENTS.noise}
       accentBadgeColor="rgba(247, 151, 30, 0.12)"
     >
       {renderContent()}

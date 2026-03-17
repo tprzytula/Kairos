@@ -13,6 +13,7 @@ import { Route } from '../../enums/route'
 import StorefrontIcon from '@mui/icons-material/Storefront'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import { Container, ScrollableContainer, FormContainer } from './index.styled'
+import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
 
 type FormMode = 'none' | 'add' | 'edit'
 
@@ -137,6 +138,8 @@ const ShopListContent = () => {
       <ModernPageHeader
         title="Shops"
         icon={<StorefrontIcon />}
+        accentGradient={SECTION_GRADIENTS.grocery}
+        accentRgb={SECTION_ACCENT_RGB.grocery}
         stats={stats}
       />
       <Container>

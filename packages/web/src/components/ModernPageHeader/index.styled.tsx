@@ -5,7 +5,7 @@ export const HeaderWrapper = styled('div')({
   width: '100%',
 })
 
-export const HeaderCard = styled(Card)(({ theme }) => ({
+export const HeaderCard = styled(Card)<{ accentgradient?: string }>(({ accentgradient }) => ({
   borderRadius: '16px',
   boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
   border: 'none',
@@ -23,7 +23,7 @@ export const HeaderCard = styled(Card)(({ theme }) => ({
     left: 0,
     right: 0,
     height: '3px',
-    background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+    background: accentgradient ?? 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
     opacity: 0.8,
   },
   '&:hover': {
@@ -44,28 +44,28 @@ export const HeaderContent = styled('div')({
   boxSizing: 'border-box',
 })
 
-export const HeaderTitle = styled('h1')(({ theme }) => ({
+export const HeaderTitle = styled('h1')<{ accentgradient?: string }>(({ theme, accentgradient }) => ({
   fontSize: '1.25rem',
   fontWeight: '700',
   color: theme.palette.text.primary,
   margin: 0,
   lineHeight: 1.1,
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  background: accentgradient ?? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   backgroundClip: 'text',
 }))
 
-export const HeaderIcon = styled('div')(({ theme }) => ({
+export const HeaderIcon = styled('div')<{ accentgradient?: string; accentrgb?: string }>(({ accentgradient, accentrgb }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   width: '2.5rem',
   height: '2.5rem',
   borderRadius: '10px',
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  background: accentgradient ?? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   color: 'white',
-  boxShadow: '0 2px 8px rgba(102, 126, 234, 0.25)',
+  boxShadow: `0 2px 8px rgba(${accentrgb ?? '102, 126, 234'}, 0.25)`,
   '& .MuiSvgIcon-root': {
     fontSize: '1.25rem',
   },
@@ -91,12 +91,12 @@ export const StatItem = styled('div')<{ wide?: boolean }>(() => ({
   textAlign: 'center',
 }))
 
-export const StatValue = styled('div')(({ theme }) => ({
+export const StatValue = styled('div')<{ accentgradient?: string }>(({ theme, accentgradient }) => ({
   fontSize: '1.1rem',
   fontWeight: '700',
   color: theme.palette.text.primary,
   lineHeight: 1,
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  background: accentgradient ?? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   backgroundClip: 'text',
