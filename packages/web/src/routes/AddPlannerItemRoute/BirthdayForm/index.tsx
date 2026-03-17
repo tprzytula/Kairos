@@ -189,7 +189,6 @@ const BirthdayForm = () => {
             <Stack spacing={2.5}>
               <FormFieldsContainer>
                 <BirthdayTextField
-                  autoFocus
                   fullWidth
                   label="Person's name"
                   value={name}
