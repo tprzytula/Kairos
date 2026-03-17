@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { Typography, Button, Chip, Tooltip, Box, Checkbox, IconButton } from '@mui/material'
+import { Typography, Button, Chip, Tooltip, Box, Checkbox, IconButton, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
@@ -9,6 +9,7 @@ import { IItemDefault } from '../../hooks/useItemDefaults/types'
 import { findItemIcon } from '../ItemForm/components/ItemImage/utils'
 import { GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import { useProjectContext } from '../../providers/ProjectProvider'
+import { useShopContext } from '../../providers/ShopProvider'
 import { addGroceryItem } from '../../api/groceryList'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
@@ -39,8 +40,11 @@ interface RecipeItemProps {
 const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeItemProps) => {
   const { currentProject } = useProjectContext()
   const { dispatch } = useAppState()
+  const { shops } = useShopContext()
   const [isAdding, setIsAdding] = useState(false)
   const [isSelectingIngredients, setIsSelectingIngredients] = useState(false)
+  const [isSelectingShop, setIsSelectingShop] = useState(false)
+  const [localShopId, setLocalShopId] = useState<string | undefined>(undefined)
   const [deselectedIndices, setDeselectedIndices] = useState<Set<number>>(new Set())
   const [showAllIngredients, setShowAllIngredients] = useState(false)
   const [showInstructions, setShowInstructions] = useState(false)
@@ -60,10 +64,23 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
   const handleCancelSelection = useCallback(() => {
     setIsSelectingIngredients(false)
     setDeselectedIndices(new Set())
+    setLocalShopId(undefined)
   }, [])
 
+  const handleCancelShopSelection = useCallback(() => {
+    setIsSelectingShop(false)
+    setLocalShopId(undefined)
+  }, [])
+
+  const handleConfirmShopSelection = useCallback(() => {
+    if (!localShopId) return
+    setIsSelectingShop(false)
+    setIsSelectingIngredients(true)
+  }, [localShopId])
+
   const handleUseRecipe = useCallback(async () => {
-    if (!currentProject || !shopId || shopId === 'all') return
+    const effectiveShopId = localShopId || shopId
+    if (!currentProject || !effectiveShopId || effectiveShopId === 'all') return
 
     const ingredientsToAdd = recipe.ingredients.filter((_, i) => !deselectedIndices.has(i))
 
@@ -77,7 +94,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                 name: ingredient.name,
                 quantity: ingredient.quantity,
                 unit: ingredient.unit,
-                shopId,
+                shopId: effectiveShopId,
                 imagePath: '',
               },
               currentProject.id
@@ -88,15 +105,17 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
       showAlert({ description: `${recipe.name} ingredients added to your list!`, severity: 'success' }, dispatch)
       setIsSelectingIngredients(false)
       setDeselectedIndices(new Set())
+      setLocalShopId(undefined)
       onUseRecipe()
     } catch (error) {
       showAlert({ description: 'Failed to add ingredients', severity: 'error' }, dispatch)
     } finally {
       setIsAdding(false)
     }
-  }, [currentProject, shopId, recipe, deselectedIndices, dispatch, onUseRecipe])
+  }, [currentProject, shopId, localShopId, recipe, deselectedIndices, dispatch, onUseRecipe])
 
-  const canUseRecipe = shopId && shopId !== 'all'
+  const needsShopSelection = !shopId || shopId === 'all'
+  const canUseRecipe = !needsShopSelection || shops.length > 0
   const hasMoreIngredients = recipe.ingredients.length > INGREDIENTS_PREVIEW_COUNT
   const visibleIngredients =
     showAllIngredients || isSelectingIngredients
@@ -264,7 +283,55 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
           </Box>
         )}
 
-        {isSelectingIngredients ? (
+        {isSelectingShop ? (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', mt: 0.5 }}>
+            <FormControl size="small" fullWidth>
+              <InputLabel>Select shop</InputLabel>
+              <Select
+                value={localShopId || ''}
+                label="Select shop"
+                onChange={(e) => setLocalShopId(e.target.value as string)}
+              >
+                {shops.map((shop) => (
+                  <MenuItem key={shop.id} value={shop.id}>
+                    {shop.icon ? `${shop.icon} ` : ''}{shop.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+              <Button
+                variant="contained"
+                size="small"
+                startIcon={<AddShoppingCartIcon />}
+                onClick={handleConfirmShopSelection}
+                disabled={!localShopId}
+                sx={{
+                  borderRadius: '8px',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  boxShadow: 'none',
+                  '&:hover': { boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)' },
+                  '&:disabled': { background: 'rgba(0,0,0,0.12)' },
+                }}
+              >
+                Continue
+              </Button>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={handleCancelShopSelection}
+                sx={{
+                  borderRadius: '8px',
+                  borderColor: 'rgba(102, 126, 234, 0.4)',
+                  color: '#667eea',
+                  '&:hover': { borderColor: '#667eea', background: 'rgba(102, 126, 234, 0.05)' },
+                }}
+              >
+                Cancel
+              </Button>
+            </Box>
+          </Box>
+        ) : isSelectingIngredients ? (
           <Box sx={{ display: 'flex', gap: '0.5rem', mt: 0.5 }}>
             <Button
               variant="contained"
@@ -298,13 +365,13 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
             </Button>
           </Box>
         ) : (
-          <Tooltip title={canUseRecipe ? `Select ingredients to add to your list` : 'Open a specific shop to use this recipe'}>
+          <Tooltip title={canUseRecipe ? `Select ingredients to add to your list` : 'No shops available'}>
             <span>
               <Button
                 variant="contained"
                 size="small"
                 startIcon={<AddShoppingCartIcon />}
-                onClick={() => setIsSelectingIngredients(true)}
+                onClick={() => needsShopSelection ? setIsSelectingShop(true) : setIsSelectingIngredients(true)}
                 disabled={!canUseRecipe}
                 sx={{
                   mt: 0.5,
