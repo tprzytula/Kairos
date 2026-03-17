@@ -50,7 +50,7 @@ const HomeDataContent = () => {
   const { toDoList, isLoading: isToDoLoading, removeFromToDoList, updateToDoItemFields } = usePlannerContext()
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
   const { birthdays } = useBirthdayContext()
-  const { mealPlans } = useMealPlanContext()
+  const { mealPlans, isLoading: isMealLoading } = useMealPlanContext()
   const { recipes } = useRecipeContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
@@ -116,7 +116,7 @@ const HomeDataContent = () => {
           toDoStats={homeData.toDoStats}
           birthdays={birthdays}
           todayMeals={todayMeals}
-          isLoading={isToDoLoading}
+          isLoading={isToDoLoading || isMealLoading}
           isExpanded={interactions.isToDoItemsExpanded}
           onToggleExpansion={interactions.handleToggleToDoItems}
           onItemToggle={interactions.handleToDoItemToggle}

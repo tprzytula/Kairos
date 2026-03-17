@@ -1,5 +1,14 @@
-import { styled } from '@mui/material/styles'
+import { styled, keyframes } from '@mui/material/styles'
 import { Box } from '@mui/material'
+
+const shimmer = keyframes`
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+`
 
 const GRADIENTS = [
   'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -154,4 +163,58 @@ export const EmptyState = styled('div')(({ theme }) => ({
   fontSize: '0.75rem',
   color: theme.palette.text.secondary,
   padding: '1.2rem',
+}))
+
+export const SkeletonContainer = styled(Box)(({ theme }) => ({
+  position: 'relative',
+  width: '100%',
+  height: '200px',
+  borderRadius: '16px',
+  overflow: 'hidden',
+  backgroundColor: theme.palette.custom?.surfaces?.secondary || '#f5f5f5',
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: `linear-gradient(90deg, ${theme.palette.action.hover} 25%, ${theme.palette.action.selected} 50%, ${theme.palette.action.hover} 75%)`,
+    backgroundSize: '200px 100%',
+    animation: `${shimmer} 1.5s infinite`,
+  },
+}))
+
+export const SkeletonBadge = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  top: '10px',
+  left: '10px',
+  zIndex: 1,
+  width: '80px',
+  height: '20px',
+  borderRadius: '20px',
+  backgroundColor: theme.palette.action.selected,
+}))
+
+export const SkeletonOverlay = styled(Box)({
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  padding: '1rem 1.1rem 0.9rem',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.35rem',
+})
+
+export const SkeletonLine = styled(Box)(({ theme }) => ({
+  height: '10px',
+  borderRadius: '4px',
+  backgroundColor: theme.palette.action.selected,
+}))
+
+export const SkeletonTitle = styled(Box)(({ theme }) => ({
+  height: '20px',
+  borderRadius: '4px',
+  backgroundColor: theme.palette.action.selected,
 }))

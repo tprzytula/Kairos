@@ -20,12 +20,13 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
   toDoStats,
   birthdays,
   todayMeals,
+  isLoading,
   onMealClick,
 }) => {
   return (
     <MiniCardsGrid>
       <MiniCard sx={{ gridColumn: '1 / 3', gridRow: 1, minHeight: 'unset' }}>
-        <TodayMealCard todayMeals={todayMeals} onMealClick={onMealClick} />
+        <TodayMealCard todayMeals={todayMeals} isLoading={isLoading} onMealClick={onMealClick} />
       </MiniCard>
 
       <MiniCard sx={{ gridColumn: 1, gridRow: 2 }}>

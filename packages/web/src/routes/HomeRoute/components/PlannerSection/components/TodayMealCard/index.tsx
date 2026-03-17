@@ -18,12 +18,18 @@ import {
   HeroLabel,
   HeroTitle,
   EmptyState,
+  SkeletonContainer,
+  SkeletonBadge,
+  SkeletonOverlay,
+  SkeletonLine,
+  SkeletonTitle,
 } from './index.styled'
 
 const AUTO_SCROLL_MS = 4000
 
 interface ITodayMealCardProps {
   todayMeals: ITodayMealItem[]
+  isLoading?: boolean
   onMealClick?: (meal: ITodayMealItem) => void
 }
 
@@ -51,7 +57,7 @@ const getDayLabel = (dateStr: string): string => {
   return new Date(`${dateStr}T00:00:00`).toLocaleDateString('en-US', { weekday: 'long' })
 }
 
-export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals, onMealClick }) => {
+export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals, isLoading, onMealClick }) => {
   const meals = sortedMeals(todayMeals)
   const [activeIndex, setActiveIndex] = useState(0)
   const touchStartX = useRef(0)
@@ -110,6 +116,18 @@ export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals, onMea
   const handleDotClick = (index: number) => {
     setActiveIndex(index)
     resetTimer()
+  }
+
+  if (isLoading) {
+    return (
+      <SkeletonContainer>
+        <SkeletonBadge />
+        <SkeletonOverlay>
+          <SkeletonLine sx={{ width: '45%' }} />
+          <SkeletonTitle sx={{ width: '70%' }} />
+        </SkeletonOverlay>
+      </SkeletonContainer>
+    )
   }
 
   if (meals.length === 0) {
