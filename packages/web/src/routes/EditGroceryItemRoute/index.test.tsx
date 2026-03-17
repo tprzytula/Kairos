@@ -1,8 +1,12 @@
 import React from 'react'
 import { act, render, screen } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppStateProvider } from '../../providers/AppStateProvider'
 import { GroceryListProvider } from '../../providers/GroceryListProvider'
+
+const createTestQueryClient = () =>
+  new QueryClient({ defaultOptions: { queries: { retry: false } } })
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
 import { Route } from '../../enums/route'
@@ -197,15 +201,18 @@ describe('Given the EditGroceryItemRoute component', () => {
 })
 
 const renderComponent = () => {
+  const queryClient = createTestQueryClient()
   render(
-    <ThemeProvider theme={theme}>
-      <AppStateProvider>
-        <GroceryListProvider>
-          <BrowserRouter>
-            <EditGroceryItemRoute />
-          </BrowserRouter>
-        </GroceryListProvider>
-      </AppStateProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <AppStateProvider>
+          <GroceryListProvider>
+            <BrowserRouter>
+              <EditGroceryItemRoute />
+            </BrowserRouter>
+          </GroceryListProvider>
+        </AppStateProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   )
 }

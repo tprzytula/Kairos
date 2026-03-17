@@ -1,4 +1,5 @@
 import { render, screen, renderHook, waitFor, act } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useGroceryListContext } from './index'
 import { GroceryListProvider } from './index'
 import * as API from '../../api/groceryList'
@@ -24,6 +25,9 @@ const MOCK_PROJECT: IProject = {
   inviteCode: 'test-invite',
   createdAt: new Date().toISOString(),
 }
+
+const createTestQueryClient = () =>
+  new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
 describe('Given the GroceryListProvider component', () => {
   beforeEach(() => {
@@ -112,8 +116,15 @@ describe('Given the useGroceryListContext hook', () => {
   it('should return the grocery list', async () => {
     jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
 
+    const queryClient = createTestQueryClient()
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <GroceryListProvider>{children}</GroceryListProvider>
+      </QueryClientProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
-      wrapper: GroceryListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -124,8 +135,15 @@ describe('Given the useGroceryListContext hook', () => {
   it('should allow you to refetch the grocery list', async () => {
     jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
 
+    const queryClient = createTestQueryClient()
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <GroceryListProvider>{children}</GroceryListProvider>
+      </QueryClientProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
-      wrapper: GroceryListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -166,8 +184,15 @@ describe('Given the useGroceryListContext hook', () => {
     it('should return an empty array', async () => {
       jest.spyOn(API, 'retrieveGroceryList').mockRejectedValue(new Error('It is what it is'))
 
+      const queryClient = createTestQueryClient()
+      const Wrapper = ({ children }: { children: React.ReactNode }) => (
+        <QueryClientProvider client={queryClient}>
+          <GroceryListProvider>{children}</GroceryListProvider>
+        </QueryClientProvider>
+      )
+
       const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
-        wrapper: GroceryListProvider,
+        wrapper: Wrapper,
       }))
 
       await waitFor(() => {
@@ -180,8 +205,15 @@ describe('Given the useGroceryListContext hook', () => {
     jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
     jest.spyOn(API, 'updateGroceryItem').mockResolvedValue()
 
+    const queryClient = createTestQueryClient()
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <GroceryListProvider>{children}</GroceryListProvider>
+      </QueryClientProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
-      wrapper: GroceryListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -222,8 +254,15 @@ describe('Given the useGroceryListContext hook', () => {
     jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
     jest.spyOn(API, 'updateGroceryItemFields').mockResolvedValue()
 
+    const queryClient = createTestQueryClient()
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <GroceryListProvider>{children}</GroceryListProvider>
+      </QueryClientProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
-      wrapper: GroceryListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -272,8 +311,15 @@ describe('Given the useGroceryListContext hook', () => {
     jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
     jest.spyOn(API, 'removeGroceryItems').mockResolvedValue()
 
+    const queryClient = createTestQueryClient()
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <GroceryListProvider>{children}</GroceryListProvider>
+      </QueryClientProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
-      wrapper: GroceryListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -285,8 +331,10 @@ describe('Given the useGroceryListContext hook', () => {
     })
 
     expect(API.removeGroceryItems).toHaveBeenCalledWith(['1'], 'test-project-id')
-    expect(result.current.groceryList).toHaveLength(1)
-    expect(result.current.groceryList[0].id).toBe('2')
+    await waitFor(() => {
+      expect(result.current.groceryList).toHaveLength(1)
+      expect(result.current.groceryList[0].id).toBe('2')
+    })
   })
 
   it('should handle error when removeGroceryItem fails', async () => {
@@ -294,8 +342,15 @@ describe('Given the useGroceryListContext hook', () => {
     jest.spyOn(API, 'removeGroceryItems').mockRejectedValue(new Error('Remove failed'))
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
 
+    const queryClient = createTestQueryClient()
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <GroceryListProvider>{children}</GroceryListProvider>
+      </QueryClientProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
-      wrapper: GroceryListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -315,8 +370,15 @@ describe('Given the useGroceryListContext hook', () => {
     jest.spyOn(API, 'updateGroceryItem').mockRejectedValue(new Error('Update failed'))
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
 
+    const queryClient = createTestQueryClient()
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <GroceryListProvider>{children}</GroceryListProvider>
+      </QueryClientProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
-      wrapper: GroceryListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -336,8 +398,15 @@ describe('Given the useGroceryListContext hook', () => {
     jest.spyOn(API, 'updateGroceryItemFields').mockRejectedValue(new Error('Update fields failed'))
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
 
+    const queryClient = createTestQueryClient()
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <GroceryListProvider>{children}</GroceryListProvider>
+      </QueryClientProvider>
+    )
+
     const { result } = await waitFor(() => renderHook(() => useGroceryListContext(), {
-      wrapper: GroceryListProvider,
+      wrapper: Wrapper,
     }))
 
     await waitFor(() => {
@@ -375,9 +444,12 @@ const EXAMPLE_GROCERY_LIST: Array<IGroceryItem> = [
 ]
 
 const renderGroceryListProvider = (props: { shopId?: string } = {}) => {
+  const queryClient = createTestQueryClient()
   return render(
-    <GroceryListProvider shopId={props.shopId}>
-      <div>Test</div>
-    </GroceryListProvider>
+    <QueryClientProvider client={queryClient}>
+      <GroceryListProvider shopId={props.shopId}>
+        <div>Test</div>
+      </GroceryListProvider>
+    </QueryClientProvider>
   )
 }

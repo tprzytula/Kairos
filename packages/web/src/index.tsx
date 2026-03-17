@@ -5,6 +5,7 @@ import '@fontsource/roboto/700.css'
 
 import { createRoot } from 'react-dom/client'
 import { ThemeProvider } from '@mui/material/styles'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { App } from './App'
 import theme from './theme'
 import { AppStateProvider } from './providers/AppStateProvider'
@@ -12,6 +13,14 @@ import { BrowserRouter } from 'react-router'
 import AuthProvider from './providers/AuthProvider'
 import { ProjectProvider } from './providers/ProjectProvider'
 import { RecipeProvider } from './providers/RecipeProvider'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+})
 
 const requestPersistentStorage = async (): Promise<void> => {
   if (navigator.storage && navigator.storage.persist) {
@@ -31,18 +40,20 @@ if (container) {
   const root = createRoot(container)
 
   root.render(
-    <ThemeProvider theme={theme}>
-      <AuthProvider>
-        <ProjectProvider>
-          <AppStateProvider>
-            <RecipeProvider>
-              <BrowserRouter>
-                <App />
-              </BrowserRouter>
-            </RecipeProvider>
-          </AppStateProvider>
-        </ProjectProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <AuthProvider>
+          <ProjectProvider>
+            <AppStateProvider>
+              <RecipeProvider>
+                <BrowserRouter>
+                  <App />
+                </BrowserRouter>
+              </RecipeProvider>
+            </AppStateProvider>
+          </ProjectProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   )
 }

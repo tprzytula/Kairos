@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useCallback, useLayoutEffect, useMemo } from 'react'
+import { createContext, useContext, useCallback, useMemo, useEffect } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { IRecipe, IRecipeIngredient } from '../../types/recipe'
 import { getRecipes, addRecipe as addRecipeApi, updateRecipe as updateRecipeApi, deleteRecipe } from '../../api/recipes'
 import { IState, IRecipeProviderProps } from './types'
@@ -19,23 +20,26 @@ export const useRecipeContext = () => useContext(RecipeContext)
 
 export const RecipeProvider = ({ children }: IRecipeProviderProps) => {
   const { currentProject } = useProjectContext()
-  const [recipes, setRecipes] = useState<IRecipe[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const queryClient = useQueryClient()
+  const queryKey = ['recipes', currentProject?.id]
+
+  const query = useQuery({
+    queryKey,
+    queryFn: () => getRecipes(currentProject!.id),
+    enabled: !!currentProject,
+  })
+
+  useEffect(() => {
+    if (query.error) {
+      console.error('Failed to fetch recipes:', query.error)
+    }
+  }, [query.error])
+
+  const recipes = query.data ?? []
 
   const fetchRecipes = useCallback(async () => {
-    if (!currentProject) return
-
-    try {
-      setIsLoading(true)
-      const items = await getRecipes(currentProject.id)
-      setRecipes(items)
-    } catch (error) {
-      console.error('Failed to fetch recipes:', error)
-      setRecipes([])
-    } finally {
-      setIsLoading(false)
-    }
-  }, [currentProject])
+    await query.refetch()
+  }, [query.refetch])
 
   const addRecipe = useCallback(async (name: string, ingredients: IRecipeIngredient[], imagePath?: string, instructions?: string[], externalLink?: string) => {
     if (!currentProject) return
@@ -50,8 +54,8 @@ export const RecipeProvider = ({ children }: IRecipeProviderProps) => {
       externalLink,
       projectId: currentProject.id,
     }
-    setRecipes((prev) => [...prev, newRecipe])
-  }, [currentProject])
+    queryClient.setQueryData<IRecipe[]>(queryKey, (prev = []) => [...prev, newRecipe])
+  }, [currentProject, queryClient])
 
   const updateRecipe = useCallback(async (id: string, fields: { name?: string; ingredients?: IRecipeIngredient[]; instructions?: string[]; imagePath?: string; externalLink?: string }) => {
     if (!currentProject) return
@@ -60,38 +64,30 @@ export const RecipeProvider = ({ children }: IRecipeProviderProps) => {
     const definedFields = Object.fromEntries(
       Object.entries(fields).filter(([, v]) => v !== undefined)
     ) as Partial<IRecipe>
-    setRecipes((prev) =>
-      prev.map((recipe) =>
-        recipe.id === id ? { ...recipe, ...definedFields } : recipe
-      )
+    queryClient.setQueryData<IRecipe[]>(queryKey, (prev = []) =>
+      prev.map((recipe) => recipe.id === id ? { ...recipe, ...definedFields } : recipe)
     )
-  }, [currentProject])
+  }, [currentProject, queryClient])
 
   const removeRecipe = useCallback(async (id: string) => {
     if (!currentProject) return
 
     await deleteRecipe(id, currentProject.id)
-    setRecipes((prev) => prev.filter((recipe) => recipe.id !== id))
-  }, [currentProject])
-
-  useLayoutEffect(() => {
-    if (currentProject) {
-      fetchRecipes()
-    } else {
-      setRecipes([])
-    }
-  }, [currentProject, fetchRecipes])
+    queryClient.setQueryData<IRecipe[]>(queryKey, (prev = []) =>
+      prev.filter((recipe) => recipe.id !== id)
+    )
+  }, [currentProject, queryClient])
 
   const value = useMemo(
     () => ({
       recipes,
-      isLoading,
+      isLoading: query.isLoading,
       fetchRecipes,
       addRecipe,
       updateRecipe,
       removeRecipe,
     }),
-    [recipes, isLoading, fetchRecipes, addRecipe, updateRecipe, removeRecipe]
+    [recipes, query.isLoading, fetchRecipes, addRecipe, updateRecipe, removeRecipe]
   )
 
   return (

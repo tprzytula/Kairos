@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { IGroceryItem } from '../AppStateProvider/types'
 import { removeGroceryItems, retrieveGroceryList, updateGroceryItem, updateGroceryItemFields, GroceryItemUpdateFields } from '../../api/groceryList'
 import { IState, IGroceryListProviderProps } from './types'
@@ -26,8 +27,7 @@ const GROCERY_VIEW_MODE_STORAGE_KEY = 'grocery-view-mode'
 
 export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderProps) => {
   const { currentProject } = useProjectContext()
-  const [groceryList, setGroceryList] = useState<Array<IGroceryItem>>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const queryClient = useQueryClient()
   const [viewMode, setViewMode] = useState<GroceryViewMode>(() => {
     const saved = localStorage.getItem(GROCERY_VIEW_MODE_STORAGE_KEY) as GroceryViewMode | null
     if (saved === GroceryViewMode.ALPHABETICAL || saved === GroceryViewMode.CATEGORIZED) {
@@ -36,99 +36,87 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
     return GroceryViewMode.CATEGORIZED
   })
 
-  const fetchGroceryList = useCallback(async () => {
-    if (!currentProject) {
-      return
-    }
-    
-    try {
-      setIsLoading(true)
+  const actualShopId = shopId === 'all' ? undefined : shopId
+  const queryKey = ['groceryList', currentProject?.id, actualShopId]
 
-      const actualShopId = shopId === 'all' ? undefined : shopId
-
-      const groceryList = addPropertyToEachItemInList({
-        list: await retrieveGroceryList(currentProject.id, actualShopId),
+  const query = useQuery({
+    queryKey,
+    queryFn: async () => {
+      const rawList = await retrieveGroceryList(currentProject!.id, actualShopId)
+      const withProps = addPropertyToEachItemInList({
+        list: rawList,
         properties: { toBeRemoved: false },
       })
-
-      const mappedGroceryList = groceryList.map((item) => ({
+      return withProps.map((item) => ({
         ...item,
         quantity: Number(item.quantity),
       }))
+    },
+    enabled: !!currentProject,
+  })
 
-      setGroceryList(mappedGroceryList)
-    } catch (error) {
-      console.error('Failed to fetch grocery list:', error)
-      setGroceryList([])
-    } finally {
-      setIsLoading(false)
+  useEffect(() => {
+    if (query.error) {
+      console.error('Failed to fetch grocery list:', query.error)
     }
-  }, [currentProject, shopId])
+  }, [query.error])
+
+  const groceryList = query.data ?? []
 
   const refetchGroceryList = useCallback(async () => {
-    await fetchGroceryList()
-  }, [fetchGroceryList])
+    await query.refetch()
+  }, [query.refetch])
 
   const removeGroceryItem = useCallback(async (id: string) => {
     if (!currentProject) return
-    
+
     try {
       await removeGroceryItems([id], currentProject.id)
-      setGroceryList((prev) => prev.filter((item) => item.id !== id))
+      queryClient.setQueryData<IGroceryItem[]>(queryKey, (prev = []) =>
+        prev.filter((item) => item.id !== id)
+      )
     } catch (error) {
       console.error('Failed to remove grocery item:', error)
     }
-  }, [currentProject])
+  }, [currentProject, queryClient, currentProject?.id, actualShopId])
 
   const updateGroceryItemQuantity = useCallback(async (id: string, quantity: number) => {
     if (!currentProject) return
-    
+
     try {
       await updateGroceryItem(id, quantity, currentProject.id)
-      setGroceryList((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, quantity } : item
-        )
+      queryClient.setQueryData<IGroceryItem[]>(queryKey, (prev = []) =>
+        prev.map((item) => item.id === id ? { ...item, quantity } : item)
       )
     } catch (error) {
       console.error('Failed to update grocery item:', error)
     }
-  }, [currentProject])
+  }, [currentProject, queryClient, currentProject?.id, actualShopId])
 
   const updateGroceryItemWithFields = useCallback(async (id: string, fields: GroceryItemUpdateFields) => {
     if (!currentProject) return
-    
+
     try {
       await updateGroceryItemFields(id, fields, currentProject.id)
-      setGroceryList((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, ...fields } : item
-        )
+      queryClient.setQueryData<IGroceryItem[]>(queryKey, (prev = []) =>
+        prev.map((item) => item.id === id ? { ...item, ...fields } : item)
       )
     } catch (error) {
       console.error('Failed to update grocery item fields:', error)
     }
-  }, [currentProject])
+  }, [currentProject, queryClient, currentProject?.id, actualShopId])
 
   const handleSetViewMode = useCallback((mode: GroceryViewMode) => {
     setViewMode(mode)
     localStorage.setItem(GROCERY_VIEW_MODE_STORAGE_KEY, mode)
   }, [])
 
-  useLayoutEffect(() => {
-    if (currentProject) {
-      fetchGroceryList()
-    } else {
-      setGroceryList([])
-    }
-  }, [currentProject, fetchGroceryList])
-
   const isAllItemsView = shopId === 'all'
 
   const value = useMemo(
     () => ({
       groceryList,
-      isLoading,
+      isLoading: query.isLoading,
       isAllItemsView,
       viewMode,
       refetchGroceryList,
@@ -137,11 +125,11 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
       updateGroceryItemFields: updateGroceryItemWithFields,
       setViewMode: handleSetViewMode,
     }),
-    [groceryList, isLoading, isAllItemsView, viewMode, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields, handleSetViewMode]
+    [groceryList, query.isLoading, isAllItemsView, viewMode, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields, handleSetViewMode]
   )
 
   return (
-    <GroceryListContext.Provider value={value}> 
+    <GroceryListContext.Provider value={value}>
       {children}
     </GroceryListContext.Provider>
   )
