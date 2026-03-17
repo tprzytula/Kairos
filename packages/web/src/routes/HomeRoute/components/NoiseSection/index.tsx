@@ -53,7 +53,8 @@ export const NoiseSection: React.FC<INoiseSectionProps> = ({
   noiseCounts,
   isLoading,
   noiseView,
-  onNoiseViewChange
+  onNoiseViewChange,
+  onNavigate
 }) => {
   const renderContent = () => {
     if (isLoading) {
@@ -100,6 +101,7 @@ export const NoiseSection: React.FC<INoiseSectionProps> = ({
       count={noiseCounts.totalCount}
       accentGradient={SECTION_GRADIENTS.noise}
       accentBadgeColor="rgba(247, 151, 30, 0.12)"
+      onHeaderClick={onNavigate}
     >
       {renderContent()}
     </SectionCard>

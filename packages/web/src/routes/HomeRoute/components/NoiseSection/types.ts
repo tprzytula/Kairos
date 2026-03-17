@@ -8,4 +8,5 @@ export interface INoiseSectionProps {
   isLoading: boolean
   noiseView: NoiseView
   onNoiseViewChange: (view: NoiseView) => void
+  onNavigate?: () => void
 }

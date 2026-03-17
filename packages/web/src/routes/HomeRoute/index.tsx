@@ -8,6 +8,7 @@ import { useMealPlanContext, MealPlanProvider } from '../../providers/MealPlanPr
 import { useRecipeContext, RecipeProvider } from '../../providers/RecipeProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
+import { useShopContext } from '../../providers/ShopProvider'
 import { AgentChatProvider } from '../../providers/AgentChatProvider'
 import { IRecipe } from '../../types/recipe'
 import { updateToDoItems } from '../../api/toDoList'
@@ -53,6 +54,7 @@ const HomeDataContent = () => {
   const { recipes } = useRecipeContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
+  const { currentShop } = useShopContext()
   const navigate = useNavigate()
 
   const interactions = useHomeInteractions()
@@ -95,6 +97,18 @@ const HomeDataContent = () => {
     navigate(Route.EditPlannerItem.replace(':id', id))
   }, [navigate])
 
+  const handleGroceryNavigate = useCallback(() => {
+    if (currentShop) {
+      navigate(Route.GroceryList.replace(':shopId', currentShop.id))
+    } else {
+      navigate(Route.Shops)
+    }
+  }, [currentShop, navigate])
+
+  const handleNoiseNavigate = useCallback(() => {
+    navigate(Route.NoiseTracking)
+  }, [navigate])
+
   const handleStepToggle = useCallback(async (todoId: string, stepId: string, isDone: boolean) => {
     const item = toDoList.find(t => t.id === todoId)
     if (!item?.steps) return
@@ -127,6 +141,7 @@ const HomeDataContent = () => {
           groceryStats={homeData.groceryStats}
           isLoading={isGroceryLoading}
           onGroceryItemClick={interactions.handleGroceryItemClick}
+          onNavigate={handleGroceryNavigate}
         />
 
         <NoiseSection
@@ -135,6 +150,7 @@ const HomeDataContent = () => {
           isLoading={isNoiseLoading}
           noiseView={interactions.noiseView}
           onNoiseViewChange={interactions.handleNoiseViewChange}
+          onNavigate={handleNoiseNavigate}
         />
 
         <AgentMessageButton />

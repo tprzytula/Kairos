@@ -8,4 +8,5 @@ export interface SectionCardProps {
   children: ReactNode
   accentGradient?: string
   accentBadgeColor?: string
+  onHeaderClick?: () => void
 }

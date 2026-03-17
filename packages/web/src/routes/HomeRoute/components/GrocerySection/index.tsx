@@ -10,7 +10,8 @@ import { SECTION_GRADIENTS } from '../../../../constants/sectionColors'
 export const GrocerySection: React.FC<IGrocerySectionProps> = ({
   groceryStats,
   isLoading,
-  onGroceryItemClick
+  onGroceryItemClick,
+  onNavigate
 }) => {
   return (
     <SectionCard
@@ -19,6 +20,7 @@ export const GrocerySection: React.FC<IGrocerySectionProps> = ({
       count={groceryStats.totalItems}
       accentGradient={SECTION_GRADIENTS.grocery}
       accentBadgeColor="rgba(17, 153, 142, 0.12)"
+      onHeaderClick={onNavigate}
     >
       {isLoading ? (
         <HomeGroceryItemPlaceholder />
