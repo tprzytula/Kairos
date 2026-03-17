@@ -49,6 +49,8 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
   const [showAllIngredients, setShowAllIngredients] = useState(false)
   const [showInstructions, setShowInstructions] = useState(false)
   const interactiveSectionRef = useRef<HTMLDivElement>(null)
+  const needsShopSelection = !shopId || shopId === 'all'
+  const canUseRecipe = !needsShopSelection || shops.length > 0
 
   const handleToggleIngredient = useCallback((index: number) => {
     setDeselectedIndices((prev) => {
@@ -78,7 +80,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
     setIsSelectingShop(false)
     setIsSelectingIngredients(true)
     setTimeout(() => {
-      interactiveSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      interactiveSectionRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' })
     }, 50)
   }, [localShopId])
 
@@ -89,7 +91,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
       setIsSelectingIngredients(true)
     }
     setTimeout(() => {
-      interactiveSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      interactiveSectionRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' })
     }, 50)
   }, [needsShopSelection])
 
@@ -129,8 +131,6 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
     }
   }, [currentProject, shopId, localShopId, recipe, deselectedIndices, dispatch, onUseRecipe])
 
-  const needsShopSelection = !shopId || shopId === 'all'
-  const canUseRecipe = !needsShopSelection || shops.length > 0
   const hasMoreIngredients = recipe.ingredients.length > INGREDIENTS_PREVIEW_COUNT
   const visibleIngredients =
     showAllIngredients || isSelectingIngredients
