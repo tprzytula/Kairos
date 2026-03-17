@@ -24,3 +24,19 @@ export const DaysUntil = styled('span')<{ $isToday?: boolean }>(({ theme, $isTod
   color: $isToday ? '#f093fb' : theme.palette.text.secondary,
   whiteSpace: 'nowrap',
 }))
+
+export const BirthdaySubLine = styled('div')(({ theme }) => ({
+  fontSize: '0.65rem',
+  color: theme.palette.text.secondary,
+  marginTop: '0.05rem',
+  marginBottom: '0.15rem',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+}))
+
+export const MoreCount = styled('div')(({ theme }) => ({
+  fontSize: '0.7rem',
+  color: theme.palette.text.secondary,
+  fontWeight: 600,
+}))
