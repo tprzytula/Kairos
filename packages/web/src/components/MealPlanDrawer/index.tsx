@@ -49,24 +49,17 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
   const [mealType, setMealType] = useState<MealType>(MealType.Dinner)
 
   useEffect(() => {
-    if (open) {
-      if (mealPlan) {
-        if (mealPlan.recipeId) {
-          setMode('recipe')
-          setSelectedRecipeId(mealPlan.recipeId)
-          setCustomName('')
-        } else {
-          setMode('custom')
-          setCustomName(mealPlan.recipeName)
-          setSelectedRecipeId(undefined)
-        }
-        setMealType(mealPlan.mealType ?? MealType.Dinner)
-      } else {
+    if (open && mealPlan) {
+      if (mealPlan.recipeId) {
         setMode('recipe')
+        setSelectedRecipeId(mealPlan.recipeId)
         setCustomName('')
+      } else {
+        setMode('custom')
+        setCustomName(mealPlan.recipeName)
         setSelectedRecipeId(undefined)
-        setMealType(MealType.Dinner)
       }
+      setMealType(mealPlan.mealType ?? MealType.Dinner)
       setSearch('')
     }
   }, [open, mealPlan])
@@ -107,7 +100,7 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
           <Box sx={{ px: '1.25em' }}>
             <DrawerHeader>
               <RestaurantIcon sx={{ fontSize: '1.1rem', verticalAlign: 'middle', marginRight: '6px' }} />
-              {mealPlan ? 'Edit Meal' : 'Add Meal'}
+              Edit Meal
             </DrawerHeader>
             <DateLabel>{displayDate}</DateLabel>
           </Box>

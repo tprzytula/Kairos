@@ -9,7 +9,7 @@ import { FormFieldType } from '../../components/ItemForm/enums'
 import { IFormField } from '../../components/ItemForm/types'
 import { addTodoItem } from '../../api/toDoList'
 import { validateFields } from './utils'
-import { useNavigate } from 'react-router'
+import { useNavigate, useLocation } from 'react-router'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { useAuth } from 'react-oidc-context'
@@ -88,9 +88,10 @@ export const AddPlannerItemContent = () => {
   const { state: { selectedCalendarDate }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
   const navigate = useNavigate()
+  const location = useLocation()
   const { toDoList } = usePlannerContext()
   const { user } = useAuth()
-  const [itemType, setItemType] = useState<ItemType>('task')
+  const [itemType, setItemType] = useState<ItemType>((location.state as { itemType?: ItemType } | null)?.itemType ?? 'task')
   const [steps, setSteps] = useState<IStep[]>([])
 
   const taskFields = useMemo<Array<IFormField>>(() => [

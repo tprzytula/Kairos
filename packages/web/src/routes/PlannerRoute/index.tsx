@@ -22,18 +22,20 @@ import { PlannerViewMode } from '../../enums/plannerViewMode'
 import { IMealPlan } from '../../types/mealPlan'
 import { MealType } from '../../enums/mealType'
 import dayjs from 'dayjs'
+import { useNavigate } from 'react-router'
+import { Route } from '../../enums/route'
 
 const PlannerContent = () => {
   const { toDoList, refetchToDoList } = usePlannerContext()
   const { state: { selectedTodoItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
+  const navigate = useNavigate()
   const [allExpanded, setAllExpanded] = useState(true)
   const [expandKey, setExpandKey] = useState(0)
   const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.CALENDAR)
-  const { mealPlans, addMealPlan, updateMealPlan, removeMealPlan } = useMealPlanContext()
+  const { mealPlans, updateMealPlan, removeMealPlan } = useMealPlanContext()
 
   const [mealDrawerOpen, setMealDrawerOpen] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [editingMealPlan, setEditingMealPlan] = useState<IMealPlan | undefined>(undefined)
 
   const pendingItems = toDoList.filter(item => !item.isDone)
@@ -121,31 +123,26 @@ const PlannerContent = () => {
   }, [])
 
   const handleAddMealPlan = useCallback((date: string) => {
-    setSelectedDate(date)
-    setEditingMealPlan(undefined)
-    setMealDrawerOpen(true)
-  }, [])
+    dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: date })
+    navigate(Route.AddPlannerItem, { state: { itemType: 'meal' } })
+  }, [dispatch, navigate])
 
   const handleMealPlanClick = useCallback((mealPlan: IMealPlan) => {
-    setSelectedDate(mealPlan.date)
     setEditingMealPlan(mealPlan)
     setMealDrawerOpen(true)
   }, [])
 
   const handleMealPlanSave = useCallback(async (date: string, recipeName: string, recipeId?: string, mealType?: MealType) => {
+    if (!editingMealPlan) return
     try {
-      if (editingMealPlan) {
-        const recipeIdUpdate = recipeId !== undefined ? recipeId : (editingMealPlan.recipeId ? null : undefined)
-        await updateMealPlan(editingMealPlan.id, { date, recipeName, recipeId: recipeIdUpdate, mealType: mealType ?? null })
-      } else {
-        await addMealPlan(date, recipeName, recipeId, mealType)
-      }
+      const recipeIdUpdate = recipeId !== undefined ? recipeId : (editingMealPlan.recipeId ? null : undefined)
+      await updateMealPlan(editingMealPlan.id, { date, recipeName, recipeId: recipeIdUpdate, mealType: mealType ?? null })
       setMealDrawerOpen(false)
     } catch (error) {
       console.error('Failed to save meal plan:', error)
       showAlert({ description: 'Failed to save meal plan', severity: 'error' }, dispatch)
     }
-  }, [editingMealPlan, addMealPlan, updateMealPlan, dispatch])
+  }, [editingMealPlan, updateMealPlan, dispatch])
 
   const handleMealPlanDelete = useCallback(async (id: string) => {
     try {
@@ -200,7 +197,7 @@ const PlannerContent = () => {
       </Container>
       <MealPlanDrawer
         open={mealDrawerOpen}
-        date={selectedDate}
+        date={editingMealPlan?.date ?? null}
         mealPlan={editingMealPlan}
         onClose={() => setMealDrawerOpen(false)}
         onSave={handleMealPlanSave}
