@@ -1,4 +1,3 @@
-import { Drawer, Box } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import LinkIcon from '@mui/icons-material/Link'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
@@ -18,6 +17,7 @@ import {
   MealsAddButton,
 } from '../Planner/CalendarView/index.styled'
 import { DrawerContent, DrawerHeader, DateLabel, SectionLabel } from './index.styled'
+import DraggableBottomDrawer from '../DraggableBottomDrawer'
 
 interface IDayPreviewDrawerProps {
   open: boolean
@@ -49,20 +49,21 @@ const DayPreviewDrawer = ({
   onMealPlanClick,
 }: IDayPreviewDrawerProps) => {
   return (
-    <Drawer
-      anchor="bottom"
+    <DraggableBottomDrawer
       open={open}
       onClose={onClose}
-      PaperProps={{ sx: { borderRadius: '16px 16px 0 0', maxHeight: '85vh', overflow: 'hidden' } }}
+      paperSx={{ maxHeight: '85vh' }}
+      dragHandleContent={
+        <>
+          <DrawerHeader>
+            <CalendarTodayIcon sx={{ fontSize: '1.1rem' }} />
+            {selectedDay ? dayjs(selectedDay).format('dddd') : ''}
+          </DrawerHeader>
+          <DateLabel>{selectedDay ? dayjs(selectedDay).format('D MMMM YYYY') : ''}</DateLabel>
+        </>
+      }
     >
-      <Box sx={{ width: '40px', height: '4px', backgroundColor: '#cbd5e1', borderRadius: '2px', margin: '10px auto 0', flexShrink: 0 }} />
       <DrawerContent>
-        <DrawerHeader>
-          <CalendarTodayIcon sx={{ fontSize: '1.1rem' }} />
-          {selectedDay ? dayjs(selectedDay).format('dddd') : ''}
-        </DrawerHeader>
-        <DateLabel>{selectedDay ? dayjs(selectedDay).format('D MMMM YYYY') : ''}</DateLabel>
-
         <SectionLabel color={isOverdue ? '#dc2626' : '#1d4ed8'}>Tasks</SectionLabel>
         {pendingTodos.length === 0 && completedTodos.length === 0 ? (
           <DayDetailEmpty>No tasks on this day</DayDetailEmpty>
@@ -117,7 +118,7 @@ const DayPreviewDrawer = ({
           ))
         )}
       </DrawerContent>
-    </Drawer>
+    </DraggableBottomDrawer>
   )
 }
 

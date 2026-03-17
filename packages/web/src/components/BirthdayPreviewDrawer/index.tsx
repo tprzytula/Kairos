@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
-import { Box, Button, Drawer } from '@mui/material'
+import { Button } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import dayjs from 'dayjs'
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types'
-import { useDragToClose } from '../../hooks/useDragToClose'
+import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import {
   ContentContainer,
   DrawerHeader,
@@ -31,8 +31,6 @@ interface BirthdayPreviewDrawerProps {
 }
 
 const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPreviewDrawerProps) => {
-  const { dragOffset, isDragging, onPointerDown, onPointerMove, onPointerUp } = useDragToClose({ onClose })
-
   const handleEdit = useCallback(() => {
     if (!item) return
     onEdit(item)
@@ -63,133 +61,76 @@ const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPrev
   })()
 
   return (
-    <Drawer
-      anchor="bottom"
+    <DraggableBottomDrawer
       open={item !== null}
       onClose={onClose}
-      transitionDuration={{ enter: 350, exit: 300 }}
-      PaperProps={{
-        sx: {
-          borderRadius: '16px 16px 0 0',
-          overflow: 'hidden',
-          background: 'transparent',
-          maxHeight: '80vh',
-        },
-      }}
+      paperSx={{ maxHeight: '80vh' }}
+      dragHandleContent={
+        <DrawerHeader>
+          <DrawerHeaderLeft>
+            <DrawerIconBox>
+              <CakeIcon />
+            </DrawerIconBox>
+            <DrawerTitle>Birthday</DrawerTitle>
+          </DrawerHeaderLeft>
+        </DrawerHeader>
+      }
     >
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-          bgcolor: 'background.paper',
-          transform: `translateY(${dragOffset}px)`,
-          transition: isDragging.current
-            ? 'transform 0s'
-            : 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
-      >
-        {/* Drag handle */}
-        <Box
-          role="button"
-          aria-label="Drag to close"
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
+      <ContentContainer>
+        <PersonName>{item?.name}</PersonName>
+
+        <MetaRow>
+          <CalendarTodayIcon sx={{ fontSize: '1rem' }} />
+          {birthdayDate}
+          {ageInfo !== null && (
+            <span style={{ color: '#db2777', fontWeight: 600 }}>
+              · {ageInfo.label}
+            </span>
+          )}
+        </MetaRow>
+
+        {item?.notes ? (
+          <NotesText>{item.notes}</NotesText>
+        ) : (
+          <NoNotesText>No notes</NoNotesText>
+        )}
+      </ContentContainer>
+
+      <Footer>
+        <Button
+          variant="contained"
+          fullWidth
+          startIcon={<EditIcon />}
+          onClick={handleEdit}
           sx={{
-            width: '100%',
-            flexShrink: 0,
-            cursor: 'grab',
-            touchAction: 'none',
-            userSelect: 'none',
-            '& *': { touchAction: 'none', userSelect: 'none' },
-            '&:active': { cursor: 'grabbing' },
+            background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+            borderRadius: '10px',
+            textTransform: 'none',
+            fontWeight: 600,
+            py: 1.25,
+            boxShadow: 'none',
+            '&:hover': { boxShadow: 'none', opacity: 0.9 },
           }}
         >
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              pt: '10px',
-              pb: '2px',
-            }}
-          >
-            <Box
-              sx={{
-                width: '36px',
-                height: '4px',
-                borderRadius: '2px',
-                background: 'rgba(0,0,0,0.15)',
-              }}
-            />
-          </Box>
-          <DrawerHeader>
-            <DrawerHeaderLeft>
-              <DrawerIconBox>
-                <CakeIcon />
-              </DrawerIconBox>
-              <DrawerTitle>Birthday</DrawerTitle>
-            </DrawerHeaderLeft>
-          </DrawerHeader>
-        </Box>
-
-        <ContentContainer>
-          <PersonName>{item?.name}</PersonName>
-
-          <MetaRow>
-            <CalendarTodayIcon sx={{ fontSize: '1rem' }} />
-            {birthdayDate}
-            {ageInfo !== null && (
-              <span style={{ color: '#db2777', fontWeight: 600 }}>
-                · {ageInfo.label}
-              </span>
-            )}
-          </MetaRow>
-
-          {item?.notes ? (
-            <NotesText>{item.notes}</NotesText>
-          ) : (
-            <NoNotesText>No notes</NoNotesText>
-          )}
-        </ContentContainer>
-
-        <Footer>
-          <Button
-            variant="contained"
-            fullWidth
-            startIcon={<EditIcon />}
-            onClick={handleEdit}
-            sx={{
-              background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
-              borderRadius: '10px',
-              textTransform: 'none',
-              fontWeight: 600,
-              py: 1.25,
-              boxShadow: 'none',
-              '&:hover': { boxShadow: 'none', opacity: 0.9 },
-            }}
-          >
-            Edit
-          </Button>
-          <Button
-            variant="outlined"
-            fullWidth
-            startIcon={<DeleteIcon />}
-            onClick={handleDelete}
-            color="error"
-            sx={{
-              borderRadius: '10px',
-              textTransform: 'none',
-              fontWeight: 600,
-              py: 1.25,
-            }}
-          >
-            Delete
-          </Button>
-        </Footer>
-      </Box>
-    </Drawer>
+          Edit
+        </Button>
+        <Button
+          variant="outlined"
+          fullWidth
+          startIcon={<DeleteIcon />}
+          onClick={handleDelete}
+          color="error"
+          sx={{
+            borderRadius: '10px',
+            textTransform: 'none',
+            fontWeight: 600,
+            py: 1.25,
+          }}
+        >
+          Delete
+        </Button>
+      </Footer>
+    </DraggableBottomDrawer>
   )
 }
 
