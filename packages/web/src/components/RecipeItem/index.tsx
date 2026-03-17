@@ -7,6 +7,8 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { IRecipe } from '../../types/recipe'
 import { IItemDefault } from '../../hooks/useItemDefaults/types'
 import { findItemIcon } from '../ItemForm/components/ItemImage/utils'
+
+const GENERIC_ITEM_NAME = 'generic'
 import { GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { useShopContext } from '../../providers/ShopProvider'
@@ -95,7 +97,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                 quantity: ingredient.quantity,
                 unit: ingredient.unit,
                 shopId: effectiveShopId,
-                imagePath: '',
+                imagePath: findItemIcon(ingredient.name, defaults) || findItemIcon(GENERIC_ITEM_NAME, defaults) || '',
               },
               currentProject.id
             )
