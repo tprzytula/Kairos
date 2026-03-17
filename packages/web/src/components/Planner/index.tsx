@@ -17,6 +17,7 @@ import BirthdayPreviewDrawer from '../BirthdayPreviewDrawer';
 import BirthdayFormDialog from '../BirthdayFormDialog';
 import GroupedView from './GroupedView';
 import CalendarView from './CalendarView';
+import CalendarViewPlaceholder from './CalendarView/Placeholder';
 import WeeklyView from './WeeklyView';
 import Placeholder from './Placeholder';
 import EmptyPlanner from './EmptyPlanner';
@@ -144,7 +145,7 @@ export const Planner = ({
   if (viewMode === PlannerViewMode.CALENDAR) {
     return (
       <>
-        {isLoading ? <Placeholder /> : (
+        {isLoading ? <CalendarViewPlaceholder /> : (
           <CalendarView
             visibleToDoItems={toDoList}
             onItemClick={handlePreview}
