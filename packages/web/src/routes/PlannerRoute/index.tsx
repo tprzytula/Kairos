@@ -135,7 +135,8 @@ const PlannerContent = () => {
   const handleMealPlanSave = useCallback(async (date: string, recipeName: string, recipeId?: string, mealType?: MealType) => {
     try {
       if (editingMealPlan) {
-        await updateMealPlan(editingMealPlan.id, { date, recipeName, recipeId: recipeId ?? null, mealType: mealType ?? null })
+        const recipeIdUpdate = recipeId !== undefined ? recipeId : (editingMealPlan.recipeId ? null : undefined)
+        await updateMealPlan(editingMealPlan.id, { date, recipeName, recipeId: recipeIdUpdate, mealType: mealType ?? null })
       } else {
         await addMealPlan(date, recipeName, recipeId, mealType)
       }
