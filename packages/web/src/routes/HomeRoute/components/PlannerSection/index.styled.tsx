@@ -5,7 +5,7 @@ export const MiniCardsGrid = styled(Box)({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
   gridTemplateRows: 'auto auto',
-  gap: '0.6rem',
+  gap: '0.875rem',
   width: '100%',
 })
 
@@ -14,9 +14,7 @@ export const MiniCard = styled(Card)({
   boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
   border: 'none',
   background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%)',
-  backdropFilter: 'blur(10px)',
-  WebkitBackdropFilter: 'blur(10px)',
-  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  transition: 'transform 0.1s ease, box-shadow 0.1s ease',
   position: 'relative',
   overflow: 'hidden',
   display: 'flex',
@@ -32,9 +30,9 @@ export const MiniCard = styled(Card)({
     background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
     opacity: 1,
   },
-  '&:hover': {
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-    transform: 'translateY(-2px)',
+  '&:active': {
+    transform: 'scale(0.985)',
+    boxShadow: '0 1px 6px rgba(0, 0, 0, 0.06)',
   },
 })
 

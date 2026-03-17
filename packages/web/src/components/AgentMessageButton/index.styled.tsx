@@ -10,12 +10,10 @@ export const AgentMessageButtonContainer = styled(Box)({
 
 export const AgentMessageCard = styled(Card)(({ theme }) => ({
   borderRadius: '16px',
-  boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
+  boxShadow: '0 1px 6px rgba(0, 0, 0, 0.04)',
   border: 'none',
   background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.98) 100%)',
-  backdropFilter: 'blur(10px)',
-  WebkitBackdropFilter: 'blur(10px)',
-  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  transition: 'transform 0.1s ease, box-shadow 0.1s ease',
   position: 'relative',
   overflow: 'hidden',
   padding: '1rem 1.25rem',
@@ -32,11 +30,10 @@ export const AgentMessageCard = styled(Card)(({ theme }) => ({
     height: '3px',
     background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
     opacity: 1,
-    transition: 'opacity 0.3s ease',
   },
-  '&:hover': {
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-    transform: 'translateY(-2px)',
+  '&:active': {
+    transform: 'scale(0.985)',
+    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.04)',
   },
 }))
 

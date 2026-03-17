@@ -2,6 +2,7 @@ import { styled } from '@mui/material/styles'
 import { Card, CardContent, Box } from '@mui/material'
 
 const DEFAULT_ACCENT = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+const DEFAULT_BADGE_COLOR = 'rgba(102, 126, 234, 0.1)'
 
 export const FullWidthSection = styled(Box)({
   gridColumn: 'auto',
@@ -14,14 +15,11 @@ export const SectionCard = styled(Card, {
   boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
   border: 'none',
   background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%)',
-  backdropFilter: 'blur(10px)',
-  WebkitBackdropFilter: 'blur(10px)',
-  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  transition: 'transform 0.1s ease, box-shadow 0.1s ease',
   position: 'relative',
   overflow: 'hidden',
   display: 'flex',
   flexDirection: 'column',
-  minHeight: '120px',
   height: 'auto',
   '&:before': {
     content: '""',
@@ -33,9 +31,9 @@ export const SectionCard = styled(Card, {
     background: accentGradient || DEFAULT_ACCENT,
     opacity: 1,
   },
-  '&:hover': {
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-    transform: 'translateY(-2px)',
+  '&:active': {
+    transform: 'scale(0.985)',
+    boxShadow: '0 1px 6px rgba(0, 0, 0, 0.06)',
   },
 }))
 
@@ -68,11 +66,13 @@ export const StyledIcon = styled('div', {
   },
 }))
 
-export const ItemCount = styled('span')(({ theme }) => ({
+export const ItemCount = styled('span', {
+  shouldForwardProp: (prop) => prop !== 'accentBadgeColor',
+})<{ accentBadgeColor?: string }>(({ theme, accentBadgeColor }) => ({
   fontSize: '0.75rem',
   fontWeight: '500',
   color: theme.palette.text.secondary,
-  background: 'rgba(102, 126, 234, 0.1)',
+  background: accentBadgeColor || DEFAULT_BADGE_COLOR,
   padding: '0.2rem 0.5rem',
   borderRadius: '12px',
   minWidth: '1.5rem',

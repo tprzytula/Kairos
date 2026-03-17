@@ -21,6 +21,6 @@ export const Content = styled('div')<IContentProps>(({ centerVertically }) => ({
     justifyContent: centerVertically ? 'center' : 'flex-start',
     width: '100%',
     flex: 1,
-    padding: '0 0.5em',
+    padding: '0 0.75rem',
     overflow: 'scroll',
 }))

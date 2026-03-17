@@ -17,6 +17,7 @@ export const GrocerySection: React.FC<IGrocerySectionProps> = ({
       title="Grocery List"
       count={groceryStats.totalItems}
       accentGradient="linear-gradient(135deg, #11998e 0%, #38ef7d 100%)"
+      accentBadgeColor="rgba(17, 153, 142, 0.12)"
     >
       {isLoading ? (
         <HomeGroceryItemPlaceholder />

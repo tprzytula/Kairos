@@ -7,4 +7,5 @@ export interface SectionCardProps {
   count: number
   children: ReactNode
   accentGradient?: string
+  accentBadgeColor?: string
 }

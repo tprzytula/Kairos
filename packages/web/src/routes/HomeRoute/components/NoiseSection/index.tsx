@@ -98,6 +98,7 @@ export const NoiseSection: React.FC<INoiseSectionProps> = ({
       title="Noise Recordings"
       count={noiseCounts.totalCount}
       accentGradient="linear-gradient(135deg, #f7971e 0%, #ffd200 100%)"
+      accentBadgeColor="rgba(247, 151, 30, 0.12)"
     >
       {renderContent()}
     </SectionCard>

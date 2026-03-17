@@ -9,11 +9,9 @@ export const HomeHeaderContainer = styled(Box)({
 
 export const HomeHeaderCard = styled(Card)({
   borderRadius: '16px',
-  boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
+  boxShadow: '0 4px 20px rgba(102, 126, 234, 0.10)',
   border: 'none',
   background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%)',
-  backdropFilter: 'blur(10px)',
-  WebkitBackdropFilter: 'blur(10px)',
   position: 'relative',
   overflow: 'hidden',
   padding: '1rem 1.25rem',

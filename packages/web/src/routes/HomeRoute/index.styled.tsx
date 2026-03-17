@@ -8,5 +8,5 @@ export const Container = styled(Box)({
   width: '100%',
   maxWidth: '100%',
   boxSizing: 'border-box',
-  background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.02) 0%, rgba(118, 75, 162, 0.02) 50%, rgba(240, 147, 251, 0.02) 100%)'
+  background: '#f5f4f9'
 })
