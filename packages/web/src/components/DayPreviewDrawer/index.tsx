@@ -16,7 +16,16 @@ import {
   MealsSectionHeader,
   MealsAddButton,
 } from '../Planner/CalendarView/index.styled'
-import { DrawerContent, DrawerHeader, DateLabel, SectionLabel } from './index.styled'
+import {
+  DrawerContent,
+  DrawerHeader,
+  DrawerHeaderLeft,
+  DrawerIconBox,
+  DrawerTitleGroup,
+  DrawerTitle,
+  DrawerSubtitle,
+  SectionLabel,
+} from './index.styled'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 
 interface IDayPreviewDrawerProps {
@@ -54,17 +63,30 @@ const DayPreviewDrawer = ({
       onClose={onClose}
       paperSx={{ maxHeight: '85vh' }}
       dragHandleContent={
-        <>
-          <DrawerHeader>
-            <CalendarTodayIcon sx={{ fontSize: '1.1rem' }} />
-            {selectedDay ? dayjs(selectedDay).format('dddd') : ''}
-          </DrawerHeader>
-          <DateLabel>{selectedDay ? dayjs(selectedDay).format('D MMMM YYYY') : ''}</DateLabel>
-        </>
+        <DrawerHeader>
+          <DrawerHeaderLeft>
+            <DrawerIconBox>
+              <CalendarTodayIcon />
+            </DrawerIconBox>
+            <DrawerTitleGroup>
+              <DrawerTitle>
+                {selectedDay ? dayjs(selectedDay).format('dddd') : ''}
+              </DrawerTitle>
+              <DrawerSubtitle>
+                {selectedDay ? dayjs(selectedDay).format('D MMMM YYYY') : ''}
+              </DrawerSubtitle>
+            </DrawerTitleGroup>
+          </DrawerHeaderLeft>
+        </DrawerHeader>
       }
     >
       <DrawerContent>
-        <SectionLabel color={isOverdue ? '#dc2626' : '#1d4ed8'}>Tasks</SectionLabel>
+        <SectionLabel
+          color={isOverdue ? '#dc2626' : '#1d4ed8'}
+          sx={{ mt: 0, pt: 0, borderTop: 'none' }}
+        >
+          Tasks
+        </SectionLabel>
         {pendingTodos.length === 0 && completedTodos.length === 0 ? (
           <DayDetailEmpty>No tasks on this day</DayDetailEmpty>
         ) : (
