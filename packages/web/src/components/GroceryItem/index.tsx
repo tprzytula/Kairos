@@ -1,14 +1,14 @@
-import { Container, ActionArea, Content, Media, Name, ActionContainer, DeleteButtonIcon, QuantityDisplay, QuantityText, UnitText, ShopIndicatorBadge } from './index.styled'
+import { Container, ActionArea, Content, Media, Name, ActionContainer, DeleteButtonIcon, QuantityDisplay, QuantityText, UnitText } from './index.styled'
 import { IGroceryItemProps } from './types'
 import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
 import { useMemo, useCallback, memo } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import StorefrontIcon from '@mui/icons-material/Storefront';
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import { useShopContext } from '../../providers/ShopProvider';
 import { ActionButton } from '../ActionButton';
+import ShopIconBadge from '../ShopIconBadge';
 
 const GroceryItem = memo(({ id, name, quantity, imagePath, unit, shopId }: IGroceryItemProps) => {
   const { state: { purchasedItems }, dispatch } = useAppState()
@@ -65,17 +65,7 @@ const GroceryItem = memo(({ id, name, quantity, imagePath, unit, shopId }: IGroc
       >  
         <Media image={imagePath} sx={imagePath ? { backgroundImage: `url(${imagePath})` } : undefined}>
           {shopForBadge && (
-            <ShopIndicatorBadge>
-              {shopForBadge.icon ? (
-                <img
-                  src={shopForBadge.icon}
-                  alt={shopForBadge.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%' }}
-                />
-              ) : (
-                <StorefrontIcon sx={{ fontSize: '12px', color: 'rgba(0,0,0,0.5)' }} />
-              )}
-            </ShopIndicatorBadge>
+            <ShopIconBadge shop={shopForBadge} size={20} bottom="-4px" right="-4px" />
           )}
         </Media>
         <Content>

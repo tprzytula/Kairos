@@ -136,21 +136,3 @@ export const DeleteButtonIcon = styled('button')({
   border: 'none',
   cursor: 'pointer',
 })
-
-export const ShopIndicatorBadge = styled('div')({
-  position: 'absolute',
-  bottom: '-4px',
-  right: '-4px',
-  width: '20px',
-  height: '20px',
-  borderRadius: '50%',
-  backgroundColor: '#ffffff',
-  border: '2px solid #ffffff',
-  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  overflow: 'hidden',
-  zIndex: 1,
-  flexShrink: 0,
-})

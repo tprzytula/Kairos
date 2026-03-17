@@ -48,6 +48,7 @@ describe('GrocerySection component', () => {
       renderWithTheme(
         <GrocerySection
           groceryStats={groceryStats}
+          shops={[]}
           isLoading={true}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
@@ -65,11 +66,13 @@ describe('GrocerySection component', () => {
       renderWithTheme(
         <GrocerySection
           groceryStats={groceryStats}
+          shops={[]}
+          shops={[]}
           isLoading={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
       )
-      
+
       expect(screen.getByText('No grocery items found')).toBeInTheDocument()
     })
   })
@@ -92,6 +95,7 @@ describe('GrocerySection component', () => {
       renderWithTheme(
         <GrocerySection
           groceryStats={groceryStats}
+          shops={[]}
           isLoading={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
@@ -119,6 +123,7 @@ describe('GrocerySection component', () => {
       renderWithTheme(
         <GrocerySection
           groceryStats={groceryStats}
+          shops={[]}
           isLoading={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
@@ -139,6 +144,7 @@ describe('GrocerySection component', () => {
       renderWithTheme(
         <GrocerySection
           groceryStats={groceryStats}
+          shops={[]}
           isLoading={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
@@ -166,6 +172,7 @@ describe('GrocerySection component', () => {
       renderWithTheme(
         <GrocerySection
           groceryStats={groceryStats}
+          shops={[]}
           isLoading={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
@@ -195,6 +202,7 @@ describe('GrocerySection component', () => {
       renderWithTheme(
         <GrocerySection
           groceryStats={groceryStats}
+          shops={[]}
           isLoading={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
