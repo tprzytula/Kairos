@@ -6,6 +6,7 @@ import { Settings as SettingsIcon, Notifications as NotificationsIcon, ShoppingC
 import * as Styled from './index.styled'
 import { getPostLogoutRedirectUri, oidcConfig } from '../../config/oidc'
 import { useProjectContext } from '../../providers/ProjectProvider'
+import { useVersion } from '../../hooks/useVersion'
 import CreateProjectDialog from '../CreateProjectDialog'
 import JoinProjectDialog from '../JoinProjectDialog'
 import ProjectSettingsSubpage from './ProjectSettingsSubpage'
@@ -17,6 +18,7 @@ type SubpageView = 'main' | 'projects' | 'notifications' | 'grocery'
 const UserMenu: React.FC = () => {
   const auth = useAuth()
   const { switchProject } = useProjectContext()
+  const { version } = useVersion()
   const [isOpen, setIsOpen] = useState(false)
   const [currentView, setCurrentView] = useState<SubpageView>('main')
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 })
@@ -181,10 +183,14 @@ const UserMenu: React.FC = () => {
                 </Styled.MainMenuItem>
 
                 <Divider sx={{ my: 1 }} />
-                
+
                 <Styled.LogoutButton onClick={handleLogout}>
                   Sign Out
                 </Styled.LogoutButton>
+
+                {version && (
+                  <Styled.VersionFooter>{version}</Styled.VersionFooter>
+                )}
               </>
             )}
 

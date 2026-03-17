@@ -219,3 +219,12 @@ export const SubpageTitle = styled(Typography)({
   fontWeight: 600,
   color: '#1f2937',
 })
+
+export const VersionFooter = styled(Typography)({
+  fontSize: '11px',
+  color: '#9ca3af',
+  textAlign: 'center',
+  marginTop: '12px',
+  fontFamily: 'monospace',
+  letterSpacing: '0.3px',
+})
