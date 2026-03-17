@@ -29,24 +29,11 @@ const getDaysUntilLabel = (nextDate: Date): { label: string; isToday: boolean } 
   return { label: `in ${diffDays}d`, isToday: false }
 }
 
-const getAgeLabel = (birthday: IBirthdayItem): string | null => {
-  if (!birthday.birthYear) return null
-  const today = new Date()
-  const thisYear = today.getFullYear()
-  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-  const birthdayThisYear = new Date(thisYear, birthday.month - 1, birthday.day)
-  const age = thisYear - birthday.birthYear
-  if (birthdayThisYear.getTime() === todayMidnight.getTime()) return `${age} today! 🎉`
-  if (birthdayThisYear.getTime() < todayMidnight.getTime()) return `${age} years old`
-  return `turns ${age}`
-}
-
 type SortedBirthday = IBirthdayItem & { nextDate: Date }
 
 const BirthdayEntry: React.FC<{ b: SortedBirthday; showDetails: boolean }> = ({ b, showDetails }) => {
   const { label, isToday } = getDaysUntilLabel(b.nextDate)
-  const ageLabel = getAgeLabel(b)
-  const subLine = [ageLabel, b.notes].filter(Boolean).join(' · ')
+  const subLine = b.notes ?? ''
 
   return (
     <div>

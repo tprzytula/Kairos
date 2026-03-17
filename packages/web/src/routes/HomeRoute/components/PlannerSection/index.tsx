@@ -25,8 +25,18 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
   isLoading,
   onMealClick,
 }) => {
-  const [isBirthdaysExpanded, setIsBirthdaysExpanded] = useState(false)
-  const [isTodayTasksExpanded, setIsTodayTasksExpanded] = useState(false)
+  const [expandedCard, setExpandedCard] = useState<'tasks' | 'birthdays' | null>(null)
+
+  const isTodayTasksExpanded = expandedCard === 'tasks'
+  const isBirthdaysExpanded = expandedCard === 'birthdays'
+
+  const toggleTasks = () => setExpandedCard(v => (v === 'tasks' ? null : 'tasks'))
+  const toggleBirthdays = () => setExpandedCard(v => (v === 'birthdays' ? null : 'birthdays'))
+
+  const tasksGridColumn = isTodayTasksExpanded ? '1 / 3' : 1
+  const tasksGridRow = isBirthdaysExpanded ? 3 : 2
+  const birthdaysGridColumn = isBirthdaysExpanded ? '1 / 3' : 2
+  const birthdaysGridRow = isTodayTasksExpanded ? 3 : 2
 
   return (
     <MiniCardsGrid>
@@ -35,8 +45,8 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
       </MiniCard>
 
       <MiniCard
-        sx={{ gridColumn: 1, gridRow: 2, cursor: 'pointer' }}
-        onClick={() => setIsTodayTasksExpanded(v => !v)}
+        sx={{ gridColumn: tasksGridColumn, gridRow: tasksGridRow, cursor: 'pointer' }}
+        onClick={toggleTasks}
       >
         <MiniCardContent>
           <MiniCardHeader>
@@ -62,8 +72,8 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
       </MiniCard>
 
       <MiniCard
-        sx={{ gridColumn: 2, gridRow: 2, cursor: 'pointer' }}
-        onClick={() => setIsBirthdaysExpanded(v => !v)}
+        sx={{ gridColumn: birthdaysGridColumn, gridRow: birthdaysGridRow, cursor: 'pointer' }}
+        onClick={toggleBirthdays}
       >
         <MiniCardContent>
           <MiniCardHeader>
