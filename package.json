@@ -8,7 +8,7 @@
     "build": "yarn build:web && yarn build:lambdas",
     "build:web": "cd packages/web && yarn && yarn build",
     "build:lambdas": "cd packages/lambdas && yarn && yarn build",
-    "test": "yarn test:web && yarn test:lambdas",
+    "test": "concurrently --kill-others-on-fail \"yarn test:web\" \"yarn test:lambdas\"",
     "test:web": "cd packages/web && yarn test",
     "test:lambdas": "cd packages/lambdas && yarn test",
     "lint": "yarn lint:web && yarn lint:lambdas",
@@ -17,6 +17,7 @@
     "prettier": "prettier . --check"
   },
   "devDependencies": {
+    "concurrently": "^9.0.0",
     "prettier": "^3.5.3"
   }
 }
