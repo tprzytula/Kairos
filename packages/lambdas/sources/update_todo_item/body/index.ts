@@ -5,10 +5,11 @@ const validateBody = (body: IRequestBody) => {
     return false;
   }
 
-  const hasAtLeastOneField = body.name !== undefined || 
-                           body.description !== undefined || 
-                           body.dueDate !== undefined || 
-                           body.isDone !== undefined;
+  const hasAtLeastOneField = body.name !== undefined ||
+                           body.description !== undefined ||
+                           body.dueDate !== undefined ||
+                           body.isDone !== undefined ||
+                           body.steps !== undefined;
   
   if (!hasAtLeastOneField) {
     return false;

@@ -175,6 +175,50 @@ describe("Given the getBody function", () => {
     expect(result).toBeNull();
   });
 
+  it("should return the parsed body when only steps is provided", () => {
+    const validBody = JSON.stringify({
+      id: "test-id",
+      steps: [{ id: "step-1", name: "Step 1", isDone: true }],
+    });
+
+    const result = getBody(validBody);
+
+    expect(result).toEqual({
+      id: "test-id",
+      steps: [{ id: "step-1", name: "Step 1", isDone: true }],
+    });
+  });
+
+  it("should return the parsed body when steps is an empty array", () => {
+    const validBody = JSON.stringify({
+      id: "test-id",
+      steps: [],
+    });
+
+    const result = getBody(validBody);
+
+    expect(result).toEqual({
+      id: "test-id",
+      steps: [],
+    });
+  });
+
+  it("should return the parsed body when steps is combined with other fields", () => {
+    const validBody = JSON.stringify({
+      id: "test-id",
+      name: "Updated Todo",
+      steps: [{ id: "step-1", name: "Step 1", isDone: false }],
+    });
+
+    const result = getBody(validBody);
+
+    expect(result).toEqual({
+      id: "test-id",
+      name: "Updated Todo",
+      steps: [{ id: "step-1", name: "Step 1", isDone: false }],
+    });
+  });
+
   it("should allow null values for optional fields", () => {
     const validBody = JSON.stringify({
       id: "test-id",
