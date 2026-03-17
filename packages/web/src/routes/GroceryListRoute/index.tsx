@@ -141,6 +141,7 @@ const GroceryListContent = () => {
             onClick: removePurchasedItems,
             children: "Remove Purchased Items",
             statusText: statusText,
+            accentGradient: SECTION_GRADIENTS.grocery,
           }}
           viewToggleButton={{
             children: getViewToggleIcon(),

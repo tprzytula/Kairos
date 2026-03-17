@@ -4,10 +4,10 @@ import UnfoldLessIcon from '@mui/icons-material/UnfoldLess'
 import { Container, LeftSection, CenterSection, RightSection, ActionButton, StatusText } from './index.styled'
 import { IActionButtonsBarProps } from './types'
 
-export const ActionButtonsBar = ({ 
-  expandCollapseButton, 
-  actionButton, 
-  viewToggleButton 
+export const ActionButtonsBar = ({
+  expandCollapseButton,
+  actionButton,
+  viewToggleButton,
 }: IActionButtonsBarProps) => {
   return (
     <Container>
@@ -32,6 +32,7 @@ export const ActionButtonsBar = ({
             <ActionButton
               variant="contained"
               color="primary"
+              accentGradient={actionButton.accentGradient}
               onClick={actionButton.onClick}
               disabled={actionButton.disabled}
               aria-label={typeof actionButton.children === 'string' ? actionButton.children : 'Action button'}

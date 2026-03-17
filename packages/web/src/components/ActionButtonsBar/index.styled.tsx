@@ -28,7 +28,9 @@ export const RightSection = styled('div')({
   flexShrink: 0,
 })
 
-export const ActionButton = styled(Button)({
+export const ActionButton = styled(Button, {
+  shouldForwardProp: (prop) => prop !== 'accentGradient',
+})<{ accentGradient?: string }>(({ accentGradient }) => ({
   width: '100%',
   minHeight: '2em',
   display: 'flex',
@@ -42,7 +44,14 @@ export const ActionButton = styled(Button)({
   textTransform: 'capitalize',
   letterSpacing: '0.01em',
   boxSizing: 'border-box',
-})
+  ...(accentGradient && {
+    background: accentGradient,
+    '&:hover': {
+      background: accentGradient,
+      filter: 'brightness(1.08)',
+    },
+  }),
+}))
 
 export const StatusText = styled('div')({
   width: '100%',

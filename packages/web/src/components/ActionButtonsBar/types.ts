@@ -13,6 +13,7 @@ export interface IActionButtonProps {
   children: ReactNode
   statusText?: string
   disabled?: boolean
+  accentGradient?: string
 }
 
 export interface IViewToggleButtonProps {

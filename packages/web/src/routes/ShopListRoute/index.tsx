@@ -156,6 +156,7 @@ const ShopListContent = () => {
                       View All Items
                     </>
                   ),
+                  accentGradient: SECTION_GRADIENTS.grocery,
                 }}
               />
             )}

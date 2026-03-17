@@ -38,6 +38,8 @@ const NavigationBar = () => {
           SelectedIcon={HomeIcon}
           UnselectedIcon={HomeOutlinedIcon}
           route={Route.Home}
+          accentGradient={SECTION_GRADIENTS.home}
+          accentRgb={SECTION_ACCENT_RGB.home}
         />
         <StyledNavigationButton onClick={handleShoppingCartClick} isSelected={isShoppingCartSelected} accentGradient={SECTION_GRADIENTS.grocery} accentRgb={SECTION_ACCENT_RGB.grocery}>
           <ShoppingCartIcon fontSize="large" />
@@ -54,6 +56,8 @@ const NavigationBar = () => {
           SelectedIcon={ChecklistIcon}
           UnselectedIcon={ChecklistOutlinedIcon}
           route={Route.Planner}
+          accentGradient={SECTION_GRADIENTS.planner}
+          accentRgb={SECTION_ACCENT_RGB.planner}
         />
       </ItemsContainer>
     </Container>
