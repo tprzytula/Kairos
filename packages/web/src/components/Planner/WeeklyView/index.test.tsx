@@ -74,12 +74,6 @@ describe('Given the WeeklyView component', () => {
     expect(screen.queryByRole('button', { name: /today/i })).not.toBeInTheDocument()
   })
 
-  it('should render 7 add meal buttons', () => {
-    render(<WeeklyView visibleToDoItems={[]} onItemClick={jest.fn()} />)
-    const addMealTexts = screen.getAllByText('Meal')
-    expect(addMealTexts).toHaveLength(7)
-  })
-
   it('should render a pending todo on the correct day', () => {
     const todo = makeTodo({ name: 'Buy groceries' })
     render(<WeeklyView visibleToDoItems={[todo]} onItemClick={jest.fn()} />)
@@ -134,14 +128,6 @@ describe('Given the WeeklyView component', () => {
     )
     fireEvent.click(screen.getByText('Pasta'))
     expect(onMealPlanClick).toHaveBeenCalledWith(meal)
-  })
-
-  it('should call onAddMealPlan with correct date when add meal button is clicked', () => {
-    const onAddMealPlan = jest.fn()
-    render(<WeeklyView visibleToDoItems={[]} onItemClick={jest.fn()} onAddMealPlan={onAddMealPlan} />)
-    const mealButtons = screen.getAllByText('Meal')
-    fireEvent.click(mealButtons[0])
-    expect(onAddMealPlan).toHaveBeenCalledWith(expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/))
   })
 
   it('should not render a todo with no dueDate in the weekly grid', () => {

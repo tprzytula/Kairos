@@ -2,7 +2,6 @@ import { useState, useMemo, useRef, useEffect } from 'react'
 import { IconButton } from '@mui/material'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import AddIcon from '@mui/icons-material/Add'
 import dayjs, { Dayjs } from 'dayjs'
 import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
@@ -26,7 +25,6 @@ import {
   BirthdayIconStyled,
   MealItem,
   MealIconStyled,
-  AddMealButton,
 } from './index.styled'
 
 interface IWeeklyViewProps {
@@ -220,10 +218,7 @@ const WeeklyView = ({
                     </MealItem>
                   ))}
 
-                  <AddMealButton onClick={() => onAddMealPlan?.(key)}>
-                    <AddIcon sx={{ fontSize: '0.65rem' }} />
-                    Meal
-                  </AddMealButton>
+
                 </DayColumnBody>
               </DayColumn>
             )
