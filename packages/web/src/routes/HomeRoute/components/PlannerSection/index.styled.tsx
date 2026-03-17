@@ -14,7 +14,7 @@ export const MiniCard = styled(Card)({
   boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
   border: 'none',
   background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%)',
-  transition: 'transform 0.1s ease, box-shadow 0.1s ease, grid-column 0.2s ease',
+  transition: 'transform 0.1s ease, box-shadow 0.1s ease',
   position: 'relative',
   overflow: 'hidden',
   display: 'flex',
