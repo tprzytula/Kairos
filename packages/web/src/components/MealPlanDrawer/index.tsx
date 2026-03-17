@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Drawer, ToggleButton, InputAdornment, Dialog, DialogContent, DialogTitle, IconButton, Box, Typography, MenuItem } from '@mui/material'
+import { Drawer, ToggleButton, InputAdornment, IconButton, Box, MenuItem } from '@mui/material'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import SearchIcon from '@mui/icons-material/Search'
 import VisibilityIcon from '@mui/icons-material/Visibility'
@@ -8,7 +8,8 @@ import { IMealPlan } from '../../types/mealPlan'
 import { IRecipe } from '../../types/recipe'
 import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
 import { useRecipeContext } from '../../providers/RecipeProvider'
-import { GroceryItemUnitLabelMap } from '../../enums/groceryItem'
+import RecipeDetailDrawer from '../RecipeDetailDrawer'
+
 import {
   DrawerContent,
   DrawerHeader,
@@ -214,65 +215,11 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
       </DrawerContent>
     </Drawer>
 
-    <Dialog
+    <RecipeDetailDrawer
       open={previewRecipe !== null}
       onClose={() => setPreviewRecipe(null)}
-      fullWidth
-      maxWidth="sm"
-      PaperProps={{ sx: { borderRadius: '12px', m: 2 } }}
-    >
-      {previewRecipe && (
-        <>
-          <DialogTitle sx={{ pb: 1, fontWeight: 700, color: '#1d4ed8' }}>
-            {previewRecipe.name}
-          </DialogTitle>
-          <DialogContent>
-            {previewRecipe.imagePath && (
-              <Box
-                component="img"
-                src={previewRecipe.imagePath}
-                alt={previewRecipe.name}
-                sx={{ width: '100%', borderRadius: '8px', mb: 2, maxHeight: '200px', objectFit: 'cover', display: 'block' }}
-              />
-            )}
-            {previewRecipe.ingredients.length > 0 && (
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="subtitle2" fontWeight={600} mb={0.5}>Ingredients</Typography>
-                {previewRecipe.ingredients.map((ing, i) => (
-                  <Typography key={i} variant="body2" color="text.secondary">
-                    • {ing.name} — {ing.quantity} {GroceryItemUnitLabelMap[ing.unit]}
-                  </Typography>
-                ))}
-              </Box>
-            )}
-            {previewRecipe.instructions && previewRecipe.instructions.length > 0 && (
-              <Box>
-                <Typography variant="subtitle2" fontWeight={600} mb={0.5}>Instructions</Typography>
-                {previewRecipe.instructions.map((step, i) => (
-                  <Typography key={i} variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                    {i + 1}. {step}
-                  </Typography>
-                ))}
-              </Box>
-            )}
-            {previewRecipe.externalLink && (
-              <Box mt={2}>
-                <Typography
-                  component="a"
-                  href={previewRecipe.externalLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variant="body2"
-                  sx={{ color: '#1d4ed8' }}
-                >
-                  View original recipe ↗
-                </Typography>
-              </Box>
-            )}
-          </DialogContent>
-        </>
-      )}
-    </Dialog>
+      recipe={previewRecipe}
+    />
     </>
   )
 }
