@@ -96,39 +96,6 @@ export const TodoDot = styled('div')<{ count?: number; isOverdue?: boolean }>(({
   visibility: count > 0 ? 'visible' : 'hidden',
 }))
 
-export const DrawerOverlay = styled('div')({
-  position: 'fixed',
-  inset: 0,
-  backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  zIndex: 1000,
-})
-
-export const BottomDrawer = styled('div')({
-  position: 'fixed',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
-  borderRadius: '20px 20px 0 0',
-  border: '1px solid rgba(226, 232, 240, 0.8)',
-  borderBottom: 'none',
-  boxShadow: '0 -8px 40px rgba(0, 0, 0, 0.18), 0 -2px 8px rgba(0, 0, 0, 0.06)',
-  zIndex: 1001,
-  maxHeight: '60vh',
-  overflowY: 'auto',
-  padding: '0 12px',
-  paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
-})
-
-export const DrawerHandle = styled('div')({
-  width: '48px',
-  height: '5px',
-  backgroundColor: '#94a3b8',
-  borderRadius: '3px',
-  margin: '10px auto 14px',
-  flexShrink: 0,
-})
-
 export const DayDetailPanel = styled('div')({
   marginTop: '0.75em',
   padding: '0.75em',
