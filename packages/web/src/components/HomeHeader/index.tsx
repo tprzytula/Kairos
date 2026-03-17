@@ -10,11 +10,12 @@ import {
   BrandingSection,
   AppBranding,
   VersionText,
+  ProjectName,
   GreetingSection,
+  GreetingRow,
   GreetingText,
   DateText,
-  RightSection,
-  ProjectName,
+  AvatarSection,
 } from './index.styled'
 
 const getGreeting = (userName?: string): string => {
@@ -44,30 +45,33 @@ const HomeHeader: React.FC = () => {
         <BrandingSection>
           <AppBranding>Kairos</AppBranding>
           <VersionText>{displayVersion}</VersionText>
+          {currentProject && (
+            <ProjectName title={currentProject.name}>
+              {currentProject.name}
+              {currentProject.isPersonal && ' (Personal)'}
+            </ProjectName>
+          )}
         </BrandingSection>
 
         <GreetingSection>
-          <HomeOutlinedIcon
-            style={{
-              fontSize: '1.1rem',
-              padding: '0.25rem',
-              borderRadius: '6px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              color: 'white',
-              gridArea: 'icon',
-            }}
-          />
-          <GreetingText style={{ gridArea: 'greeting' }}>{getGreeting(userName)}</GreetingText>
-          <DateText style={{ gridArea: 'date' }}>{formatDate()}</DateText>
+          <GreetingRow>
+            <HomeOutlinedIcon
+              style={{
+                fontSize: '1rem',
+                padding: '0.22rem',
+                borderRadius: '6px',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+              }}
+            />
+            <GreetingText>{getGreeting(userName)}</GreetingText>
+          </GreetingRow>
+          <DateText>{formatDate()}</DateText>
         </GreetingSection>
 
-        <RightSection>
-          <ProjectName>
-            {currentProject ? currentProject.name : 'Loading...'}
-            {currentProject?.isPersonal && ' (Personal)'}
-          </ProjectName>
+        <AvatarSection>
           {auth.user && <UserMenu />}
-        </RightSection>
+        </AvatarSection>
       </HomeHeaderCard>
     </HomeHeaderContainer>
   )

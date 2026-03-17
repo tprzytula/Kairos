@@ -14,14 +14,13 @@ export const HomeHeaderCard = styled(Card)({
   background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.98) 100%)',
   backdropFilter: 'blur(10px)',
   WebkitBackdropFilter: 'blur(10px)',
-  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   position: 'relative',
   overflow: 'hidden',
-  padding: '1.25rem',
-  display: 'flex',
-  justifyContent: 'space-between',
+  padding: '1rem 1.25rem',
+  display: 'grid',
+  gridTemplateColumns: '1fr auto 1fr',
   alignItems: 'center',
-  gap: '1rem',
+  gap: '0.5rem',
   '&:before': {
     content: '""',
     position: 'absolute',
@@ -37,9 +36,8 @@ export const HomeHeaderCard = styled(Card)({
 export const BrandingSection = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.2rem',
+  gap: '0.15rem',
   alignItems: 'flex-start',
-  flexShrink: 0,
 })
 
 export const AppBranding = styled('div')({
@@ -57,66 +55,60 @@ export const AppBranding = styled('div')({
 })
 
 export const VersionText = styled('div')(({ theme }) => ({
-  fontSize: '0.72rem',
+  fontSize: '0.7rem',
   fontWeight: '500',
   color: theme.palette.text.secondary,
-  letterSpacing: '0.4px',
-  opacity: 0.65,
+  letterSpacing: '0.3px',
+  opacity: 0.6,
   fontFamily: 'monospace',
 }))
 
+export const ProjectName = styled('div')(({ theme }) => ({
+  fontSize: '0.72rem',
+  fontWeight: '500',
+  color: theme.palette.text.secondary,
+  opacity: 0.75,
+  maxWidth: '120px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+}))
+
 export const GreetingSection = styled('div')({
-  display: 'grid',
-  gridTemplateColumns: 'auto 1fr',
-  gridTemplateRows: 'auto auto',
-  gridTemplateAreas: `
-    "icon greeting"
-    ". date"
-  `,
-  columnGap: '0.5rem',
-  rowGap: '0.125rem',
+  display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
-  flex: 1,
-  justifyContent: 'center',
+  gap: '0.1rem',
+})
+
+export const GreetingRow = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.4rem',
 })
 
 export const GreetingText = styled('div')(({ theme }) => ({
-  fontSize: '1.1rem',
+  fontSize: '1.05rem',
   fontWeight: '700',
   color: theme.palette.text.primary,
   lineHeight: 1.2,
-  letterSpacing: '0.5px',
+  letterSpacing: '0.3px',
   '@media (max-width: 480px)': {
-    fontSize: '1rem',
+    fontSize: '0.95rem',
   },
 }))
 
 export const DateText = styled('div')(({ theme }) => ({
-  fontSize: '0.8rem',
+  fontSize: '0.78rem',
   fontWeight: '500',
   color: theme.palette.text.secondary,
   lineHeight: 1.2,
-  opacity: 0.8,
-  '@media (max-width: 480px)': {
-    fontSize: '0.75rem',
-  },
+  opacity: 0.75,
+  textAlign: 'center',
 }))
 
-export const RightSection = styled('div')({
+export const AvatarSection = styled('div')({
   display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-end',
-  gap: '0.35rem',
-  flexShrink: 0,
+  justifyContent: 'flex-end',
+  alignItems: 'center',
 })
-
-export const ProjectName = styled('div')(({ theme }) => ({
-  fontSize: '0.9rem',
-  fontWeight: '600',
-  color: theme.palette.text.primary,
-  lineHeight: '1.2',
-  textAlign: 'right',
-  '@media (max-width: 480px)': {
-    fontSize: '0.8rem',
-  },
-}))
