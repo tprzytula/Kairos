@@ -1,16 +1,19 @@
-import { jest } from '@jest/globals';
 import type { IRequestBody } from './body/types';
 
-const mockPromise = jest.fn().mockResolvedValue({ MessageId: 'test-message-id' });
-const mockSNSPublish = jest.fn().mockReturnValue({
-    promise: mockPromise
-});
+// eslint-disable-next-line no-var
+var mockPromise: jest.Mock;
+// eslint-disable-next-line no-var
+var mockSNSPublish: jest.Mock;
 
-jest.mock('aws-sdk', () => ({
-    SNS: jest.fn().mockImplementation(() => ({
-        publish: mockSNSPublish
-    }))
-}));
+jest.mock('aws-sdk', () => {
+    mockPromise = jest.fn().mockResolvedValue({ MessageId: 'test-message-id' });
+    mockSNSPublish = jest.fn().mockReturnValue({ promise: mockPromise });
+    return {
+        SNS: jest.fn().mockImplementation(() => ({
+            publish: mockSNSPublish,
+        })),
+    };
+});
 
 import { handler } from './index';
 import { getBody } from './body';

@@ -1,10 +1,13 @@
-import { jest } from "@jest/globals";
+// eslint-disable-next-line no-var
+var mockSendNotification: jest.Mock;
 
-const mockSendNotification = jest.fn();
-jest.mock('web-push', () => ({
-  setVapidDetails: jest.fn(),
-  sendNotification: mockSendNotification
-}));
+jest.mock('web-push', () => {
+  mockSendNotification = jest.fn();
+  return {
+    setVapidDetails: jest.fn(),
+    sendNotification: mockSendNotification,
+  };
+});
 
 import { handler } from "./index";
 import { query, getItem } from "@kairos-lambdas-libs/dynamodb";
