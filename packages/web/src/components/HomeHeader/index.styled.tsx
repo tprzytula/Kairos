@@ -11,7 +11,7 @@ export const HomeHeaderCard = styled(Card)({
   borderRadius: '16px',
   boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
   border: 'none',
-  background: 'linear-gradient(135deg, rgba(102,126,234,0.06) 0%, rgba(118,75,162,0.08) 50%, rgba(240,147,251,0.04) 100%)',
+  background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%)',
   backdropFilter: 'blur(10px)',
   WebkitBackdropFilter: 'blur(10px)',
   position: 'relative',
