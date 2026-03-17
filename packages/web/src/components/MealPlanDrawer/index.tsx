@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Drawer, ToggleButton, InputAdornment, IconButton, Box, MenuItem } from '@mui/material'
+import { ToggleButton, InputAdornment, IconButton, Box, MenuItem } from '@mui/material'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import SearchIcon from '@mui/icons-material/Search'
 import VisibilityIcon from '@mui/icons-material/Visibility'
@@ -9,6 +9,7 @@ import { IRecipe } from '../../types/recipe'
 import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import RecipeDetailDrawer from '../RecipeDetailDrawer'
+import DraggableBottomDrawer from '../DraggableBottomDrawer'
 
 import {
   DrawerContent,
@@ -98,128 +99,129 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
 
   return (
     <>
-    <Drawer
-      anchor="bottom"
-      open={open}
-      onClose={onClose}
-      PaperProps={{ sx: { borderRadius: '16px 16px 0 0', maxHeight: '85vh' } }}
-    >
-      <DrawerContent>
-        <DrawerHeader>
-          <RestaurantIcon sx={{ fontSize: '1.1rem', verticalAlign: 'middle', marginRight: '6px' }} />
-          {mealPlan ? 'Edit Meal' : 'Add Meal'}
-        </DrawerHeader>
-
-        <DateLabel>{displayDate}</DateLabel>
-
-        <StyledTextField
-          select
-          size="small"
-          label="Meal type"
-          value={mealType}
-          onChange={(e) => setMealType(e.target.value as MealType)}
-          fullWidth
-        >
-          {MEAL_TYPE_ORDER.map(type => (
-            <MenuItem key={type} value={type}>{type}</MenuItem>
-          ))}
-        </StyledTextField>
-
-        <ModeToggle
-          value={mode}
-          exclusive
-          onChange={(_, value) => { if (value) setMode(value) }}
-        >
-          <ToggleButton value="recipe">From Recipe</ToggleButton>
-          <ToggleButton value="custom">Custom Name</ToggleButton>
-        </ModeToggle>
-
-        {mode === 'recipe' ? (
-          <>
-            <SearchField
-              size="small"
-              placeholder="Search recipes..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                  </InputAdornment>
-                ),
-              }}
-              fullWidth
-            />
-            <RecipeList>
-              {filteredRecipes.length === 0 ? (
-                <RecipeItem sx={{ color: '#9ca3af', fontStyle: 'italic' }}>
-                  {search ? 'No recipes found' : 'No recipes yet'}
-                </RecipeItem>
-              ) : (
-                filteredRecipes.map(recipe => (
-                  <RecipeItemRow
-                    key={recipe.id}
-                    selected={selectedRecipeId === recipe.id}
-                    onClick={() => setSelectedRecipeId(recipe.id)}
-                  >
-                    {recipe.imagePath ? (
-                      <RecipeThumbnail src={recipe.imagePath} alt={recipe.name} />
-                    ) : (
-                      <RecipeThumbnailPlaceholder seed={recipe.name.charCodeAt(0)}>
-                        {recipe.name.charAt(0).toUpperCase()}
-                      </RecipeThumbnailPlaceholder>
-                    )}
-                    <RecipeItemName>{recipe.name}</RecipeItemName>
-                    <IconButton
-                      size="small"
-                      onClick={(e) => { e.stopPropagation(); setPreviewRecipe(recipe) }}
-                      sx={{ color: '#9ca3af', flexShrink: 0, '&:hover': { color: '#1d4ed8' } }}
-                    >
-                      <VisibilityIcon sx={{ fontSize: '1rem' }} />
-                    </IconButton>
-                  </RecipeItemRow>
-                ))
-              )}
-            </RecipeList>
-          </>
-        ) : (
+      <DraggableBottomDrawer
+        open={open}
+        onClose={onClose}
+        paperSx={{ maxHeight: '85vh' }}
+        dragHandleContent={
+          <Box sx={{ px: '1.25em' }}>
+            <DrawerHeader>
+              <RestaurantIcon sx={{ fontSize: '1.1rem', verticalAlign: 'middle', marginRight: '6px' }} />
+              {mealPlan ? 'Edit Meal' : 'Add Meal'}
+            </DrawerHeader>
+            <DateLabel>{displayDate}</DateLabel>
+          </Box>
+        }
+      >
+        <DrawerContent>
           <StyledTextField
+            select
             size="small"
-            label="Meal name"
-            value={customName}
-            onChange={(e) => setCustomName(e.target.value)}
+            label="Meal type"
+            value={mealType}
+            onChange={(e) => setMealType(e.target.value as MealType)}
             fullWidth
-            autoFocus
-            onKeyDown={(e) => { if (e.key === 'Enter' && canSave) handleSave() }}
-          />
-        )}
-
-        <SaveButton
-          variant="contained"
-          fullWidth
-          disabled={!canSave}
-          onClick={handleSave}
-        >
-          Save
-        </SaveButton>
-
-        {mealPlan && onDelete && (
-          <DeleteButton
-            variant="outlined"
-            fullWidth
-            onClick={() => onDelete(mealPlan.id)}
           >
-            Delete
-          </DeleteButton>
-        )}
-      </DrawerContent>
-    </Drawer>
+            {MEAL_TYPE_ORDER.map(type => (
+              <MenuItem key={type} value={type}>{type}</MenuItem>
+            ))}
+          </StyledTextField>
 
-    <RecipeDetailDrawer
-      open={previewRecipe !== null}
-      onClose={() => setPreviewRecipe(null)}
-      recipe={previewRecipe}
-    />
+          <ModeToggle
+            value={mode}
+            exclusive
+            onChange={(_, value) => { if (value) setMode(value) }}
+          >
+            <ToggleButton value="recipe">From Recipe</ToggleButton>
+            <ToggleButton value="custom">Custom Name</ToggleButton>
+          </ModeToggle>
+
+          {mode === 'recipe' ? (
+            <>
+              <SearchField
+                size="small"
+                placeholder="Search recipes..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                }}
+                fullWidth
+              />
+              <RecipeList>
+                {filteredRecipes.length === 0 ? (
+                  <RecipeItem sx={{ color: '#9ca3af', fontStyle: 'italic' }}>
+                    {search ? 'No recipes found' : 'No recipes yet'}
+                  </RecipeItem>
+                ) : (
+                  filteredRecipes.map(recipe => (
+                    <RecipeItemRow
+                      key={recipe.id}
+                      selected={selectedRecipeId === recipe.id}
+                      onClick={() => setSelectedRecipeId(recipe.id)}
+                    >
+                      {recipe.imagePath ? (
+                        <RecipeThumbnail src={recipe.imagePath} alt={recipe.name} />
+                      ) : (
+                        <RecipeThumbnailPlaceholder seed={recipe.name.charCodeAt(0)}>
+                          {recipe.name.charAt(0).toUpperCase()}
+                        </RecipeThumbnailPlaceholder>
+                      )}
+                      <RecipeItemName>{recipe.name}</RecipeItemName>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => { e.stopPropagation(); setPreviewRecipe(recipe) }}
+                        sx={{ color: '#9ca3af', flexShrink: 0, '&:hover': { color: '#1d4ed8' } }}
+                      >
+                        <VisibilityIcon sx={{ fontSize: '1rem' }} />
+                      </IconButton>
+                    </RecipeItemRow>
+                  ))
+                )}
+              </RecipeList>
+            </>
+          ) : (
+            <StyledTextField
+              size="small"
+              label="Meal name"
+              value={customName}
+              onChange={(e) => setCustomName(e.target.value)}
+              fullWidth
+              autoFocus
+              onKeyDown={(e) => { if (e.key === 'Enter' && canSave) handleSave() }}
+            />
+          )}
+
+          <SaveButton
+            variant="contained"
+            fullWidth
+            disabled={!canSave}
+            onClick={handleSave}
+          >
+            Save
+          </SaveButton>
+
+          {mealPlan && onDelete && (
+            <DeleteButton
+              variant="outlined"
+              fullWidth
+              onClick={() => onDelete(mealPlan.id)}
+            >
+              Delete
+            </DeleteButton>
+          )}
+        </DrawerContent>
+      </DraggableBottomDrawer>
+
+      <RecipeDetailDrawer
+        open={previewRecipe !== null}
+        onClose={() => setPreviewRecipe(null)}
+        recipe={previewRecipe}
+      />
     </>
   )
 }
