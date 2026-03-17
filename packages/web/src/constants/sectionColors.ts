@@ -1,11 +1,11 @@
 export const SECTION_GRADIENTS = {
-  planner: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  grocery: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
-  noise: 'linear-gradient(135deg, #f7971e 0%, #ffd200 100%)',
+  planner: 'linear-gradient(135deg, #6366f1 0%, #7c3aed 100%)',
+  grocery: 'linear-gradient(135deg, #0d9488 0%, #34d399 100%)',
+  noise: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)',
 }
 
 export const SECTION_ACCENT_RGB = {
-  planner: '102, 126, 234',
-  grocery: '17, 153, 142',
-  noise: '247, 151, 30',
+  planner: '99, 102, 241',
+  grocery: '13, 148, 136',
+  noise: '245, 158, 11',
 }
