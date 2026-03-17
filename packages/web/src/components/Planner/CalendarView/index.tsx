@@ -21,7 +21,9 @@ import {
   DayNumber,
   TodoDot,
   CompletedTodoDot,
-  DayDetailPanel,
+  DrawerOverlay,
+  BottomDrawer,
+  DrawerHandle,
   DayDetailHeader,
   DayDetailItem,
   OverdueDayDetailItem,
@@ -247,51 +249,58 @@ const CalendarView = ({
       </CalendarGrid>
 
       {selectedDay && (
-        <DayDetailPanel>
-          <DayDetailHeader>
-            {dayjs(selectedDay).format('dddd, D MMMM')}
-          </DayDetailHeader>
-          {selectedDayPendingTodos.length === 0 && selectedDayCompletedTodos.length === 0 ? (
-            <DayDetailEmpty>No tasks on this day</DayDetailEmpty>
-          ) : (
-            <>
-              {selectedDayPendingTodos.map(todo => (
-                isSelectedDayOverdue ? (
-                  <OverdueDayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+        <>
+          <DrawerOverlay onClick={() => {
+            setSelectedDay(null)
+            dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: null })
+          }} />
+          <BottomDrawer>
+            <DrawerHandle />
+            <DayDetailHeader>
+              {dayjs(selectedDay).format('dddd, D MMMM')}
+            </DayDetailHeader>
+            {selectedDayPendingTodos.length === 0 && selectedDayCompletedTodos.length === 0 ? (
+              <DayDetailEmpty>No tasks on this day</DayDetailEmpty>
+            ) : (
+              <>
+                {selectedDayPendingTodos.map(todo => (
+                  isSelectedDayOverdue ? (
+                    <OverdueDayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+                      {todo.name}
+                    </OverdueDayDetailItem>
+                  ) : (
+                    <DayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+                      {todo.name}
+                    </DayDetailItem>
+                  )
+                ))}
+                {selectedDayCompletedTodos.map(todo => (
+                  <CompletedDayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
                     {todo.name}
-                  </OverdueDayDetailItem>
-                ) : (
-                  <DayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
-                    {todo.name}
-                  </DayDetailItem>
-                )
-              ))}
-              {selectedDayCompletedTodos.map(todo => (
-                <CompletedDayDetailItem key={todo.id} onClick={() => onItemClick(todo.id)}>
-                  {todo.name}
-                </CompletedDayDetailItem>
-              ))}
-            </>
-          )}
-          {selectedDayBirthdays.length > 0 && (
-            <>
-              {selectedDayBirthdays.map(birthday => (
-                <BirthdayDayDetailItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
-                  <CakeIcon sx={{ fontSize: '0.9rem', color: '#db2777', flexShrink: 0 }} />
-                  {birthday.name}
-                </BirthdayDayDetailItem>
-              ))}
-            </>
-          )}
-          <MealsSectionHeader>Meals</MealsSectionHeader>
-          {selectedDayMealPlans.map(plan => (
-            <MealDayDetailItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
-              <MealPlanIcon sx={{ fontSize: '0.9rem', flexShrink: 0 }} />
-              {plan.recipeName}
-              {plan.recipeId && <LinkIcon sx={{ fontSize: '0.75rem', color: '#d97706', marginLeft: 'auto', flexShrink: 0 }} />}
-            </MealDayDetailItem>
-          ))}
-        </DayDetailPanel>
+                  </CompletedDayDetailItem>
+                ))}
+              </>
+            )}
+            {selectedDayBirthdays.length > 0 && (
+              <>
+                {selectedDayBirthdays.map(birthday => (
+                  <BirthdayDayDetailItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
+                    <CakeIcon sx={{ fontSize: '0.9rem', color: '#db2777', flexShrink: 0 }} />
+                    {birthday.name}
+                  </BirthdayDayDetailItem>
+                ))}
+              </>
+            )}
+            <MealsSectionHeader>Meals</MealsSectionHeader>
+            {selectedDayMealPlans.map(plan => (
+              <MealDayDetailItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
+                <MealPlanIcon sx={{ fontSize: '0.9rem', flexShrink: 0 }} />
+                {plan.recipeName}
+                {plan.recipeId && <LinkIcon sx={{ fontSize: '0.75rem', color: '#d97706', marginLeft: 'auto', flexShrink: 0 }} />}
+              </MealDayDetailItem>
+            ))}
+          </BottomDrawer>
+        </>
       )}
 
       {itemsWithoutDueDate.length > 0 && (
