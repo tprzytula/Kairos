@@ -82,11 +82,13 @@ const PlannerContent = () => {
     }
 
     if (selectedCount === 0) {
+      if (viewMode === PlannerViewMode.CALENDAR) return "Tap a day to see its tasks"
+      if (viewMode === PlannerViewMode.WEEKLY)   return "Tap a task to view details"
       return "Tap items to mark as done"
     }
 
     return `${selectedCount} of ${totalItems} item${totalItems === 1 ? '' : 's'} selected`
-  }, [toDoList.length, selectedTodoItems.size])
+  }, [toDoList.length, selectedTodoItems.size, viewMode])
 
   const clearSelectedTodoItems = useCallback((selectedTodoItems: Set<string>) => {
     dispatch({
