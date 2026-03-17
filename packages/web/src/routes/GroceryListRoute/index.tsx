@@ -12,6 +12,7 @@ import UnfoldLessIcon from '@mui/icons-material/UnfoldLess'
 import StorefrontIcon from '@mui/icons-material/Storefront'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import { Container, ScrollableContainer } from './index.styled'
+import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
 import { useState, useCallback, useMemo } from 'react'
 import RecipeDrawer from '../../components/RecipeDrawer'
 import { useParams, useNavigate } from 'react-router'
@@ -102,6 +103,8 @@ const GroceryListContent = () => {
     <StandardLayout>
       <ModernPageHeader
         title={shopId === 'all' ? 'All Grocery Items' : (currentShop ? currentShop.name : "Grocery List")}
+        accentGradient={SECTION_GRADIENTS.grocery}
+        accentRgb={SECTION_ACCENT_RGB.grocery}
         icon={currentShop?.icon ? (
           <img
             src={currentShop.icon}
