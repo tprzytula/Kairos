@@ -44,6 +44,8 @@ export const DrawerTitle = styled('span')({
 export const ContentContainer = styled(Box)({
   flex: 1,
   overflowY: 'auto',
+  WebkitOverflowScrolling: 'touch',
+  overscrollBehavior: 'contain',
   padding: '1rem 1.25rem',
   display: 'flex',
   flexDirection: 'column',
