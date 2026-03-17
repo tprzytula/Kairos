@@ -48,3 +48,13 @@ export const MoreCount = styled('div')(({ theme }) => ({
   color: theme.palette.text.secondary,
   fontWeight: 600,
 }))
+
+export const TaskSubLine = styled('div')(({ theme }) => ({
+  fontSize: '0.65rem',
+  color: theme.palette.text.secondary,
+  marginTop: '0.05rem',
+  marginBottom: '0.15rem',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+}))

@@ -26,6 +26,7 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
   onMealClick,
 }) => {
   const [isBirthdaysExpanded, setIsBirthdaysExpanded] = useState(false)
+  const [isTodayTasksExpanded, setIsTodayTasksExpanded] = useState(false)
 
   return (
     <MiniCardsGrid>
@@ -33,14 +34,29 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
         <TodayMealCard todayMeals={todayMeals} isLoading={isLoading} onMealClick={onMealClick} />
       </MiniCard>
 
-      <MiniCard sx={{ gridColumn: 1, gridRow: 2 }}>
+      <MiniCard
+        sx={{ gridColumn: 1, gridRow: 2, cursor: 'pointer' }}
+        onClick={() => setIsTodayTasksExpanded(v => !v)}
+      >
         <MiniCardContent>
           <MiniCardHeader>
             <MiniCardIcon><ChecklistIcon /></MiniCardIcon>
             <MiniCardTitle>Today's Tasks</MiniCardTitle>
+            <Box
+              sx={{
+                ml: 'auto',
+                display: 'flex',
+                alignItems: 'center',
+                transition: 'transform 150ms ease',
+                transform: isTodayTasksExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                opacity: 0.6,
+              }}
+            >
+              <ExpandMoreIcon sx={{ fontSize: '0.9rem' }} />
+            </Box>
           </MiniCardHeader>
           <MiniCardBody>
-            <TodayTasksCard sortedItems={toDoStats.sortedItems} />
+            <TodayTasksCard sortedItems={toDoStats.sortedItems} isExpanded={isTodayTasksExpanded} />
           </MiniCardBody>
         </MiniCardContent>
       </MiniCard>
