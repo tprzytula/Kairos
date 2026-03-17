@@ -38,6 +38,7 @@ interface ICalendarViewProps {
   mealPlans?: IMealPlan[]
   onAddMealPlan?: (date: string) => void
   onMealPlanClick?: (mealPlan: IMealPlan) => void
+  onAddTask?: (date: string) => void
 }
 
 const CalendarView = ({
@@ -48,6 +49,7 @@ const CalendarView = ({
   mealPlans = [],
   onAddMealPlan,
   onMealPlanClick,
+  onAddTask,
 }: ICalendarViewProps) => {
   const { dispatch } = useAppState()
   const [currentMonth, setCurrentMonth] = useState<Dayjs>(() => dayjs().startOf('month'))
@@ -252,6 +254,7 @@ const CalendarView = ({
         onBirthdayClick={onBirthdayClick}
         onAddMealPlan={onAddMealPlan}
         onMealPlanClick={onMealPlanClick}
+        onAddTask={onAddTask}
       />
 
       {itemsWithoutDueDate.length > 0 && (
