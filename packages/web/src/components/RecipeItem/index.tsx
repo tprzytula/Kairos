@@ -111,6 +111,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
       onUseRecipe()
     } catch (error) {
       showAlert({ description: 'Failed to add ingredients', severity: 'error' }, dispatch)
+      onUseRecipe()
     } finally {
       setIsAdding(false)
     }
