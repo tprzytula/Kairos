@@ -191,7 +191,6 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
               value={customName}
               onChange={(e) => setCustomName(e.target.value)}
               fullWidth
-              autoFocus
               onKeyDown={(e) => { if (e.key === 'Enter' && canSave) handleSave() }}
             />
           )}
