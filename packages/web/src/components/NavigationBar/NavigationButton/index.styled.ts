@@ -4,8 +4,8 @@ import { IconButton } from '@mui/material';
 export const StyledNavigationButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'isSelected' && prop !== 'accentGradient' && prop !== 'accentRgb',
 })<{ isSelected: boolean; accentGradient?: string; accentRgb?: string }>(({ theme, isSelected, accentGradient, accentRgb }) => {
-  const gradient = accentGradient ?? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-  const rgb = accentRgb ?? '102, 126, 234';
+  const gradient = accentGradient ?? 'linear-gradient(135deg, #6366f1 0%, #7c3aed 100%)';
+  const rgb = accentRgb ?? '99, 102, 241';
   return ({
   width: '48px',
   height: '48px',
