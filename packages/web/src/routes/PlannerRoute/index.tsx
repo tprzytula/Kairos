@@ -12,6 +12,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import ViewWeekIcon from '@mui/icons-material/ViewWeek'
 import ViewModuleIcon from '@mui/icons-material/ViewModule'
 import { Container, ScrollableContainer } from './index.styled'
+import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useCallback, useMemo, useState } from 'react'
 import { showAlert } from '../../utils/alert'
@@ -167,6 +168,8 @@ const PlannerContent = () => {
         title="Planner"
         icon={<ChecklistIcon />}
         stats={stats}
+        accentGradient={SECTION_GRADIENTS.planner}
+        accentRgb={SECTION_ACCENT_RGB.planner}
       />
       <Container>
         <ActionButtonsBar
