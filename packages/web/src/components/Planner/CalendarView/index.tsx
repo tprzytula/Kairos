@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { useAppState } from '../../../providers/AppStateProvider'
 import { ActionName } from '../../../providers/AppStateProvider/enums'
 import { IconButton } from '@mui/material'
@@ -248,7 +249,7 @@ const CalendarView = ({
         })}
       </CalendarGrid>
 
-      {selectedDay && (
+      {selectedDay && createPortal(
         <>
           <DrawerOverlay onClick={() => {
             setSelectedDay(null)
@@ -300,7 +301,8 @@ const CalendarView = ({
               </MealDayDetailItem>
             ))}
           </BottomDrawer>
-        </>
+        </>,
+        document.body
       )}
 
       {itemsWithoutDueDate.length > 0 && (
