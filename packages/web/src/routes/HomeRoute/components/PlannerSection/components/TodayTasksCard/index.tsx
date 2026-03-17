@@ -65,7 +65,7 @@ export const TodayTasksCard: React.FC<ITodayTasksCardProps> = ({ sortedItems, is
       ))}
       {rest.length > 0 && (
         <>
-          <Collapse in={isExpanded} timeout={150}>
+          <Collapse in={isExpanded} timeout={150} unmountOnExit>
             {rest.map(item => (
               <TaskEntry key={item.id} item={item} showDetails={isExpanded} />
             ))}

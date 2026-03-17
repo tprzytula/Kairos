@@ -78,7 +78,7 @@ export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ b
       ))}
       {rest.length > 0 && (
         <>
-          <Collapse in={isExpanded} timeout={150}>
+          <Collapse in={isExpanded} timeout={150} unmountOnExit>
             {rest.map(b => (
               <BirthdayEntry key={b.id} b={b} showDetails={isExpanded} />
             ))}
