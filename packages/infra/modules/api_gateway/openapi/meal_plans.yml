@@ -252,6 +252,10 @@ components:
           type: string
           nullable: true
           example: "recipe-789"
+        mealType:
+          type: string
+          nullable: true
+          example: "Dinner"
   securitySchemes:
     CognitoAuthorizer:
       type: apiKey
