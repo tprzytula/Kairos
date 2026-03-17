@@ -15,6 +15,7 @@ import {
   MealPlanIcon,
   MealsSectionHeader,
   MealsAddButton,
+  TasksAddButton,
 } from '../Planner/CalendarView/index.styled'
 import {
   DrawerContent,
@@ -41,6 +42,7 @@ interface IDayPreviewDrawerProps {
   onBirthdayClick?: (id: string) => void
   onAddMealPlan?: (date: string) => void
   onMealPlanClick?: (mealPlan: IMealPlan) => void
+  onAddTask?: (date: string) => void
 }
 
 const DayPreviewDrawer = ({
@@ -56,6 +58,7 @@ const DayPreviewDrawer = ({
   onBirthdayClick,
   onAddMealPlan,
   onMealPlanClick,
+  onAddTask,
 }: IDayPreviewDrawerProps) => {
   return (
     <DraggableBottomDrawer
@@ -86,6 +89,9 @@ const DayPreviewDrawer = ({
           sx={{ mt: 0, pt: 0, borderTop: 'none' }}
         >
           Tasks
+          {onAddTask && selectedDay && (
+            <TasksAddButton onClick={(e) => { e.stopPropagation(); onAddTask(selectedDay) }}>+</TasksAddButton>
+          )}
         </SectionLabel>
         {pendingTodos.length === 0 && completedTodos.length === 0 ? (
           <DayDetailEmpty>No tasks on this day</DayDetailEmpty>

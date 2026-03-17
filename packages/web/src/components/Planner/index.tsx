@@ -100,6 +100,11 @@ export const Planner = ({
     await removeBirthdayItem(id);
   }, [removeBirthdayItem]);
 
+  const handleAddTask = useCallback((date: string) => {
+    dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: date })
+    navigate(Route.AddPlannerItem)
+  }, [dispatch, navigate])
+
   const handleStepToggle = useCallback(async (todoId: string, stepId: string, isDone: boolean) => {
     const item = toDoList.find(t => t.id === todoId)
     if (!item?.steps) return
@@ -148,6 +153,7 @@ export const Planner = ({
             mealPlans={mealPlans}
             onAddMealPlan={onAddMealPlan}
             onMealPlanClick={onMealPlanClick}
+            onAddTask={handleAddTask}
           />
         )}
         {drawers}
