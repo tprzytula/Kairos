@@ -1,16 +1,11 @@
-// eslint-disable-next-line no-var
-var mockSendNotification: jest.Mock;
-
-jest.mock('web-push', () => {
-  mockSendNotification = jest.fn();
-  return {
-    setVapidDetails: jest.fn(),
-    sendNotification: mockSendNotification,
-  };
-});
+jest.mock('web-push', () => ({
+  setVapidDetails: jest.fn(),
+  sendNotification: jest.fn(),
+}));
 
 import { handler } from "./index";
 import { query, getItem } from "@kairos-lambdas-libs/dynamodb";
+import * as webPush from 'web-push';
 
 jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
   DynamoDBTable: {
@@ -28,6 +23,7 @@ jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
 
 const mockQuery = jest.mocked(query);
 const mockGetItem = jest.mocked(getItem);
+const mockSendNotification = jest.mocked(webPush.sendNotification);
 
 describe('send_todo_notifications Lambda', () => {
   beforeEach(() => {

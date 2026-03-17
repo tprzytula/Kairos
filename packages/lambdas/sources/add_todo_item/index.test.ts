@@ -1,17 +1,12 @@
 import type { IRequestBody } from './body/types';
 
-// eslint-disable-next-line no-var
-var mockPromise: jest.Mock;
-// eslint-disable-next-line no-var
-var mockSNSPublish: jest.Mock;
-
 jest.mock('aws-sdk', () => {
-    mockPromise = jest.fn().mockResolvedValue({ MessageId: 'test-message-id' });
-    mockSNSPublish = jest.fn().mockReturnValue({ promise: mockPromise });
+    const mockPublish = jest.fn().mockReturnValue({
+        promise: jest.fn().mockResolvedValue({ MessageId: 'test-message-id' }),
+    });
     return {
-        SNS: jest.fn().mockImplementation(() => ({
-            publish: mockSNSPublish,
-        })),
+        SNS: jest.fn().mockImplementation(() => ({ publish: mockPublish })),
+        __mocks: { publish: mockPublish },
     };
 });
 
@@ -19,6 +14,8 @@ import { handler } from './index';
 import { getBody } from './body';
 import { DynamoDBTable, putItem } from '@kairos-lambdas-libs/dynamodb';
 import { randomUUID } from 'node:crypto';
+
+const mockSNSPublish: jest.Mock = (jest.requireMock('aws-sdk') as { __mocks: { publish: jest.Mock } }).__mocks.publish;
 
 jest.mock('./body', () => ({
     getBody: jest.fn()
