@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { Typography, Button, Chip, Tooltip, Box, Checkbox, IconButton, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -50,6 +50,9 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
   const [deselectedIndices, setDeselectedIndices] = useState<Set<number>>(new Set())
   const [showAllIngredients, setShowAllIngredients] = useState(false)
   const [showInstructions, setShowInstructions] = useState(false)
+  const interactiveSectionRef = useRef<HTMLDivElement>(null)
+  const needsShopSelection = !shopId || shopId === 'all'
+  const canUseRecipe = !needsShopSelection || shops.length > 0
 
   const handleToggleIngredient = useCallback((index: number) => {
     setDeselectedIndices((prev) => {
@@ -78,7 +81,21 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
     if (!localShopId) return
     setIsSelectingShop(false)
     setIsSelectingIngredients(true)
+    setTimeout(() => {
+      interactiveSectionRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' })
+    }, 50)
   }, [localShopId])
+
+  const handleClickUseRecipe = useCallback(() => {
+    if (needsShopSelection) {
+      setIsSelectingShop(true)
+    } else {
+      setIsSelectingIngredients(true)
+    }
+    setTimeout(() => {
+      interactiveSectionRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' })
+    }, 50)
+  }, [needsShopSelection])
 
   const handleUseRecipe = useCallback(async () => {
     const effectiveShopId = localShopId || shopId
@@ -117,8 +134,6 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
     }
   }, [currentProject, shopId, localShopId, recipe, deselectedIndices, dispatch, onUseRecipe])
 
-  const needsShopSelection = !shopId || shopId === 'all'
-  const canUseRecipe = !needsShopSelection || shops.length > 0
   const hasMoreIngredients = recipe.ingredients.length > INGREDIENTS_PREVIEW_COUNT
   const visibleIngredients =
     showAllIngredients || isSelectingIngredients
@@ -286,6 +301,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
           </Box>
         )}
 
+        <Box ref={interactiveSectionRef}>
         {isSelectingShop ? (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', mt: 0.5 }}>
             <FormControl size="small" fullWidth>
@@ -377,7 +393,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                 variant="contained"
                 size="small"
                 startIcon={<AddShoppingCartIcon />}
-                onClick={() => needsShopSelection ? setIsSelectingShop(true) : setIsSelectingIngredients(true)}
+                onClick={handleClickUseRecipe}
                 disabled={!canUseRecipe}
                 sx={{
                   mt: 0.5,
@@ -393,6 +409,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
             </span>
           </Tooltip>
         )}
+        </Box>
       </RecipeInteractiveArea>
     </RecipeCard>
   )
