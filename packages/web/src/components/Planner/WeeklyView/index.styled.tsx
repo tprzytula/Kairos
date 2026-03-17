@@ -55,64 +55,58 @@ export const TodayButton = styled(Button)({
   },
 })
 
-export const WeekGridWrapper = styled('div')({
+export const WeekRowsWrapper = styled('div')({
   flex: 1,
-  overflowX: 'auto',
-  overflowY: 'hidden',
+  overflowY: 'auto',
   padding: '0 12px 16px',
-  scrollBehavior: 'smooth',
-  WebkitOverflowScrolling: 'touch',
-  '&::-webkit-scrollbar': {
-    height: '4px',
-  },
-  '&::-webkit-scrollbar-track': {
-    background: 'transparent',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    background: '#cbd5e1',
-    borderRadius: '4px',
-  },
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px',
+  '&::-webkit-scrollbar': { width: '4px' },
+  '&::-webkit-scrollbar-thumb': { background: '#cbd5e1', borderRadius: '4px' },
 })
 
-export const WeekGrid = styled('div')({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(7, 120px)',
-  gap: '8px',
-  height: '100%',
-  minHeight: '420px',
-})
-
-interface IDayColumnProps {
+interface IDayRowProps {
   isToday?: boolean
 }
 
-export const DayColumn = styled('div')<IDayColumnProps>(({ isToday }) => ({
+export const DayRow = styled('div')<IDayRowProps>(({ isToday }) => ({
   display: 'flex',
-  flexDirection: 'column',
-  borderRadius: '16px',
+  flexDirection: 'row',
+  alignItems: 'flex-start',
+  borderRadius: '12px',
   border: `1.5px solid ${isToday ? TODAY_BORDER : BORDER_COLOR}`,
   backgroundColor: isToday ? TODAY_BG : '#ffffff',
+  boxShadow: isToday ? '0 2px 8px rgba(99,102,241,0.12)' : '0 1px 3px rgba(0,0,0,0.04)',
   overflow: 'hidden',
-  transition: 'box-shadow 0.15s ease, transform 0.15s ease',
-  boxShadow: isToday ? '0 4px 16px rgba(99,102,241,0.15)' : '0 1px 4px rgba(0,0,0,0.04)',
-  '&:hover': {
-    boxShadow: isToday
-      ? '0 6px 20px rgba(99,102,241,0.2)'
-      : '0 4px 12px rgba(0,0,0,0.08)',
-    transform: 'translateY(-1px)',
-  },
+  minHeight: '40px',
+  transition: 'box-shadow 0.15s ease',
 }))
 
-export const DayColumnHeader = styled('div')<IDayColumnProps>(({ isToday }) => ({
-  textAlign: 'center',
-  padding: '14px 8px 12px',
+export const DayRowHeader = styled('div')<IDayRowProps>(({ isToday }) => ({
+  width: '64px',
+  flexShrink: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '10px 8px',
   background: isToday
     ? `linear-gradient(135deg, ${TODAY_COLOR} 0%, #818cf8 100%)`
     : 'transparent',
-  flexShrink: 0,
+  borderRight: `1px solid ${isToday ? TODAY_BORDER : BORDER_COLOR}`,
 }))
 
-export const DayName = styled('div')<IDayColumnProps>(({ isToday }) => ({
+export const DayRowItems = styled('div')({
+  flex: 1,
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '5px',
+  padding: '7px 8px',
+  alignContent: 'flex-start',
+})
+
+export const DayName = styled('div')<IDayRowProps>(({ isToday }) => ({
   fontSize: '0.65rem',
   fontWeight: 700,
   color: isToday ? 'rgba(255,255,255,0.75)' : '#94a3b8',
@@ -122,28 +116,13 @@ export const DayName = styled('div')<IDayColumnProps>(({ isToday }) => ({
   marginBottom: '5px',
 }))
 
-export const DayNumber = styled('div')<IDayColumnProps>(({ isToday }) => ({
+export const DayNumber = styled('div')<IDayRowProps>(({ isToday }) => ({
   fontSize: '1.5rem',
   fontWeight: isToday ? 800 : 600,
   color: isToday ? '#ffffff' : '#1e293b',
   lineHeight: 1,
 }))
 
-export const DayColumnBody = styled('div')({
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  padding: '8px 6px',
-  gap: '5px',
-  overflowY: 'auto',
-  '&::-webkit-scrollbar': {
-    width: '3px',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    background: '#e2e8f0',
-    borderRadius: '2px',
-  },
-})
 
 const baseItem = {
   fontSize: '0.72rem',

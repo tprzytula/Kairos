@@ -2,8 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import dayjs from 'dayjs'
 import WeeklyView from './index'
 
-// JSDOM does not implement scrollTo
-window.HTMLElement.prototype.scrollTo = jest.fn()
 import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../types/mealPlan'
