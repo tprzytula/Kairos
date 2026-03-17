@@ -12,8 +12,12 @@ Kairos is a full-stack serverless application running on AWS. It provides:
 
 - **Grocery list management** — add, categorise, and organise items by shop
 - **Todo list management** — track tasks with push notification reminders
+- **Meal planning** — plan meals on a calendar with linked recipes
+- **Recipe management** — store and manage recipes with image uploads
+- **Birthday tracking** — keep track of upcoming birthdays
 - **Noise tracking** — log and review environmental noise readings
 - **Shop management** — define and manage shopping locations
+- **AI agent** — chat interface powered by a streaming Lambda backend
 - **Shared projects** — invite others to collaborate on lists in real time
 - **Progressive Web App** — installable, offline-capable, with push notifications
 
@@ -51,7 +55,7 @@ Includes a compiled service worker (`sw.ts`) for PWA offline support and push no
 
 ### `packages/lambdas`
 
-29 AWS Lambda handlers written in TypeScript, bundled with esbuild for Node.js 20. Organised as a Lerna workspace with four internal shared libraries:
+48 AWS Lambda handlers written in TypeScript, bundled with esbuild for Node.js 20. Organised as a Lerna workspace with four internal shared libraries:
 
 | Library | Purpose |
 |---------|---------|
@@ -68,14 +72,14 @@ Terraform configuration deploying to **eu-west-2 (London)** with eight modules:
 |--------|----------|
 | `api_gateway` | REST API with OpenAPI specs and Cognito authoriser |
 | `cognito` | User Pool, Google OAuth identity provider |
-| `dynamodb` | 10 tables with GSIs for multi-tenant queries |
+| `dynamodb` | 13 tables with GSIs for multi-tenant queries |
 | `lambda` | Function definitions and IAM execution roles |
 | `s3` | Web asset bucket, lambda dist bucket, CloudFront distribution |
 | `sns` | Topic for todo push notifications |
 | `policies` | IAM policies for Lambda ↔ AWS service access |
 | `assets` | Static asset deployment |
 
-OpenAPI 3.0 specs live in `packages/infra/modules/api_gateway/openapi/` and define the contracts for all eight resource groups.
+OpenAPI 3.0 specs live in `packages/infra/modules/api_gateway/openapi/` and define the contracts for all resource groups.
 
 ### `packages/assets`
 
@@ -174,6 +178,9 @@ Every user gets a personal project (ID = their Cognito user ID). Projects can be
 | `grocery_list` | Grocery items, scoped by project |
 | `grocery_items_defaults` | Pre-populated default items |
 | `todo_list` | Todo tasks, scoped by project |
+| `meal_plans` | Meal plan entries linked to recipes, scoped by project |
+| `recipes` | User recipes with optional image uploads |
+| `birthdays` | Birthday entries, scoped by project |
 | `noise_tracking` | Noise readings, scoped by project |
 | `projects` | Project definitions |
 | `project_members` | User ↔ project membership |
@@ -182,17 +189,22 @@ Every user gets a personal project (ID = their Cognito user ID). Projects can be
 | `shops` | Shop definitions, scoped by project |
 | `migrations` | Database migration tracking |
 
-### Lambda functions (29)
+### Lambda functions (48)
 
 | Group | Functions |
 |-------|----------|
-| Grocery list | `add`, `get`, `get_defaults`, `update`, `delete`, `delete_bulk` |
+| Grocery list | `add`, `get`, `update`, `delete`, `delete_bulk` |
+| Grocery defaults | `add`, `get`, `get_upload_url`, `update`, `delete` |
 | Todo list | `add`, `get`, `update`, `update_bulk`, `delete` |
+| Meal plans | `add`, `get`, `update`, `delete` |
+| Recipes | `add`, `get`, `get_upload_url`, `update`, `delete` |
+| Birthdays | `add`, `get`, `update`, `delete` |
 | Noise tracking | `add`, `get`, `delete` |
-| Shops | `add`, `get`, `update`, `delete` |
+| Shops | `add`, `get`, `get_upload_url`, `update`, `delete` |
 | Projects | `create`, `get_user_projects`, `join`, `get_invite_info` |
 | User preferences | `get`, `update` |
 | Push notifications | `save_subscription`, `delete_subscription`, `send_notifications` |
+| AI agent | `send_message`, `stream_message` |
 | Infrastructure | `db_migrations` |
 
 ### Push notifications
