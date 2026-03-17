@@ -25,7 +25,9 @@ import {
   DrawerOverlay,
   BottomDrawer,
   DrawerHandle,
-  DayDetailHeader,
+  DayDetailHeaderWrapper,
+  DayDetailDayOfWeek,
+  DayDetailDateLabel,
   DayDetailItem,
   OverdueDayDetailItem,
   CompletedDayDetailItem,
@@ -39,6 +41,7 @@ import {
   MealPlanIcon,
   MealDayDetailItem,
   MealsSectionHeader,
+  MealsAddButton,
 } from './index.styled'
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -257,9 +260,10 @@ const CalendarView = ({
           }} />
           <BottomDrawer>
             <DrawerHandle />
-            <DayDetailHeader>
-              {dayjs(selectedDay).format('dddd, D MMMM')}
-            </DayDetailHeader>
+            <DayDetailHeaderWrapper>
+              <DayDetailDayOfWeek>{dayjs(selectedDay).format('dddd')}</DayDetailDayOfWeek>
+              <DayDetailDateLabel>{dayjs(selectedDay).format('D MMMM')}</DayDetailDateLabel>
+            </DayDetailHeaderWrapper>
             {selectedDayPendingTodos.length === 0 && selectedDayCompletedTodos.length === 0 ? (
               <DayDetailEmpty>No tasks on this day</DayDetailEmpty>
             ) : (
@@ -292,7 +296,12 @@ const CalendarView = ({
                 ))}
               </>
             )}
-            <MealsSectionHeader>Meals</MealsSectionHeader>
+            <MealsSectionHeader>
+              <span>Meals</span>
+              {onAddMealPlan && selectedDay && (
+                <MealsAddButton onClick={(e) => { e.stopPropagation(); onAddMealPlan(selectedDay) }}>+</MealsAddButton>
+              )}
+            </MealsSectionHeader>
             {selectedDayMealPlans.map(plan => (
               <MealDayDetailItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
                 <MealPlanIcon sx={{ fontSize: '0.9rem', flexShrink: 0 }} />
