@@ -55,17 +55,17 @@ export const formatNoiseTimestamp = (timestamp: number): INoiseTimestampFormatte
   if (dateOnly.getTime() === today.getTime()) {
     return {
       date: 'Today',
-      time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      time: date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
     }
   } else if (dateOnly.getTime() === yesterday.getTime()) {
     return {
       date: 'Yesterday',
-      time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      time: date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
     }
   } else {
     return {
-      date: date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }),
-      time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      date: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+      time: date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
     }
   }
 }
