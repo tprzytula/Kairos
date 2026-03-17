@@ -1,14 +1,12 @@
 import { Drawer, Box } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import LinkIcon from '@mui/icons-material/Link'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import dayjs from 'dayjs'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../types/mealPlan'
 import {
-  DayDetailHeaderWrapper,
-  DayDetailDayOfWeek,
-  DayDetailDateLabel,
   DayDetailItem,
   OverdueDayDetailItem,
   CompletedDayDetailItem,
@@ -19,6 +17,7 @@ import {
   MealsSectionHeader,
   MealsAddButton,
 } from '../Planner/CalendarView/index.styled'
+import { DrawerContent, DrawerHeader, DateLabel, SectionLabel } from './index.styled'
 
 interface IDayPreviewDrawerProps {
   open: boolean
@@ -54,15 +53,17 @@ const DayPreviewDrawer = ({
       anchor="bottom"
       open={open}
       onClose={onClose}
-      PaperProps={{ sx: { borderRadius: '16px 16px 0 0', maxHeight: '60vh', overflow: 'hidden' } }}
+      PaperProps={{ sx: { borderRadius: '16px 16px 0 0', maxHeight: '85vh', overflow: 'hidden' } }}
     >
-      <Box sx={{ overflowY: 'auto', padding: '0 12px', paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
-        <Box sx={{ width: '48px', height: '5px', backgroundColor: '#94a3b8', borderRadius: '3px', margin: '10px auto 14px', flexShrink: 0 }} />
-        <DayDetailHeaderWrapper>
-          <DayDetailDayOfWeek>{selectedDay ? dayjs(selectedDay).format('dddd') : ''}</DayDetailDayOfWeek>
-          <DayDetailDateLabel>{selectedDay ? dayjs(selectedDay).format('D MMMM') : ''}</DayDetailDateLabel>
-        </DayDetailHeaderWrapper>
+      <Box sx={{ width: '40px', height: '4px', backgroundColor: '#cbd5e1', borderRadius: '2px', margin: '10px auto 0', flexShrink: 0 }} />
+      <DrawerContent>
+        <DrawerHeader>
+          <CalendarTodayIcon sx={{ fontSize: '1.1rem' }} />
+          {selectedDay ? dayjs(selectedDay).format('dddd') : ''}
+        </DrawerHeader>
+        <DateLabel>{selectedDay ? dayjs(selectedDay).format('D MMMM YYYY') : ''}</DateLabel>
 
+        <SectionLabel color={isOverdue ? '#dc2626' : '#1d4ed8'}>Tasks</SectionLabel>
         {pendingTodos.length === 0 && completedTodos.length === 0 ? (
           <DayDetailEmpty>No tasks on this day</DayDetailEmpty>
         ) : (
@@ -86,12 +87,17 @@ const DayPreviewDrawer = ({
           </>
         )}
 
-        {birthdays.length > 0 && birthdays.map(birthday => (
-          <BirthdayDayDetailItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
-            <CakeIcon sx={{ fontSize: '0.9rem', color: '#db2777', flexShrink: 0 }} />
-            {birthday.name}
-          </BirthdayDayDetailItem>
-        ))}
+        {birthdays.length > 0 && (
+          <>
+            <SectionLabel color="#db2777">Birthdays</SectionLabel>
+            {birthdays.map(birthday => (
+              <BirthdayDayDetailItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
+                <CakeIcon sx={{ fontSize: '0.9rem', color: '#db2777', flexShrink: 0 }} />
+                {birthday.name}
+              </BirthdayDayDetailItem>
+            ))}
+          </>
+        )}
 
         <MealsSectionHeader>
           <span>Meals</span>
@@ -99,14 +105,18 @@ const DayPreviewDrawer = ({
             <MealsAddButton onClick={(e) => { e.stopPropagation(); onAddMealPlan(selectedDay) }}>+</MealsAddButton>
           )}
         </MealsSectionHeader>
-        {mealPlans.map(plan => (
-          <MealDayDetailItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
-            <MealPlanIcon sx={{ fontSize: '0.9rem', flexShrink: 0 }} />
-            {plan.recipeName}
-            {plan.recipeId && <LinkIcon sx={{ fontSize: '0.75rem', color: '#d97706', marginLeft: 'auto', flexShrink: 0 }} />}
-          </MealDayDetailItem>
-        ))}
-      </Box>
+        {mealPlans.length === 0 ? (
+          <DayDetailEmpty>No meals planned</DayDetailEmpty>
+        ) : (
+          mealPlans.map(plan => (
+            <MealDayDetailItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
+              <MealPlanIcon sx={{ fontSize: '0.9rem', flexShrink: 0 }} />
+              {plan.recipeName}
+              {plan.recipeId && <LinkIcon sx={{ fontSize: '0.75rem', color: '#d97706', marginLeft: 'auto', flexShrink: 0 }} />}
+            </MealDayDetailItem>
+          ))
+        )}
+      </DrawerContent>
     </Drawer>
   )
 }
