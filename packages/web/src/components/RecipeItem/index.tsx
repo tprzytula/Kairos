@@ -132,7 +132,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
     } finally {
       setIsAdding(false)
     }
-  }, [currentProject, shopId, localShopId, recipe, deselectedIndices, dispatch, onUseRecipe])
+  }, [currentProject, shopId, localShopId, recipe, deselectedIndices, dispatch, onUseRecipe, defaults])
 
   const hasMoreIngredients = recipe.ingredients.length > INGREDIENTS_PREVIEW_COUNT
   const visibleIngredients =

@@ -4,6 +4,8 @@ import MenuBookIcon from '@mui/icons-material/MenuBook'
 import AddIcon from '@mui/icons-material/Add'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { IRecipe } from '../../types/recipe'
+import { useItemDefaults } from '../../hooks/useItemDefaults'
+import { retrieveGroceryListDefaults } from '../../api/groceryList'
 import RecipeList from '../RecipeList'
 import RecipeForm from '../RecipeForm'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
@@ -25,6 +27,7 @@ interface RecipeDrawerProps {
 const RecipeDrawer = ({ open, onClose, onUseRecipe, shopId }: RecipeDrawerProps) => {
   const [view, setView] = useState<'list' | 'form'>('list')
   const [editingRecipe, setEditingRecipe] = useState<IRecipe | null>(null)
+  const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
 
   const handleAddClick = useCallback(() => {
     setEditingRecipe(null)
@@ -85,6 +88,7 @@ const RecipeDrawer = ({ open, onClose, onUseRecipe, shopId }: RecipeDrawerProps)
             onEditRecipe={handleEditRecipe}
             onUseRecipe={handleUseRecipe}
             shopId={shopId}
+            defaults={defaults}
           />
         ) : (
           <RecipeForm
