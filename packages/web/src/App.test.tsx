@@ -1,9 +1,13 @@
 import { screen, render } from '@testing-library/react'
 import { BrowserRouter } from 'react-router'
 import { ThemeProvider } from '@mui/material/styles'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppStateProvider } from './providers/AppStateProvider'
 import theme from './theme'
 import { App } from './App'
+
+const createTestQueryClient = () =>
+  new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
 // Mock the auth context
 jest.mock('react-oidc-context', () => ({
@@ -16,14 +20,17 @@ jest.mock('react-oidc-context', () => ({
 }))
 
 const renderApp = () => {
+  const queryClient = createTestQueryClient()
   render(
-    <ThemeProvider theme={theme}>
-      <AppStateProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </AppStateProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <AppStateProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AppStateProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   )
 }
 

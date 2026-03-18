@@ -1,5 +1,6 @@
 import React from 'react'
 import { render, screen, renderHook, waitFor, act } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { usePlannerContext } from './index'
 import { PlannerProvider } from './index'
 import * as API from '../../api/toDoList'
@@ -17,6 +18,9 @@ jest.mock('react-oidc-context', () => ({
 jest.mock('../../api/projects', () => ({
   retrieveUserProjects: jest.fn().mockResolvedValue([])
 }))
+
+const createTestQueryClient = () =>
+  new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
 describe('Given the PlannerProvider component', () => {
   it('should render the component', async () => {
@@ -57,10 +61,13 @@ describe('Given the usePlannerContext hook', () => {
   it('should return the todo list', async () => {
     jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
 
+    const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <MockProjectProvider>
-        <PlannerProvider>{children}</PlannerProvider>
-      </MockProjectProvider>
+      <QueryClientProvider client={queryClient}>
+        <MockProjectProvider>
+          <PlannerProvider>{children}</PlannerProvider>
+        </MockProjectProvider>
+      </QueryClientProvider>
     )
 
     const { result } = await waitFor(() => renderHook(() => usePlannerContext(), {
@@ -75,10 +82,13 @@ describe('Given the usePlannerContext hook', () => {
   it('should allow you to refetch the todo list', async () => {
     jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
 
+    const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <MockProjectProvider>
-        <PlannerProvider>{children}</PlannerProvider>
-      </MockProjectProvider>
+      <QueryClientProvider client={queryClient}>
+        <MockProjectProvider>
+          <PlannerProvider>{children}</PlannerProvider>
+        </MockProjectProvider>
+      </QueryClientProvider>
     )
 
     const { result } = await waitFor(() => renderHook(() => usePlannerContext(), {
@@ -120,10 +130,13 @@ describe('Given the usePlannerContext hook', () => {
     it('should return an empty array', async () => {
       jest.spyOn(API, 'retrieveToDoList').mockRejectedValue(new Error('It is what it is'))
 
+      const queryClient = createTestQueryClient()
       const Wrapper = ({ children }: { children: React.ReactNode }) => (
-        <MockProjectProvider>
-          <PlannerProvider>{children}</PlannerProvider>
-        </MockProjectProvider>
+        <QueryClientProvider client={queryClient}>
+          <MockProjectProvider>
+            <PlannerProvider>{children}</PlannerProvider>
+          </MockProjectProvider>
+        </QueryClientProvider>
       )
 
       const { result } = await waitFor(() => renderHook(() => usePlannerContext(), {
@@ -139,10 +152,13 @@ describe('Given the usePlannerContext hook', () => {
   it('should handle removing items from the todo list', async () => {
     jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
 
+    const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <MockProjectProvider>
-        <PlannerProvider>{children}</PlannerProvider>
-      </MockProjectProvider>
+      <QueryClientProvider client={queryClient}>
+        <MockProjectProvider>
+          <PlannerProvider>{children}</PlannerProvider>
+        </MockProjectProvider>
+      </QueryClientProvider>
     )
 
     const { result } = await waitFor(() => renderHook(() => usePlannerContext(), {
@@ -157,8 +173,10 @@ describe('Given the usePlannerContext hook', () => {
       await result.current.removeFromToDoList('1')
     })
 
-    expect(result.current.toDoList).toHaveLength(1)
-    expect(result.current.toDoList[0].id).toBe('2')
+    await waitFor(() => {
+      expect(result.current.toDoList).toHaveLength(1)
+      expect(result.current.toDoList[0].id).toBe('2')
+    })
   })
 
 
@@ -167,10 +185,13 @@ describe('Given the usePlannerContext hook', () => {
     jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
     jest.spyOn(API, 'updateToDoItemFields').mockResolvedValue()
 
+    const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <MockProjectProvider>
-        <PlannerProvider>{children}</PlannerProvider>
-      </MockProjectProvider>
+      <QueryClientProvider client={queryClient}>
+        <MockProjectProvider>
+          <PlannerProvider>{children}</PlannerProvider>
+        </MockProjectProvider>
+      </QueryClientProvider>
     )
 
     const { result } = await waitFor(() => renderHook(() => usePlannerContext(), {
@@ -186,10 +207,12 @@ describe('Given the usePlannerContext hook', () => {
     })
 
     expect(API.updateToDoItemFields).toHaveBeenCalledWith('1', { isDone: true, name: 'Updated task' }, 'test-project-id')
-    
-    const updatedItem = result.current.toDoList.find(item => item.id === '1')
-    expect(updatedItem?.isDone).toBe(true)
-    expect(updatedItem?.name).toBe('Updated task')
+
+    await waitFor(() => {
+      const updatedItem = result.current.toDoList.find(item => item.id === '1')
+      expect(updatedItem?.isDone).toBe(true)
+      expect(updatedItem?.name).toBe('Updated task')
+    })
   })
 
   it('should handle errors when updating todo item fields fails', async () => {
@@ -197,10 +220,13 @@ describe('Given the usePlannerContext hook', () => {
     jest.spyOn(API, 'updateToDoItemFields').mockRejectedValue(new Error('Update failed'))
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
 
+    const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <MockProjectProvider>
-        <PlannerProvider>{children}</PlannerProvider>
-      </MockProjectProvider>
+      <QueryClientProvider client={queryClient}>
+        <MockProjectProvider>
+          <PlannerProvider>{children}</PlannerProvider>
+        </MockProjectProvider>
+      </QueryClientProvider>
     )
 
     const { result } = await waitFor(() => renderHook(() => usePlannerContext(), {
@@ -226,13 +252,16 @@ describe('Given the usePlannerContext hook', () => {
     const promise = new Promise<ITodoItem[]>((resolve) => {
       resolvePromise = resolve
     })
-    
+
     jest.spyOn(API, 'retrieveToDoList').mockReturnValue(promise)
 
+    const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <MockProjectProvider>
-        <PlannerProvider>{children}</PlannerProvider>
-      </MockProjectProvider>
+      <QueryClientProvider client={queryClient}>
+        <MockProjectProvider>
+          <PlannerProvider>{children}</PlannerProvider>
+        </MockProjectProvider>
+      </QueryClientProvider>
     )
 
     const { result } = renderHook(() => usePlannerContext(), {
@@ -301,11 +330,14 @@ const MockProjectProvider = ({ children }: { children: React.ReactNode }) => {
 }
 
 const renderPlannerProvider = () => {
+  const queryClient = createTestQueryClient()
   return render(
-    <MockProjectProvider>
-      <PlannerProvider>
-        <div>Test</div>
-      </PlannerProvider>
-    </MockProjectProvider>
+    <QueryClientProvider client={queryClient}>
+      <MockProjectProvider>
+        <PlannerProvider>
+          <div>Test</div>
+        </PlannerProvider>
+      </MockProjectProvider>
+    </QueryClientProvider>
   )
 }

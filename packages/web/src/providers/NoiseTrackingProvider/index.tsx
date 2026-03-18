@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
+import { createContext, useContext, useCallback, useMemo, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { INoiseTrackingItem } from '../../api/noiseTracking'
 import { retrieveNoiseTrackingItems } from '../../api/noiseTracking'
 import { IState, INoiseTrackingProviderProps } from './types'
@@ -16,50 +17,36 @@ export const useNoiseTrackingContext = () => useContext(NoiseTrackingContext)
 
 export const NoiseTrackingProvider = ({ children }: INoiseTrackingProviderProps) => {
   const { currentProject } = useProjectContext()
-  const [noiseTrackingItems, setNoiseTrackingItems] = useState<Array<INoiseTrackingItem>>([])
-  const [isLoading, setIsLoading] = useState(false)
 
-  const fetchNoiseTrackingItems = useCallback(async () => {
-    if (!currentProject) {
-      return
-    }
-    
-    try {
-      setIsLoading(true)
+  const query = useQuery({
+    queryKey: ['noiseTrackingItems', currentProject?.id],
+    queryFn: () => retrieveNoiseTrackingItems(currentProject!.id),
+    enabled: !!currentProject,
+  })
 
-      const list = await retrieveNoiseTrackingItems(currentProject.id)
-      setNoiseTrackingItems(list)
-    } catch (error) {
-      console.error('Failed to fetch noise tracking items:', error)
-      setNoiseTrackingItems([])
-    } finally {
-      setIsLoading(false)
+  useEffect(() => {
+    if (query.error) {
+      console.error('Failed to fetch noise tracking items:', query.error)
     }
-  }, [currentProject])
+  }, [query.error])
+
+  const noiseTrackingItems = query.data ?? []
 
   const refetchNoiseTrackingItems = useCallback(async () => {
-    await fetchNoiseTrackingItems()
-  }, [fetchNoiseTrackingItems])
-
-  useLayoutEffect(() => {
-    if (currentProject) {
-      fetchNoiseTrackingItems()
-    } else {
-      setNoiseTrackingItems([])
-    }
-  }, [currentProject, fetchNoiseTrackingItems])
+    await query.refetch()
+  }, [query.refetch])
 
   const value = useMemo(
     () => ({
       noiseTrackingItems,
-      isLoading,
+      isLoading: query.isLoading,
       refetchNoiseTrackingItems,
     }),
-    [noiseTrackingItems, isLoading, refetchNoiseTrackingItems]
+    [noiseTrackingItems, query.isLoading, refetchNoiseTrackingItems]
   )
 
   return (
-    <NoiseTrackingContext.Provider value={value}> 
+    <NoiseTrackingContext.Provider value={value}>
       {children}
     </NoiseTrackingContext.Provider>
   )

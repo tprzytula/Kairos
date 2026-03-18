@@ -1,8 +1,12 @@
 import React from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
+
+const createTestQueryClient = () =>
+  new QueryClient({ defaultOptions: { queries: { retry: false } } })
 import { BrowserRouter } from 'react-router'
 import NoiseTrackingRoute from '.'
 import * as API from '../../api/noiseTracking'
@@ -147,15 +151,18 @@ const renderComponent = () => {
     dispatch: jest.fn(),
   })
 
+  const queryClient = createTestQueryClient()
   render(
-    <ThemeProvider theme={theme}>
-      <AppStateProvider>
-        <BrowserRouter>
-          <MockProjectProvider>
-            <NoiseTrackingRoute />
-          </MockProjectProvider>
-        </BrowserRouter>
-      </AppStateProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <AppStateProvider>
+          <BrowserRouter>
+            <MockProjectProvider>
+              <NoiseTrackingRoute />
+            </MockProjectProvider>
+          </BrowserRouter>
+        </AppStateProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   )
 }

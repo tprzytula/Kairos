@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useCallback, useLayoutEffect, useMemo } from 'react'
+import { createContext, useContext, useCallback, useMemo, useEffect } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { StateComponentProps } from '../AppStateProvider/types'
 import { IState } from './types'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
@@ -19,72 +20,56 @@ export const usePlannerContext = () => useContext(PlannerContext)
 
 export const PlannerProvider = ({ children }: StateComponentProps) => {
   const { currentProject } = useProjectContext()
-  const [toDoList, setToDoList] = useState<Array<ITodoItem>>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const queryClient = useQueryClient()
+  const queryKey = ['toDoList', currentProject?.id]
 
-  const fetchToDoList = useCallback(async () => {
-    if (!currentProject) {
-      return
+  const query = useQuery({
+    queryKey,
+    queryFn: () => retrieveToDoList(currentProject!.id),
+    enabled: !!currentProject,
+  })
+
+  useEffect(() => {
+    if (query.error) {
+      console.error('Failed to fetch to do list:', query.error)
     }
-    
-    try {
-      setIsLoading(true)
+  }, [query.error])
 
-      const list = await retrieveToDoList(currentProject.id)
-      setToDoList(list)
-    } catch (error) {
-      console.error('Failed to fetch to do list:', error)
-      setToDoList([])
-    } finally {
-      setIsLoading(false)
-    }
-  }, [currentProject])
-
-  const removeFromToDoList = useCallback((id: string) => {
-    setToDoList((prev) => prev.filter((item) => item.id !== id))
-  }, [])
+  const toDoList = query.data ?? []
 
   const refetchToDoList = useCallback(async () => {
-    await fetchToDoList()
-  }, [fetchToDoList])
+    await query.refetch()
+  }, [query.refetch])
+
+  const removeFromToDoList = useCallback((id: string) => {
+    queryClient.setQueryData<ITodoItem[]>(queryKey, (prev = []) =>
+      prev.filter((item) => item.id !== id)
+    )
+  }, [queryClient, currentProject?.id])
 
   const updateToDoItemFieldsHandler = useCallback(async (id: string, fields: any) => {
     if (!currentProject) return
-    
+
     try {
       await updateToDoItemFields(id, fields, currentProject.id)
-      
-      // Update the local state to reflect the changes
-      setToDoList((prev) => 
-        prev.map((item) => 
-          item.id === id 
-            ? { ...item, ...fields }
-            : item
-        )
+      queryClient.setQueryData<ITodoItem[]>(queryKey, (prev = []) =>
+        prev.map((item) => item.id === id ? { ...item, ...fields } : item)
       )
     } catch (error) {
       console.error('Failed to update todo item:', error)
       throw error
     }
-  }, [currentProject])
-
-  useLayoutEffect(() => {
-    if (currentProject) {
-      fetchToDoList()
-    } else {
-      setToDoList([])
-    }
-  }, [currentProject, fetchToDoList])
+  }, [currentProject, queryClient])
 
   const value = useMemo(
     () => ({
       toDoList,
-      isLoading,
+      isLoading: query.isLoading,
       refetchToDoList,
       removeFromToDoList,
       updateToDoItemFields: updateToDoItemFieldsHandler,
     }),
-    [toDoList, isLoading, refetchToDoList, removeFromToDoList, updateToDoItemFieldsHandler]
+    [toDoList, query.isLoading, refetchToDoList, removeFromToDoList, updateToDoItemFieldsHandler]
   )
 
   return (

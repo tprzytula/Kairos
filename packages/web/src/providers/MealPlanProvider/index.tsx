@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useCallback, useLayoutEffect, useMemo } from 'react'
+import { createContext, useContext, useCallback, useMemo, useEffect } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { IMealPlan } from '../../types/mealPlan'
 import { MealType } from '../../enums/mealType'
 import { getMealPlans, addMealPlan as addMealPlanApi, updateMealPlan as updateMealPlanApi, deleteMealPlan } from '../../api/mealPlans'
@@ -20,23 +21,26 @@ export const useMealPlanContext = () => useContext(MealPlanContext)
 
 export const MealPlanProvider = ({ children }: IMealPlanProviderProps) => {
   const { currentProject } = useProjectContext()
-  const [mealPlans, setMealPlans] = useState<IMealPlan[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const queryClient = useQueryClient()
+  const queryKey = ['mealPlans', currentProject?.id]
+
+  const query = useQuery({
+    queryKey,
+    queryFn: () => getMealPlans(currentProject!.id),
+    enabled: !!currentProject,
+  })
+
+  useEffect(() => {
+    if (query.error) {
+      console.error('Failed to fetch meal plans:', query.error)
+    }
+  }, [query.error])
+
+  const mealPlans = query.data ?? []
 
   const fetchMealPlans = useCallback(async () => {
-    if (!currentProject) return
-
-    try {
-      setIsLoading(true)
-      const items = await getMealPlans(currentProject.id)
-      setMealPlans(items)
-    } catch (error) {
-      console.error('Failed to fetch meal plans:', error)
-      setMealPlans([])
-    } finally {
-      setIsLoading(false)
-    }
-  }, [currentProject])
+    await query.refetch()
+  }, [query.refetch])
 
   const addMealPlan = useCallback(async (date: string, recipeName: string, recipeId?: string, mealType?: MealType) => {
     if (!currentProject) return
@@ -50,8 +54,8 @@ export const MealPlanProvider = ({ children }: IMealPlanProviderProps) => {
       mealType,
       projectId: currentProject.id,
     }
-    setMealPlans((prev) => [...prev, newMealPlan])
-  }, [currentProject])
+    queryClient.setQueryData<IMealPlan[]>(queryKey, (prev = []) => [...prev, newMealPlan])
+  }, [currentProject, queryClient])
 
   const updateMealPlan = useCallback(async (id: string, fields: { date?: string; recipeName?: string; recipeId?: string | null; mealType?: MealType | null }) => {
     if (!currentProject) return
@@ -60,38 +64,30 @@ export const MealPlanProvider = ({ children }: IMealPlanProviderProps) => {
     const definedFields = Object.fromEntries(
       Object.entries(fields).filter(([, v]) => v !== undefined)
     ) as Partial<IMealPlan>
-    setMealPlans((prev) =>
-      prev.map((plan) =>
-        plan.id === id ? { ...plan, ...definedFields } : plan
-      )
+    queryClient.setQueryData<IMealPlan[]>(queryKey, (prev = []) =>
+      prev.map((plan) => plan.id === id ? { ...plan, ...definedFields } : plan)
     )
-  }, [currentProject])
+  }, [currentProject, queryClient])
 
   const removeMealPlan = useCallback(async (id: string) => {
     if (!currentProject) return
 
     await deleteMealPlan(id, currentProject.id)
-    setMealPlans((prev) => prev.filter((plan) => plan.id !== id))
-  }, [currentProject])
-
-  useLayoutEffect(() => {
-    if (currentProject) {
-      fetchMealPlans()
-    } else {
-      setMealPlans([])
-    }
-  }, [currentProject, fetchMealPlans])
+    queryClient.setQueryData<IMealPlan[]>(queryKey, (prev = []) =>
+      prev.filter((plan) => plan.id !== id)
+    )
+  }, [currentProject, queryClient])
 
   const value = useMemo(
     () => ({
       mealPlans,
-      isLoading,
+      isLoading: query.isLoading,
       fetchMealPlans,
       addMealPlan,
       updateMealPlan,
       removeMealPlan,
     }),
-    [mealPlans, isLoading, fetchMealPlans, addMealPlan, updateMealPlan, removeMealPlan]
+    [mealPlans, query.isLoading, fetchMealPlans, addMealPlan, updateMealPlan, removeMealPlan]
   )
 
   return (

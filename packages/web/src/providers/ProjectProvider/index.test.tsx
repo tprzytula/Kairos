@@ -1,5 +1,6 @@
 import React from 'react'
 import { render, screen, waitFor, act } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ProjectProvider, useProjectContext } from './ProjectProvider'
 import { retrieveUserProjects, createProject, joinProject, getProjectInviteInfo } from '../../api/projects'
 import { getUserPreferences, updateUserPreferences } from '../../api/userPreferences'
@@ -29,6 +30,9 @@ const mockGetProjectInviteInfo = getProjectInviteInfo as jest.MockedFunction<typ
 const mockGetUserPreferences = getUserPreferences as jest.MockedFunction<typeof getUserPreferences>
 const mockUpdateUserPreferences = updateUserPreferences as jest.MockedFunction<typeof updateUserPreferences>
 
+const createTestQueryClient = () =>
+  new QueryClient({ defaultOptions: { queries: { retry: false } } })
+
 const TestComponent = () => {
   const context = useProjectContext()
   return (
@@ -41,10 +45,13 @@ const TestComponent = () => {
 }
 
 const renderWithProvider = () => {
+  const queryClient = createTestQueryClient()
   return render(
-    <ProjectProvider>
-      <TestComponent />
-    </ProjectProvider>
+    <QueryClientProvider client={queryClient}>
+      <ProjectProvider>
+        <TestComponent />
+      </ProjectProvider>
+    </QueryClientProvider>
   )
 }
 
@@ -53,11 +60,12 @@ describe('ProjectProvider', () => {
     jest.clearAllMocks()
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
-      user: { 
+      user: {
         sub: 'test-user-id',
         access_token: 'test-access-token'
       }
     })
+    mockUpdateUserPreferences.mockResolvedValue(undefined)
   })
 
   it('should fetch projects on mount when authenticated', async () => {
@@ -139,7 +147,7 @@ describe('ProjectProvider', () => {
     await waitFor(() => {
       expect(screen.getByTestId('current-project')).toHaveTextContent('Personal Project')
     })
-    
+
     expect(mockUpdateUserPreferences).toHaveBeenCalledWith(
       { currentProjectId: 'personal-project' },
       'test-access-token'
@@ -197,7 +205,7 @@ describe('ProjectProvider', () => {
     await waitFor(() => {
       expect(screen.getByTestId('current-project')).toHaveTextContent('Shared Project')
     })
-    
+
     expect(mockGetUserPreferences).toHaveBeenCalledWith('test-access-token')
   })
 

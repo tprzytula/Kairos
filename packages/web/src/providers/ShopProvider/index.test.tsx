@@ -1,5 +1,6 @@
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { ReactNode } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ShopProvider, useShopContext } from './index'
 import { retrieveShops, addShop, updateShop, deleteShop } from '../../api/shops'
 import { retrieveGroceryList } from '../../api/groceryList/retrieve'
@@ -49,6 +50,9 @@ const mockUseAuth = useAuth as jest.Mock
 const mockUseProjectContext = useProjectContext as jest.Mock
 const mockUseLocation = useLocation as jest.Mock
 
+const createTestQueryClient = () =>
+  new QueryClient({ defaultOptions: { queries: { retry: false } } })
+
 const MOCK_PROJECT: IProject = {
   id: 'project-1',
   ownerId: 'user-1',
@@ -67,9 +71,15 @@ const MOCK_SHOP: IShop = {
   updatedAt: '2024-01-01T00:00:00Z',
 }
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <ShopProvider>{children}</ShopProvider>
-)
+const createWrapper = () => {
+  const queryClient = createTestQueryClient()
+  const Wrapper = ({ children }: { children: ReactNode }) => (
+    <QueryClientProvider client={queryClient}>
+      <ShopProvider>{children}</ShopProvider>
+    </QueryClientProvider>
+  )
+  return Wrapper
+}
 
 describe('Given the ShopProvider', () => {
   beforeEach(() => {
@@ -96,7 +106,7 @@ describe('Given the ShopProvider', () => {
 
   describe('When the provider mounts with a project and authenticated user', () => {
     it('should fetch shops on mount', async () => {
-      renderHook(() => useShopContext(), { wrapper: Wrapper })
+      renderHook(() => useShopContext(), { wrapper: createWrapper() })
 
       await waitFor(() => {
         expect(mockRetrieveShops).toHaveBeenCalledWith('project-1')
@@ -107,7 +117,7 @@ describe('Given the ShopProvider', () => {
       let resolveShops!: (value: IShop[]) => void
       mockRetrieveShops.mockReturnValue(new Promise<IShop[]>(resolve => { resolveShops = resolve }))
 
-      const { result } = renderHook(() => useShopContext(), { wrapper: Wrapper })
+      const { result } = renderHook(() => useShopContext(), { wrapper: createWrapper() })
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(true)
@@ -125,7 +135,7 @@ describe('Given the ShopProvider', () => {
     it('should populate shops with item counts after fetch', async () => {
       mockRetrieveGroceryList.mockResolvedValue([{ id: 'item-1' }, { id: 'item-2' }])
 
-      const { result } = renderHook(() => useShopContext(), { wrapper: Wrapper })
+      const { result } = renderHook(() => useShopContext(), { wrapper: createWrapper() })
 
       await waitFor(() => {
         expect(result.current.shops).toHaveLength(1)
@@ -141,7 +151,7 @@ describe('Given the ShopProvider', () => {
         currentProjectId: 'project-1',
       })
 
-      const { result } = renderHook(() => useShopContext(), { wrapper: Wrapper })
+      const { result } = renderHook(() => useShopContext(), { wrapper: createWrapper() })
 
       await waitFor(() => {
         expect(result.current.currentShop).not.toBeNull()
@@ -155,7 +165,7 @@ describe('Given the ShopProvider', () => {
     it('should not fetch shops', () => {
       mockUseProjectContext.mockReturnValue({ currentProject: null })
 
-      renderHook(() => useShopContext(), { wrapper: Wrapper })
+      renderHook(() => useShopContext(), { wrapper: createWrapper() })
 
       expect(mockRetrieveShops).not.toHaveBeenCalled()
     })
@@ -163,7 +173,7 @@ describe('Given the ShopProvider', () => {
 
   describe('When addShop is called', () => {
     it('should call the API and return the new shop id', async () => {
-      const { result } = renderHook(() => useShopContext(), { wrapper: Wrapper })
+      const { result } = renderHook(() => useShopContext(), { wrapper: createWrapper() })
 
       await waitFor(() => expect(result.current.isLoading).toBe(false))
 
@@ -179,7 +189,7 @@ describe('Given the ShopProvider', () => {
     it('should throw when there is no current project', async () => {
       mockUseProjectContext.mockReturnValue({ currentProject: null })
 
-      const { result } = renderHook(() => useShopContext(), { wrapper: Wrapper })
+      const { result } = renderHook(() => useShopContext(), { wrapper: createWrapper() })
 
       await expect(
         act(async () => {
@@ -191,7 +201,7 @@ describe('Given the ShopProvider', () => {
 
   describe('When updateShop is called', () => {
     it('should update the shop in local state', async () => {
-      const { result } = renderHook(() => useShopContext(), { wrapper: Wrapper })
+      const { result } = renderHook(() => useShopContext(), { wrapper: createWrapper() })
 
       await waitFor(() => expect(result.current.shops).toHaveLength(1))
 
@@ -210,7 +220,7 @@ describe('Given the ShopProvider', () => {
 
   describe('When deleteShop is called', () => {
     it('should remove the shop from state', async () => {
-      const { result } = renderHook(() => useShopContext(), { wrapper: Wrapper })
+      const { result } = renderHook(() => useShopContext(), { wrapper: createWrapper() })
 
       await waitFor(() => expect(result.current.shops).toHaveLength(1))
 
@@ -231,7 +241,7 @@ describe('Given the ShopProvider', () => {
         currentProjectId: 'project-1',
       })
 
-      const { result } = renderHook(() => useShopContext(), { wrapper: Wrapper })
+      const { result } = renderHook(() => useShopContext(), { wrapper: createWrapper() })
 
       await waitFor(() => expect(result.current.currentShop?.id).toBe('shop-1'))
 
@@ -250,7 +260,7 @@ describe('Given the ShopProvider', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
       mockRetrieveShops.mockRejectedValue(new Error('Network error'))
 
-      const { result } = renderHook(() => useShopContext(), { wrapper: Wrapper })
+      const { result } = renderHook(() => useShopContext(), { wrapper: createWrapper() })
 
       await waitFor(() => expect(result.current.isLoading).toBe(false))
 

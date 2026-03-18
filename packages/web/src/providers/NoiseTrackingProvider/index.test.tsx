@@ -1,5 +1,6 @@
 import React from 'react'
 import { render, screen, renderHook, waitFor, act } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import * as API from '../../api/noiseTracking'
 import { INoiseTrackingItem } from '../../api/noiseTracking'
 import { NoiseTrackingProvider, useNoiseTrackingContext } from './index'
@@ -16,6 +17,9 @@ jest.mock('react-oidc-context', () => ({
 jest.mock('../../api/projects', () => ({
   retrieveUserProjects: jest.fn().mockResolvedValue([])
 }))
+
+const createTestQueryClient = () =>
+  new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
 describe('Given the NoiseTrackingProvider component', () => {
   it('should render the component', async () => {
@@ -56,10 +60,13 @@ describe('Given the useNoiseTrackingContext hook', () => {
   it('should return the noise tracking items', async () => {
       jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(EXAMPLE_NOISE_TRACKING_ITEMS)
 
+    const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <MockProjectProvider>
-        <NoiseTrackingProvider>{children}</NoiseTrackingProvider>
-      </MockProjectProvider>
+      <QueryClientProvider client={queryClient}>
+        <MockProjectProvider>
+          <NoiseTrackingProvider>{children}</NoiseTrackingProvider>
+        </MockProjectProvider>
+      </QueryClientProvider>
     )
 
     const { result } = await waitFor(() => renderHook(() => useNoiseTrackingContext(), {
@@ -74,10 +81,13 @@ describe('Given the useNoiseTrackingContext hook', () => {
   it('should allow you to refetch the noise tracking items', async () => {
     jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(EXAMPLE_NOISE_TRACKING_ITEMS)
 
+    const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <MockProjectProvider>
-        <NoiseTrackingProvider>{children}</NoiseTrackingProvider>
-      </MockProjectProvider>
+      <QueryClientProvider client={queryClient}>
+        <MockProjectProvider>
+          <NoiseTrackingProvider>{children}</NoiseTrackingProvider>
+        </MockProjectProvider>
+      </QueryClientProvider>
     )
 
     const { result } = await waitFor(() => renderHook(() => useNoiseTrackingContext(), {
@@ -111,10 +121,13 @@ describe('Given the useNoiseTrackingContext hook', () => {
     it('should return an empty array', async () => {
       jest.spyOn(API, 'retrieveNoiseTrackingItems').mockRejectedValue(new Error('It is what it is'))
 
+      const queryClient = createTestQueryClient()
       const Wrapper = ({ children }: { children: React.ReactNode }) => (
-        <MockProjectProvider>
-          <NoiseTrackingProvider>{children}</NoiseTrackingProvider>
-        </MockProjectProvider>
+        <QueryClientProvider client={queryClient}>
+          <MockProjectProvider>
+            <NoiseTrackingProvider>{children}</NoiseTrackingProvider>
+          </MockProjectProvider>
+        </QueryClientProvider>
       )
 
       const { result } = await waitFor(() => renderHook(() => useNoiseTrackingContext(), {
@@ -129,10 +142,13 @@ describe('Given the useNoiseTrackingContext hook', () => {
 
   describe('Context initialization', () => {
     it('should provide initial state values', async () => {
+      const queryClient = createTestQueryClient()
       const Wrapper = ({ children }: { children: React.ReactNode }) => (
-        <MockProjectProvider>
-          <NoiseTrackingProvider>{children}</NoiseTrackingProvider>
-        </MockProjectProvider>
+        <QueryClientProvider client={queryClient}>
+          <MockProjectProvider>
+            <NoiseTrackingProvider>{children}</NoiseTrackingProvider>
+          </MockProjectProvider>
+        </QueryClientProvider>
       )
 
       const { result } = renderHook(() => useNoiseTrackingContext(), {
@@ -149,7 +165,7 @@ describe('Given the useNoiseTrackingContext hook', () => {
     it('should handle context usage outside provider', () => {
       // Test the useContext behavior when used outside provider
       const { result } = renderHook(() => useNoiseTrackingContext())
-      
+
       // Should return initial state values
       expect(result.current.noiseTrackingItems).toEqual([])
       expect(result.current.isLoading).toBe(false)
@@ -197,11 +213,14 @@ const MockProjectProvider = ({ children }: { children: React.ReactNode }) => {
 }
 
 const renderNoiseTrackingProvider = () => {
+  const queryClient = createTestQueryClient()
   return render(
-    <MockProjectProvider>
-      <NoiseTrackingProvider>
-        <div>Test</div>
-      </NoiseTrackingProvider>
-    </MockProjectProvider>
+    <QueryClientProvider client={queryClient}>
+      <MockProjectProvider>
+        <NoiseTrackingProvider>
+          <div>Test</div>
+        </NoiseTrackingProvider>
+      </MockProjectProvider>
+    </QueryClientProvider>
   )
 }

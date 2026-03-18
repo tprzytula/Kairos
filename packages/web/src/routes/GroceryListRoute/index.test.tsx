@@ -1,8 +1,12 @@
 import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter, useNavigate, useParams } from 'react-router'
+
+const createTestQueryClient = () =>
+  new QueryClient({ defaultOptions: { queries: { retry: false } } })
 import GroceryListRoute from '.'
 import * as API from '../../api/groceryList'
 import { GroceryItemUnit } from '../../enums/groceryItem'
@@ -179,7 +183,9 @@ describe('Given the GroceryListRoute component', () => {
         renderComponent()
       })
 
-      expect(errorSpy).toHaveBeenCalledWith('Failed to fetch grocery list:', new Error('Bad things happen all the time'))
+      await waitFor(() => {
+        expect(errorSpy).toHaveBeenCalledWith('Failed to fetch grocery list:', new Error('Bad things happen all the time'))
+      })
     })
   })
 })
@@ -192,15 +198,18 @@ const renderComponent = () => {
     dispatch: jest.fn(),
   })
 
+  const queryClient = createTestQueryClient()
   render(
-    <ThemeProvider theme={theme}>
-      <ProjectProvider>
-        <AppStateProvider>
-          <BrowserRouter>
-            <GroceryListRoute />
-          </BrowserRouter>
-        </AppStateProvider>
-      </ProjectProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <ProjectProvider>
+          <AppStateProvider>
+            <BrowserRouter>
+              <GroceryListRoute />
+            </BrowserRouter>
+          </AppStateProvider>
+        </ProjectProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   )
 }

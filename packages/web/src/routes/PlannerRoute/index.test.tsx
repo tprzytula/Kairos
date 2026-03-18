@@ -1,5 +1,6 @@
 import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
@@ -8,6 +9,9 @@ import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import * as ToDoAPI from '../../api/toDoList'
 import { IProject } from '../../types/project'
+
+const createTestQueryClient = () =>
+  new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
 jest.mock('../../providers/AppStateProvider', () => ({
   ...jest.requireActual('../../providers/AppStateProvider'),
@@ -187,15 +191,18 @@ describe('Given the PlannerRoute component', () => {
 
     jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
 
+    const queryClient = createTestQueryClient()
     await act(async () => {
       render(
-        <ThemeProvider theme={theme}>
-          <AppStateProvider>
-            <BrowserRouter>
-              <PlannerRoute />
-            </BrowserRouter>
-          </AppStateProvider>
-        </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider theme={theme}>
+            <AppStateProvider>
+              <BrowserRouter>
+                <PlannerRoute />
+              </BrowserRouter>
+            </AppStateProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
       )
     })
 
@@ -281,13 +288,16 @@ const renderComponent = () => {
     dispatch: jest.fn(),
   })
 
+  const queryClient = createTestQueryClient()
   render(
-    <ThemeProvider theme={theme}>
-      <AppStateProvider>
-        <BrowserRouter>
-          <PlannerRoute />
-        </BrowserRouter>
-      </AppStateProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <AppStateProvider>
+          <BrowserRouter>
+            <PlannerRoute />
+          </BrowserRouter>
+        </AppStateProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   )
 }

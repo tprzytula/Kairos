@@ -1,8 +1,12 @@
 import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
 import theme from '../../theme'
 import { BrowserRouter } from 'react-router'
+
+const createTestQueryClient = () =>
+  new QueryClient({ defaultOptions: { queries: { retry: false } } })
 import HomeRoute from '.'
 import * as GroceryAPI from '../../api/groceryList'
 import * as ToDoAPI from '../../api/toDoList'
@@ -328,6 +332,9 @@ describe('Given the HomeRoute component', () => {
     })
 
     // Click first grocery item
+    await waitFor(() => {
+      expect(screen.queryByTitle('Apple (5 unit(s))')).toBeInTheDocument()
+    })
     const firstIcon = screen.getByTitle('Apple (5 unit(s))')
     await act(async () => {
       fireEvent.click(firstIcon)
@@ -433,9 +440,11 @@ describe('Given the HomeRoute component', () => {
         renderComponent()
       })
 
-      expect(errorSpy).toHaveBeenCalledWith('Failed to fetch grocery list:', new Error('Grocery API failed'))
-      expect(errorSpy).toHaveBeenCalledWith('Failed to fetch to do list:', new Error('ToDo API failed'))
-      expect(errorSpy).toHaveBeenCalledWith('Failed to fetch noise tracking items:', new Error('Noise API failed'))
+      await waitFor(() => {
+        expect(errorSpy).toHaveBeenCalledWith('Failed to fetch grocery list:', new Error('Grocery API failed'))
+        expect(errorSpy).toHaveBeenCalledWith('Failed to fetch to do list:', new Error('ToDo API failed'))
+        expect(errorSpy).toHaveBeenCalledWith('Failed to fetch noise tracking items:', new Error('Noise API failed'))
+      })
     })
   })
 
@@ -652,6 +661,9 @@ describe('Given the HomeRoute component', () => {
       })
 
       // Navigate to detail view
+      await waitFor(() => {
+        expect(screen.queryByText('Today')).toBeInTheDocument()
+      })
       const todayBlock = screen.getByText('Today').closest('div')
       await act(async () => {
         fireEvent.click(todayBlock!)
@@ -692,6 +704,9 @@ describe('Given the HomeRoute component', () => {
       })
 
       // Click on "Last 7 days" (should have 0 items)
+      await waitFor(() => {
+        expect(screen.queryByText('Last 7 days')).toBeInTheDocument()
+      })
       const last7DaysBlock = screen.getByText('Last 7 days').closest('div')
       await act(async () => {
         fireEvent.click(last7DaysBlock!)
@@ -776,15 +791,18 @@ const renderComponent = () => {
     dispatch: jest.fn(),
   })
 
+  const queryClient = createTestQueryClient()
   render(
-    <ThemeProvider theme={theme}>
-      <ProjectProvider>
-        <AppStateProvider>
-          <BrowserRouter>
-            <HomeRoute />
-          </BrowserRouter>
-        </AppStateProvider>
-      </ProjectProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <ProjectProvider>
+          <AppStateProvider>
+            <BrowserRouter>
+              <HomeRoute />
+            </BrowserRouter>
+          </AppStateProvider>
+        </ProjectProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   )
 } 
