@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useAuth } from 'react-oidc-context'
+import { useNavigate } from 'react-router'
 import { Divider, ListItemIcon, ListItemText } from '@mui/material'
-import { Settings as SettingsIcon, Notifications as NotificationsIcon, ShoppingCart as ShoppingCartIcon } from '@mui/icons-material'
+import { Settings as SettingsIcon, Notifications as NotificationsIcon, ShoppingCart as ShoppingCartIcon, VolumeUp as VolumeUpIcon } from '@mui/icons-material'
 import * as Styled from './index.styled'
 import { getPostLogoutRedirectUri, oidcConfig } from '../../config/oidc'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { useVersion } from '../../hooks/useVersion'
+import { Route } from '../../enums/route'
 import CreateProjectDialog from '../CreateProjectDialog'
 import JoinProjectDialog from '../JoinProjectDialog'
 import ProjectSettingsSubpage from './ProjectSettingsSubpage'
@@ -17,6 +19,7 @@ type SubpageView = 'main' | 'projects' | 'notifications' | 'grocery'
 
 const UserMenu: React.FC = () => {
   const auth = useAuth()
+  const navigate = useNavigate()
   const { switchProject } = useProjectContext()
   const { version } = useVersion()
   const [isOpen, setIsOpen] = useState(false)
@@ -72,6 +75,11 @@ const UserMenu: React.FC = () => {
 
   const handleShowGrocerySettings = () => {
     setCurrentView('grocery')
+  }
+
+  const handleNavigateToNoiseTracking = () => {
+    navigate(Route.NoiseTracking)
+    closeDropdown()
   }
 
   const handleBackToMain = () => {
@@ -180,6 +188,13 @@ const UserMenu: React.FC = () => {
                     <ShoppingCartIcon fontSize="small" />
                   </ListItemIcon>
                   <ListItemText primary="Grocery Settings" />
+                </Styled.MainMenuItem>
+
+                <Styled.MainMenuItem onClick={handleNavigateToNoiseTracking}>
+                  <ListItemIcon>
+                    <VolumeUpIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="Noise Tracking" />
                 </Styled.MainMenuItem>
 
                 <Divider sx={{ my: 1 }} />
