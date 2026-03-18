@@ -15,6 +15,7 @@ locals {
       }
     }
     "add_grocery_item" = {
+      timeout               = 10
       environment_variables = {}
       permissions = {
         database = {

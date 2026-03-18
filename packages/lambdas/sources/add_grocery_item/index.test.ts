@@ -1,7 +1,7 @@
 import { getBody } from "./body";
-import { upsertItem } from "./database";
+import { upsertItem, queryProjectItems } from "./database";
 import { IRequestBody } from "./body/types";
-import { getCategoryForItem } from "./utils";
+import { fetchDefaults, getCategoryForItem } from "./utils";
 import { GroceryItemCategory } from "@kairos-lambdas-libs/dynamodb/enums";
 
 import { handler } from "./index";
@@ -12,13 +12,22 @@ jest.mock('./body', () => ({
 
 jest.mock('./database', () => ({
     upsertItem: jest.fn(),
+    queryProjectItems: jest.fn(),
 }));
 
 jest.mock('./utils', () => ({
+    fetchDefaults: jest.fn(),
     getCategoryForItem: jest.fn(),
 }));
 
 describe('Given the add_grocery_item lambda handler', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        jest.mocked(queryProjectItems).mockResolvedValue([]);
+        jest.mocked(fetchDefaults).mockResolvedValue([]);
+        jest.mocked(getCategoryForItem).mockReturnValue(GroceryItemCategory.OTHER);
+    });
+
     it('should require project ID', async () => {
         const result = await runHandler({ body: null });
 
@@ -36,59 +45,108 @@ describe('Given the add_grocery_item lambda handler', () => {
         });
     });
 
-    describe('When the body is valid', () => {
-        it('should fetch category and upsert the item in the grocery list table', async () => {
-            jest.mocked(getBody).mockReturnValue(EXAMPLE_GROCERY_ITEM);
-            jest.mocked(getCategoryForItem).mockResolvedValue(GroceryItemCategory.FRUITS_VEGETABLES);
+    describe('When the body is valid with a single item', () => {
+        it('should query project items and defaults once, then upsert', async () => {
+            jest.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
+            jest.mocked(getCategoryForItem).mockReturnValue(GroceryItemCategory.FRUITS_VEGETABLES);
+            jest.mocked(upsertItem).mockResolvedValue({ id: EXAMPLE_ID, statusCode: 201 });
 
-            await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) }, true);
+            await runHandler({ body: JSON.stringify(EXAMPLE_BODY) }, true);
 
-            expect(jest.mocked(getCategoryForItem)).toHaveBeenCalledWith("Apple");
-            expect(jest.mocked(upsertItem)).toHaveBeenCalledWith({
-                ...EXAMPLE_GROCERY_ITEM,
-                projectId: "test-project",
-                category: GroceryItemCategory.FRUITS_VEGETABLES,
-            });
+            expect(jest.mocked(queryProjectItems)).toHaveBeenCalledWith("test-project");
+            expect(jest.mocked(fetchDefaults)).toHaveBeenCalledTimes(1);
+            expect(jest.mocked(getCategoryForItem)).toHaveBeenCalledWith("Apple", []);
+            expect(jest.mocked(upsertItem)).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    projectId: "test-project",
+                    name: "Apple",
+                    category: GroceryItemCategory.FRUITS_VEGETABLES,
+                }),
+                [],
+            );
         });
 
-        describe('And the upsert succeeds', () => {
-            it('should return status 200', async () => {
-                jest.mocked(getBody).mockReturnValue(EXAMPLE_GROCERY_ITEM);
-                jest.mocked(getCategoryForItem).mockResolvedValue(GroceryItemCategory.FRUITS_VEGETABLES);
-                jest.mocked(upsertItem).mockResolvedValue({
-                    id: EXAMPLE_ID,
-                    statusCode: 200,
-                });
+        it('should return items array with status 201 when all items are created', async () => {
+            jest.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
+            jest.mocked(upsertItem).mockResolvedValue({ id: EXAMPLE_ID, statusCode: 201 });
 
-                const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) }, true);
+            const result = await runHandler({ body: JSON.stringify(EXAMPLE_BODY) }, true);
 
-                expect(result.statusCode).toBe(200);
-                expect(result.body).toEqual(JSON.stringify({ id: EXAMPLE_ID }));
-            });
+            expect(result.statusCode).toBe(201);
+            expect(result.body).toEqual(JSON.stringify({ items: [{ id: EXAMPLE_ID }] }));
+        });
+    });
+
+    describe('When the body contains multiple items', () => {
+        it('should upsert each item sequentially', async () => {
+            jest.mocked(getBody).mockReturnValue(EXAMPLE_MULTI_BODY);
+            jest.mocked(upsertItem)
+                .mockResolvedValueOnce({ id: "id-1", statusCode: 201 })
+                .mockResolvedValueOnce({ id: "id-2", statusCode: 201 });
+
+            const result = await runHandler({ body: JSON.stringify(EXAMPLE_MULTI_BODY) }, true);
+
+            expect(jest.mocked(upsertItem)).toHaveBeenCalledTimes(2);
+            expect(result.statusCode).toBe(201);
+            expect(result.body).toEqual(JSON.stringify({
+                items: [{ id: "id-1" }, { id: "id-2" }],
+            }));
         });
 
-        describe('And the upsert fails', () => {
-            it('should return status 500', async () => {
-                jest.mocked(getBody).mockReturnValue(EXAMPLE_GROCERY_ITEM);
-                jest.mocked(getCategoryForItem).mockResolvedValue(GroceryItemCategory.FRUITS_VEGETABLES);
-                jest.mocked(upsertItem).mockRejectedValue(new Error('Upsert failed'));
+        it('should return status 200 when some items are updates', async () => {
+            jest.mocked(getBody).mockReturnValue(EXAMPLE_MULTI_BODY);
+            jest.mocked(upsertItem)
+                .mockResolvedValueOnce({ id: "id-1", statusCode: 200 })
+                .mockResolvedValueOnce({ id: "id-2", statusCode: 201 });
 
-                const result = await runHandler({ body: JSON.stringify(EXAMPLE_GROCERY_ITEM) }, true);
+            const result = await runHandler({ body: JSON.stringify(EXAMPLE_MULTI_BODY) }, true);
 
-                expect(result.statusCode).toBe(500);
-            });
+            expect(result.statusCode).toBe(200);
+        });
+    });
+
+    describe('When the upsert fails', () => {
+        it('should return status 500', async () => {
+            jest.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
+            jest.mocked(upsertItem).mockRejectedValue(new Error('Upsert failed'));
+
+            const result = await runHandler({ body: JSON.stringify(EXAMPLE_BODY) }, true);
+
+            expect(result.statusCode).toBe(500);
         });
     });
 });
 
-const EXAMPLE_GROCERY_ITEM: IRequestBody = {
-    name: "Apple",
-    quantity: "1",
-    unit: "kg",
-    imagePath: "/assets/images/generic-grocery-item.png",
-}
+const EXAMPLE_BODY: IRequestBody = {
+    items: [{
+        name: "Apple",
+        quantity: 1,
+        unit: "kg",
+        shopId: "shop-1",
+        imagePath: "/assets/images/generic-grocery-item.png",
+    }],
+};
 
-const EXAMPLE_ID = "11111111-1111-1111-1111-111111111111";  
+const EXAMPLE_MULTI_BODY: IRequestBody = {
+    items: [
+        {
+            name: "Apple",
+            quantity: 1,
+            unit: "kg",
+            shopId: "shop-1",
+            imagePath: "/assets/images/apple.png",
+        },
+        {
+            name: "Banana",
+            quantity: 3,
+            unit: "unit",
+            shopId: "shop-1",
+            imagePath: "/assets/images/banana.png",
+        },
+    ],
+};
+
+const EXAMPLE_ID = "11111111-1111-1111-1111-111111111111";
 
 interface IAPIGatewayProxyEvent {
     body: string | null;

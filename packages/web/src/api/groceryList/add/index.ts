@@ -2,21 +2,28 @@ import { IGroceryItem } from '../../../providers/AppStateProvider/types'
 import { API_BASE_URL } from '../../index'
 import { createFetchOptions } from '../../../utils/api'
 
-export const addGroceryItem = async (item: Omit<IGroceryItem, 'id' | 'toBeRemoved'>, projectId?: string): Promise<IGroceryItem> => {
+type GroceryItemInput = Omit<IGroceryItem, 'id' | 'toBeRemoved'>
+
+export const addGroceryItem = async (item: GroceryItemInput, projectId?: string): Promise<IGroceryItem> => {
+  const result = await addGroceryItems([item], projectId)
+  return { ...item, ...result[0] } as IGroceryItem
+}
+
+export const addGroceryItems = async (items: GroceryItemInput[], projectId?: string): Promise<Array<{ id: string }>> => {
   const response = await fetch(`${API_BASE_URL}/grocery_list/items`, createFetchOptions({
     method: 'PUT',
-    body: JSON.stringify(item),
+    body: JSON.stringify({ items }),
   }, projectId))
 
   if (response.ok) {
     const data = await response.json()
 
-    if (data.id) {
-      return data
+    if (data.items && Array.isArray(data.items)) {
+      return data.items
     }
 
     throw new Error('Unexpected response from API')
   }
 
-  throw new Error('Failed to add a grocery item')
+  throw new Error('Failed to add grocery items')
 }

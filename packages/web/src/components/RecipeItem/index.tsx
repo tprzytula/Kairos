@@ -12,7 +12,7 @@ const GENERIC_ITEM_NAME = 'generic'
 import { GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { useShopContext } from '../../providers/ShopProvider'
-import { addGroceryItem } from '../../api/groceryList'
+import { addGroceryItems } from '../../api/groceryList'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
 import {
@@ -106,19 +106,15 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
     setIsAdding(true)
     try {
       if (ingredientsToAdd.length > 0) {
-        await Promise.all(
-          ingredientsToAdd.map((ingredient) =>
-            addGroceryItem(
-              {
-                name: ingredient.name,
-                quantity: ingredient.quantity,
-                unit: ingredient.unit,
-                shopId: effectiveShopId,
-                imagePath: findItemIcon(ingredient.name, defaults) || findItemIcon(GENERIC_ITEM_NAME, defaults) || '',
-              },
-              currentProject.id
-            )
-          )
+        await addGroceryItems(
+          ingredientsToAdd.map((ingredient) => ({
+            name: ingredient.name,
+            quantity: ingredient.quantity,
+            unit: ingredient.unit,
+            shopId: effectiveShopId,
+            imagePath: findItemIcon(ingredient.name, defaults) || findItemIcon(GENERIC_ITEM_NAME, defaults) || '',
+          })),
+          currentProject.id
         )
       }
       showAlert({ description: `${recipe.name} ingredients added to your list!`, severity: 'success' }, dispatch)
