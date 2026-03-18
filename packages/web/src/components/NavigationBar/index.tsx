@@ -29,6 +29,15 @@ const NavigationBar = () => {
   }, [currentShop, navigate]);
 
   const isShoppingCartSelected = location.pathname.includes('/groceries') || location.pathname === Route.Shops;
+  const isRecipesSelected = location.pathname === Route.Recipes;
+
+  const handleRecipesClick = useCallback(() => {
+    if (isRecipesSelected) {
+      navigate(`${Route.Recipes}?action=new`);
+    } else {
+      navigate(Route.Recipes);
+    }
+  }, [isRecipesSelected, navigate]);
 
   return (
     <Container elevation={0}>
@@ -45,13 +54,9 @@ const NavigationBar = () => {
           <ShoppingCartIcon fontSize="large" />
         </StyledNavigationButton>
         <AddItemButton />
-        <NavigationButton
-          SelectedIcon={MenuBookIcon}
-          UnselectedIcon={MenuBookOutlinedIcon}
-          route={Route.Recipes}
-          accentGradient={SECTION_GRADIENTS.recipe}
-          accentRgb={SECTION_ACCENT_RGB.recipe}
-        />
+        <StyledNavigationButton onClick={handleRecipesClick} isSelected={isRecipesSelected} accentGradient={SECTION_GRADIENTS.recipe} accentRgb={SECTION_ACCENT_RGB.recipe}>
+          {isRecipesSelected ? <MenuBookIcon fontSize="large" /> : <MenuBookOutlinedIcon fontSize="large" />}
+        </StyledNavigationButton>
         <NavigationButton
           SelectedIcon={ChecklistIcon}
           UnselectedIcon={ChecklistOutlinedIcon}
