@@ -7,6 +7,9 @@ export const StyledNavigationButton = styled(IconButton, {
   const gradient = accentGradient ?? 'linear-gradient(135deg, #6366f1 0%, #7c3aed 100%)';
   const rgb = accentRgb ?? '99, 102, 241';
   return ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   width: '48px',
   height: '48px',
   minWidth: '48px',
@@ -18,6 +21,7 @@ export const StyledNavigationButton = styled(IconButton, {
   position: 'relative',
   overflow: 'hidden',
   flexShrink: 0,
+  alignSelf: 'center',
   
   ...(isSelected
     ? {
