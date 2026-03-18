@@ -3,7 +3,7 @@ import RecipeItem from './index'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { useShopContext } from '../../providers/ShopProvider'
 import { useAppState } from '../../providers/AppStateProvider'
-import { addGroceryItem } from '../../api/groceryList'
+import { addGroceryItems } from '../../api/groceryList'
 import { showAlert } from '../../utils/alert'
 import { IRecipe } from '../../types/recipe'
 import { GroceryItemUnit } from '../../enums/groceryItem'
@@ -21,7 +21,7 @@ jest.mock('../../providers/AppStateProvider', () => ({
 }))
 
 jest.mock('../../api/groceryList', () => ({
-  addGroceryItem: jest.fn(),
+  addGroceryItems: jest.fn(),
 }))
 
 jest.mock('../../utils/alert', () => ({
@@ -122,17 +122,24 @@ describe('Given the RecipeItem component', () => {
       expect(screen.getByRole('button', { name: /use recipe/i })).toBeVisible()
     })
 
-    it('should call addGroceryItem for each ingredient on Add to List', async () => {
-      ;(addGroceryItem as jest.Mock).mockResolvedValue(undefined)
+    it('should call addGroceryItems with all ingredients on Add to List', async () => {
+      ;(addGroceryItems as jest.Mock).mockResolvedValue(undefined)
       render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
       fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
       fireEvent.click(screen.getByRole('button', { name: /add to list/i }))
-      await waitFor(() => expect(addGroceryItem).toHaveBeenCalledTimes(2))
+      await waitFor(() => expect(addGroceryItems).toHaveBeenCalledTimes(1))
+      expect(addGroceryItems).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({ name: 'Pasta', quantity: 200 }),
+          expect.objectContaining({ name: 'Eggs', quantity: 2 }),
+        ]),
+        'proj-1'
+      )
       expect(mockOnUseRecipe).toHaveBeenCalled()
     })
 
     it('should show success alert after adding ingredients', async () => {
-      ;(addGroceryItem as jest.Mock).mockResolvedValue(undefined)
+      ;(addGroceryItems as jest.Mock).mockResolvedValue(undefined)
       render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
       fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
       fireEvent.click(screen.getByRole('button', { name: /add to list/i }))
@@ -142,8 +149,8 @@ describe('Given the RecipeItem component', () => {
       ))
     })
 
-    it('should show error alert when addGroceryItem fails', async () => {
-      ;(addGroceryItem as jest.Mock).mockRejectedValue(new Error('Failed'))
+    it('should show error alert when addGroceryItems fails', async () => {
+      ;(addGroceryItems as jest.Mock).mockRejectedValue(new Error('Failed'))
       render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
       fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
       fireEvent.click(screen.getByRole('button', { name: /add to list/i }))

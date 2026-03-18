@@ -1,66 +1,28 @@
-import { addGroceryItem } from '.'
+import { addGroceryItem, addGroceryItems } from '.'
 import { FetchMock } from 'jest-fetch-mock'
 import { GroceryItemUnit } from '../../../enums/groceryItem'
 
 const fetchMock = fetch as FetchMock
-const exampleResponse = [
-  {
-    id: '1',
-    name: 'Milk',
-    quantity: 5,
-    unit: GroceryItemUnit.LITER,
-    imagePath: '/assets/icons/milk.png',
-  },
-  {
-    id: '2',
-    name: 'Paper Towel',
-    quantity: 2,
-    unit: GroceryItemUnit.UNIT,
-    imagePath: '/assets/icons/generic-grocery-item.png',
-  },
-]
 
-describe('Given the addGroceryItem function', () => {
-  it('should make the correct request to the API with legacy project when no project ID provided', async () => {
-    fetchMock.mockResponse(JSON.stringify(exampleResponse[0]))
+describe('Given the addGroceryItems function', () => {
+  it('should send items in batch format', async () => {
+    fetchMock.mockResponse(JSON.stringify({ items: [{ id: '1' }, { id: '2' }] }))
 
-    await addGroceryItem({
-      name: 'Milk',
-      quantity: 5,
-      unit: GroceryItemUnit.LITER,
-      shopId: 'shop-1',
-      imagePath: '/assets/icons/milk.png'
-    })
+    await addGroceryItems([
+      { name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, shopId: 'shop-1', imagePath: '/assets/icons/milk.png' },
+      { name: 'Eggs', quantity: 6, unit: GroceryItemUnit.UNIT, shopId: 'shop-1', imagePath: '/assets/icons/eggs.png' },
+    ], 'test-project-id')
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items',
       {
         method: 'PUT',
-        body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, shopId: 'shop-1', imagePath: '/assets/icons/milk.png' }),
-        headers: {
-          'X-Project-ID': 'legacy-shared-project',
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-  })
-
-  it('should make the correct request to the API with provided project ID', async () => {
-    fetchMock.mockResponse(JSON.stringify(exampleResponse[0]))
-
-    await addGroceryItem({
-      name: 'Milk',
-      quantity: 5,
-      unit: GroceryItemUnit.LITER,
-      shopId: 'shop-1',
-      imagePath: '/assets/icons/milk.png'
-    }, 'test-project-id')
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1/grocery_list/items',
-      {
-        method: 'PUT',
-        body: JSON.stringify({ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, shopId: 'shop-1', imagePath: '/assets/icons/milk.png' }),
+        body: JSON.stringify({
+          items: [
+            { name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, shopId: 'shop-1', imagePath: '/assets/icons/milk.png' },
+            { name: 'Eggs', quantity: 6, unit: GroceryItemUnit.UNIT, shopId: 'shop-1', imagePath: '/assets/icons/eggs.png' },
+          ],
+        }),
         headers: {
           'X-Project-ID': 'test-project-id',
           'Content-Type': 'application/json',
@@ -69,49 +31,74 @@ describe('Given the addGroceryItem function', () => {
     )
   })
 
-  it('should return the created item', async () => {
-    fetchMock.mockResponse(JSON.stringify(exampleResponse[0]))
+  it('should return the items array from the response', async () => {
+    fetchMock.mockResponse(JSON.stringify({ items: [{ id: '1' }, { id: '2' }] }))
+
+    const result = await addGroceryItems([
+      { name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, shopId: 'shop-1', imagePath: '/assets/icons/milk.png' },
+    ], 'test-project-id')
+
+    expect(result).toEqual([{ id: '1' }, { id: '2' }])
+  })
+
+  it('should use legacy project when no project ID provided', async () => {
+    fetchMock.mockResponse(JSON.stringify({ items: [{ id: '1' }] }))
+
+    await addGroceryItems([
+      { name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, shopId: 'shop-1', imagePath: '/assets/icons/milk.png' },
+    ])
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'X-Project-ID': 'legacy-shared-project',
+        }),
+      })
+    )
+  })
+
+  describe('When the API call fails', () => {
+    it('should throw an error', async () => {
+      fetchMock.mockResponse(JSON.stringify({ error: 'API call failed' }), { status: 500 })
+
+      await expect(addGroceryItems([
+        { name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, shopId: 'shop-1', imagePath: '/assets/icons/milk.png' },
+      ])).rejects.toThrow('Failed to add grocery items')
+    })
+  })
+
+  describe('When the response does not contain items array', () => {
+    it('should throw an error', async () => {
+      fetchMock.mockResponse(JSON.stringify({ id: '1' }), { status: 200 })
+
+      await expect(addGroceryItems([
+        { name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, shopId: 'shop-1', imagePath: '/assets/icons/milk.png' },
+      ])).rejects.toThrow('Unexpected response from API')
+    })
+  })
+})
+
+describe('Given the addGroceryItem function (single-item wrapper)', () => {
+  it('should wrap the item in an array and return a single item', async () => {
+    fetchMock.mockResponse(JSON.stringify({ items: [{ id: '1' }] }))
 
     const result = await addGroceryItem({
       name: 'Milk',
       quantity: 5,
       unit: GroceryItemUnit.LITER,
       shopId: 'shop-1',
-      imagePath: '/assets/icons/milk.png'
-    })
+      imagePath: '/assets/icons/milk.png',
+    }, 'test-project-id')
 
-    expect(result).toStrictEqual(exampleResponse[0])
-  })
-
-  describe('When the API call fails', () => {
-    it('should throw an error', async () => {
-      fetchMock.mockResponse(JSON.stringify({ error: 'API call failed' }), {
-        status: 500,
+    expect(result).toEqual(expect.objectContaining({ id: '1', name: 'Milk' }))
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        body: JSON.stringify({
+          items: [{ name: 'Milk', quantity: 5, unit: GroceryItemUnit.LITER, shopId: 'shop-1', imagePath: '/assets/icons/milk.png' }],
+        }),
       })
-
-      await expect(addGroceryItem({
-        name: 'Milk',
-        quantity: 5,
-        unit: GroceryItemUnit.LITER,
-        shopId: 'shop-1',
-        imagePath: '/assets/icons/milk.png'
-      })).rejects.toThrow('Failed to add a grocery item')
-    })
-  })
-
-  describe('When the returned data does not contain an id', () => {
-    it('should throw an error', async () => {
-      fetchMock.mockResponse(JSON.stringify({ name: 'Milk', quantity: 5 }), {
-        status: 200,
-      })
-
-      await expect(addGroceryItem({
-        name: 'Milk',
-        quantity: 5,
-        unit: GroceryItemUnit.LITER,
-        shopId: 'shop-1',
-        imagePath: '/assets/icons/milk.png'
-      })).rejects.toThrow('Unexpected response from API')
-    })
+    )
   })
 })

@@ -8,23 +8,25 @@ export interface GroceryItemDefault {
   unit: string;
 }
 
-export const getCategoryForItem = async (itemName: string): Promise<GroceryItemCategory> => {
+export const fetchDefaults = async (): Promise<GroceryItemDefault[]> => {
   try {
-    const defaults = await scan({
+    return await scan({
       tableName: DynamoDBTable.GROCERY_ITEMS_DEFAULTS,
     });
-
-    const matchingDefault = defaults.find(
-      defaultItem => defaultItem.name.toLowerCase() === itemName.toLowerCase()
-    );
-
-    if (matchingDefault) {
-      return getCategory(matchingDefault.name);
-    }
-
-    return getCategory(itemName);
   } catch (error) {
     console.error('Failed to fetch grocery defaults:', error);
-    return getCategory(itemName);
+    return [];
   }
+};
+
+export const getCategoryForItem = (itemName: string, defaults: GroceryItemDefault[]): GroceryItemCategory => {
+  const matchingDefault = defaults.find(
+    defaultItem => defaultItem.name.toLowerCase() === itemName.toLowerCase()
+  );
+
+  if (matchingDefault) {
+    return getCategory(matchingDefault.name);
+  }
+
+  return getCategory(itemName);
 };

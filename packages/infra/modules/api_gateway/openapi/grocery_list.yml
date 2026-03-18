@@ -450,7 +450,19 @@ components:
       description: Project ID for multi-tenancy data isolation
   schemas:
     details:
-      title: Grocery Item Details
+      title: Grocery Items Batch Request
+      required:
+        - items
+      type: object
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 25
+          items:
+            $ref: "#/components/schemas/groceryItem"
+    groceryItem:
+      title: Grocery Item
       required:
         - name
         - quantity

@@ -1,4 +1,4 @@
-import { getCategoryForItem } from "./index";
+import { fetchDefaults, getCategoryForItem, GroceryItemDefault } from "./index";
 import { scan } from "@kairos-lambdas-libs/dynamodb";
 import { GroceryItemCategory } from "@kairos-lambdas-libs/dynamodb/enums";
 import { getCategory } from "../../db_migrations/migrations/001_add_grocery_defaults/data/categoryMappings";
@@ -14,69 +14,68 @@ jest.mock("../../db_migrations/migrations/001_add_grocery_defaults/data/category
   getCategory: jest.fn(),
 }));
 
+describe('fetchDefaults', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should scan the grocery items defaults table', async () => {
+    jest.mocked(scan).mockResolvedValue(mockDefaults);
+
+    const result = await fetchDefaults();
+
+    expect(scan).toHaveBeenCalledWith({
+      tableName: "GroceryItemsDefaults",
+    });
+    expect(result).toEqual(mockDefaults);
+  });
+
+  it('should return empty array on scan error', async () => {
+    jest.mocked(scan).mockRejectedValue(new Error("Database error"));
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+
+    const result = await fetchDefaults();
+
+    expect(result).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalledWith('Failed to fetch grocery defaults:', expect.any(Error));
+    consoleSpy.mockRestore();
+  });
+});
+
 describe('getCategoryForItem', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should return category for item found in defaults', async () => {
-    const mockDefaults = [
-      { name: "apple", icon: "/icons/apple.png", unit: "unit(s)" },
-      { name: "banana", icon: "/icons/banana.png", unit: "unit(s)" },
-    ];
-
-    jest.mocked(scan).mockResolvedValue(mockDefaults);
+  it('should return category for item found in defaults', () => {
     jest.mocked(getCategory).mockReturnValue(GroceryItemCategory.FRUITS_VEGETABLES);
 
-    const result = await getCategoryForItem("apple");
+    const result = getCategoryForItem("apple", mockDefaults);
 
-    expect(scan).toHaveBeenCalledWith({
-      tableName: "GroceryItemsDefaults",
-    });
     expect(getCategory).toHaveBeenCalledWith("apple");
     expect(result).toBe(GroceryItemCategory.FRUITS_VEGETABLES);
   });
 
-  it('should return category for item not found in defaults using fallback', async () => {
-    const mockDefaults = [
-      { name: "banana", icon: "/icons/banana.png", unit: "unit(s)" },
-    ];
-
-    jest.mocked(scan).mockResolvedValue(mockDefaults);
+  it('should return category for item not found in defaults using fallback', () => {
     jest.mocked(getCategory).mockReturnValue(GroceryItemCategory.OTHER);
 
-    const result = await getCategoryForItem("unknown item");
+    const result = getCategoryForItem("unknown item", mockDefaults);
 
     expect(getCategory).toHaveBeenCalledWith("unknown item");
     expect(result).toBe(GroceryItemCategory.OTHER);
   });
 
-  it('should handle case insensitive matching', async () => {
-    const mockDefaults = [
-      { name: "apple", icon: "/icons/apple.png", unit: "unit(s)" },
-    ];
-
-    jest.mocked(scan).mockResolvedValue(mockDefaults);
+  it('should handle case insensitive matching', () => {
     jest.mocked(getCategory).mockReturnValue(GroceryItemCategory.FRUITS_VEGETABLES);
 
-    const result = await getCategoryForItem("APPLE");
+    const result = getCategoryForItem("APPLE", mockDefaults);
 
     expect(getCategory).toHaveBeenCalledWith("apple");
     expect(result).toBe(GroceryItemCategory.FRUITS_VEGETABLES);
   });
-
-  it('should handle scan errors gracefully', async () => {
-    jest.mocked(scan).mockRejectedValue(new Error("Database error"));
-    jest.mocked(getCategory).mockReturnValue(GroceryItemCategory.OTHER);
-
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-
-    const result = await getCategoryForItem("apple");
-
-    expect(consoleSpy).toHaveBeenCalledWith('Failed to fetch grocery defaults:', expect.any(Error));
-    expect(getCategory).toHaveBeenCalledWith("apple");
-    expect(result).toBe(GroceryItemCategory.OTHER);
-
-    consoleSpy.mockRestore();
-  });
 });
+
+const mockDefaults: GroceryItemDefault[] = [
+  { name: "apple", icon: "/icons/apple.png", unit: "unit(s)" },
+  { name: "banana", icon: "/icons/banana.png", unit: "unit(s)" },
+];
