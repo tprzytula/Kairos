@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import CheckIcon from '@mui/icons-material/Check'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { Collapse } from '@mui/material'
 import { ITodoItem, IStep } from '../../../../../../api/toDoList/retrieve/types'
 import { getDueDateClass, formatDueDateRelative } from '../../../../../../utils/dateTime'
 import {
@@ -21,6 +23,7 @@ interface TaskCardProps {
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ item, onStepToggle, onCardClick }) => {
+  const [isStepsExpanded, setIsStepsExpanded] = useState(false)
   const dueDateClass = getDueDateClass(item.dueDate)
   const dueDateLabel = formatDueDateRelative(item.dueDate)
   const steps = item.steps ?? []
@@ -31,6 +34,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ item, onStepToggle, onCardClick }) 
   const handleStepClick = (e: React.MouseEvent, step: IStep) => {
     e.stopPropagation()
     onStepToggle(item.id, step.id, !step.isDone)
+  }
+
+  const handleProgressClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsStepsExpanded(v => !v)
   }
 
   return (
@@ -47,22 +55,36 @@ const TaskCard: React.FC<TaskCardProps> = ({ item, onStepToggle, onCardClick }) 
           <ProgressBarTrack>
             <ProgressBarFill $percent={percent} />
           </ProgressBarTrack>
-          <ProgressLabel>{doneCount}/{totalSteps} steps</ProgressLabel>
+          <ProgressLabel
+            onClick={handleProgressClick}
+            style={{ cursor: 'pointer', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.2rem' }}
+          >
+            {doneCount}/{totalSteps} steps
+            <ExpandMoreIcon
+              sx={{
+                fontSize: '0.8rem',
+                transform: isStepsExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 150ms ease',
+              }}
+            />
+          </ProgressLabel>
 
-          <StepsContainer>
-            {steps.map(step => (
-              <StepRow
-                key={step.id}
-                $isDone={step.isDone}
-                onClick={e => handleStepClick(e, step)}
-              >
-                <div className="step-checkbox">
-                  {step.isDone && <CheckIcon sx={{ fontSize: '0.6rem' }} />}
-                </div>
-                <span className="step-name">{step.name}</span>
-              </StepRow>
-            ))}
-          </StepsContainer>
+          <Collapse in={isStepsExpanded} timeout={150} unmountOnExit>
+            <StepsContainer>
+              {steps.map(step => (
+                <StepRow
+                  key={step.id}
+                  $isDone={step.isDone}
+                  onClick={e => handleStepClick(e, step)}
+                >
+                  <div className="step-checkbox">
+                    {step.isDone && <CheckIcon sx={{ fontSize: '0.6rem' }} />}
+                  </div>
+                  <span className="step-name">{step.name}</span>
+                </StepRow>
+              ))}
+            </StepsContainer>
+          </Collapse>
         </>
       )}
     </CardWrapper>
