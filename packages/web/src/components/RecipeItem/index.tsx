@@ -175,7 +175,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                  sx={{ color: '#667eea', padding: '2px' }}
+                  sx={{ color: '#f97316', padding: '2px' }}
                 >
                   <OpenInNewIcon sx={{ fontSize: '1rem' }} />
                 </IconButton>
@@ -187,8 +187,8 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
               label={`${recipe.ingredients.length} ingredient${recipe.ingredients.length !== 1 ? 's' : ''}`}
               size="small"
               sx={{
-                background: 'rgba(102, 126, 234, 0.1)',
-                color: '#667eea',
+                background: 'rgba(249, 115, 22, 0.1)',
+                color: '#f97316',
                 fontWeight: 500,
                 fontSize: '0.7rem',
               }}
@@ -198,8 +198,8 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                 label={`${recipe.instructions.length} step${recipe.instructions.length !== 1 ? 's' : ''}`}
                 size="small"
                 sx={{
-                  background: 'rgba(118, 75, 162, 0.1)',
-                  color: '#764ba2',
+                  background: 'rgba(244, 63, 94, 0.1)',
+                  color: '#f43f5e',
                   fontWeight: 500,
                   fontSize: '0.7rem',
                 }}
@@ -221,7 +221,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                     <Checkbox
                       checked={!isDeselected}
                       size="small"
-                      sx={{ padding: '0 4px 0 0', color: '#667eea', '&.Mui-checked': { color: '#667eea' } }}
+                      sx={{ padding: '0 4px 0 0', color: '#f97316', '&.Mui-checked': { color: '#f97316' } }}
                       onClick={(e) => e.stopPropagation()}
                       onChange={() => handleToggleIngredient(index)}
                     />
@@ -245,7 +245,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
               <Button
                 size="small"
                 onClick={() => setShowAllIngredients((v) => !v)}
-                sx={{ alignSelf: 'flex-start', color: '#667eea', padding: '0 4px', minWidth: 0, fontSize: '0.72rem' }}
+                sx={{ alignSelf: 'flex-start', color: '#f97316', padding: '0 4px', minWidth: 0, fontSize: '0.72rem' }}
                 endIcon={showAllIngredients ? <ExpandLessIcon fontSize="inherit" /> : <ExpandMoreIcon fontSize="inherit" />}
               >
                 {showAllIngredients ? 'Show less' : `${recipe.ingredients.length - INGREDIENTS_PREVIEW_COUNT} more`}
@@ -260,7 +260,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
               size="small"
               onClick={() => setShowInstructions((v) => !v)}
               sx={{
-                color: '#667eea',
+                color: '#f97316',
                 padding: '0 4px',
                 minWidth: 0,
                 fontSize: '0.72rem',
@@ -280,8 +280,8 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                         minWidth: '20px',
                         height: '20px',
                         borderRadius: '50%',
-                        background: 'rgba(102, 126, 234, 0.15)',
-                        color: '#667eea',
+                        background: 'rgba(249, 115, 22, 0.15)',
+                        color: '#f97316',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -330,9 +330,9 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                 disabled={!localShopId}
                 sx={{
                   borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
                   boxShadow: 'none',
-                  '&:hover': { boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)' },
+                  '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
                   '&:disabled': { background: 'rgba(0,0,0,0.12)' },
                 }}
               >
@@ -344,9 +344,9 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                 onClick={handleCancelShopSelection}
                 sx={{
                   borderRadius: '8px',
-                  borderColor: 'rgba(102, 126, 234, 0.4)',
-                  color: '#667eea',
-                  '&:hover': { borderColor: '#667eea', background: 'rgba(102, 126, 234, 0.05)' },
+                  borderColor: 'rgba(249, 115, 22, 0.4)',
+                  color: '#f97316',
+                  '&:hover': { borderColor: '#f97316', background: 'rgba(249, 115, 22, 0.05)' },
                 }}
               >
                 Cancel
@@ -363,9 +363,9 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
               disabled={isAdding}
               sx={{
                 borderRadius: '8px',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
                 boxShadow: 'none',
-                '&:hover': { boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)' },
+                '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
                 '&:disabled': { background: 'rgba(0,0,0,0.12)' },
               }}
             >
@@ -378,9 +378,9 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
               disabled={isAdding}
               sx={{
                 borderRadius: '8px',
-                borderColor: 'rgba(102, 126, 234, 0.4)',
-                color: '#667eea',
-                '&:hover': { borderColor: '#667eea', background: 'rgba(102, 126, 234, 0.05)' },
+                borderColor: 'rgba(249, 115, 22, 0.4)',
+                color: '#f97316',
+                '&:hover': { borderColor: '#f97316', background: 'rgba(249, 115, 22, 0.05)' },
               }}
             >
               Cancel
@@ -398,9 +398,9 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                 sx={{
                   mt: 0.5,
                   borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
                   boxShadow: 'none',
-                  '&:hover': { boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)' },
+                  '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
                   '&:disabled': { background: 'rgba(0,0,0,0.12)' },
                 }}
               >
