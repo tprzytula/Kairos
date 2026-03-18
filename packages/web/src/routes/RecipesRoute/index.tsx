@@ -1,11 +1,9 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { IconButton } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
-import AddIcon from '@mui/icons-material/Add'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import StandardLayout from '../../layout/standardLayout'
 import ModernPageHeader from '../../components/ModernPageHeader'
-import ActionButtonsBar from '../../components/ActionButtonsBar'
 import RecipeList from '../../components/RecipeList'
 import RecipeForm from '../../components/RecipeForm'
 import DraggableBottomDrawer from '../../components/DraggableBottomDrawer'
@@ -20,16 +18,22 @@ import {
   ContentContainer,
 } from '../../components/RecipeDrawer/index.styled'
 import { Container, ScrollableContainer } from './index.styled'
+import { useSearchParams, useNavigate } from 'react-router'
 
 const RecipesContent = () => {
   const { recipes } = useRecipeContext()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<IRecipe | null>(null)
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
 
-  const handleAddClick = useCallback(() => {
-    setEditingRecipe(null)
-    setIsFormOpen(true)
-  }, [])
+  useEffect(() => {
+    if (searchParams.get('action') === 'new') {
+      setEditingRecipe(null)
+      setIsFormOpen(true)
+      navigate('/recipes', { replace: true })
+    }
+  }, [searchParams, navigate])
 
   const handleEditRecipe = useCallback((recipe: IRecipe) => {
     setEditingRecipe(recipe)
@@ -60,14 +64,6 @@ const RecipesContent = () => {
         stats={stats}
       />
       <Container>
-        <ActionButtonsBar
-          actionButton={{
-            isEnabled: true,
-            onClick: handleAddClick,
-            children: 'Add Recipe',
-            accentGradient: SECTION_GRADIENTS.recipe,
-          }}
-        />
         <ScrollableContainer>
           <RecipeList
             onEditRecipe={handleEditRecipe}
