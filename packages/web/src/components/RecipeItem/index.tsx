@@ -267,7 +267,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
               {showInstructions ? 'Hide instructions' : 'Show instructions'}
             </Button>
             {showInstructions && (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', maxHeight: '220px', overflowY: 'auto', pr: 0.5 }}>
                 {recipe.instructions.map((step, index) => (
                   <Box key={index} sx={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
                     <Typography
