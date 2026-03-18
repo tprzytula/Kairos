@@ -6,7 +6,9 @@ import JoinProjectDialog from './index'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { IProjectInviteInfo } from '../../types/project'
 
-jest.mock('../../providers/ProjectProvider')
+jest.mock('../../providers/ProjectProvider', () => ({
+  useProjectContext: jest.fn(),
+}))
 
 const mockUseProjectContext = useProjectContext as jest.MockedFunction<typeof useProjectContext>
 

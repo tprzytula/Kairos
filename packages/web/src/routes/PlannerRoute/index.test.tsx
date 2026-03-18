@@ -14,16 +14,30 @@ const createTestQueryClient = () =>
   new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
 jest.mock('../../providers/AppStateProvider', () => ({
-  ...jest.requireActual('../../providers/AppStateProvider'),
+  AppStateProvider: ({ children }: any) => children,
+  AppState: { Provider: ({ children }: any) => children, Consumer: jest.fn() },
+  initialState: {
+    alerts: new Map(),
+    purchasedItems: new Set(),
+    selectedTodoItems: new Set(),
+    selectedCalendarDate: null,
+  },
   useAppState: jest.fn(),
 }))
 
 jest.mock('../../providers/ProjectProvider', () => ({
-  ...jest.requireActual('../../providers/ProjectProvider'),
+  ProjectProvider: ({ children }: any) => children,
+  ProjectContext: { Provider: ({ children }: any) => children, Consumer: jest.fn() },
   useProjectContext: jest.fn(),
 }))
 
-jest.mock('../../api/toDoList')
+jest.mock('../../api/toDoList', () => ({
+  retrieveToDoList: jest.fn(),
+  addTodoItem: jest.fn(),
+  removeTodoItems: jest.fn(),
+  updateToDoItems: jest.fn(),
+  updateToDoItemFields: jest.fn(),
+}))
 
 jest.mock('react-oidc-context', () => ({
   useAuth: jest.fn(() => ({ user: { access_token: 'test-access-token' } })),

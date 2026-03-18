@@ -5,8 +5,14 @@ import { Context } from "../../providers/AppStateProvider/types"
 import { IAlert } from "../Alert/types";
 import { hideAlert } from "../../utils/alert";
 
-jest.mock('../../providers/AppStateProvider');
-jest.mock('../../utils/alert');
+jest.mock('../../providers/AppStateProvider', () => ({
+  useAppState: jest.fn(),
+}));
+jest.mock('../../utils/alert', () => ({
+  hideAlert: jest.fn(),
+  showAlert: jest.fn(),
+  generateId: jest.fn(),
+}));
 
 describe('Given the AlertContainer component', () => {
     describe('When there are no alerts', () => {

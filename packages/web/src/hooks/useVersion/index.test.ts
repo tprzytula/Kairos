@@ -1,5 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react'
 import { VersionInfo } from '../../types/version'
+import { useVersion } from './index'
 
 // Mock fetch
 const mockFetch = jest.fn()
@@ -16,18 +17,18 @@ const mockVersionInfo: VersionInfo = {
   cacheKey: 'kairos-v2025.08.07.1703.12345'
 }
 
-// Mock the entire module
-jest.mock('./index')
-
-// Import the hook and mocked isLocalhost function  
-import { useVersion, isLocalhost } from './index'
-
-const mockIsLocalhost = isLocalhost as jest.MockedFunction<typeof isLocalhost>
+const setHostname = (hostname: string) => {
+  Object.defineProperty(window, 'location', {
+    value: { ...window.location, hostname },
+    writable: true,
+    configurable: true,
+  })
+}
 
 describe('useVersion', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockIsLocalhost.mockReturnValue(false)
+    setHostname('production.example.com')
   })
 
   it('should initialize with loading state', () => {
@@ -104,7 +105,7 @@ describe('useVersion', () => {
 
   describe('localhost detection', () => {
     it('should return "localhost" when running on localhost', async () => {
-      mockIsLocalhost.mockReturnValue(true)
+      setHostname('localhost')
 
       const { result } = renderHook(() => useVersion())
 
@@ -118,7 +119,7 @@ describe('useVersion', () => {
     })
 
     it('should fetch version normally for production environments', async () => {
-      mockIsLocalhost.mockReturnValue(false)
+      setHostname('production.example.com')
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => mockVersionInfo

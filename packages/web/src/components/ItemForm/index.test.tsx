@@ -6,8 +6,21 @@ import { useForm } from './hooks/useForm'
 import { IItemDefault } from '../../hooks/useItemDefaults/types'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 
-jest.mock('../../api/groceryList');
-jest.mock('./hooks/useForm');
+jest.mock('../../api/groceryList', () => ({
+  addGroceryItem: jest.fn(),
+  removeGroceryItems: jest.fn(),
+  retrieveGroceryList: jest.fn(),
+  retrieveGroceryListDefaults: jest.fn(),
+  updateGroceryItem: jest.fn(),
+  updateGroceryItemFields: jest.fn(),
+  addGroceryItemDefault: jest.fn(),
+  deleteGroceryItemDefault: jest.fn(),
+  updateGroceryItemDefault: jest.fn(),
+  getGroceryDefaultUploadUrl: jest.fn(),
+}));
+jest.mock('./hooks/useForm', () => ({
+  useForm: jest.fn(),
+}));
 
 describe('Given the ItemForm component', () => {
     it('should render the form fields', () => {

@@ -51,7 +51,7 @@ describe('Given the addGroceryItemDefault function', () => {
   it('should resolve without error on success', async () => {
     fetchMock.mockResponse(JSON.stringify({}), { status: 200 })
 
-    await expect(addGroceryItemDefault(examplePayload)).resolves.not.toThrow()
+    await expect(addGroceryItemDefault(examplePayload)).resolves.toBeUndefined()
   })
 
   describe('When the API call fails', () => {

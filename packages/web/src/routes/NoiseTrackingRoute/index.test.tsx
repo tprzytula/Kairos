@@ -15,11 +15,22 @@ import { ProjectContext } from '../../providers/ProjectProvider'
 import { IProject } from '../../types/project'
 
 jest.mock('../../providers/AppStateProvider', () => ({
-  ...jest.requireActual('../../providers/AppStateProvider'),
+  AppStateProvider: ({ children }: any) => children,
+  AppState: { Provider: ({ children }: any) => children, Consumer: jest.fn() },
+  initialState: {
+    alerts: new Map(),
+    purchasedItems: new Set(),
+    selectedTodoItems: new Set(),
+    selectedCalendarDate: null,
+  },
   useAppState: jest.fn(),
 }))
 
-jest.mock('../../api/noiseTracking')
+jest.mock('../../api/noiseTracking', () => ({
+  retrieveNoiseTrackingItems: jest.fn(),
+  addNoiseTrackingItem: jest.fn(),
+  removeNoiseTrackingItem: jest.fn(),
+}))
 jest.mock('react-oidc-context', () => ({
   useAuth: () => ({
     isAuthenticated: true,

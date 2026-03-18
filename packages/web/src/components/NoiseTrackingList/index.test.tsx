@@ -3,7 +3,10 @@ import * as NoiseTrackingProvider from '../../providers/NoiseTrackingProvider'
 import NoiseTrackingList from './index'
 import { ViewMode } from './types'
 
-jest.mock('../../providers/NoiseTrackingProvider')
+jest.mock('../../providers/NoiseTrackingProvider', () => ({
+  useNoiseTrackingContext: jest.fn(),
+  NoiseTrackingProvider: jest.fn(({ children }: any) => children),
+}))
 
 const MOCK_ITEMS = [
   { id: '1', timestamp: new Date().setHours(14, 58, 0, 0) },

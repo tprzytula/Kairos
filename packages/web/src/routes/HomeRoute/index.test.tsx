@@ -19,20 +19,56 @@ import { ProjectProvider, useProjectContext } from '../../providers/ProjectProvi
 import { IProject, ProjectRole } from '../../types/project'
 
 jest.mock('../../providers/AppStateProvider', () => ({
-  ...jest.requireActual('../../providers/AppStateProvider'),
+  AppStateProvider: ({ children }: any) => children,
+  AppState: { Provider: ({ children }: any) => children, Consumer: jest.fn() },
+  initialState: {
+    alerts: new Map(),
+    purchasedItems: new Set(),
+    selectedTodoItems: new Set(),
+    selectedCalendarDate: null,
+  },
   useAppState: jest.fn(),
 }))
 
 jest.mock('../../providers/ProjectProvider', () => ({
-  ...jest.requireActual('../../providers/ProjectProvider'),
+  ProjectProvider: ({ children }: any) => children,
+  ProjectContext: { Provider: ({ children }: any) => children, Consumer: jest.fn() },
   useProjectContext: jest.fn(),
 }))
 
-jest.mock('../../api/groceryList')
-jest.mock('../../api/toDoList')
-jest.mock('../../api/noiseTracking')
-jest.mock('../../api/birthdays/retrieve')
-jest.mock('../../api/mealPlans')
+jest.mock('../../api/groceryList', () => ({
+  retrieveGroceryList: jest.fn(),
+  addGroceryItem: jest.fn(),
+  removeGroceryItems: jest.fn(),
+  updateGroceryItem: jest.fn(),
+  updateGroceryItemFields: jest.fn(),
+  retrieveGroceryListDefaults: jest.fn(),
+  addGroceryItemDefault: jest.fn(),
+  updateGroceryItemDefault: jest.fn(),
+  deleteGroceryItemDefault: jest.fn(),
+  getGroceryDefaultUploadUrl: jest.fn(),
+}))
+jest.mock('../../api/toDoList', () => ({
+  retrieveToDoList: jest.fn(),
+  addTodoItem: jest.fn(),
+  removeTodoItems: jest.fn(),
+  updateToDoItems: jest.fn(),
+  updateToDoItemFields: jest.fn(),
+}))
+jest.mock('../../api/noiseTracking', () => ({
+  retrieveNoiseTrackingItems: jest.fn(),
+  addNoiseTrackingItem: jest.fn(),
+  removeNoiseTrackingItem: jest.fn(),
+}))
+jest.mock('../../api/birthdays/retrieve', () => ({
+  retrieveBirthdays: jest.fn(),
+}))
+jest.mock('../../api/mealPlans', () => ({
+  getMealPlans: jest.fn(),
+  addMealPlan: jest.fn(),
+  updateMealPlan: jest.fn(),
+  deleteMealPlan: jest.fn(),
+}))
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(() => jest.fn()),

@@ -56,7 +56,7 @@ describe('Given the updateRecipe function', () => {
   it('should resolve without error on success', async () => {
     fetchMock.mockResponse(JSON.stringify({}), { status: 200 })
 
-    await expect(updateRecipe(exampleId, exampleFields)).resolves.not.toThrow()
+    await expect(updateRecipe(exampleId, exampleFields)).resolves.toBeUndefined()
   })
 
   describe('When the API call fails', () => {

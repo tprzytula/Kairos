@@ -4,7 +4,9 @@ import { useShopContext } from "../../providers/ShopProvider";
 import { IShop } from "../../providers/AppStateProvider/types";
 import { useNavigate } from "react-router";
 
-jest.mock("../../providers/ShopProvider");
+jest.mock("../../providers/ShopProvider", () => ({
+  useShopContext: jest.fn(),
+}));
 jest.mock("react-router", () => ({
   useNavigate: jest.fn(),
 }));

@@ -8,7 +8,13 @@ import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import { ProjectContext } from '../ProjectProvider'
 import { IProject } from '../../types/project'
 
-jest.mock('../../api/toDoList')
+jest.mock('../../api/toDoList', () => ({
+  retrieveToDoList: jest.fn(),
+  updateToDoItems: jest.fn(),
+  updateToDoItemFields: jest.fn(),
+  addTodoItem: jest.fn(),
+  removeTodoItems: jest.fn(),
+}))
 jest.mock('react-oidc-context', () => ({
   useAuth: () => ({
     isAuthenticated: true,

@@ -16,12 +16,20 @@ import { useShopContext } from '../../providers/ShopProvider'
 import { IProject, ProjectRole } from '../../types/project'
 
 jest.mock('../../providers/AppStateProvider', () => ({
-  ...jest.requireActual('../../providers/AppStateProvider'),
+  AppStateProvider: ({ children }: any) => children,
+  AppState: { Provider: ({ children }: any) => children, Consumer: jest.fn() },
+  initialState: {
+    alerts: new Map(),
+    purchasedItems: new Set(),
+    selectedTodoItems: new Set(),
+    selectedCalendarDate: null,
+  },
   useAppState: jest.fn(),
 }))
 
 jest.mock('../../providers/ProjectProvider', () => ({
-  ...jest.requireActual('../../providers/ProjectProvider'),
+  ProjectProvider: ({ children }: any) => children,
+  ProjectContext: { Provider: ({ children }: any) => children, Consumer: jest.fn() },
   useProjectContext: jest.fn(),
 }))
 
@@ -29,7 +37,18 @@ jest.mock('../../providers/ShopProvider', () => ({
   useShopContext: jest.fn(),
 }))
 
-jest.mock('../../api/groceryList')
+jest.mock('../../api/groceryList', () => ({
+  retrieveGroceryList: jest.fn(),
+  addGroceryItem: jest.fn(),
+  removeGroceryItems: jest.fn(),
+  updateGroceryItem: jest.fn(),
+  updateGroceryItemFields: jest.fn(),
+  retrieveGroceryListDefaults: jest.fn(),
+  addGroceryItemDefault: jest.fn(),
+  updateGroceryItemDefault: jest.fn(),
+  deleteGroceryItemDefault: jest.fn(),
+  getGroceryDefaultUploadUrl: jest.fn(),
+}))
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(),

@@ -22,7 +22,9 @@ jest.mock('../../hooks/useItemDefaults', () => ({
   }),
 }))
 
-jest.mock('../../components/ItemForm');
+jest.mock('../../components/ItemForm', () => {
+  return { __esModule: true, default: jest.fn(() => null) };
+});
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(() => jest.fn()),
@@ -49,7 +51,8 @@ const mockGroceryListContext = {
 }
 
 jest.mock('../../providers/GroceryListProvider', () => ({
-  ...jest.requireActual('../../providers/GroceryListProvider'),
+  GroceryListProvider: ({ children }: any) => children,
+  GroceryListContext: { Provider: ({ children }: any) => children, Consumer: jest.fn() },
   useGroceryListContext: () => mockGroceryListContext,
 }))
 

@@ -7,7 +7,11 @@ import { NoiseTrackingProvider, useNoiseTrackingContext } from './index'
 import { ProjectContext } from '../ProjectProvider'
 import { IProject } from '../../types/project'
 
-jest.mock('../../api/noiseTracking')
+jest.mock('../../api/noiseTracking', () => ({
+  retrieveNoiseTrackingItems: jest.fn(),
+  addNoiseTrackingItem: jest.fn(),
+  removeNoiseTrackingItem: jest.fn(),
+}))
 jest.mock('react-oidc-context', () => ({
   useAuth: () => ({
     isAuthenticated: true,

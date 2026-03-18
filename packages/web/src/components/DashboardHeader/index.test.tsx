@@ -17,7 +17,8 @@ jest.mock('../UserMenu', () => {
   }
 })
 
-const mockUseAuth = require('react-oidc-context').useAuth
+import { useAuth } from 'react-oidc-context'
+const mockUseAuth = useAuth as jest.Mock
 
 const theme = createTheme()
 

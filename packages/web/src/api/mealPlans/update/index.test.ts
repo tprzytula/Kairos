@@ -51,7 +51,7 @@ describe('Given the updateMealPlan function', () => {
   it('should resolve without error on success', async () => {
     fetchMock.mockResponse(JSON.stringify({}), { status: 200 })
 
-    await expect(updateMealPlan(exampleId, exampleFields)).resolves.not.toThrow()
+    await expect(updateMealPlan(exampleId, exampleFields)).resolves.toBeUndefined()
   })
 
   describe('When the API call fails', () => {

@@ -8,9 +8,21 @@ import { GroceryItemUnit } from '../../enums/groceryItem'
 import { ProjectProvider, useProjectContext } from '../ProjectProvider'
 import { IProject, ProjectRole } from '../../types/project'
 
-jest.mock('../../api/groceryList')
+jest.mock('../../api/groceryList', () => ({
+  retrieveGroceryList: jest.fn(),
+  addGroceryItem: jest.fn(),
+  removeGroceryItems: jest.fn(),
+  updateGroceryItem: jest.fn(),
+  updateGroceryItemFields: jest.fn(),
+  retrieveGroceryListDefaults: jest.fn(),
+  addGroceryItemDefault: jest.fn(),
+  deleteGroceryItemDefault: jest.fn(),
+  updateGroceryItemDefault: jest.fn(),
+  getGroceryDefaultUploadUrl: jest.fn(),
+}))
 jest.mock('../ProjectProvider', () => ({
-  ...jest.requireActual('../ProjectProvider'),
+  ProjectProvider: ({ children }: any) => children,
+  ProjectContext: { Provider: ({ children }: any) => children, Consumer: jest.fn() },
   useProjectContext: jest.fn(),
 }))
 

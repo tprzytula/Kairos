@@ -6,9 +6,15 @@ import { useShopContext } from "../../providers/ShopProvider";
 import { GroceryItemUnit } from "../../enums/groceryItem";
 import { ActionName } from "../../providers/AppStateProvider/enums";
 
-jest.mock("../../providers/AppStateProvider");
-jest.mock("../../providers/GroceryListProvider");
-jest.mock("../../providers/ShopProvider");
+jest.mock("../../providers/AppStateProvider", () => ({
+  useAppState: jest.fn(),
+}));
+jest.mock("../../providers/GroceryListProvider", () => ({
+  useGroceryListContext: jest.fn(),
+}));
+jest.mock("../../providers/ShopProvider", () => ({
+  useShopContext: jest.fn(),
+}));
 
 describe("Given the GroceryItem component", () => {
   it("should render the component with correct props", () => {

@@ -15,11 +15,36 @@ import { useGroceryListContext } from '../../providers/GroceryListProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { useShopContext } from '../../providers/ShopProvider'
 
-jest.mock('../../api/groceryList');
-jest.mock('../../components/ItemForm');
-jest.mock('../../hooks/useItemDefaults');
-jest.mock('../../providers/GroceryListProvider');
-jest.mock('../../providers/ProjectProvider');
+jest.mock('../../api/groceryList', () => ({
+  addGroceryItem: jest.fn(),
+  retrieveGroceryList: jest.fn(),
+  removeGroceryItems: jest.fn(),
+  updateGroceryItem: jest.fn(),
+  updateGroceryItemFields: jest.fn(),
+  retrieveGroceryListDefaults: jest.fn(),
+  addGroceryItemDefault: jest.fn(),
+  updateGroceryItemDefault: jest.fn(),
+  deleteGroceryItemDefault: jest.fn(),
+  getGroceryDefaultUploadUrl: jest.fn(),
+}));
+jest.mock('../../components/ItemForm', () => {
+  return { __esModule: true, default: jest.fn(() => null) };
+});
+jest.mock('../../hooks/useItemDefaults', () => ({
+  useItemDefaults: jest.fn(),
+}));
+jest.mock('../../providers/GroceryListProvider', () => ({
+  useGroceryListContext: jest.fn(),
+  GroceryListProvider: ({ children }: any) => children,
+  GroceryListContext: {},
+  initialState: {},
+}));
+jest.mock('../../providers/ProjectProvider', () => ({
+  useProjectContext: jest.fn(),
+  ProjectProvider: ({ children }: any) => children,
+  ProjectContext: {},
+  initialState: {},
+}));
 jest.mock('../../providers/ShopProvider', () => ({
   useShopContext: jest.fn(),
 }));

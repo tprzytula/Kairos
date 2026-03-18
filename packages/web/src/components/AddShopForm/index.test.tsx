@@ -1,5 +1,8 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { FetchMock } from 'jest-fetch-mock'
 import AddShopForm from ".";
+
+const fetchMock = fetch as FetchMock
 
 const mockOnSubmit = jest.fn();
 const mockOnCancel = jest.fn();

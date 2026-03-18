@@ -4,7 +4,9 @@ import { useAppState } from "../../providers/AppStateProvider";
 import { ActionName } from "../../providers/AppStateProvider/enums";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-jest.mock("../../providers/AppStateProvider");
+jest.mock("../../providers/AppStateProvider", () => ({
+  useAppState: jest.fn(),
+}));
 
 describe("Given the ToDoItem component", () => {
   it("should render the component with correct props", () => {

@@ -2,7 +2,9 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import ConnectivityNotification from './index'
 import { useInternetConnectivity } from '../../hooks/useInternetConnectivity'
 
-jest.mock('../../hooks/useInternetConnectivity')
+jest.mock('../../hooks/useInternetConnectivity', () => ({
+  useInternetConnectivity: jest.fn(),
+}))
 
 const mockUseInternetConnectivity = useInternetConnectivity as jest.MockedFunction<typeof useInternetConnectivity>
 

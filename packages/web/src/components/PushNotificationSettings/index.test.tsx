@@ -4,7 +4,9 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import PushNotificationSettings from './index';
 import { usePushNotifications } from '../../hooks/usePushNotifications';
 
-jest.mock('../../hooks/usePushNotifications');
+jest.mock('../../hooks/usePushNotifications', () => ({
+  usePushNotifications: jest.fn(),
+}));
 
 const mockUsePushNotifications = usePushNotifications as jest.MockedFunction<typeof usePushNotifications>;
 

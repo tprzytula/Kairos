@@ -22,16 +22,20 @@ const renderComponent = (props = {}) => {
 }
 
 // Mock clipboard API
-Object.assign(navigator, {
-  clipboard: {
+Object.defineProperty(navigator, 'clipboard', {
+  value: {
     writeText: jest.fn(),
   },
+  writable: true,
+  configurable: true,
 })
 
 // Mock Web Share API
 const mockShare = jest.fn()
-Object.assign(navigator, {
-  share: mockShare,
+Object.defineProperty(navigator, 'share', {
+  value: mockShare,
+  writable: true,
+  configurable: true,
 })
 
 describe('ProjectInviteDisplay component', () => {

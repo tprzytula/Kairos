@@ -19,8 +19,15 @@ jest.mock('react-router', () => ({
   useLocation: jest.fn(),
 }))
 
-jest.mock('../../../providers/NoiseTrackingProvider')
-jest.mock('../../../api/noiseTracking')
+jest.mock('../../../providers/NoiseTrackingProvider', () => ({
+  useNoiseTrackingContext: jest.fn(),
+  NoiseTrackingProvider: jest.fn(({ children }: any) => children),
+}))
+jest.mock('../../../api/noiseTracking', () => ({
+  addNoiseTrackingItem: jest.fn(),
+  retrieveNoiseTrackingItems: jest.fn(),
+  removeNoiseTrackingItem: jest.fn(),
+}))
 
 const renderWithProviders = (children: React.ReactNode) => {
   return render(

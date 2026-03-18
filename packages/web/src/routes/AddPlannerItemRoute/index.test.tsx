@@ -16,10 +16,28 @@ jest.mock('react-router', () => ({
   useNavigate: jest.fn(() => jest.fn()),
 }))
 
-jest.mock('../../api/toDoList');
-jest.mock('../../components/ItemForm');
-jest.mock('../../providers/PlannerProvider');
-jest.mock('../../providers/ProjectProvider');
+jest.mock('../../api/toDoList', () => ({
+  addTodoItem: jest.fn(),
+  retrieveToDoList: jest.fn(),
+  removeTodoItems: jest.fn(),
+  updateToDoItems: jest.fn(),
+  updateToDoItemFields: jest.fn(),
+}));
+jest.mock('../../components/ItemForm', () => {
+  return { __esModule: true, default: jest.fn(() => null) };
+});
+jest.mock('../../providers/PlannerProvider', () => ({
+  usePlannerContext: jest.fn(),
+  PlannerProvider: ({ children }: any) => children,
+  PlannerContext: {},
+  initialState: {},
+}));
+jest.mock('../../providers/ProjectProvider', () => ({
+  useProjectContext: jest.fn(),
+  ProjectProvider: ({ children }: any) => children,
+  ProjectContext: {},
+  initialState: {},
+}));
 jest.mock('../../components/ModernPageHeader', () => ({ title }: any) => <div>{title}</div>);
 jest.mock('@mui/icons-material/Checklist', () => () => <div>ChecklistIcon</div>)
 jest.mock('react-oidc-context', () => ({

@@ -18,8 +18,17 @@ jest.mock('react-oidc-context', () => ({
   useAuth: jest.fn(() => ({ user: { access_token: 'test-access-token' } })),
 }))
 
-jest.mock('../../providers/ProjectProvider')
-jest.mock('../../api/toDoList')
+jest.mock('../../providers/ProjectProvider', () => ({
+  useProjectContext: jest.fn(),
+  ProjectProvider: jest.fn(({ children }: any) => children),
+}))
+jest.mock('../../api/toDoList', () => ({
+  addTodoItem: jest.fn(),
+  removeTodoItems: jest.fn(),
+  retrieveToDoList: jest.fn(),
+  updateToDoItems: jest.fn(),
+  updateToDoItemFields: jest.fn(),
+}))
 
 jest.mock('./CalendarView', () => ({
   __esModule: true,
