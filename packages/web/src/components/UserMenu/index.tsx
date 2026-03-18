@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useAuth } from 'react-oidc-context'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { Divider, ListItemIcon, ListItemText } from '@mui/material'
 import { Settings as SettingsIcon, Notifications as NotificationsIcon, ShoppingCart as ShoppingCartIcon, VolumeUp as VolumeUpIcon } from '@mui/icons-material'
 import * as Styled from './index.styled'

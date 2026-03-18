@@ -1,7 +1,12 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createPortal } from 'react-dom'
+import { useNavigate } from 'react-router'
 import UserMenu from './index'
+
+jest.mock('react-router', () => ({
+  useNavigate: jest.fn(),
+}))
 
 // Mock the react-oidc-context hook
 const defaultMockAuthState = {
@@ -71,11 +76,14 @@ Object.defineProperty(window, 'innerWidth', {
 })
 
 describe('UserMenu', () => {
+  const mockNavigate = jest.fn()
+
   beforeEach(() => {
     jest.clearAllMocks()
     mockUseAuth.mockReturnValue(defaultMockAuthState)
     // Reset location mock
     mockHref.mockClear()
+    ;(useNavigate as jest.Mock).mockReturnValue(mockNavigate)
   })
 
   it('should render user button', () => {
@@ -144,10 +152,19 @@ describe('UserMenu', () => {
       removeUser: jest.fn(),
       user: null,
     })
-    
+
     const { container } = render(<UserMenu />)
-    
+
     expect(container.firstChild).toBeNull()
+  })
+
+  it('should navigate to noise tracking when Noise Tracking is clicked', () => {
+    render(<UserMenu />)
+
+    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByText('Noise Tracking'))
+
+    expect(mockNavigate).toHaveBeenCalledWith('/noise-tracking')
   })
 
   describe('Portal functionality', () => {
