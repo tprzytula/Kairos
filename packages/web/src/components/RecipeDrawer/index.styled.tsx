@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
+import { SECTION_GRADIENTS } from '../../constants/sectionColors'
 
 export const DrawerHeader = styled(Box)({
   display: 'flex',
@@ -20,7 +21,7 @@ export const DrawerIconBox = styled(Box)({
   width: '2.25rem',
   height: '2.25rem',
   borderRadius: '10px',
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  background: SECTION_GRADIENTS.recipe,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -34,7 +35,7 @@ export const DrawerIconBox = styled(Box)({
 export const DrawerTitle = styled('span')({
   fontSize: '1.1rem',
   fontWeight: '700',
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  background: SECTION_GRADIENTS.recipe,
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   backgroundClip: 'text',
