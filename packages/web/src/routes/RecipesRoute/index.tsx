@@ -9,6 +9,8 @@ import RecipeForm from '../../components/RecipeForm'
 import DraggableBottomDrawer from '../../components/DraggableBottomDrawer'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import { IRecipe } from '../../types/recipe'
+import { useItemDefaults } from '../../hooks/useItemDefaults'
+import { retrieveGroceryListDefaults } from '../../api/groceryList'
 import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
 import {
   DrawerHeader,
@@ -22,6 +24,7 @@ import { useSearchParams, useNavigate } from 'react-router'
 
 const RecipesContent = () => {
   const { recipes } = useRecipeContext()
+  const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<IRecipe | null>(null)
   const [searchParams] = useSearchParams()
@@ -68,6 +71,7 @@ const RecipesContent = () => {
           <RecipeList
             onEditRecipe={handleEditRecipe}
             onUseRecipe={handleDrawerClose}
+            defaults={defaults}
           />
         </ScrollableContainer>
       </Container>
