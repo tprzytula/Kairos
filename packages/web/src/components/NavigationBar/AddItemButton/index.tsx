@@ -87,6 +87,7 @@ const RouteToAddItemMapping: IRouteToAddItemMapping = {
     [Route.GroceryList]: Route.AddGroceryItem,
     [Route.Planner]: Route.AddPlannerItem,
     [Route.Shops]: Route.Shops, // Special case: navigate to same route with mode parameter
+    [Route.Recipes]: Route.Recipes, // Special case: navigate to same route with action parameter
 }
 
 const AddItemButton = () => {
@@ -113,7 +114,9 @@ const AddItemButton = () => {
 
     const onClick = useCallback(async () => {
         if (addItemRoute) {
-            if (location.pathname === Route.Shops) {
+            if (location.pathname === Route.Recipes) {
+                navigate(`${Route.Recipes}?action=new`);
+            } else if (location.pathname === Route.Shops) {
                 // Special case: navigate to shops with add mode parameter
                 navigate(`${Route.Shops}?mode=add`);
             } else if (location.pathname.match(/^\/groceries\/[^\/]+$/)) {
