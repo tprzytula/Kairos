@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles'
 export const TaskListContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.65rem',
+  gap: '0.4rem',
 })
 
 export const ExpandButton = styled('div')(({ theme }) => ({
@@ -14,7 +14,7 @@ export const ExpandButton = styled('div')(({ theme }) => ({
   fontSize: '0.75rem',
   fontWeight: 600,
   color: theme.palette.text.secondary,
-  padding: '0.5rem',
+  padding: '0.35rem',
   borderRadius: '8px',
   cursor: 'pointer',
   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -34,5 +34,5 @@ export const EmptyMessage = styled('div')(({ theme }) => ({
   fontSize: '0.8rem',
   color: theme.palette.text.secondary,
   textAlign: 'center',
-  padding: '1rem 0',
+  padding: '0.5rem 0',
 }))

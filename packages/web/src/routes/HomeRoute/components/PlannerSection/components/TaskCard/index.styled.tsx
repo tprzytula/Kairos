@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 
 export const CardWrapper = styled('div')<{ $dueDateClass?: string }>(({ theme, $dueDateClass }) => ({
   borderRadius: '12px',
-  padding: '0.75rem',
+  padding: '0.5rem 0.65rem',
   background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,1) 100%)',
   border: '1px solid rgba(99, 102, 241, 0.08)',
   position: 'relative',
@@ -33,7 +33,7 @@ export const CardHeader = styled('div')({
   alignItems: 'flex-start',
   justifyContent: 'space-between',
   gap: '0.5rem',
-  marginBottom: '0.35rem',
+  marginBottom: '0.2rem',
   cursor: 'pointer',
 })
 
@@ -90,7 +90,7 @@ export const ProgressLabel = styled('div')(({ theme }) => ({
   fontWeight: 500,
   color: theme.palette.text.secondary,
   textAlign: 'right',
-  marginBottom: '0.4rem',
+  marginBottom: '0.25rem',
 }))
 
 export const StepsContainer = styled('div')({
