@@ -1,5 +1,5 @@
 import { screen, render } from '@testing-library/react'
-import { BrowserRouter } from 'react-router'
+import { MemoryRouter } from 'react-router'
 import { ThemeProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppStateProvider } from './providers/AppStateProvider'
@@ -25,9 +25,9 @@ const renderApp = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <AppStateProvider>
-          <BrowserRouter>
+          <MemoryRouter initialEntries={['/']}>
             <App />
-          </BrowserRouter>
+          </MemoryRouter>
         </AppStateProvider>
       </ThemeProvider>
     </QueryClientProvider>

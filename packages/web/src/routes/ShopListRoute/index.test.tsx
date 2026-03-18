@@ -19,23 +19,23 @@ jest.mock('../../providers/AppStateProvider', () => ({
   useAppState: jest.fn(),
 }))
 
-jest.mock('../../components/ShopList', () => {
-  return function MockShopList() {
+jest.mock('../../components/ShopList', () => ({
+  default: function MockShopList() {
     return <div data-testid="shop-list">Shop List</div>
   }
-})
+}))
 
-jest.mock('../../components/AddShopForm', () => {
-  return function MockAddShopForm() {
+jest.mock('../../components/AddShopForm', () => ({
+  default: function MockAddShopForm() {
     return <div data-testid="add-shop-form">Add Shop Form</div>
   }
-})
+}))
 
-jest.mock('../../components/EditShopForm', () => {
-  return function MockEditShopForm() {
+jest.mock('../../components/EditShopForm', () => ({
+  default: function MockEditShopForm() {
     return <div data-testid="edit-shop-form">Edit Shop Form</div>
   }
-})
+}))
 
 describe('Given the ShopListRoute component', () => {
   const mockNavigate = jest.fn()

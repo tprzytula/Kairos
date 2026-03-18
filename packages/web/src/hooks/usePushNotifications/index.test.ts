@@ -174,9 +174,13 @@ describe('usePushNotifications', () => {
 
       const { result } = renderHook(() => usePushNotifications())
 
-      await expect(
-        act(async () => { await result.current.requestPermission() })
-      ).rejects.toThrow('Push notifications are not supported')
+      let thrownError: Error | undefined
+      try {
+        await act(async () => { await result.current.requestPermission() })
+      } catch (e) {
+        thrownError = e as Error
+      }
+      expect(thrownError?.message).toContain('Push notifications are not supported')
     })
   })
 
@@ -253,9 +257,13 @@ describe('usePushNotifications', () => {
 
       const { result } = renderHook(() => usePushNotifications())
 
-      await expect(
-        act(async () => { await result.current.subscribe() })
-      ).rejects.toThrow('Permission not granted for notifications')
+      let thrownError: Error | undefined
+      try {
+        await act(async () => { await result.current.subscribe() })
+      } catch (e) {
+        thrownError = e as Error
+      }
+      expect(thrownError?.message).toContain('Permission not granted for notifications')
     })
 
     it('should throw when user is not authenticated', async () => {
@@ -263,9 +271,13 @@ describe('usePushNotifications', () => {
 
       const { result } = renderHook(() => usePushNotifications())
 
-      await expect(
-        act(async () => { await result.current.subscribe() })
-      ).rejects.toThrow('Push notifications are not supported or user not authenticated')
+      let thrownError: Error | undefined
+      try {
+        await act(async () => { await result.current.subscribe() })
+      } catch (e) {
+        thrownError = e as Error
+      }
+      expect(thrownError?.message).toContain('Push notifications are not supported or user not authenticated')
     })
   })
 
@@ -323,9 +335,13 @@ describe('usePushNotifications', () => {
 
       const { result } = renderHook(() => usePushNotifications())
 
-      await expect(
-        act(async () => { await result.current.unsubscribe() })
-      ).rejects.toThrow('Push notifications are not supported or user not authenticated')
+      let thrownError: Error | undefined
+      try {
+        await act(async () => { await result.current.unsubscribe() })
+      } catch (e) {
+        thrownError = e as Error
+      }
+      expect(thrownError?.message).toContain('Push notifications are not supported or user not authenticated')
     })
 
     it('should clear isLoading after unsubscribe completes', async () => {

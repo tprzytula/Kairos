@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import { FetchMock } from 'jest-fetch-mock'
 import EditShopForm from ".";
 
@@ -16,18 +16,15 @@ jest.mock('../../api/shops/getUploadUrl', () => ({
   getShopUploadUrl: (...args: any[]) => mockGetShopUploadUrl(...args)
 }));
 
-jest.mock('../RecipeForm/ImageCropModal', () => {
-  const { useEffect } = require('react');
-  return {
-    __esModule: true,
-    default: ({ onConfirm }: any) => {
-      useEffect(() => {
-        onConfirm({ x: 0, y: 0, width: 100, height: 100 });
-      }, []);
-      return null;
-    }
-  };
-});
+// Store the onConfirm callback so the test can call it manually
+let capturedOnConfirm: ((area: any) => void) | null = null;
+jest.mock('../RecipeForm/ImageCropModal', () => ({
+  __esModule: true,
+  default: ({ onConfirm }: any) => {
+    capturedOnConfirm = onConfirm;
+    return null;
+  }
+}));
 
 jest.mock('../RecipeForm/cropUtils', () => ({
   getCroppedBlob: jest.fn().mockResolvedValue(new Blob(['img'], { type: 'image/jpeg' }))
@@ -96,6 +93,11 @@ describe("Given the EditShopForm component", () => {
       const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
       const file = new File(['img'], 'new-icon.jpg', { type: 'image/jpeg' });
       fireEvent.change(fileInput, { target: { files: [file] } });
+
+      // Manually trigger the crop confirm (ImageCropModal mock captures the callback)
+      await act(async () => {
+        capturedOnConfirm?.({ x: 0, y: 0, width: 100, height: 100 });
+      });
 
       await waitFor(() => {
         expect(saveButton).not.toBeDisabled();
@@ -170,6 +172,11 @@ describe("Given the EditShopForm component", () => {
       const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
       const file = new File(['img'], 'new-icon.jpg', { type: 'image/jpeg' });
       fireEvent.change(fileInput, { target: { files: [file] } });
+
+      // Manually trigger the crop confirm
+      await act(async () => {
+        capturedOnConfirm?.({ x: 0, y: 0, width: 100, height: 100 });
+      });
 
       await waitFor(() => {
         expect(mockGetShopUploadUrl).toHaveBeenCalled();

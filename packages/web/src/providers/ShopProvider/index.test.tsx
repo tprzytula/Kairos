@@ -191,11 +191,15 @@ describe('Given the ShopProvider', () => {
 
       const { result } = renderHook(() => useShopContext(), { wrapper: createWrapper() })
 
-      await expect(
-        act(async () => {
+      let thrownError: Error | undefined
+      try {
+        await act(async () => {
           await result.current.addShop({ name: 'New Shop' })
         })
-      ).rejects.toThrow('No current project')
+      } catch (e) {
+        thrownError = e as Error
+      }
+      expect(thrownError?.message).toContain('No current project')
     })
   })
 

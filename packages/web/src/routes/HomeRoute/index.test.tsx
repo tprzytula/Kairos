@@ -69,9 +69,33 @@ jest.mock('../../api/mealPlans', () => ({
   updateMealPlan: jest.fn(),
   deleteMealPlan: jest.fn(),
 }))
+jest.mock('../../api/recipes', () => ({
+  getRecipes: jest.fn().mockResolvedValue([]),
+  addRecipe: jest.fn(),
+  updateRecipe: jest.fn(),
+  deleteRecipe: jest.fn(),
+}))
+jest.mock('../../api/shops', () => ({
+  retrieveShops: jest.fn().mockResolvedValue([]),
+  addShop: jest.fn(),
+  updateShop: jest.fn(),
+  deleteShop: jest.fn(),
+}))
+jest.mock('../../api/groceryList/retrieve', () => ({
+  retrieveGroceryList: jest.fn().mockResolvedValue([]),
+}))
+jest.mock('../../api/userPreferences', () => ({
+  getUserPreferences: jest.fn().mockResolvedValue({}),
+  updateUserPreferences: jest.fn(),
+}))
+jest.mock('../../hooks/useVersion', () => ({
+  useVersion: () => ({ version: 'test', isLoading: false, error: null }),
+  isLocalhost: () => true,
+}))
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(() => jest.fn()),
+  useLocation: jest.fn(() => ({ pathname: '/' })),
 }))
 
 // Mock the useAuth hook for DashboardHeader and ProjectProvider
@@ -519,12 +543,26 @@ describe('Given the HomeRoute component', () => {
     })
 
     it('should display tasks due today in Today\'s Tasks card', async () => {
+      // Use real timers but mock Date for this test to avoid react-query + fake timer conflicts
+      jest.useRealTimers()
+      const FAKE_NOW = new Date('2024-01-15T12:00:00Z').getTime()
+      const RealDate = Date
+      const mockDate = jest.fn((...args: any[]) => {
+        if (args.length === 0) return new RealDate(FAKE_NOW)
+        return new (RealDate as any)(...args)
+      }) as any
+      mockDate.now = () => FAKE_NOW
+      mockDate.parse = RealDate.parse
+      mockDate.UTC = RealDate.UTC
+      mockDate.prototype = RealDate.prototype
+      globalThis.Date = mockDate
+
       const todayItem = {
         id: '2',
         name: 'Today Task',
         isDone: false,
         description: 'Due today',
-        dueDate: new Date('2024-01-15T15:00:00Z').getTime() // Same day
+        dueDate: new RealDate('2024-01-15T15:00:00Z').getTime() // Same day
       }
 
       jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([todayItem])
@@ -539,6 +577,8 @@ describe('Given the HomeRoute component', () => {
         const todaySlide = screen.getByTestId('today-tasks-slide')
         expect(within(todaySlide).getByText('Today Task')).toBeInTheDocument()
       })
+
+      globalThis.Date = RealDate
     })
 
     it('should not show tasks due tomorrow in Today\'s Tasks card', async () => {
@@ -785,8 +825,19 @@ describe('Given the HomeRoute component', () => {
     })
 
     it('should show birthday that is today', async () => {
-      jest.useFakeTimers()
-      jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
+      // Use real timers but mock Date to avoid react-query + fake timer conflicts
+      jest.useRealTimers()
+      const FAKE_NOW = new Date('2024-01-15T12:00:00Z').getTime()
+      const RealDate = Date
+      const mockDate = jest.fn((...args: any[]) => {
+        if (args.length === 0) return new RealDate(FAKE_NOW)
+        return new (RealDate as any)(...args)
+      }) as any
+      mockDate.now = () => FAKE_NOW
+      mockDate.parse = RealDate.parse
+      mockDate.UTC = RealDate.UTC
+      mockDate.prototype = RealDate.prototype
+      globalThis.Date = mockDate
 
       jest.spyOn(BirthdayAPI, 'retrieveBirthdays').mockResolvedValue([
         { id: '1', name: 'Happy Person', month: 1, day: 15 }
@@ -801,7 +852,7 @@ describe('Given the HomeRoute component', () => {
         expect(screen.getByText('Today!')).toBeInTheDocument()
       })
 
-      jest.useRealTimers()
+      globalThis.Date = RealDate
     })
 
     it('should not show a meal for a different day', async () => {

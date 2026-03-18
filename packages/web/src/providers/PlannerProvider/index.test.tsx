@@ -243,11 +243,15 @@ describe('Given the usePlannerContext hook', () => {
       expect(result.current.toDoList).toHaveLength(2)
     })
 
-    await expect(async () => {
+    let thrownError: Error | undefined
+    try {
       await act(async () => {
         await result.current.updateToDoItemFields('1', { isDone: true })
       })
-    }).rejects.toThrow('Update failed')
+    } catch (e) {
+      thrownError = e as Error
+    }
+    expect(thrownError?.message).toContain('Update failed')
 
     expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to update todo item:', expect.any(Error))
     consoleErrorSpy.mockRestore()

@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import BirthdayFormDialog from './index'
 import { useBirthdayContext } from '../../providers/BirthdayProvider'
 
@@ -58,18 +59,22 @@ describe('Given the BirthdayFormDialog component', () => {
     })
 
     it('should show error when name is empty on submit', async () => {
+      const user = userEvent.setup()
       render(<BirthdayFormDialog open={true} onClose={jest.fn()} />)
-      // Trigger via Enter key since button is disabled when name/day are empty
-      fireEvent.keyPress(screen.getByLabelText(/birth year/i), { key: 'Enter', code: 'Enter', charCode: 13 })
+      // Focus the birth year field and press Enter to trigger form submission
+      screen.getByLabelText(/birth year/i).focus()
+      await user.keyboard('{Enter}')
       expect(await screen.findByText('Name is required')).toBeVisible()
       expect(mockAddBirthdayItem).not.toHaveBeenCalled()
     })
 
     it('should show error when day is invalid', async () => {
+      const user = userEvent.setup()
       render(<BirthdayFormDialog open={true} onClose={jest.fn()} />)
       fireEvent.change(screen.getByLabelText(/person's name/i), { target: { value: 'Alice' } })
-      // Trigger via Enter key since button is disabled when day is empty
-      fireEvent.keyPress(screen.getByLabelText(/person's name/i), { key: 'Enter', code: 'Enter', charCode: 13 })
+      // Focus the name field and press Enter to trigger form submission
+      screen.getByLabelText(/person's name/i).focus()
+      await user.keyboard('{Enter}')
       expect(await screen.findByText(/valid day/i)).toBeVisible()
     })
 

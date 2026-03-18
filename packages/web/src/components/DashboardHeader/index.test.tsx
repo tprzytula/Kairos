@@ -1,4 +1,5 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { ThemeProvider } from '@mui/material/styles'
 import { createTheme } from '@mui/material/styles'
 import DashboardHeader from './index'
@@ -11,11 +12,11 @@ jest.mock('react-oidc-context', () => ({
 }))
 
 // Mock the UserMenu component
-jest.mock('../UserMenu', () => {
-  return function MockUserMenu() {
+jest.mock('../UserMenu', () => ({
+  default: function MockUserMenu() {
     return <div data-testid="user-menu">UserMenu</div>
   }
-})
+}))
 
 import { useAuth } from 'react-oidc-context'
 const mockUseAuth = useAuth as jest.Mock
@@ -24,9 +25,11 @@ const theme = createTheme()
 
 const renderWithTheme = (component: React.ReactElement) => {
   return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
+    <MemoryRouter>
+      <ThemeProvider theme={theme}>
+        {component}
+      </ThemeProvider>
+    </MemoryRouter>
   )
 }
 

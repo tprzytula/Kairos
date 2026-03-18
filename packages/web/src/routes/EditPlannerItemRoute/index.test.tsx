@@ -9,9 +9,9 @@ import { FormFieldType } from '../../components/ItemForm/enums'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import theme from '../../theme'
 
-jest.mock('../../components/ItemForm', () => {
-  return jest.fn(() => <div>ItemForm Mock</div>)
-})
+jest.mock('../../components/ItemForm', () => ({
+  default: jest.fn(() => <div>ItemForm Mock</div>)
+}))
 
 const mockNavigate = jest.fn()
 const mockToDoListContext = {

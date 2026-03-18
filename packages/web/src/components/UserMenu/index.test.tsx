@@ -103,30 +103,22 @@ describe('UserMenu', () => {
   })
 
   it('should attempt to navigate to Cognito logout URL when logout is clicked', () => {
-    // Suppress console.error for the JSDOM navigation warning
-    const originalError = console.error
-    console.error = jest.fn()
-    
     render(<UserMenu />)
-    
+
     fireEvent.click(screen.getByRole('button'))
-    
+
     // The logout should execute without throwing an error
-    // (JSDOM will show a warning but the function should complete)
     expect(() => {
       fireEvent.click(screen.getByRole('button', { name: /sign out/i }))
     }).not.toThrow()
-    
-    // Verify the logout logic was invoked by checking that console.error was called
-    // (JSDOM's navigation warning indicates the href assignment was attempted)
-    expect(console.error).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: expect.stringContaining('Not implemented: navigation')
-      })
+
+    // Verify window.location.href was set to the Cognito logout URL
+    expect(mockHref).toHaveBeenCalledWith(
+      expect.stringContaining('/logout?client_id=test-client-id&logout_uri=')
     )
-    
-    // Restore original console.error
-    console.error = originalError
+
+    // Verify removeUser was called (logout action)
+    expect(defaultMockAuthState.removeUser).toHaveBeenCalled()
   })
 
   it('should show user initials when no picture', () => {

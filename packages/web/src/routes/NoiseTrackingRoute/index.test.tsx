@@ -101,8 +101,8 @@ describe('Given the NoiseTrackingRoute component', () => {
       expect(screen.getByText('18 August 2024 • Sunday')).toBeVisible()
       
       // Check individual timestamps - they should be visible since items auto-expand
-      const firstTimestamp = screen.getAllByText('25 Apr 2024, 07:00')
-      const secondTimestamp = screen.getAllByText('18 Aug 2024, 17:46')
+      const firstTimestamp = screen.getAllByText('25 Apr 2024 at 07:00')
+      const secondTimestamp = screen.getAllByText('18 Aug 2024 at 17:46')
       expect(firstTimestamp.length).toBeGreaterThan(0)
       expect(secondTimestamp.length).toBeGreaterThan(0)
       expect(firstTimestamp[0]).toBeVisible()

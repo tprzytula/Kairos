@@ -42,7 +42,7 @@ describe('Given the SimpleView component', () => {
         />
       );
 
-      expect(screen.getByText('25 Apr 2027, 10:46')).toBeInTheDocument();
+      expect(screen.getByText('25 Apr 2027 at 10:46')).toBeInTheDocument();
       expect(screen.getByText('14:58', { exact: false })).toBeInTheDocument();
     });
 

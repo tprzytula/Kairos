@@ -32,8 +32,9 @@ type FetchMockResponse = {
 };
 
 let mockResponses: FetchMockResponse[] = [];
-// Default to empty string response (matches jest-fetch-mock enableMocks() behavior)
-let defaultMockResponse: FetchMockResponse | null = { body: "", init: { status: 200 } };
+// Default to empty JSON response — jest-fetch-mock returned "" which JSON.parse() tolerates,
+// but the native Response.json() throws on empty bodies, so we use "null" as a safe default.
+let defaultMockResponse: FetchMockResponse | null = { body: "null", init: { status: 200 } };
 
 const mockedFetch = jest.fn(async (_input: RequestInfo | URL, _init?: RequestInit): Promise<Response> => {
   const mockData = mockResponses.length > 0 ? mockResponses.shift()! : defaultMockResponse;

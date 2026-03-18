@@ -9,8 +9,8 @@ jest.mock("../../providers/ShopProvider", () => ({
 jest.mock("react-router", () => ({
   useNavigate: jest.fn(),
 }));
-jest.mock("../SwipeableList", () => {
-  return function MockSwipeableList({ list, component: Component }: any) {
+jest.mock("../SwipeableList", () => ({
+  default: function MockSwipeableList({ list, component: Component }: any) {
     return (
       <div data-testid="swipeable-list">
         {list.map((item: any) => (
@@ -20,8 +20,8 @@ jest.mock("../SwipeableList", () => {
         ))}
       </div>
     );
-  };
-});
+  }
+}));
 
 describe("Given the ShopList component", () => {
   beforeEach(() => {
