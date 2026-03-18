@@ -1,11 +1,33 @@
 import React from 'react'
 import { Collapse } from '@mui/material'
 import { IBirthdayItem } from '../../../../../../api/birthdays/retrieve/types'
-import { BirthdayRow, BirthdayName, DaysUntil, BirthdaySubLine, MoreCount } from './index.styled'
+import {
+  BirthdayList,
+  BirthdayRow,
+  BirthdayAvatar,
+  BirthdayInfo,
+  BirthdayName,
+  BirthdayDate,
+  DaysUntilBadge,
+  DaysUrgency,
+  MoreCount,
+} from './index.styled'
 
-interface IUpcomingBirthdaysCardProps {
-  birthdays: IBirthdayItem[]
-  isExpanded?: boolean
+const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+const AVATAR_GRADIENTS = [
+  'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+  'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+  'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+  'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+  'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+  'linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)',
+]
+
+const getAvatarGradient = (name: string): string => {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash)
+  return AVATAR_GRADIENTS[Math.abs(hash) % AVATAR_GRADIENTS.length]
 }
 
 const getNextBirthdayDate = (birthday: IBirthdayItem): Date => {
@@ -19,31 +41,43 @@ const getNextBirthdayDate = (birthday: IBirthdayItem): Date => {
   return candidate
 }
 
-const getDaysUntilLabel = (nextDate: Date): { label: string; isToday: boolean } => {
+const getDaysUntilInfo = (nextDate: Date): { label: string; urgency: DaysUrgency } => {
   const today = new Date()
   const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
   const diffDays = Math.round((nextDate.getTime() - todayMidnight.getTime()) / (1000 * 60 * 60 * 24))
 
-  if (diffDays === 0) return { label: 'Today!', isToday: true }
-  if (diffDays === 1) return { label: 'Tomorrow', isToday: false }
-  return { label: `in ${diffDays}d`, isToday: false }
+  if (diffDays === 0) return { label: 'Today!', urgency: 'today' }
+  if (diffDays === 1) return { label: 'Tomorrow', urgency: 'soon' }
+  if (diffDays <= 7) return { label: `in ${diffDays}d`, urgency: 'week' }
+  return { label: `in ${diffDays}d`, urgency: 'later' }
 }
 
 type SortedBirthday = IBirthdayItem & { nextDate: Date }
 
-const BirthdayEntry: React.FC<{ b: SortedBirthday; showDetails: boolean }> = ({ b, showDetails }) => {
-  const { label, isToday } = getDaysUntilLabel(b.nextDate)
-  const subLine = b.notes ?? ''
+const BirthdayEntry: React.FC<{ b: SortedBirthday }> = ({ b }) => {
+  const { label, urgency } = getDaysUntilInfo(b.nextDate)
+  const exactDay = `${MONTH_SHORT[b.month - 1]} ${b.day}`
+  const currentYear = new Date().getFullYear()
+  const age = b.birthYear ? currentYear - b.birthYear : null
+  const dateLabel = age !== null ? `${exactDay} · turns ${age}` : exactDay
 
   return (
-    <div>
-      <BirthdayRow>
+    <BirthdayRow>
+      <BirthdayAvatar $gradient={getAvatarGradient(b.name)}>
+        {b.name.charAt(0).toUpperCase()}
+      </BirthdayAvatar>
+      <BirthdayInfo>
         <BirthdayName>{b.name}</BirthdayName>
-        <DaysUntil $isToday={isToday}>{label}</DaysUntil>
-      </BirthdayRow>
-      {showDetails && subLine && <BirthdaySubLine>{subLine}</BirthdaySubLine>}
-    </div>
+        <BirthdayDate>{dateLabel}</BirthdayDate>
+      </BirthdayInfo>
+      <DaysUntilBadge $urgency={urgency}>{label}</DaysUntilBadge>
+    </BirthdayRow>
   )
+}
+
+interface IUpcomingBirthdaysCardProps {
+  birthdays: IBirthdayItem[]
+  isExpanded?: boolean
 }
 
 export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ birthdays, isExpanded = false }) => {
@@ -59,21 +93,23 @@ export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ b
   const rest = sorted.slice(3)
 
   return (
-    <>
+    <BirthdayList>
       {top3.map(b => (
-        <BirthdayEntry key={b.id} b={b} showDetails={isExpanded} />
+        <BirthdayEntry key={b.id} b={b} />
       ))}
       {rest.length > 0 && (
         <>
           <Collapse in={isExpanded} timeout={150} unmountOnExit>
-            {rest.map(b => (
-              <BirthdayEntry key={b.id} b={b} showDetails={isExpanded} />
-            ))}
+            <BirthdayList>
+              {rest.map(b => (
+                <BirthdayEntry key={b.id} b={b} />
+              ))}
+            </BirthdayList>
           </Collapse>
           {!isExpanded && <MoreCount>+{rest.length} more</MoreCount>}
         </>
       )}
-    </>
+    </BirthdayList>
   )
 }
 
