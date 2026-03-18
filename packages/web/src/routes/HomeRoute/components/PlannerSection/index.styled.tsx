@@ -81,6 +81,43 @@ export const MiniCardBody = styled('div')({
   overflow: 'hidden',
 })
 
+export const TaskCarouselWrapper = styled('div')({
+  overflow: 'hidden',
+  position: 'relative',
+  flex: 1,
+})
+
+export const TaskCarouselTrack = styled('div')<{ $offset: number }>(({ $offset }) => ({
+  display: 'flex',
+  width: '200%',
+  transform: `translateX(${-$offset * 50}%)`,
+  transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+}))
+
+export const TaskCarouselSlide = styled('div')({
+  width: '50%',
+  flexShrink: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.25rem',
+})
+
+export const TaskCarouselDots = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  gap: '4px',
+  paddingTop: '0.35rem',
+})
+
+export const TaskCarouselDot = styled('div')<{ $active: boolean }>(({ $active }) => ({
+  width: $active ? 12 : 5,
+  height: 5,
+  borderRadius: '3px',
+  background: $active ? '#667eea' : '#d1d5db',
+  transition: 'all 0.25s ease',
+  cursor: 'pointer',
+}))
+
 // Kept for backward compatibility with existing tests
 export const CompactItemList = styled('ul')({
   listStyle: 'none',
