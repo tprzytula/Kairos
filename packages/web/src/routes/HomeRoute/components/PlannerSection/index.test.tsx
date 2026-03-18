@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import theme from '../../../../theme'
 import { PlannerSection } from './index'
@@ -57,10 +57,8 @@ const defaultProps = {
   birthdays: [],
   todayMeals: [],
   isLoading: false,
-  isExpanded: false,
-  expandedItems: new Set<string>(),
-  onToggleExpansion: jest.fn(),
-  onItemToggle: jest.fn(),
+  onStepToggle: jest.fn(),
+  onCardClick: jest.fn(),
 }
 
 describe('PlannerSection component', () => {
@@ -73,67 +71,108 @@ describe('PlannerSection component', () => {
     jest.useRealTimers()
   })
 
-  describe('card titles', () => {
-    it('should render three section cards', () => {
+  describe('section layout', () => {
+    it('should render Tasks section, meal card, and birthdays card', () => {
       renderWithTheme(<PlannerSection {...defaultProps} />)
 
-      expect(screen.getByText("Today's Tasks")).toBeInTheDocument()
+      expect(screen.getByText('Tasks')).toBeInTheDocument()
       expect(screen.getByText('No meal planned')).toBeInTheDocument()
       expect(screen.getByText('Birthdays')).toBeInTheDocument()
     })
   })
 
-  describe('Today\'s Tasks card', () => {
-    it('should show empty state when no tasks for today', () => {
+  describe('Tasks section', () => {
+    it('should show empty state when no tasks', () => {
       renderWithTheme(<PlannerSection {...defaultProps} />)
 
-      expect(screen.getByText('No tasks for today')).toBeInTheDocument()
+      expect(screen.getByText('No tasks planned — enjoy the day!')).toBeInTheDocument()
     })
 
-    it('should show tasks due today', () => {
+    it('should show task names from sorted items', () => {
       const todayDate = new Date('2024-01-15T15:00:00Z').getTime()
-      const item = createMockTodoItem({ id: '1', name: 'Today Task', dueDate: todayDate })
-      const toDoStats = createMockToDoStats({ sortedItems: [item] })
+      const item = createMockTodoItem({ id: '1', name: 'Visit the forest', dueDate: todayDate })
+      const toDoStats = createMockToDoStats({ sortedItems: [item], pendingItems: [item] })
 
       renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
 
-      const todaySlide = screen.getByTestId('today-tasks-slide')
-      expect(within(todaySlide).getByText('Today Task')).toBeInTheDocument()
+      expect(screen.getByText('Visit the forest')).toBeInTheDocument()
     })
 
-    it('should show overdue badge when there are overdue tasks', () => {
-      const pastDate = new Date('2024-01-10T12:00:00Z').getTime()
-      const item = createMockTodoItem({ id: '1', name: 'Old Task', dueDate: pastDate })
-      const toDoStats = createMockToDoStats({ sortedItems: [item] })
+    it('should show subtask progress bar and step count', () => {
+      const item = createMockTodoItem({
+        id: '1',
+        name: 'Trip',
+        dueDate: new Date('2024-01-16T12:00:00Z').getTime(),
+        steps: [
+          { id: 's1', name: 'Pack clothes', isDone: true },
+          { id: 's2', name: 'Buy tickets', isDone: false },
+          { id: 's3', name: 'Buy snacks', isDone: false },
+        ],
+      })
+      const toDoStats = createMockToDoStats({ sortedItems: [item], pendingItems: [item] })
 
       renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
 
-      expect(screen.getByText('1 overdue')).toBeInTheDocument()
+      expect(screen.getByText('1/3 steps')).toBeInTheDocument()
+      expect(screen.getByText('Pack clothes')).toBeInTheDocument()
+      expect(screen.getByText('Buy tickets')).toBeInTheDocument()
+      expect(screen.getByText('Buy snacks')).toBeInTheDocument()
     })
 
-    it('should not show tasks due in the future in Today card', () => {
-      const futureDate = new Date('2024-01-20T12:00:00Z').getTime()
-      const item = createMockTodoItem({ id: '1', name: 'Future Task', dueDate: futureDate })
-      const toDoStats = createMockToDoStats({ sortedItems: [item] })
+    it('should call onStepToggle when a step is clicked', () => {
+      const onStepToggle = jest.fn()
+      const item = createMockTodoItem({
+        id: '1',
+        name: 'Trip',
+        steps: [
+          { id: 's1', name: 'Pack clothes', isDone: false },
+        ],
+      })
+      const toDoStats = createMockToDoStats({ sortedItems: [item], pendingItems: [item] })
 
-      renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
+      renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} onStepToggle={onStepToggle} />)
 
-      const todaySlide = screen.getByTestId('today-tasks-slide')
-      expect(within(todaySlide).queryByText('Future Task')).not.toBeInTheDocument()
-      expect(within(todaySlide).getByText('No tasks for today')).toBeInTheDocument()
+      fireEvent.click(screen.getByText('Pack clothes'))
+
+      expect(onStepToggle).toHaveBeenCalledWith('1', 's1', true)
     })
 
-    it('should show +N more when more than 3 tasks today', () => {
-      const todayDate = new Date('2024-01-15T15:00:00Z').getTime()
-      const items = Array.from({ length: 5 }, (_, i) =>
-        createMockTodoItem({ id: `${i}`, name: `Task ${i}`, dueDate: todayDate + i * 1000 })
+    it('should call onCardClick when a task header is clicked', () => {
+      const onCardClick = jest.fn()
+      const item = createMockTodoItem({ id: '1', name: 'My Task' })
+      const toDoStats = createMockToDoStats({ sortedItems: [item], pendingItems: [item] })
+
+      renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} onCardClick={onCardClick} />)
+
+      fireEvent.click(screen.getByText('My Task'))
+
+      expect(onCardClick).toHaveBeenCalledWith(item)
+    })
+
+    it('should show expand button when more than 2 tasks', () => {
+      const items = Array.from({ length: 4 }, (_, i) =>
+        createMockTodoItem({ id: `${i}`, name: `Task ${i}` })
       )
-      const toDoStats = createMockToDoStats({ sortedItems: items })
+      const toDoStats = createMockToDoStats({ sortedItems: items, pendingItems: items })
 
       renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
 
-      const todaySlide = screen.getByTestId('today-tasks-slide')
-      expect(within(todaySlide).getByText('+2 more')).toBeInTheDocument()
+      expect(screen.getByText('2 more tasks')).toBeInTheDocument()
+      // Only first 2 visible by default
+      expect(screen.getByText('Task 0')).toBeInTheDocument()
+      expect(screen.getByText('Task 1')).toBeInTheDocument()
+    })
+
+    it('should show pending items count badge', () => {
+      const items = [
+        createMockTodoItem({ id: '1', name: 'Task 1' }),
+        createMockTodoItem({ id: '2', name: 'Task 2' }),
+      ]
+      const toDoStats = createMockToDoStats({ sortedItems: items, pendingItems: items })
+
+      renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
+
+      expect(screen.getByText('2')).toBeInTheDocument()
     })
   })
 

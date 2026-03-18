@@ -130,10 +130,8 @@ const HomeDataContent = () => {
           birthdays={birthdays}
           todayMeals={todayMeals}
           isLoading={isToDoLoading || isMealLoading}
-          isExpanded={interactions.isToDoItemsExpanded}
-          onToggleExpansion={interactions.handleToggleToDoItems}
-          onItemToggle={interactions.handleToDoItemToggle}
-          expandedItems={interactions.expandedToDoItems}
+          onStepToggle={handleStepToggle}
+          onCardClick={interactions.handleToDoItemSelect}
           onMealClick={handleMealClick}
         />
 

@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor, fireEvent, within } from '@testing-library/react'
+import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
@@ -105,7 +105,7 @@ describe('Given the HomeRoute component', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Grocery List')).toBeVisible()
-      expect(screen.getByText("Today's Tasks")).toBeVisible()
+      expect(screen.getByText('Tasks')).toBeVisible()
       expect(screen.getByText('No meal planned')).toBeVisible()
       expect(screen.getByText('Birthdays')).toBeVisible()
       expect(screen.getByText('Noise Recordings')).toBeVisible()
@@ -119,7 +119,7 @@ describe('Given the HomeRoute component', () => {
 
     await waitFor(() => {
       expect(screen.getByText('No grocery items found')).toBeVisible()
-      expect(screen.getByText('No tasks for today')).toBeVisible()
+      expect(screen.getByText('No tasks planned — enjoy the day!')).toBeVisible()
       expect(screen.getAllByText('No meal planned')[0]).toBeVisible()
       expect(screen.getByText('No birthdays saved')).toBeVisible()
       expect(screen.getByText('No noise recordings found')).toBeVisible()
@@ -280,7 +280,7 @@ describe('Given the HomeRoute component', () => {
     })
   })
 
-  it('should display tasks due today in the Today\'s Tasks card', async () => {
+  it('should display pending tasks in the Tasks section', async () => {
     const now = new Date()
     const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     const mockToDoList = [
@@ -296,10 +296,10 @@ describe('Given the HomeRoute component', () => {
     })
 
     await waitFor(() => {
-      const todaySlide = screen.getByTestId('today-tasks-slide')
-      expect(within(todaySlide).getByText('Today Task')).toBeInTheDocument()
-      expect(within(todaySlide).queryByText('Future Task')).not.toBeInTheDocument()
-      expect(within(todaySlide).queryByText('Completed Task')).not.toBeInTheDocument()
+      expect(screen.getByText('Today Task')).toBeInTheDocument()
+      expect(screen.getByText('Future Task')).toBeInTheDocument()
+      // Completed tasks should not appear
+      expect(screen.queryByText('Completed Task')).not.toBeInTheDocument()
     })
   })
 
@@ -460,7 +460,7 @@ describe('Given the HomeRoute component', () => {
       jest.useRealTimers()
     })
 
-    it('should show overdue badge for overdue items', async () => {
+    it('should show overdue task with overdue label', async () => {
       const overdueItem = {
         id: '1',
         name: 'Overdue Task',
@@ -478,17 +478,18 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByText('1 overdue')).toBeInTheDocument()
+        expect(screen.getByText('Overdue Task')).toBeInTheDocument()
+        expect(screen.getByText('overdue by 5 days')).toBeInTheDocument()
       })
     })
 
-    it('should display tasks due today in Today\'s Tasks card', async () => {
+    it('should display tasks due today with due today label', async () => {
       const todayItem = {
         id: '2',
         name: 'Today Task',
         isDone: false,
         description: 'Due today',
-        dueDate: new Date('2024-01-15T15:00:00Z').getTime() // Same day
+        dueDate: new Date('2024-01-15T12:00:00Z').getTime() // Same moment
       }
 
       jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([todayItem])
@@ -500,12 +501,12 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        const todaySlide = screen.getByTestId('today-tasks-slide')
-        expect(within(todaySlide).getByText('Today Task')).toBeInTheDocument()
+        expect(screen.getByText('Today Task')).toBeInTheDocument()
+        expect(screen.getByText('due today')).toBeInTheDocument()
       })
     })
 
-    it('should not show tasks due tomorrow in Today\'s Tasks card', async () => {
+    it('should show tasks due tomorrow in tasks section', async () => {
       const tomorrowItem = {
         id: '3',
         name: 'Tomorrow Task',
@@ -523,12 +524,12 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        expect(screen.queryByText('Tomorrow Task')).not.toBeInTheDocument()
-        expect(screen.getByText('No tasks for today')).toBeInTheDocument()
+        expect(screen.getByText('Tomorrow Task')).toBeInTheDocument()
+        expect(screen.getByText('due tomorrow')).toBeInTheDocument()
       })
     })
 
-    it('should not show tasks due in weeks in Today\'s Tasks card', async () => {
+    it('should show tasks due in weeks in tasks section', async () => {
       const weekItem = {
         id: '4',
         name: 'Week Task',
@@ -546,12 +547,11 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        expect(screen.queryByText('Week Task')).not.toBeInTheDocument()
-        expect(screen.getByText('No tasks for today')).toBeInTheDocument()
+        expect(screen.getByText('Week Task')).toBeInTheDocument()
       })
     })
 
-    it('should not show tasks due in months in Today\'s Tasks card', async () => {
+    it('should show tasks due in months in tasks section', async () => {
       const monthItem = {
         id: '5',
         name: 'Month Task',
@@ -569,12 +569,11 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        expect(screen.queryByText('Month Task')).not.toBeInTheDocument()
-        expect(screen.getByText('No tasks for today')).toBeInTheDocument()
+        expect(screen.getByText('Month Task')).toBeInTheDocument()
       })
     })
 
-    it('should handle items without due dates', async () => {
+    it('should show tasks without due dates in tasks section', async () => {
       const noDateItem = {
         id: '6',
         name: 'No Date Task',
@@ -592,9 +591,7 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        // Tasks without due dates don't appear in Today's Tasks
-        expect(screen.queryByText('No Date Task')).not.toBeInTheDocument()
-        expect(screen.getByText('No tasks for today')).toBeInTheDocument()
+        expect(screen.getByText('No Date Task')).toBeInTheDocument()
       })
     })
   })
@@ -723,7 +720,7 @@ describe('Given the HomeRoute component', () => {
   })
 
   describe('planner mini-cards data', () => {
-    it('should show multiple overdue tasks as a single badge count', async () => {
+    it('should show multiple overdue tasks in the task list', async () => {
       jest.useFakeTimers()
       jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
 
@@ -742,7 +739,10 @@ describe('Given the HomeRoute component', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByText('3 overdue')).toBeInTheDocument()
+        // First 2 overdue tasks visible, 1 more behind expand
+        expect(screen.getByText('Old Task 1')).toBeInTheDocument()
+        expect(screen.getByText('Old Task 2')).toBeInTheDocument()
+        expect(screen.getByText('1 more task')).toBeInTheDocument()
       })
 
       jest.useRealTimers()
