@@ -38,17 +38,19 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const touchStartX = useRef(0)
 
-  const resetTimer = useCallback(() => {
+  const resetTimer = useCallback((expanded: boolean) => {
     if (timerRef.current) clearInterval(timerRef.current)
-    timerRef.current = setInterval(() => {
-      setActiveTaskSlide(s => (s + 1) % 2)
-    }, AUTO_SCROLL_MS)
+    if (!expanded) {
+      timerRef.current = setInterval(() => {
+        setActiveTaskSlide(s => (s + 1) % 2)
+      }, AUTO_SCROLL_MS)
+    }
   }, [])
 
   useEffect(() => {
-    resetTimer()
+    resetTimer(isTodayTasksExpanded)
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
-  }, [resetTimer])
+  }, [resetTimer, isTodayTasksExpanded])
 
   const handleTaskTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX
@@ -58,14 +60,14 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
     const diff = touchStartX.current - e.changedTouches[0].clientX
     if (Math.abs(diff) > 40) {
       setActiveTaskSlide(s => diff > 0 ? (s + 1) % 2 : (s - 1 + 2) % 2)
-      resetTimer()
+      resetTimer(isTodayTasksExpanded)
     }
   }
 
   const handleDotClick = (e: React.MouseEvent, index: number) => {
     e.stopPropagation()
     setActiveTaskSlide(index)
-    resetTimer()
+    resetTimer(isTodayTasksExpanded)
   }
 
   return (
