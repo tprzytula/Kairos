@@ -39,6 +39,7 @@ import { showAlert } from '../../utils/alert'
 import { getRecipeUploadUrl } from '../../api/recipes'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { FormContainer, IngredientRow, IngredientsSection, FormActions, ImageUploadBox, ImagePreview } from './index.styled'
+import { SECTION_GRADIENTS } from '../../constants/sectionColors'
 import ImageCropModal from './ImageCropModal'
 import { getCroppedBlob } from './cropUtils'
 
@@ -404,7 +405,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           size="small"
           startIcon={<AddIcon />}
           onClick={handleAddIngredient}
-          sx={{ alignSelf: 'flex-start', borderRadius: '8px' }}
+          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: '#f97316', color: '#f97316', '&:hover': { borderColor: '#f43f5e', color: '#f43f5e', background: 'rgba(249,115,22,0.05)' } }}
         >
           Add Ingredient
         </Button>
@@ -445,7 +446,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           size="small"
           startIcon={<AddIcon />}
           onClick={handleAddInstruction}
-          sx={{ alignSelf: 'flex-start', borderRadius: '8px' }}
+          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: '#f97316', color: '#f97316', '&:hover': { borderColor: '#f43f5e', color: '#f43f5e', background: 'rgba(249,115,22,0.05)' } }}
         >
           Add Step
         </Button>
@@ -478,9 +479,9 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           disabled={isSaving || isUploading}
           sx={{
             borderRadius: '8px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: SECTION_GRADIENTS.recipe,
             boxShadow: 'none',
-            '&:hover': { boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)' },
+            '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
           }}
         >
           {isSaving ? 'Saving...' : (initialRecipe ? 'Update' : 'Save Recipe')}

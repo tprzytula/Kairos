@@ -86,7 +86,7 @@ export const LeftActionsContainer = styled('div')<{ $isVisible: boolean; $transl
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: '#2196f3',
+    background: '#667eea',
     zIndex: 1,
     opacity: $isVisible ? 1 : 0,
     transform: `translateX(${$isVisible ? 0 : '-100%'})`,
@@ -191,13 +191,13 @@ export const LeftActionButton = styled('button')({
   
   '@media (prefers-color-scheme: dark)': {
     color: '#ffffff',
-    
+
     '&:hover': {
-      background: '#1976d2',
+      background: '#5a6fd6',
     },
-    
+
     '&:active': {
-      background: '#42a5f5',
+      background: '#7c8ff0',
     },
   },
   

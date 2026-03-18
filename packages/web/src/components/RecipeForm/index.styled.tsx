@@ -32,14 +32,14 @@ export const ImageUploadBox = styled(Box)({
   alignItems: 'center',
   justifyContent: 'center',
   height: '195px',
-  border: '2px dashed rgba(102, 126, 234, 0.4)',
+  border: '2px dashed rgba(249, 115, 22, 0.4)',
   borderRadius: '12px',
   cursor: 'pointer',
   overflow: 'hidden',
   position: 'relative',
   '&:hover': {
-    borderColor: 'rgba(102, 126, 234, 0.8)',
-    background: 'rgba(102, 126, 234, 0.04)',
+    borderColor: 'rgba(249, 115, 22, 0.8)',
+    background: 'rgba(249, 115, 22, 0.04)',
   },
 })
 
