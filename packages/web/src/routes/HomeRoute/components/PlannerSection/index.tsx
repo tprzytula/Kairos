@@ -99,7 +99,7 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
           </MiniCardHeader>
           <TaskCarouselWrapper>
             <TaskCarouselTrack $offset={activeTaskSlide}>
-              <TaskCarouselSlide>
+              <TaskCarouselSlide data-testid="today-tasks-slide">
                 <TodayTasksCard sortedItems={toDoStats.sortedItems} isExpanded={isTodayTasksExpanded} />
               </TaskCarouselSlide>
               <TaskCarouselSlide>

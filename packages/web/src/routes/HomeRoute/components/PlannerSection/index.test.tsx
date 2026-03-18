@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import theme from '../../../../theme'
 import { PlannerSection } from './index'
@@ -97,7 +97,8 @@ describe('PlannerSection component', () => {
 
       renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
 
-      expect(screen.getByText('Today Task')).toBeInTheDocument()
+      const todaySlide = screen.getByTestId('today-tasks-slide')
+      expect(within(todaySlide).getByText('Today Task')).toBeInTheDocument()
     })
 
     it('should show overdue badge when there are overdue tasks', () => {
@@ -117,8 +118,9 @@ describe('PlannerSection component', () => {
 
       renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
 
-      expect(screen.queryByText('Future Task')).not.toBeInTheDocument()
-      expect(screen.getByText('No tasks for today')).toBeInTheDocument()
+      const todaySlide = screen.getByTestId('today-tasks-slide')
+      expect(within(todaySlide).queryByText('Future Task')).not.toBeInTheDocument()
+      expect(within(todaySlide).getByText('No tasks for today')).toBeInTheDocument()
     })
 
     it('should show +N more when more than 3 tasks today', () => {
@@ -130,7 +132,8 @@ describe('PlannerSection component', () => {
 
       renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
 
-      expect(screen.getByText('+2 more')).toBeInTheDocument()
+      const todaySlide = screen.getByTestId('today-tasks-slide')
+      expect(within(todaySlide).getByText('+2 more')).toBeInTheDocument()
     })
   })
 
