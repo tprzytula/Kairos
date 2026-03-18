@@ -41,7 +41,7 @@ describe('Given the getBody function', () => {
             
             getBody('invalid JSON');
 
-            expect(consoleSpy).toHaveBeenCalledWith('Failed to parse body:', new SyntaxError(`Unexpected token 'i', "invalid JSON" is not valid JSON`));
+            expect(consoleSpy).toHaveBeenCalledWith('Failed to parse body:', expect.any(SyntaxError));
         });
     });
 });

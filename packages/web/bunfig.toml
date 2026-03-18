@@ -1,0 +1,7 @@
+[test]
+root = "./src"
+preload = ["./testSetup.ts"]
+dom = true
+
+[test.env]
+TZ = "Europe/London"

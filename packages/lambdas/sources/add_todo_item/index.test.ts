@@ -15,7 +15,7 @@ import { getBody } from './body';
 import { DynamoDBTable, putItem } from '@kairos-lambdas-libs/dynamodb';
 import { randomUUID } from 'node:crypto';
 
-const mockSNSPublish: jest.Mock = (jest.requireMock('aws-sdk') as { __mocks: { publish: jest.Mock } }).__mocks.publish;
+const mockSNSPublish = (require('aws-sdk') as any).__mocks.publish;
 
 jest.mock('./body', () => ({
     getBody: jest.fn()

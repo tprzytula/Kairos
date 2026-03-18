@@ -3,8 +3,14 @@ import { DynamoDBTable } from "../../enums";
 import * as Client from '../../client';
 import { TransactWriteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
-jest.mock("../../client");
-jest.mock("@aws-sdk/lib-dynamodb");
+jest.mock("../../client", () => ({
+  getDocumentClient: jest.fn(),
+  getClient: jest.fn(),
+}));
+jest.mock("@aws-sdk/lib-dynamodb", () => ({
+  ...jest.requireActual("@aws-sdk/lib-dynamodb"),
+  TransactWriteCommand: jest.fn(),
+}));
 
 describe("Given the updateItems function", () => {
   it("should pass the right table name and items to the updateItems command", async () => {

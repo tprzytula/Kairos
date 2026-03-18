@@ -1,7 +1,7 @@
 import { handler } from "./index";
 import * as database from "./database";
 
-jest.mock("./database");
+jest.mock("./database", () => ({ upsertItem: jest.fn() }));
 
 describe('Given the add_shop lambda handler', () => {
     beforeEach(() => {

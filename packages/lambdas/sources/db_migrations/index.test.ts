@@ -4,8 +4,8 @@ import * as tracker from './tracker';
 import { Migration, MigrationResult } from './runner/types';
 import { LastMigrationRecord } from './tracker/types';
 
-jest.mock('./runner');
-jest.mock('./tracker');
+jest.mock('./runner', () => ({ runMigrations: jest.fn() }));
+jest.mock('./tracker', () => ({ getLastExecutedMigration: jest.fn() }));
 
 jest.mock('./migrations/001_add_grocery_defaults', () => ({
   default: { id: '001', name: 'Migration 1', execute: jest.fn() }

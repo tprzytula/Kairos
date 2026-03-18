@@ -3,8 +3,14 @@ import { DynamoDBTable } from "../../enums";
 import * as Client from '../../client';
 import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
-jest.mock("../../client");
-jest.mock('@aws-sdk/lib-dynamodb');
+jest.mock("../../client", () => ({
+  getDocumentClient: jest.fn(),
+  getClient: jest.fn(),
+}));
+jest.mock("@aws-sdk/lib-dynamodb", () => ({
+  ...jest.requireActual("@aws-sdk/lib-dynamodb"),
+  QueryCommand: jest.fn(),
+}));
 
 describe("Given the query command", () => {
   it('should create a query command with the right table name and attributes', async () => {

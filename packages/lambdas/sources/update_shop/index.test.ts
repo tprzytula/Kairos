@@ -7,7 +7,7 @@ jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
     updateItem: jest.fn(),
 }));
 
-jest.mock("./body");
+jest.mock("./body", () => ({ getBody: jest.fn() }));
 
 const { DynamoDBTable } = DynamoDB;
 

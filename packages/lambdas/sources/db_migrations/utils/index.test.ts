@@ -2,7 +2,7 @@ import * as utils from './index';
 import * as tracker from '../tracker';
 import { LastMigrationRecord, MigrationRecord } from '../tracker/types';
 
-jest.mock('../tracker');
+jest.mock('../tracker', () => ({ getLastExecutedMigration: jest.fn(), getExecutedMigrations: jest.fn() }));
 
 describe('Migration Utils', () => {
   beforeEach(() => {

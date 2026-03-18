@@ -3,8 +3,14 @@ import { DynamoDBTable } from "../../enums";
 import * as Client from '../../client';
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
-jest.mock("../../client");
-jest.mock("@aws-sdk/lib-dynamodb");
+jest.mock("../../client", () => ({
+  getDocumentClient: jest.fn(),
+  getClient: jest.fn(),
+}));
+jest.mock("@aws-sdk/lib-dynamodb", () => ({
+  ...jest.requireActual("@aws-sdk/lib-dynamodb"),
+  GetCommand: jest.fn(),
+}));
 
 describe("Given the getItem function", () => {
   it("should pass the right table name and id to the getItem command", async () => {

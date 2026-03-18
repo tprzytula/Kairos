@@ -23,6 +23,8 @@ jobs:
           node-version: 20
           cache: yarn
           cache-dependency-path: packages/lambdas/yarn.lock
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
       - name: Install Modules
         run: yarn
       - name: Build

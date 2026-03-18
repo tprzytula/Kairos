@@ -3,8 +3,8 @@ import { getBody } from "./body";
 import { updateItem } from "@kairos-lambdas-libs/dynamodb";
 import { DynamoDBTable } from "@kairos-lambdas-libs/dynamodb";
 
-jest.mock("./body");
-jest.mock("@kairos-lambdas-libs/dynamodb");
+jest.mock("./body", () => ({ getBody: jest.fn() }));
+jest.mock("@kairos-lambdas-libs/dynamodb", () => ({ ...jest.requireActual("@kairos-lambdas-libs/dynamodb"), updateItem: jest.fn() }));
 
 describe("Given the update_todo_item lambda handler", () => {
   const runHandler = (event: any, includeProjectId: boolean = false) => {

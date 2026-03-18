@@ -2,7 +2,7 @@ import * as runner from './index';
 import * as tracker from '../tracker';
 import { Migration, MigrationResult } from './types';
 
-jest.mock('../tracker');
+jest.mock('../tracker', () => ({ isMigrationExecuted: jest.fn(), validateMigrationChecksum: jest.fn(), recordMigration: jest.fn(), updateLastExecutedMigration: jest.fn() }));
 
 describe('Migration Runner Functions', () => {
   let mockMigrations: Migration[];
@@ -125,27 +125,23 @@ describe('Migration Runner Functions', () => {
 
   describe('loadMigrationsFromDirectory', () => {
     it('should handle directory loading scenarios', async () => {
-      // Since the loader function is actually tested in a separate module,
-      // we can test the integration by mocking the loader module directly
       const mockMigrations = [
         { id: '001', name: 'Test Migration 1', execute: jest.fn() },
         { id: '002', name: 'Test Migration 2', execute: jest.fn() },
       ];
 
-      // Mock the loader module
       jest.doMock('./loader', () => ({
         loadMigrationsFromDirectory: jest.fn().mockResolvedValue(mockMigrations),
       }));
 
-      // Re-import to get the mocked version
       const { loadMigrationsFromDirectory } = await import('./loader');
-      
+
       const migrations = await loadMigrationsFromDirectory('/test');
-      
+
       expect(migrations).toHaveLength(2);
       expect(migrations[0].id).toBe('001');
       expect(migrations[1].id).toBe('002');
-      
+
       jest.dontMock('./loader');
     });
   });

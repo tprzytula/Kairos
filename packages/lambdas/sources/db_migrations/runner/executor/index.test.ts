@@ -2,7 +2,7 @@ import * as executor from './index';
 import * as tracker from '../../tracker';
 import { Migration } from '../types';
 
-jest.mock('../../tracker');
+jest.mock('../../tracker', () => ({ isMigrationExecuted: jest.fn(), validateMigrationChecksum: jest.fn(), recordMigration: jest.fn(), updateLastExecutedMigration: jest.fn() }));
 
 describe('Migration Executor Functions', () => {
   let mockMigration: Migration;

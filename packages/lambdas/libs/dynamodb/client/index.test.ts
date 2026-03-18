@@ -2,7 +2,7 @@ import { DynamoDBClientFactory } from "./factory";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
-jest.mock('./factory');
+jest.mock('./factory', () => ({ DynamoDBClientFactory: { getInstance: jest.fn() } }));
 
 describe("Given the client", () => {
   describe("When getClient is called", () => {

@@ -3,8 +3,14 @@ import { DynamoDBTable } from "../../enums";
 import * as Client from '../../client';
 import { BatchWriteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
-jest.mock("../../client");
-jest.mock("@aws-sdk/lib-dynamodb");
+jest.mock("../../client", () => ({
+  getDocumentClient: jest.fn(),
+  getClient: jest.fn(),
+}));
+jest.mock("@aws-sdk/lib-dynamodb", () => ({
+  ...jest.requireActual("@aws-sdk/lib-dynamodb"),
+  BatchWriteCommand: jest.fn(),
+}));
 
 describe("Given the deleteItems function", () => {
   it("should pass the right table name and ids to the deleteItems command", async () => {

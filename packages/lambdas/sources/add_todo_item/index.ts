@@ -5,13 +5,17 @@ import { getBody } from "./body";
 import { DynamoDBTable, putItem } from "@kairos-lambdas-libs/dynamodb";
 import { randomUUID } from "node:crypto";
 import { SNS } from "aws-sdk";
-import { 
-  TodoItem, 
-  TodoNotificationPayload, 
-  CreateTodoResponse 
+import {
+  TodoItem,
+  TodoNotificationPayload,
+  CreateTodoResponse
 } from "./types";
 
-const sns = new SNS();
+let sns: SNS;
+const getSNS = () => {
+  if (!sns) sns = new SNS();
+  return sns;
+};
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
@@ -92,5 +96,5 @@ const publishTodoNotification = async (payload: TodoNotificationPayload): Promis
     Subject: `New todo item added: ${payload.todoItem.name}`
   };
 
-  await sns.publish(publishParams).promise();
+  await getSNS().publish(publishParams).promise();
 };

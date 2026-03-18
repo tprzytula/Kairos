@@ -109,4 +109,4 @@ export const SwipeableListItem = forwardRef<SwipeableListItemRef, SwipeableListI
 
 SwipeableListItem.displayName = 'SwipeableListItem';
 
-export { SwipeableListItemProps, SwipeableListItemRef } from './types';
+export type { SwipeableListItemProps, SwipeableListItemRef } from './types';
