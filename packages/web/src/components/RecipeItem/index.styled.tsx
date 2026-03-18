@@ -3,15 +3,15 @@ import { Box, Paper } from '@mui/material'
 
 export const RecipeCard = styled(Paper)({
   borderRadius: '12px',
-  border: '1px solid rgba(102, 126, 234, 0.1)',
-  background: 'rgba(102, 126, 234, 0.03)',
+  border: '1px solid rgba(249, 115, 22, 0.1)',
+  background: 'rgba(249, 115, 22, 0.03)',
   boxShadow: 'none',
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
   transition: 'box-shadow 0.2s ease, transform 0.2s ease',
   '&:hover': {
-    boxShadow: '0 4px 16px rgba(102, 126, 234, 0.15)',
+    boxShadow: '0 4px 16px rgba(249, 115, 22, 0.15)',
     transform: 'translateY(-1px)',
   },
 })
@@ -20,10 +20,10 @@ export const RecipeCardTapArea = styled(Box)({
   cursor: 'pointer',
   transition: 'background 0.15s ease',
   '&:hover': {
-    background: 'rgba(102, 126, 234, 0.04)',
+    background: 'rgba(249, 115, 22, 0.04)',
   },
   '&:active': {
-    background: 'rgba(102, 126, 234, 0.09)',
+    background: 'rgba(249, 115, 22, 0.09)',
   },
 })
 
@@ -99,6 +99,6 @@ export const SelectableIngredientRow = styled(IngredientItemRow)<{ isDeselected?
   borderRadius: '6px',
   padding: '2px 4px',
   '&:hover': {
-    background: 'rgba(102, 126, 234, 0.08)',
+    background: 'rgba(249, 115, 22, 0.08)',
   },
 }))
