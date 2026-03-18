@@ -6,6 +6,7 @@ export enum Route {
     EditGroceryItem = '/groceries/:shopId/edit/:id',
     GroceryList = '/groceries/:shopId',
     NoiseTracking = '/noise-tracking',
+    Recipes = '/recipes',
     Planner = '/planner',
     AddPlannerItem = '/planner/add',
     EditPlannerItem = '/planner/edit/:id',

@@ -10,6 +10,7 @@ import PlannerRoute from './routes/PlannerRoute'
 import AddPlannerItemRoute from './routes/AddPlannerItemRoute'
 import EditPlannerItemRoute from './routes/EditPlannerItemRoute'
 import HomeRoute from './routes/HomeRoute'
+import RecipesRoute from './routes/RecipesRoute'
 import AuthCallback from './components/AuthCallback'
 import SilentCallback from './components/SilentCallback'
 import ProtectedContent from './components/ProtectedContent'
@@ -51,6 +52,11 @@ export const App = () => {
         <Route path={RouteEnum.NoiseTracking} element={
           <ProtectedContent>
             <NoiseTrackingRoute />
+          </ProtectedContent>
+        } />
+        <Route path={RouteEnum.Recipes} element={
+          <ProtectedContent>
+            <RecipesRoute />
           </ProtectedContent>
         } />
         <Route path={RouteEnum.Planner} element={

@@ -1,8 +1,8 @@
 import HomeIcon from '@mui/icons-material/Home';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import VolumeUpOutlinedIcon from '@mui/icons-material/VolumeUpOutlined';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
 import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
 import ChecklistIcon from '@mui/icons-material/Checklist';
 import NavigationButton from './NavigationButton';
@@ -46,11 +46,11 @@ const NavigationBar = () => {
         </StyledNavigationButton>
         <AddItemButton />
         <NavigationButton
-          SelectedIcon={VolumeUpIcon}
-          UnselectedIcon={VolumeUpOutlinedIcon}
-          route={Route.NoiseTracking}
-          accentGradient={SECTION_GRADIENTS.noise}
-          accentRgb={SECTION_ACCENT_RGB.noise}
+          SelectedIcon={MenuBookIcon}
+          UnselectedIcon={MenuBookOutlinedIcon}
+          route={Route.Recipes}
+          accentGradient={SECTION_GRADIENTS.recipe}
+          accentRgb={SECTION_ACCENT_RGB.recipe}
         />
         <NavigationButton
           SelectedIcon={ChecklistIcon}
