@@ -5,7 +5,6 @@ import theme from '../../../../theme'
 import { PlannerSection } from './index'
 import { ITodoItem } from '../../../../api/toDoList/retrieve/types'
 import { IToDoStats } from '../../../../hooks/useHomeData/types'
-import { IBirthdayItem } from '../../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../../types/mealPlan'
 import { MealType } from '../../../../enums/mealType'
 
@@ -23,14 +22,6 @@ const createMockToDoStats = (overrides: Partial<IToDoStats> = {}): IToDoStats =>
   sortedItems: [],
   displayedItems: [],
   hasMoreItems: false,
-  ...overrides
-})
-
-const createMockBirthday = (overrides: Partial<IBirthdayItem> = {}): IBirthdayItem => ({
-  id: 'birthday-1',
-  name: 'Alice',
-  month: 6,
-  day: 15,
   ...overrides
 })
 
@@ -54,7 +45,6 @@ const renderWithTheme = (component: React.ReactElement) => {
 
 const defaultProps = {
   toDoStats: createMockToDoStats(),
-  birthdays: [],
   todayMeals: [],
   isLoading: false,
   onStepToggle: jest.fn(),
@@ -72,12 +62,11 @@ describe('PlannerSection component', () => {
   })
 
   describe('section layout', () => {
-    it('should render Tasks section, meal card, and birthdays card', () => {
+    it('should render Tasks section and meal card', () => {
       renderWithTheme(<PlannerSection {...defaultProps} />)
 
       expect(screen.getByText('Tasks')).toBeInTheDocument()
       expect(screen.getByText('No meal planned')).toBeInTheDocument()
-      expect(screen.getByText('Birthdays')).toBeInTheDocument()
     })
   })
 
@@ -114,6 +103,8 @@ describe('PlannerSection component', () => {
       renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
 
       expect(screen.getByText('1/3 steps')).toBeInTheDocument()
+      // Steps are collapsed by default — expand to see them
+      fireEvent.click(screen.getByText('1/3 steps'))
       expect(screen.getByText('Pack clothes')).toBeInTheDocument()
       expect(screen.getByText('Buy tickets')).toBeInTheDocument()
       expect(screen.getByText('Buy snacks')).toBeInTheDocument()
@@ -132,6 +123,8 @@ describe('PlannerSection component', () => {
 
       renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} onStepToggle={onStepToggle} />)
 
+      // Steps are collapsed by default — expand first
+      fireEvent.click(screen.getByText('0/1 steps'))
       fireEvent.click(screen.getByText('Pack clothes'))
 
       expect(onStepToggle).toHaveBeenCalledWith('1', 's1', true)
@@ -222,62 +215,4 @@ describe('PlannerSection component', () => {
     })
   })
 
-  describe('Birthdays card', () => {
-    it('should show empty state when no birthdays saved', () => {
-      renderWithTheme(<PlannerSection {...defaultProps} />)
-
-      expect(screen.getByText('No birthdays saved')).toBeInTheDocument()
-    })
-
-    it('should show upcoming birthday names', () => {
-      const birthday = createMockBirthday({ id: '1', name: 'Bob', month: 2, day: 1 })
-
-      renderWithTheme(<PlannerSection {...defaultProps} birthdays={[birthday]} />)
-
-      expect(screen.getByText('Bob')).toBeInTheDocument()
-    })
-
-    it('should show "Today!" for a birthday today', () => {
-      // System time is 2024-01-15
-      const birthday = createMockBirthday({ id: '1', name: 'Charlie', month: 1, day: 15 })
-
-      renderWithTheme(<PlannerSection {...defaultProps} birthdays={[birthday]} />)
-
-      expect(screen.getByText('Today!')).toBeInTheDocument()
-    })
-
-    it('should show "Tomorrow" for a birthday tomorrow', () => {
-      // System time is 2024-01-15
-      const birthday = createMockBirthday({ id: '1', name: 'Diana', month: 1, day: 16 })
-
-      renderWithTheme(<PlannerSection {...defaultProps} birthdays={[birthday]} />)
-
-      expect(screen.getByText('Tomorrow')).toBeInTheDocument()
-    })
-
-    it('should show days until for a birthday in the future', () => {
-      // System time is 2024-01-15
-      const birthday = createMockBirthday({ id: '1', name: 'Eve', month: 1, day: 25 })
-
-      renderWithTheme(<PlannerSection {...defaultProps} birthdays={[birthday]} />)
-
-      expect(screen.getByText('in 10d')).toBeInTheDocument()
-    })
-
-    it('should show only the next 3 upcoming birthdays', () => {
-      const birthdays = [
-        createMockBirthday({ id: '1', name: 'Person 1', month: 1, day: 16 }),
-        createMockBirthday({ id: '2', name: 'Person 2', month: 1, day: 17 }),
-        createMockBirthday({ id: '3', name: 'Person 3', month: 1, day: 18 }),
-        createMockBirthday({ id: '4', name: 'Person 4', month: 1, day: 19 }),
-      ]
-
-      renderWithTheme(<PlannerSection {...defaultProps} birthdays={birthdays} />)
-
-      expect(screen.getByText('Person 1')).toBeInTheDocument()
-      expect(screen.getByText('Person 2')).toBeInTheDocument()
-      expect(screen.getByText('Person 3')).toBeInTheDocument()
-      expect(screen.queryByText('Person 4')).not.toBeInTheDocument()
-    })
-  })
 })

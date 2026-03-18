@@ -1,5 +1,8 @@
 import React, { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { Box } from '@mui/material'
+import CakeIcon from '@mui/icons-material/Cake'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useGroceryListContext, GroceryListProvider } from '../../providers/GroceryListProvider'
 import { usePlannerContext, PlannerProvider } from '../../providers/PlannerProvider'
 import { useNoiseTrackingContext, NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
@@ -24,6 +27,15 @@ import RecipeDetailDrawer from '../../components/RecipeDetailDrawer'
 import GrocerySection from './components/GrocerySection'
 import NoiseSection from './components/NoiseSection'
 import PlannerSection from './components/PlannerSection'
+import UpcomingBirthdaysCard from './components/PlannerSection/components/UpcomingBirthdaysCard'
+import {
+  MiniCard,
+  MiniCardContent,
+  MiniCardHeader,
+  MiniCardIcon,
+  MiniCardTitle,
+  MiniCardBody,
+} from './components/PlannerSection/index.styled'
 import { useHomeData } from '../../hooks/useHomeData'
 import { useHomeInteractions } from '../../hooks/useHomeInteractions'
 
@@ -59,6 +71,7 @@ const HomeDataContent = () => {
 
   const interactions = useHomeInteractions()
   const [selectedRecipe, setSelectedRecipe] = useState<IRecipe | null>(null)
+  const [isBirthdaysExpanded, setIsBirthdaysExpanded] = useState(false)
 
   const homeData = useHomeData({
     groceryList,
@@ -127,7 +140,6 @@ const HomeDataContent = () => {
       <Container>
         <PlannerSection
           toDoStats={homeData.toDoStats}
-          birthdays={birthdays}
           todayMeals={todayMeals}
           isLoading={isToDoLoading || isMealLoading}
           onStepToggle={handleStepToggle}
@@ -142,6 +154,33 @@ const HomeDataContent = () => {
           onGroceryItemClick={interactions.handleGroceryItemClick}
           onNavigate={handleGroceryNavigate}
         />
+
+        <MiniCard
+          sx={{ cursor: 'pointer' }}
+          onClick={() => setIsBirthdaysExpanded(v => !v)}
+        >
+          <MiniCardContent>
+            <MiniCardHeader>
+              <MiniCardIcon><CakeIcon /></MiniCardIcon>
+              <MiniCardTitle>Birthdays</MiniCardTitle>
+              <Box
+                sx={{
+                  ml: 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  transition: 'transform 150ms ease',
+                  transform: isBirthdaysExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                  opacity: 0.6,
+                }}
+              >
+                <ExpandMoreIcon sx={{ fontSize: '0.9rem' }} />
+              </Box>
+            </MiniCardHeader>
+            <MiniCardBody>
+              <UpcomingBirthdaysCard birthdays={birthdays} isExpanded={isBirthdaysExpanded} />
+            </MiniCardBody>
+          </MiniCardContent>
+        </MiniCard>
 
         <NoiseSection
           noiseTrackingItems={noiseTrackingItems}
