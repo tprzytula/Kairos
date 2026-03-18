@@ -209,7 +209,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
         {recipe.ingredients.length > 0 && (
           <IngredientList>
             {visibleIngredients.map((ingredient, index) => {
-              const icon = findItemIcon(ingredient.name, defaults)
+              const icon = findItemIcon(ingredient.name, defaults) || findItemIcon(GENERIC_ITEM_NAME, defaults)
               const isDeselected = deselectedIndices.has(index)
               if (isSelectingIngredients) {
                 return (
