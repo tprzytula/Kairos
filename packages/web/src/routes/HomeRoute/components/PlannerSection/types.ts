@@ -1,6 +1,7 @@
 import { IToDoStats } from '../../../../hooks/useHomeData/types'
 import { IBirthdayItem } from '../../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../../types/mealPlan'
+import { ITodoItem } from '../../../../api/toDoList/retrieve/types'
 
 export interface ITodayMealItem extends IMealPlan {
   imagePath?: string
@@ -11,9 +12,7 @@ export interface IToDoSectionProps {
   birthdays: IBirthdayItem[]
   todayMeals: ITodayMealItem[]
   isLoading: boolean
-  isExpanded: boolean
-  onToggleExpansion: () => void
-  onItemToggle: (id: string) => void
-  expandedItems: Set<string>
+  onStepToggle: (todoId: string, stepId: string, isDone: boolean) => void
+  onCardClick: (item: ITodoItem) => void
   onMealClick?: (meal: ITodayMealItem) => void
 }
