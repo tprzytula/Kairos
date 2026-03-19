@@ -1,11 +1,19 @@
 import { useState } from 'react'
-import { Box, Typography, TextField, Skeleton, InputAdornment } from '@mui/material'
+import { Box, Typography, Skeleton } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
-import SearchIcon from '@mui/icons-material/Search'
+import SearchIconMui from '@mui/icons-material/Search'
 import { IRecipe } from '../../types/recipe'
 import { IItemDefault } from '../../hooks/useItemDefaults/types'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import RecipeItem from '../RecipeItem'
+import {
+  RecipeListContainer,
+  SearchContainer,
+  SearchIcon,
+  SearchInput,
+  EmptyStateContainer,
+  NoMatchContainer,
+} from './index.styled'
 
 interface RecipeListProps {
   onEditRecipe: (recipe: IRecipe) => void
@@ -38,25 +46,17 @@ const RecipeList = ({ onEditRecipe, onUseRecipe, shopId, defaults }: RecipeListP
     : recipes
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-      <TextField
-        size="small"
-        placeholder="Search recipes..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon fontSize="small" sx={{ color: 'text.disabled' }} />
-            </InputAdornment>
-          ),
-        }}
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            borderRadius: '10px',
-          },
-        }}
-      />
+    <RecipeListContainer>
+      <SearchContainer>
+        <SearchIcon>
+          <SearchIconMui />
+        </SearchIcon>
+        <SearchInput
+          placeholder="Search recipes..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </SearchContainer>
 
       {isLoading ? (
         <>
@@ -65,16 +65,7 @@ const RecipeList = ({ onEditRecipe, onUseRecipe, shopId, defaults }: RecipeListP
           <RecipeSkeletonCard />
         </>
       ) : recipes.length === 0 ? (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            py: 6,
-            gap: 1.5,
-          }}
-        >
+        <EmptyStateContainer>
           <MenuBookIcon sx={{ fontSize: '3rem', color: 'rgba(102, 126, 234, 0.4)' }} />
           <Typography variant="body1" fontWeight={600} color="text.secondary">
             No recipes yet
@@ -82,13 +73,13 @@ const RecipeList = ({ onEditRecipe, onUseRecipe, shopId, defaults }: RecipeListP
           <Typography variant="body2" color="text.disabled" textAlign="center">
             Add your first recipe using the + button above
           </Typography>
-        </Box>
+        </EmptyStateContainer>
       ) : filtered.length === 0 ? (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4, gap: 1 }}>
+        <NoMatchContainer>
           <Typography variant="body2" color="text.secondary">
             No recipes match "{search}"
           </Typography>
-        </Box>
+        </NoMatchContainer>
       ) : (
         filtered.map((recipe) => (
           <RecipeItem
@@ -101,7 +92,7 @@ const RecipeList = ({ onEditRecipe, onUseRecipe, shopId, defaults }: RecipeListP
           />
         ))
       )}
-    </Box>
+    </RecipeListContainer>
   )
 }
 
