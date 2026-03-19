@@ -7,9 +7,10 @@ export const BirthdayList = styled('div')({
 })
 
 export const BirthdayEntryContainer = styled('div')<{ $isToday?: boolean }>(({ $isToday }) => ({
-  display: 'flex',
+  display: 'grid',
+  gridTemplateColumns: '3.2rem 1fr auto',
   alignItems: 'center',
-  gap: '0.5rem',
+  gap: '0.4rem',
   padding: '0.2rem 0.25rem',
   borderRadius: '8px',
   ...($isToday && {
@@ -18,11 +19,11 @@ export const BirthdayEntryContainer = styled('div')<{ $isToday?: boolean }>(({ $
 }))
 
 export const DateBadge = styled('div')<{ $isToday?: boolean }>(({ $isToday }) => ({
-  flexShrink: 0,
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'center',
   gap: '0.2rem',
-  padding: '0.15rem 0.35rem',
+  padding: '0.15rem 0',
   borderRadius: '6px',
   background: $isToday
     ? 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)'
@@ -47,7 +48,7 @@ export const DateBadgeDay = styled('span')<{ $isToday?: boolean }>(({ theme, $is
 }))
 
 export const BirthdayInfo = styled('div')({
-  flex: 1,
+  gridColumn: 2,
   minWidth: 0,
 })
 
@@ -62,11 +63,11 @@ export const BirthdayName = styled('span')(({ theme }) => ({
 }))
 
 export const DaysUntil = styled('span')<{ $isToday?: boolean }>(({ theme, $isToday }) => ({
-  flexShrink: 0,
   fontSize: '0.65rem',
   fontWeight: 700,
   color: $isToday ? '#ec4899' : theme.palette.text.secondary,
   whiteSpace: 'nowrap',
+  textAlign: 'right',
 }))
 
 export const BirthdaySubLine = styled('div')(({ theme }) => ({
