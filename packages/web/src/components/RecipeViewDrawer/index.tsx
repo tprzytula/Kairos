@@ -3,7 +3,6 @@ import { Box, Button, Checkbox, IconButton, Typography } from '@mui/material'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { IRecipe } from '../../types/recipe'
@@ -43,11 +42,10 @@ interface RecipeViewDrawerProps {
   onClose: () => void
   onEdit: (recipe: IRecipe) => void
   onUseRecipe: (recipe: IRecipe) => void
-  onDelete: (recipe: IRecipe) => void
   defaults?: IItemDefault[]
 }
 
-const RecipeViewDrawer = ({ recipe, onClose, onEdit, onUseRecipe, onDelete, defaults }: RecipeViewDrawerProps) => {
+const RecipeViewDrawer = ({ recipe, onClose, onEdit, onUseRecipe, defaults }: RecipeViewDrawerProps) => {
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set())
   const [checkedSteps, setCheckedSteps] = useState<Set<number>>(new Set())
 
@@ -83,11 +81,6 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, onUseRecipe, onDelete, defa
     if (!recipe) return
     onUseRecipe(recipe)
   }, [recipe, onUseRecipe])
-
-  const handleDelete = useCallback(() => {
-    if (!recipe) return
-    onDelete(recipe)
-  }, [recipe, onDelete])
 
   const placeholderSeed = recipe?.name.charCodeAt(0) ?? 0
   const instructions = recipe?.instructions ?? []
@@ -230,7 +223,7 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, onUseRecipe, onDelete, defa
             '&:hover': { boxShadow: 'none', opacity: 0.9 },
           }}
         >
-          Use Recipe
+          Add to Shopping List
         </Button>
         <Button
           variant="contained"
@@ -248,21 +241,6 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, onUseRecipe, onDelete, defa
           }}
         >
           Edit Recipe
-        </Button>
-        <Button
-          variant="outlined"
-          fullWidth
-          startIcon={<DeleteIcon />}
-          onClick={handleDelete}
-          color="error"
-          sx={{
-            borderRadius: '10px',
-            textTransform: 'none',
-            fontWeight: 600,
-            py: 1.25,
-          }}
-        >
-          Delete Recipe
         </Button>
       </Footer>
     </DraggableBottomDrawer>
