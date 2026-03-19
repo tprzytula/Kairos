@@ -1,12 +1,26 @@
 import React from 'react'
 import { Collapse } from '@mui/material'
 import { IBirthdayItem } from '../../../../../../api/birthdays/retrieve/types'
-import { BirthdayRow, BirthdayName, DaysUntil, BirthdaySubLine, MoreCount } from './index.styled'
+import {
+  BirthdayList,
+  BirthdayEntryContainer,
+  DateBadge,
+  DateBadgeDate,
+  DateBadgeDay,
+  BirthdayInfo,
+  BirthdayName,
+  DaysUntil,
+  BirthdaySubLine,
+  MoreCount,
+} from './index.styled'
 
 interface IUpcomingBirthdaysCardProps {
   birthdays: IBirthdayItem[]
   isExpanded?: boolean
 }
+
+const monthDayFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' })
+const dayOfWeekFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'short' })
 
 const getNextBirthdayDate = (birthday: IBirthdayItem): Date => {
   const today = new Date()
@@ -29,20 +43,30 @@ const getDaysUntilLabel = (nextDate: Date): { label: string; isToday: boolean } 
   return { label: `in ${diffDays}d`, isToday: false }
 }
 
+const getDateLabel = (nextDate: Date): { monthDay: string; dayOfWeek: string } => ({
+  monthDay: monthDayFormatter.format(nextDate),
+  dayOfWeek: dayOfWeekFormatter.format(nextDate),
+})
+
 type SortedBirthday = IBirthdayItem & { nextDate: Date }
 
 const BirthdayEntry: React.FC<{ b: SortedBirthday; showDetails: boolean }> = ({ b, showDetails }) => {
   const { label, isToday } = getDaysUntilLabel(b.nextDate)
+  const { monthDay, dayOfWeek } = getDateLabel(b.nextDate)
   const subLine = b.notes ?? ''
 
   return (
-    <div>
-      <BirthdayRow>
+    <BirthdayEntryContainer $isToday={isToday}>
+      <DateBadge $isToday={isToday}>
+        <DateBadgeDate $isToday={isToday}>{monthDay}</DateBadgeDate>
+        <DateBadgeDay $isToday={isToday}>{dayOfWeek}</DateBadgeDay>
+      </DateBadge>
+      <BirthdayInfo>
         <BirthdayName>{b.name}</BirthdayName>
-        <DaysUntil $isToday={isToday}>{label}</DaysUntil>
-      </BirthdayRow>
-      {showDetails && subLine && <BirthdaySubLine>{subLine}</BirthdaySubLine>}
-    </div>
+        {showDetails && subLine && <BirthdaySubLine>{subLine}</BirthdaySubLine>}
+      </BirthdayInfo>
+      <DaysUntil $isToday={isToday}>{label}</DaysUntil>
+    </BirthdayEntryContainer>
   )
 }
 
@@ -59,7 +83,7 @@ export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ b
   const rest = sorted.slice(3)
 
   return (
-    <>
+    <BirthdayList>
       {top3.map(b => (
         <BirthdayEntry key={b.id} b={b} showDetails={isExpanded} />
       ))}
@@ -73,7 +97,7 @@ export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ b
           {!isExpanded && <MoreCount>+{rest.length} more</MoreCount>}
         </>
       )}
-    </>
+    </BirthdayList>
   )
 }
 

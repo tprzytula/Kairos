@@ -29,12 +29,12 @@ import NoiseSection from './components/NoiseSection'
 import PlannerSection from './components/PlannerSection'
 import UpcomingBirthdaysCard from './components/PlannerSection/components/UpcomingBirthdaysCard'
 import {
-  MiniCard,
   MiniCardContent,
   MiniCardHeader,
-  MiniCardIcon,
   MiniCardTitle,
   MiniCardBody,
+  BirthdayCard,
+  BirthdayCardIcon,
 } from './components/PlannerSection/index.styled'
 import { useHomeData } from '../../hooks/useHomeData'
 import { useHomeInteractions } from '../../hooks/useHomeInteractions'
@@ -155,13 +155,12 @@ const HomeDataContent = () => {
           onNavigate={handleGroceryNavigate}
         />
 
-        <MiniCard
-          sx={{ cursor: 'pointer' }}
+        <BirthdayCard
           onClick={() => setIsBirthdaysExpanded(v => !v)}
         >
           <MiniCardContent>
             <MiniCardHeader>
-              <MiniCardIcon><CakeIcon /></MiniCardIcon>
+              <BirthdayCardIcon><CakeIcon /></BirthdayCardIcon>
               <MiniCardTitle>Birthdays</MiniCardTitle>
               <Box
                 sx={{
@@ -180,7 +179,7 @@ const HomeDataContent = () => {
               <UpcomingBirthdaysCard birthdays={birthdays} isExpanded={isBirthdaysExpanded} />
             </MiniCardBody>
           </MiniCardContent>
-        </MiniCard>
+        </BirthdayCard>
 
         <NoiseSection
           noiseTrackingItems={noiseTrackingItems}
