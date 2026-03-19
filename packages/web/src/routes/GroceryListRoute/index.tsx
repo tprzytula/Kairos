@@ -10,18 +10,18 @@ import SortByAlphaIcon from '@mui/icons-material/SortByAlpha'
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess'
 import StorefrontIcon from '@mui/icons-material/Storefront'
-import MenuBookIcon from '@mui/icons-material/MenuBook'
 import { Container, ScrollableContainer } from './index.styled'
 import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
-import { useState, useCallback, useMemo } from 'react'
-import RecipeDrawer from '../../components/RecipeDrawer'
-import { useParams, useNavigate } from 'react-router'
+import { useState, useCallback, useMemo, useEffect } from 'react'
+import AddGroceryItemDrawer from '../../components/AddGroceryItemDrawer'
+import { useParams, useNavigate, useSearchParams } from 'react-router'
 import { removeGroceryItems } from '../../api/groceryList'
 import { showAlert } from '../../utils/alert'
 import { ActionName } from '../../providers/AppStateProvider/enums'
 import { GroceryViewMode } from '../../enums/groceryCategory'
 import { useShopContext } from '../../providers/ShopProvider'
 import { Route } from '../../enums/route'
+import { RecipeProvider } from '../../providers/RecipeProvider'
 
 const GroceryListContent = () => {
   const { shopId } = useParams<{ shopId: string }>()
@@ -29,26 +29,35 @@ const GroceryListContent = () => {
   const { groceryList, viewMode, setViewMode, refetchGroceryList } = useGroceryListContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
   const navigate = useNavigate()
-  
+  const [searchParams] = useSearchParams()
+
   const currentShop = shopId === 'all' ? null : shops.find(shop => shop.id === shopId)
-  
+
   const handleBackToShops = useCallback(() => {
     setCurrentShop(null)
     navigate(Route.Shops)
   }, [navigate, setCurrentShop])
-  
+
   const unpurchasedItems = groceryList.filter(item => !purchasedItems.has(item.id))
   const purchasedCount = groceryList.length - unpurchasedItems.length
-  
+
   const stats = [
     { value: groceryList.length, label: 'Total Items' },
     { value: unpurchasedItems.length, label: 'Remaining' },
     { value: purchasedCount, label: 'Purchased' }
   ]
-  
+
   const [allExpanded, setAllExpanded] = useState<boolean>(true)
   const [expandKey, setExpandKey] = useState<number>(0)
-  const [recipeDrawerOpen, setRecipeDrawerOpen] = useState(false)
+  const [addDrawerOpen, setAddDrawerOpen] = useState(false)
+
+  useEffect(() => {
+    if (searchParams.get('openAdd') === 'true') {
+      setAddDrawerOpen(true)
+      navigate(`/groceries/${shopId}`, { replace: true })
+    }
+  }, [searchParams, shopId, navigate])
+
   const toggleAll = useCallback(() => {
     setAllExpanded((v) => !v)
     setExpandKey((k) => k + 1)
@@ -57,22 +66,22 @@ const GroceryListContent = () => {
   const statusText = useMemo(() => {
     const totalItems = groceryList.length;
     const purchasedCount = purchasedItems.size;
-    
+
     if (totalItems === 0) {
       return "Your grocery list is empty";
     }
-    
+
     if (purchasedCount === 0) {
       return "Tap items to mark as purchased";
     }
-    
+
     return `${purchasedCount} of ${totalItems} item${totalItems === 1 ? '' : 's'} purchased`;
   }, [groceryList.length, purchasedItems.size]);
 
   const clearPurchasedItems = useCallback((purchasedItems: Set<string>) => {
-    dispatch({ 
-      type: ActionName.CLEAR_PURCHASED_ITEMS, 
-      payload: Array.from(purchasedItems) 
+    dispatch({
+      type: ActionName.CLEAR_PURCHASED_ITEMS,
+      payload: Array.from(purchasedItems)
     })
   }, [dispatch])
 
@@ -121,12 +130,6 @@ const GroceryListContent = () => {
           tooltip: "Back to Shops",
           ariaLabel: "Navigate back to shops list",
         }}
-        secondaryActionButton={{
-          icon: <MenuBookIcon />,
-          onClick: () => setRecipeDrawerOpen(true),
-          tooltip: "Browse recipes",
-          ariaLabel: "Open recipe book",
-        }}
       />
       <Container>
         <ActionButtonsBar
@@ -157,11 +160,11 @@ const GroceryListContent = () => {
           <GroceryList allExpanded={allExpanded} expandKey={expandKey} shopId={shopId} />
         </ScrollableContainer>
       </Container>
-      <RecipeDrawer
-        open={recipeDrawerOpen}
-        onClose={() => setRecipeDrawerOpen(false)}
-        onUseRecipe={refetchGroceryList}
+      <AddGroceryItemDrawer
+        open={addDrawerOpen}
+        onClose={() => setAddDrawerOpen(false)}
         shopId={shopId}
+        onItemAdded={refetchGroceryList}
       />
     </StandardLayout>
   )
@@ -169,10 +172,12 @@ const GroceryListContent = () => {
 
 export const GroceryListRoute = () => {
   const { shopId } = useParams<{ shopId: string }>()
-  
+
   return (
     <GroceryListProvider shopId={shopId}>
-      <GroceryListContent />
+      <RecipeProvider>
+        <GroceryListContent />
+      </RecipeProvider>
     </GroceryListProvider>
   )
 }

@@ -30,6 +30,7 @@ jest.mock('../../providers/ShopProvider', () => ({
 }))
 
 jest.mock('../../api/groceryList')
+jest.mock('../../api/recipes')
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(),
