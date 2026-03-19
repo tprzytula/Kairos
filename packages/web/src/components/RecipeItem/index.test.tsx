@@ -87,24 +87,21 @@ describe('Given the RecipeItem component', () => {
     expect(mockOnEdit).toHaveBeenCalledWith(exampleRecipe)
   })
 
-  it('should render ingredient list with names', () => {
+  it('should not render ingredients by default in compact view', () => {
     render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
-    expect(screen.getAllByText(/Pasta/).length).toBeGreaterThan(0)
-    expect(screen.getByText(/Eggs/)).toBeVisible()
+    expect(screen.queryByText(/Eggs/)).not.toBeInTheDocument()
   })
 
-  it('should show instructions when Show instructions is clicked', () => {
+  it('should show ingredients when Use Recipe is clicked', () => {
     render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
-    fireEvent.click(screen.getByRole('button', { name: /show instructions/i }))
-    expect(screen.getByText('Boil water')).toBeVisible()
-    expect(screen.getByText('Cook pasta')).toBeVisible()
+    fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
+    expect(screen.getByText(/Pasta — 200/)).toBeVisible()
+    expect(screen.getByText(/Eggs — 2/)).toBeVisible()
   })
 
-  it('should toggle instructions off when Hide instructions is clicked', () => {
+  it('should not render instructions toggle in compact view', () => {
     render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
-    fireEvent.click(screen.getByRole('button', { name: /show instructions/i }))
-    fireEvent.click(screen.getByRole('button', { name: /hide instructions/i }))
-    expect(screen.queryByText('Boil water')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /show instructions/i })).not.toBeInTheDocument()
   })
 
   describe('When shopId is provided', () => {
