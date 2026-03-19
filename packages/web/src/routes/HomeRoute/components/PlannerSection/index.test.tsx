@@ -294,12 +294,13 @@ describe('UpcomingBirthdaysCard component', () => {
     expect(screen.getByText('in 10d')).toBeInTheDocument()
   })
 
-  it('should show only the next 3 upcoming birthdays', () => {
+  it('should show only the next 4 upcoming birthdays', () => {
     const birthdays = [
       createMockBirthday({ id: '1', name: 'Person 1', month: 1, day: 16 }),
       createMockBirthday({ id: '2', name: 'Person 2', month: 1, day: 17 }),
       createMockBirthday({ id: '3', name: 'Person 3', month: 1, day: 18 }),
       createMockBirthday({ id: '4', name: 'Person 4', month: 1, day: 19 }),
+      createMockBirthday({ id: '5', name: 'Person 5', month: 1, day: 20 }),
     ]
 
     renderBirthdays(birthdays)
@@ -307,7 +308,8 @@ describe('UpcomingBirthdaysCard component', () => {
     expect(screen.getByText('Person 1')).toBeInTheDocument()
     expect(screen.getByText('Person 2')).toBeInTheDocument()
     expect(screen.getByText('Person 3')).toBeInTheDocument()
-    expect(screen.queryByText('Person 4')).not.toBeInTheDocument()
+    expect(screen.getByText('Person 4')).toBeInTheDocument()
+    expect(screen.queryByText('Person 5')).not.toBeInTheDocument()
   })
 
   it('should show empty state when no birthdays saved', () => {
