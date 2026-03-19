@@ -243,13 +243,14 @@ describe('UpcomingBirthdaysCard component', () => {
       </ThemeProvider>
     )
 
-  it('should show the date text for a birthday', () => {
-    // System time is 2024-01-15; birthday on Jan 16 → "Jan 16"
+  it('should show the date parts for a birthday', () => {
+    // System time is 2024-01-15; birthday on Jan 16
     const birthday = createMockBirthday({ id: '1', name: 'Frank', month: 1, day: 16 })
 
     renderBirthdays([birthday])
 
-    expect(screen.getByText('Jan 16')).toBeInTheDocument()
+    expect(screen.getByText('Jan')).toBeInTheDocument()
+    expect(screen.getByText('16')).toBeInTheDocument()
   })
 
   it('should show the day of week for a birthday', () => {

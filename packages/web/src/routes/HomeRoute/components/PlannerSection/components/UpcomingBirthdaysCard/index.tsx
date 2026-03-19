@@ -5,8 +5,9 @@ import {
   BirthdayList,
   BirthdayEntryContainer,
   DateBadge,
-  DateBadgeDate,
+  DateBadgeMonth,
   DateBadgeDay,
+  DateBadgeWeekday,
   BirthdayInfo,
   BirthdayName,
   DaysUntil,
@@ -19,8 +20,8 @@ interface IUpcomingBirthdaysCardProps {
   isExpanded?: boolean
 }
 
-const monthDayFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' })
-const dayOfWeekFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'short' })
+const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'short' })
+const weekdayFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'short' })
 
 const getNextBirthdayDate = (birthday: IBirthdayItem): Date => {
   const today = new Date()
@@ -43,23 +44,25 @@ const getDaysUntilLabel = (nextDate: Date): { label: string; isToday: boolean } 
   return { label: `in ${diffDays}d`, isToday: false }
 }
 
-const getDateLabel = (nextDate: Date): { monthDay: string; dayOfWeek: string } => ({
-  monthDay: monthDayFormatter.format(nextDate),
-  dayOfWeek: dayOfWeekFormatter.format(nextDate),
+const getDateParts = (nextDate: Date): { month: string; day: number; weekday: string } => ({
+  month: monthFormatter.format(nextDate),
+  day: nextDate.getDate(),
+  weekday: weekdayFormatter.format(nextDate),
 })
 
 type SortedBirthday = IBirthdayItem & { nextDate: Date }
 
 const BirthdayEntry: React.FC<{ b: SortedBirthday; showDetails: boolean }> = ({ b, showDetails }) => {
   const { label, isToday } = getDaysUntilLabel(b.nextDate)
-  const { monthDay, dayOfWeek } = getDateLabel(b.nextDate)
+  const { month, day, weekday } = getDateParts(b.nextDate)
   const subLine = b.notes ?? ''
 
   return (
     <BirthdayEntryContainer $isToday={isToday}>
       <DateBadge $isToday={isToday}>
-        <DateBadgeDate $isToday={isToday}>{monthDay}</DateBadgeDate>
-        <DateBadgeDay $isToday={isToday}>{dayOfWeek}</DateBadgeDay>
+        <DateBadgeMonth $isToday={isToday}>{month}</DateBadgeMonth>
+        <DateBadgeDay $isToday={isToday}>{day}</DateBadgeDay>
+        <DateBadgeWeekday $isToday={isToday}>{weekday}</DateBadgeWeekday>
       </DateBadge>
       <BirthdayInfo>
         <BirthdayName>{b.name}</BirthdayName>
