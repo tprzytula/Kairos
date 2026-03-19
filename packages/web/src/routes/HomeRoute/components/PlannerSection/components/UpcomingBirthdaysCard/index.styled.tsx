@@ -1,8 +1,14 @@
 import { styled } from '@mui/material/styles'
 
 export const BirthdayList = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  gap: '0.35rem',
+})
+
+export const CollapseGrid = styled('div')({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, 1fr)',
   gap: '0.35rem',
 })
 
@@ -95,4 +101,5 @@ export const MoreCount = styled('div')(({ theme }) => ({
   fontWeight: 600,
   paddingLeft: '0.5rem',
   paddingTop: '0.15rem',
+  gridColumn: '1 / -1',
 }))

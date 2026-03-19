@@ -13,6 +13,7 @@ import {
   DaysUntil,
   BirthdaySubLine,
   MoreCount,
+  CollapseGrid,
 } from './index.styled'
 
 interface IUpcomingBirthdaysCardProps {
@@ -82,20 +83,23 @@ export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ b
     .map(b => ({ ...b, nextDate: getNextBirthdayDate(b) }))
     .sort((a, b) => a.nextDate.getTime() - b.nextDate.getTime())
 
-  const top3 = sorted.slice(0, 3)
-  const rest = sorted.slice(3)
+  const INITIAL_COUNT = 4
+  const topN = sorted.slice(0, INITIAL_COUNT)
+  const rest = sorted.slice(INITIAL_COUNT)
 
   return (
     <BirthdayList>
-      {top3.map(b => (
+      {topN.map(b => (
         <BirthdayEntry key={b.id} b={b} showDetails={isExpanded} />
       ))}
       {rest.length > 0 && (
         <>
-          <Collapse in={isExpanded} timeout={150} unmountOnExit>
-            {rest.map(b => (
-              <BirthdayEntry key={b.id} b={b} showDetails={isExpanded} />
-            ))}
+          <Collapse in={isExpanded} timeout={150} unmountOnExit sx={{ gridColumn: '1 / -1' }}>
+            <CollapseGrid>
+              {rest.map(b => (
+                <BirthdayEntry key={b.id} b={b} showDetails={isExpanded} />
+              ))}
+            </CollapseGrid>
           </Collapse>
           {!isExpanded && <MoreCount>+{rest.length} more</MoreCount>}
         </>
