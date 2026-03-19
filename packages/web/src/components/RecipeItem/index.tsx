@@ -227,7 +227,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                     '&:disabled': { background: 'rgba(0,0,0,0.12)' },
                   }}
                 >
-                  Use Recipe
+                  Add to List
                 </Button>
               </span>
             </Tooltip>

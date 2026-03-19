@@ -100,7 +100,6 @@ const RecipesContent = () => {
         onClose={handleCloseView}
         onEdit={handleViewToEdit}
         onUseRecipe={handleUseFromView}
-        onDelete={handleDeleteFromView}
         defaults={defaults}
       />
       <DraggableBottomDrawer
