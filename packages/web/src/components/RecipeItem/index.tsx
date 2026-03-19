@@ -1,8 +1,6 @@
 import { useState, useCallback, useRef } from 'react'
 import { Typography, Button, Chip, Tooltip, Box, Checkbox, IconButton, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { IRecipe } from '../../types/recipe'
 import { IItemDefault } from '../../hooks/useItemDefaults/types'
@@ -20,16 +18,13 @@ import {
   RecipeCardTapArea,
   RecipeCardBody,
   RecipeCardHeader,
-  RecipeCoverImage,
+  RecipeThumbnail,
   RecipePlaceholder,
   RecipeInteractiveArea,
   IngredientList,
-  IngredientItemRow,
   IngredientIcon,
   SelectableIngredientRow,
 } from './index.styled'
-
-const INGREDIENTS_PREVIEW_COUNT = 3
 
 interface RecipeItemProps {
   recipe: IRecipe
@@ -48,11 +43,11 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
   const [isSelectingShop, setIsSelectingShop] = useState(false)
   const [localShopId, setLocalShopId] = useState<string | undefined>(undefined)
   const [deselectedIndices, setDeselectedIndices] = useState<Set<number>>(new Set())
-  const [showAllIngredients, setShowAllIngredients] = useState(false)
-  const [showInstructions, setShowInstructions] = useState(false)
   const interactiveSectionRef = useRef<HTMLDivElement>(null)
   const needsShopSelection = !shopId || shopId === 'all'
   const canUseRecipe = !needsShopSelection || shops.length > 0
+
+  const isExpanded = isSelectingIngredients || isSelectingShop
 
   const handleToggleIngredient = useCallback((index: number) => {
     setDeselectedIndices((prev) => {
@@ -86,7 +81,8 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
     }, 50)
   }, [localShopId])
 
-  const handleClickUseRecipe = useCallback(() => {
+  const handleClickUseRecipe = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
     if (needsShopSelection) {
       setIsSelectingShop(true)
     } else {
@@ -130,23 +126,18 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
     }
   }, [currentProject, shopId, localShopId, recipe, deselectedIndices, dispatch, onUseRecipe, defaults])
 
-  const hasMoreIngredients = recipe.ingredients.length > INGREDIENTS_PREVIEW_COUNT
-  const visibleIngredients =
-    showAllIngredients || isSelectingIngredients
-      ? recipe.ingredients
-      : recipe.ingredients.slice(0, INGREDIENTS_PREVIEW_COUNT)
   const placeholderSeed = recipe.name.charCodeAt(0)
 
   return (
     <RecipeCard>
-      <RecipeCardTapArea onClick={() => !isSelectingIngredients && onEdit(recipe)}>
+      <RecipeCardTapArea onClick={() => !isExpanded && onEdit(recipe)}>
         {recipe.imagePath ? (
-          <RecipeCoverImage src={recipe.imagePath} alt={recipe.name} />
+          <RecipeThumbnail src={recipe.imagePath} alt={recipe.name} />
         ) : (
           <RecipePlaceholder seed={placeholderSeed}>
             <Typography
               sx={{
-                fontSize: '2.5rem',
+                fontSize: '1.75rem',
                 fontWeight: 700,
                 color: 'rgba(255,255,255,0.85)',
                 lineHeight: 1,
@@ -159,7 +150,17 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
         )}
         <RecipeCardBody>
           <RecipeCardHeader>
-            <Typography variant="body1" fontWeight={600}>
+            <Typography
+              variant="body1"
+              fontWeight={600}
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+              }}
+            >
               {recipe.name}
             </Typography>
             {recipe.externalLink && (
@@ -171,7 +172,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                  sx={{ color: '#f97316', padding: '2px' }}
+                  sx={{ color: '#f97316', padding: '2px', flexShrink: 0 }}
                 >
                   <OpenInNewIcon sx={{ fontSize: '1rem' }} />
                 </IconButton>
@@ -187,6 +188,7 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                 color: '#f97316',
                 fontWeight: 500,
                 fontSize: '0.7rem',
+                height: '22px',
               }}
             />
             {recipe.instructions && recipe.instructions.length > 0 && (
@@ -198,20 +200,48 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                   color: '#f43f5e',
                   fontWeight: 500,
                   fontSize: '0.7rem',
+                  height: '22px',
                 }}
               />
             )}
           </Box>
+          {!isExpanded && (
+            <Tooltip title={canUseRecipe ? 'Select ingredients to add to your list' : 'No shops available'}>
+              <span>
+                <Button
+                  variant="contained"
+                  size="small"
+                  startIcon={<AddShoppingCartIcon sx={{ fontSize: '0.875rem !important' }} />}
+                  onClick={handleClickUseRecipe}
+                  disabled={!canUseRecipe}
+                  sx={{
+                    borderRadius: '6px',
+                    background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
+                    boxShadow: 'none',
+                    fontSize: '0.72rem',
+                    padding: '3px 10px',
+                    minHeight: 0,
+                    alignSelf: 'flex-start',
+                    textTransform: 'none',
+                    '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
+                    '&:disabled': { background: 'rgba(0,0,0,0.12)' },
+                  }}
+                >
+                  Use Recipe
+                </Button>
+              </span>
+            </Tooltip>
+          )}
         </RecipeCardBody>
       </RecipeCardTapArea>
 
-      <RecipeInteractiveArea>
-        {recipe.ingredients.length > 0 && (
-          <IngredientList>
-            {visibleIngredients.map((ingredient, index) => {
-              const icon = findItemIcon(ingredient.name, defaults) || findItemIcon(GENERIC_ITEM_NAME, defaults)
-              const isDeselected = deselectedIndices.has(index)
-              if (isSelectingIngredients) {
+      {isExpanded && (
+        <RecipeInteractiveArea>
+          {isSelectingIngredients && recipe.ingredients.length > 0 && (
+            <IngredientList>
+              {recipe.ingredients.map((ingredient, index) => {
+                const icon = findItemIcon(ingredient.name, defaults) || findItemIcon(GENERIC_ITEM_NAME, defaults)
+                const isDeselected = deselectedIndices.has(index)
                 return (
                   <SelectableIngredientRow key={index} isDeselected={isDeselected} onClick={() => handleToggleIngredient(index)}>
                     <Checkbox
@@ -227,186 +257,99 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                     </Typography>
                   </SelectableIngredientRow>
                 )
-              }
-              return (
-                <IngredientItemRow key={index}>
-                  {icon && <IngredientIcon src={icon} alt={ingredient.name} />}
-                  <Typography variant="caption" color="text.secondary">
-                    {ingredient.name} — {ingredient.quantity} {GroceryItemUnitLabelMap[ingredient.unit]}
-                  </Typography>
-                </IngredientItemRow>
-              )
-            })}
-            {hasMoreIngredients && !isSelectingIngredients && (
-              <Button
-                size="small"
-                onClick={() => setShowAllIngredients((v) => !v)}
-                sx={{ alignSelf: 'flex-start', color: '#f97316', padding: '0 4px', minWidth: 0, fontSize: '0.72rem' }}
-                endIcon={showAllIngredients ? <ExpandLessIcon fontSize="inherit" /> : <ExpandMoreIcon fontSize="inherit" />}
-              >
-                {showAllIngredients ? 'Show less' : `${recipe.ingredients.length - INGREDIENTS_PREVIEW_COUNT} more`}
-              </Button>
-            )}
-          </IngredientList>
-        )}
+              })}
+            </IngredientList>
+          )}
 
-        {recipe.instructions && recipe.instructions.length > 0 && (
-          <Box>
-            <Button
-              size="small"
-              onClick={() => setShowInstructions((v) => !v)}
-              sx={{
-                color: '#f97316',
-                padding: '0 4px',
-                minWidth: 0,
-                fontSize: '0.72rem',
-                mb: showInstructions ? 0.75 : 0,
-              }}
-              endIcon={showInstructions ? <ExpandLessIcon fontSize="inherit" /> : <ExpandMoreIcon fontSize="inherit" />}
-            >
-              {showInstructions ? 'Hide instructions' : 'Show instructions'}
-            </Button>
-            {showInstructions && (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', maxHeight: '220px', overflowY: 'auto', pr: 0.5 }}>
-                {recipe.instructions.map((step, index) => (
-                  <Box key={index} sx={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        minWidth: '20px',
-                        height: '20px',
-                        borderRadius: '50%',
-                        background: 'rgba(249, 115, 22, 0.15)',
-                        color: '#f97316',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: 600,
-                        flexShrink: 0,
-                      }}
-                    >
-                      {index + 1}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ lineHeight: '1.4', paddingTop: '2px' }}>
-                      {step}
-                    </Typography>
-                  </Box>
-                ))}
+          <Box ref={interactiveSectionRef}>
+            {isSelectingShop ? (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <FormControl size="small" fullWidth>
+                  <InputLabel>Select shop</InputLabel>
+                  <Select
+                    value={localShopId || ''}
+                    label="Select shop"
+                    onChange={(e) => setLocalShopId(e.target.value as string)}
+                  >
+                    {shops.map((shop) => (
+                      <MenuItem key={shop.id} value={shop.id}>
+                        {shop.icon && (
+                          <Box component="img" src={shop.icon} alt="" sx={{ width: 20, height: 20, objectFit: 'contain', mr: 1 }} />
+                        )}
+                        {shop.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    startIcon={<AddShoppingCartIcon />}
+                    onClick={handleConfirmShopSelection}
+                    disabled={!localShopId}
+                    sx={{
+                      borderRadius: '8px',
+                      background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
+                      boxShadow: 'none',
+                      '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
+                      '&:disabled': { background: 'rgba(0,0,0,0.12)' },
+                    }}
+                  >
+                    Continue
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={handleCancelShopSelection}
+                    sx={{
+                      borderRadius: '8px',
+                      borderColor: 'rgba(249, 115, 22, 0.4)',
+                      color: '#f97316',
+                      '&:hover': { borderColor: '#f97316', background: 'rgba(249, 115, 22, 0.05)' },
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </Box>
               </Box>
-            )}
+            ) : isSelectingIngredients ? (
+              <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  startIcon={<AddShoppingCartIcon />}
+                  onClick={handleUseRecipe}
+                  disabled={isAdding}
+                  sx={{
+                    borderRadius: '8px',
+                    background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
+                    boxShadow: 'none',
+                    '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
+                    '&:disabled': { background: 'rgba(0,0,0,0.12)' },
+                  }}
+                >
+                  {isAdding ? 'Adding...' : 'Add to List'}
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={handleCancelSelection}
+                  disabled={isAdding}
+                  sx={{
+                    borderRadius: '8px',
+                    borderColor: 'rgba(249, 115, 22, 0.4)',
+                    color: '#f97316',
+                    '&:hover': { borderColor: '#f97316', background: 'rgba(249, 115, 22, 0.05)' },
+                  }}
+                >
+                  Cancel
+                </Button>
+              </Box>
+            ) : null}
           </Box>
-        )}
-
-        <Box ref={interactiveSectionRef}>
-        {isSelectingShop ? (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', mt: 0.5 }}>
-            <FormControl size="small" fullWidth>
-              <InputLabel>Select shop</InputLabel>
-              <Select
-                value={localShopId || ''}
-                label="Select shop"
-                onChange={(e) => setLocalShopId(e.target.value as string)}
-              >
-                {shops.map((shop) => (
-                  <MenuItem key={shop.id} value={shop.id}>
-                    {shop.icon && (
-                      <Box component="img" src={shop.icon} alt="" sx={{ width: 20, height: 20, objectFit: 'contain', mr: 1 }} />
-                    )}
-                    {shop.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-              <Button
-                variant="contained"
-                size="small"
-                startIcon={<AddShoppingCartIcon />}
-                onClick={handleConfirmShopSelection}
-                disabled={!localShopId}
-                sx={{
-                  borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
-                  boxShadow: 'none',
-                  '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
-                  '&:disabled': { background: 'rgba(0,0,0,0.12)' },
-                }}
-              >
-                Continue
-              </Button>
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={handleCancelShopSelection}
-                sx={{
-                  borderRadius: '8px',
-                  borderColor: 'rgba(249, 115, 22, 0.4)',
-                  color: '#f97316',
-                  '&:hover': { borderColor: '#f97316', background: 'rgba(249, 115, 22, 0.05)' },
-                }}
-              >
-                Cancel
-              </Button>
-            </Box>
-          </Box>
-        ) : isSelectingIngredients ? (
-          <Box sx={{ display: 'flex', gap: '0.5rem', mt: 0.5 }}>
-            <Button
-              variant="contained"
-              size="small"
-              startIcon={<AddShoppingCartIcon />}
-              onClick={handleUseRecipe}
-              disabled={isAdding}
-              sx={{
-                borderRadius: '8px',
-                background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
-                boxShadow: 'none',
-                '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
-                '&:disabled': { background: 'rgba(0,0,0,0.12)' },
-              }}
-            >
-              {isAdding ? 'Adding...' : 'Add to List'}
-            </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={handleCancelSelection}
-              disabled={isAdding}
-              sx={{
-                borderRadius: '8px',
-                borderColor: 'rgba(249, 115, 22, 0.4)',
-                color: '#f97316',
-                '&:hover': { borderColor: '#f97316', background: 'rgba(249, 115, 22, 0.05)' },
-              }}
-            >
-              Cancel
-            </Button>
-          </Box>
-        ) : (
-          <Tooltip title={canUseRecipe ? `Select ingredients to add to your list` : 'No shops available'}>
-            <span>
-              <Button
-                variant="contained"
-                size="small"
-                startIcon={<AddShoppingCartIcon />}
-                onClick={handleClickUseRecipe}
-                disabled={!canUseRecipe}
-                sx={{
-                  mt: 0.5,
-                  borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
-                  boxShadow: 'none',
-                  '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
-                  '&:disabled': { background: 'rgba(0,0,0,0.12)' },
-                }}
-              >
-                Use Recipe
-              </Button>
-            </span>
-          </Tooltip>
-        )}
-        </Box>
-      </RecipeInteractiveArea>
+        </RecipeInteractiveArea>
+      )}
     </RecipeCard>
   )
 }

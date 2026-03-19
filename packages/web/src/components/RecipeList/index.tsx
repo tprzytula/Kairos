@@ -23,16 +23,15 @@ interface RecipeListProps {
 }
 
 const RecipeSkeletonCard = () => (
-  <Box sx={{ borderRadius: '12px', border: '1px solid rgba(102,126,234,0.1)', overflow: 'hidden' }}>
-    <Skeleton variant="rectangular" height={110} />
-    <Box sx={{ padding: '0.75rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-      <Skeleton variant="text" width="55%" height={22} />
-      <Skeleton variant="rounded" width={90} height={20} />
-    </Box>
-    <Box sx={{ padding: '0 1rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-      <Skeleton variant="text" width="70%" />
-      <Skeleton variant="text" width="60%" />
-      <Skeleton variant="rounded" width={100} height={30} sx={{ mt: 0.5 }} />
+  <Box sx={{ borderRadius: '12px', border: '1px solid rgba(249,115,22,0.1)', overflow: 'hidden', display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.625rem' }}>
+    <Skeleton variant="rounded" width={90} height={90} sx={{ flexShrink: 0, borderRadius: '10px' }} />
+    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+      <Skeleton variant="text" width="70%" height={22} />
+      <Box sx={{ display: 'flex', gap: '0.4rem' }}>
+        <Skeleton variant="rounded" width={85} height={22} />
+        <Skeleton variant="rounded" width={55} height={22} />
+      </Box>
+      <Skeleton variant="rounded" width={90} height={26} sx={{ mt: '0.1rem' }} />
     </Box>
   </Box>
 )

@@ -18,6 +18,11 @@ export const RecipeCard = styled(Paper)({
 
 export const RecipeCardTapArea = styled(Box)({
   cursor: 'pointer',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: '0.75rem',
+  padding: '0.625rem',
   transition: 'background 0.15s ease',
   '&:hover': {
     background: 'rgba(249, 115, 22, 0.04)',
@@ -27,23 +32,12 @@ export const RecipeCardTapArea = styled(Box)({
   },
 })
 
-export const RecipeCardBody = styled(Box)({
-  padding: '0.75rem 1rem',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.4rem',
-})
-
-export const RecipeCardHeader = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-})
-
-export const RecipeCoverImage = styled('img')({
-  width: '100%',
-  height: '195px',
+export const RecipeThumbnail = styled('img')({
+  width: '90px',
+  height: '90px',
   objectFit: 'cover',
+  borderRadius: '10px',
+  flexShrink: 0,
   display: 'block',
 })
 
@@ -57,16 +51,32 @@ const PLACEHOLDER_GRADIENTS = [
 ]
 
 export const RecipePlaceholder = styled(Box)<{ seed?: number }>(({ seed = 0 }) => ({
-  width: '100%',
-  height: '110px',
+  width: '90px',
+  height: '90px',
+  borderRadius: '10px',
+  flexShrink: 0,
   background: PLACEHOLDER_GRADIENTS[seed % PLACEHOLDER_GRADIENTS.length],
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
 }))
 
+export const RecipeCardBody = styled(Box)({
+  flex: 1,
+  minWidth: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.3rem',
+})
+
+export const RecipeCardHeader = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+})
+
 export const RecipeInteractiveArea = styled(Box)({
-  padding: '0 1rem 1rem',
+  padding: '0 0.625rem 0.625rem',
   display: 'flex',
   flexDirection: 'column',
   gap: '0.5rem',
