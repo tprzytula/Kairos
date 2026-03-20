@@ -281,16 +281,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/recipeIngredient"
-        mealTypes:
-          type: array
-          items:
-            type: string
-          example: ["Dinner"]
-        dishTypes:
-          type: array
-          items:
-            type: string
-          example: ["pasta"]
         createdAt:
           type: string
           format: date-time
@@ -322,16 +312,6 @@ components:
         imagePath:
           type: string
           example: "https://cdn.example.com/user-uploads/recipes/abc.jpg"
-        mealTypes:
-          type: array
-          items:
-            type: string
-          example: ["Dinner"]
-        dishTypes:
-          type: array
-          items:
-            type: string
-          example: ["pasta"]
     updateRecipeRequest:
       title: Update Recipe Request
       type: object
@@ -356,16 +336,6 @@ components:
         imagePath:
           type: string
           example: "https://cdn.example.com/user-uploads/recipes/abc.jpg"
-        mealTypes:
-          type: array
-          items:
-            type: string
-          example: ["Dinner"]
-        dishTypes:
-          type: array
-          items:
-            type: string
-          example: ["pasta"]
   securitySchemes:
     CognitoAuthorizer:
       type: apiKey

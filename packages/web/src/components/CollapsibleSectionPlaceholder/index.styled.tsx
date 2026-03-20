@@ -1,6 +1,19 @@
 import styled from '@emotion/styled';
 import { Box } from '@mui/material';
-import { shimmerStyles } from '../../utils/styles/shimmer'
+
+const shimmerStyles = {
+  background: 'linear-gradient(90deg, #f1f5f9 25%, #e5e7eb 50%, #f1f5f9 75%)',
+  backgroundSize: '200% 100%',
+  animation: 'shimmer 1.5s infinite linear',
+  '@keyframes shimmer': {
+    '0%': {
+      backgroundPosition: '200% 0',
+    },
+    '100%': {
+      backgroundPosition: '-200% 0',
+    },
+  },
+};
 
 export const SectionWrapper = styled(Box)({
   marginBottom: 2,

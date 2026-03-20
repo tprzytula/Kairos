@@ -1,6 +1,5 @@
 import { styled } from '@mui/material/styles'
 import { Box, Card } from '@mui/material'
-import { gradientTextStyles } from '../../utils/styles/gradientText'
 
 export const AppInfoCardContainer = styled(Box)({
   padding: '0.5rem 0 0.5rem 0',
@@ -57,7 +56,10 @@ export const BrandingSection = styled('div')({
 export const AppBranding = styled('div')(({ theme }) => ({
   fontSize: '1.2rem',
   fontWeight: '700',
-  ...gradientTextStyles('linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'),
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
   letterSpacing: '0.5px',
   transition: 'all 0.3s ease',
   lineHeight: '1.2',

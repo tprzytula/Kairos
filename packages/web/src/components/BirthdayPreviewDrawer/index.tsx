@@ -1,14 +1,13 @@
-import DrawerActionButton from '../DrawerActionButton'
+import { useCallback } from 'react'
+import { Button } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import dayjs from 'dayjs'
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types'
-import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import {
-  BIRTHDAY_GRADIENT,
   ContentContainer,
   DrawerHeader,
   DrawerHeaderLeft,
@@ -32,12 +31,17 @@ interface BirthdayPreviewDrawerProps {
 }
 
 const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPreviewDrawerProps) => {
-  const { handleEdit, handleDelete } = usePreviewDrawerActions({
-    item,
-    onEdit,
-    onDelete,
-    onClose,
-  })
+  const handleEdit = useCallback(() => {
+    if (!item) return
+    onEdit(item)
+    onClose()
+  }, [item, onEdit, onClose])
+
+  const handleDelete = useCallback(() => {
+    if (!item) return
+    onDelete(item.id)
+    onClose()
+  }, [item, onDelete, onClose])
 
   const birthdayDate = item
     ? `${item.day} ${MONTH_NAMES[item.month - 1]}`
@@ -64,10 +68,10 @@ const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPrev
       dragHandleContent={
         <DrawerHeader>
           <DrawerHeaderLeft>
-            <DrawerIconBox gradient={BIRTHDAY_GRADIENT}>
+            <DrawerIconBox>
               <CakeIcon />
             </DrawerIconBox>
-            <DrawerTitle gradient={BIRTHDAY_GRADIENT}>Birthday</DrawerTitle>
+            <DrawerTitle>Birthday</DrawerTitle>
           </DrawerHeaderLeft>
         </DrawerHeader>
       }
@@ -93,19 +97,38 @@ const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPrev
       </ContentContainer>
 
       <Footer>
-        <DrawerActionButton
-          gradient="linear-gradient(135deg, #ec4899 0%, #db2777 100%)"
-          icon={<EditIcon />}
-          label="Edit"
+        <Button
+          variant="contained"
+          fullWidth
+          startIcon={<EditIcon />}
           onClick={handleEdit}
-        />
-        <DrawerActionButton
+          sx={{
+            background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+            borderRadius: '10px',
+            textTransform: 'none',
+            fontWeight: 600,
+            py: 1.25,
+            boxShadow: 'none',
+            '&:hover': { boxShadow: 'none', opacity: 0.9 },
+          }}
+        >
+          Edit
+        </Button>
+        <Button
           variant="outlined"
-          icon={<DeleteIcon />}
-          label="Delete"
+          fullWidth
+          startIcon={<DeleteIcon />}
           onClick={handleDelete}
           color="error"
-        />
+          sx={{
+            borderRadius: '10px',
+            textTransform: 'none',
+            fontWeight: 600,
+            py: 1.25,
+          }}
+        >
+          Delete
+        </Button>
       </Footer>
     </DraggableBottomDrawer>
   )

@@ -1,6 +1,5 @@
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
-import { COLORS } from '../../constants/colors'
 
 export const FormContainer = styled(Box)({
   display: 'flex',
@@ -33,14 +32,14 @@ export const ImageUploadBox = styled(Box)({
   alignItems: 'center',
   justifyContent: 'center',
   height: '195px',
-  border: `2px dashed ${COLORS.orange.muted}`,
+  border: '2px dashed rgba(249, 115, 22, 0.4)',
   borderRadius: '12px',
   cursor: 'pointer',
   overflow: 'hidden',
   position: 'relative',
   '&:hover': {
-    borderColor: COLORS.orange.borderStrong,
-    background: COLORS.orange.bgSubtle,
+    borderColor: 'rgba(249, 115, 22, 0.8)',
+    background: 'rgba(249, 115, 22, 0.04)',
   },
 })
 

@@ -14,8 +14,6 @@ export interface IRecipe {
     externalLink?: string
     ingredients: string  // JSON-serialized IRecipeIngredient[]
     instructions?: string  // JSON-serialized string[]
-    mealTypes?: string  // JSON-serialized MealType[]
-    dishTypes?: string  // JSON-serialized RecipeDishType[]
     createdAt: string
     updatedAt: string
 }

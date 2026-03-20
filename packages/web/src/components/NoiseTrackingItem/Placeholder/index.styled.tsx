@@ -1,6 +1,16 @@
 import { styled } from '@mui/material/styles'
 import { Card, CardContent } from '@mui/material'
-import { shimmerKeyframes } from '../../../utils/styles/shimmer'
+
+const shimmer = `
+  @keyframes shimmer {
+    0% {
+      background-position: -200px 0;
+    }
+    100% {
+      background-position: calc(200px + 100%) 0;
+    }
+  }
+`;
 
 export const Container = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -43,7 +53,8 @@ export const TimeIcon = styled('div')(({ theme }) => ({
   flexShrink: 0,
   background: `linear-gradient(90deg, ${theme.palette.custom?.surfaces?.secondary || '#f1f5f9'} 0%, ${theme.palette.custom?.surfaces?.hover || '#f8fafc'} 50%, ${theme.palette.custom?.surfaces?.secondary || '#f1f5f9'} 100%)`,
   backgroundSize: '200px 100%',
-  animation: `${shimmerKeyframes} 1.5s infinite linear`,
+  animation: 'shimmer 1.5s infinite linear',
+  [shimmer]: '',
 }))
 
 export const AbsoluteTime = styled('div')(({ theme }) => ({
@@ -52,7 +63,8 @@ export const AbsoluteTime = styled('div')(({ theme }) => ({
   borderRadius: '4px',
   background: `linear-gradient(90deg, ${theme.palette.custom?.surfaces?.secondary || '#f1f5f9'} 0%, ${theme.palette.custom?.surfaces?.hover || '#f8fafc'} 50%, ${theme.palette.custom?.surfaces?.secondary || '#f1f5f9'} 100%)`,
   backgroundSize: '200px 100%',
-  animation: `${shimmerKeyframes} 1.5s infinite linear`,
+  animation: 'shimmer 1.5s infinite linear',
+  [shimmer]: '',
 }))
 
 export const RelativeTime = styled('div')(({ theme }) => ({
@@ -62,5 +74,6 @@ export const RelativeTime = styled('div')(({ theme }) => ({
   marginTop: '2px',
   background: `linear-gradient(90deg, ${theme.palette.custom?.surfaces?.secondary || '#f1f5f9'} 0%, ${theme.palette.custom?.surfaces?.hover || '#f8fafc'} 50%, ${theme.palette.custom?.surfaces?.secondary || '#f1f5f9'} 100%)`,
   backgroundSize: '200px 100%',
-  animation: `${shimmerKeyframes} 1.5s infinite linear`,
+  animation: 'shimmer 1.5s infinite linear',
+  [shimmer]: '',
 }))

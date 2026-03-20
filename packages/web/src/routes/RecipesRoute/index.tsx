@@ -6,7 +6,6 @@ import StandardLayout from '../../layout/standardLayout'
 import ModernPageHeader from '../../components/ModernPageHeader'
 import RecipeList from '../../components/RecipeList'
 import RecipeForm from '../../components/RecipeForm'
-import RecipeViewDrawer from '../../components/RecipeViewDrawer'
 import DraggableBottomDrawer from '../../components/DraggableBottomDrawer'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import { IRecipe } from '../../types/recipe'
@@ -19,16 +18,15 @@ import {
   DrawerIconBox,
   DrawerTitle,
   ContentContainer,
-} from '../../components/DrawerHeader/index.styled'
+} from '../../components/RecipeDrawer/index.styled'
 import { Container, ScrollableContainer } from './index.styled'
 import { useSearchParams, useNavigate } from 'react-router'
 
 const RecipesContent = () => {
-  const { recipes, removeRecipe } = useRecipeContext()
+  const { recipes } = useRecipeContext()
   const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<IRecipe | null>(null)
-  const [viewingRecipe, setViewingRecipe] = useState<IRecipe | null>(null)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
@@ -40,24 +38,10 @@ const RecipesContent = () => {
     }
   }, [searchParams, navigate])
 
-  const handleViewRecipe = useCallback((recipe: IRecipe) => {
-    setViewingRecipe(recipe)
-  }, [])
-
-  const handleCloseView = useCallback(() => {
-    setViewingRecipe(null)
-  }, [])
-
-  const handleViewToEdit = useCallback((recipe: IRecipe) => {
-    setViewingRecipe(null)
+  const handleEditRecipe = useCallback((recipe: IRecipe) => {
     setEditingRecipe(recipe)
     setIsFormOpen(true)
   }, [])
-
-  const handleDeleteFromView = useCallback(async (recipe: IRecipe) => {
-    setViewingRecipe(null)
-    await removeRecipe(recipe.id)
-  }, [removeRecipe])
 
   const handleFormDone = useCallback(() => {
     setEditingRecipe(null)
@@ -85,16 +69,12 @@ const RecipesContent = () => {
       <Container>
         <ScrollableContainer>
           <RecipeList
-            onViewRecipe={handleViewRecipe}
+            onEditRecipe={handleEditRecipe}
+            onUseRecipe={handleDrawerClose}
+            defaults={defaults}
           />
         </ScrollableContainer>
       </Container>
-      <RecipeViewDrawer
-        recipe={viewingRecipe}
-        onClose={handleCloseView}
-        onEdit={handleViewToEdit}
-        defaults={defaults}
-      />
       <DraggableBottomDrawer
         open={isFormOpen}
         onClose={handleDrawerClose}

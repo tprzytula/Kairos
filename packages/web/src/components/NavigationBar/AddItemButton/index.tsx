@@ -120,9 +120,9 @@ const AddItemButton = () => {
                 // Special case: navigate to shops with add mode parameter
                 navigate(`${Route.Shops}?mode=add`);
             } else if (location.pathname.match(/^\/groceries\/[^\/]+$/)) {
-                // Special case: grocery list - open add drawer via query param
+                // Special case: grocery list - extract shopId and navigate to add item
                 const shopId = location.pathname.split('/')[2];
-                navigate(`/groceries/${shopId}?openAdd=true`);
+                navigate(Route.AddGroceryItem.replace(':shopId', shopId));
             } else {
                 navigate(addItemRoute);
             }

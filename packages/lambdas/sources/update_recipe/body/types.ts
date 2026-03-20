@@ -13,6 +13,4 @@ export interface IRequestBody {
     instructions?: string[];
     imagePath?: string;
     externalLink?: string;
-    mealTypes?: string[];
-    dishTypes?: string[];
 }

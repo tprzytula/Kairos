@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from 'react'
-import { Box, Checkbox, Chip, FormControlLabel, Typography } from '@mui/material'
+import { useCallback } from 'react'
+import { Box, Button, Checkbox, Chip, FormControlLabel, Typography } from '@mui/material'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -7,9 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import dayjs from 'dayjs'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
-import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
-import DrawerActionButton from '../DrawerActionButton'
 import {
   ContentContainer,
   DescriptionText,
@@ -21,7 +19,6 @@ import {
   ItemName,
   MetaRow,
   NoDescriptionText,
-  TODO_GRADIENT,
 } from './index.styled'
 
 interface ToDoItemPreviewDrawerProps {
@@ -34,20 +31,23 @@ interface ToDoItemPreviewDrawerProps {
 }
 
 const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle, onDelete }: ToDoItemPreviewDrawerProps) => {
-  const onEditItem = useMemo(() => (todoItem: ITodoItem) => onEdit(todoItem.id), [onEdit])
-
-  const { handleEdit, handleDelete } = usePreviewDrawerActions({
-    item,
-    onEdit: onEditItem,
-    onDelete,
-    onClose,
-  })
+  const handleEdit = useCallback(() => {
+    if (!item) return
+    onEdit(item.id)
+    onClose()
+  }, [item, onEdit, onClose])
 
   const handleMarkDone = useCallback(() => {
     if (!item) return
     onMarkDone?.(item.id)
     onClose()
   }, [item, onMarkDone, onClose])
+
+  const handleDelete = useCallback(() => {
+    if (!item) return
+    onDelete?.(item.id)
+    onClose()
+  }, [item, onDelete, onClose])
 
   const steps = item?.steps ?? []
 
@@ -59,10 +59,10 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle
       dragHandleContent={
         <DrawerHeader>
           <DrawerHeaderLeft>
-            <DrawerIconBox gradient={TODO_GRADIENT}>
+            <DrawerIconBox>
               <AssignmentIcon />
             </DrawerIconBox>
-            <DrawerTitle gradient={TODO_GRADIENT}>Task Preview</DrawerTitle>
+            <DrawerTitle>Task Preview</DrawerTitle>
           </DrawerHeaderLeft>
           <Chip
             label={item?.isDone ? 'Done' : 'Pending'}
@@ -138,28 +138,58 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle
 
       <Footer>
         {!item?.isDone && onMarkDone && (
-          <DrawerActionButton
-            gradient="linear-gradient(135deg, #059669 0%, #047857 100%)"
-            icon={<CheckCircleIcon />}
-            label="Mark as Complete"
+          <Button
+            variant="contained"
+            fullWidth
+            startIcon={<CheckCircleIcon />}
             onClick={handleMarkDone}
-            sx={{ mb: 1 }}
-          />
+            sx={{
+              background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+              borderRadius: '10px',
+              textTransform: 'none',
+              fontWeight: 600,
+              py: 1.25,
+              boxShadow: 'none',
+              mb: 1,
+              '&:hover': { boxShadow: 'none', opacity: 0.9 },
+            }}
+          >
+            Mark as Complete
+          </Button>
         )}
-        <DrawerActionButton
-          gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-          icon={<EditIcon />}
-          label="Edit Task"
+        <Button
+          variant="contained"
+          fullWidth
+          startIcon={<EditIcon />}
           onClick={handleEdit}
-        />
-        <DrawerActionButton
+          sx={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: '10px',
+            textTransform: 'none',
+            fontWeight: 600,
+            py: 1.25,
+            boxShadow: 'none',
+            '&:hover': { boxShadow: 'none', opacity: 0.9 },
+          }}
+        >
+          Edit Task
+        </Button>
+        <Button
           variant="outlined"
-          icon={<DeleteIcon />}
-          label="Delete Task"
+          fullWidth
+          startIcon={<DeleteIcon />}
           onClick={handleDelete}
           color="error"
-          sx={{ mt: 1 }}
-        />
+          sx={{
+            borderRadius: '10px',
+            textTransform: 'none',
+            fontWeight: 600,
+            py: 1.25,
+            mt: 1,
+          }}
+        >
+          Delete Task
+        </Button>
       </Footer>
     </DraggableBottomDrawer>
   )

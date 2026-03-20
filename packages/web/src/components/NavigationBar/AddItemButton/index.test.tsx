@@ -91,13 +91,13 @@ describe('Given the AddItemButton component', () => {
       expect(button).not.toBeDisabled()
     })
 
-    it('should open add drawer via query param when clicked', () => {
+    it('should navigate to Add Grocery Item route when clicked', () => {
       renderWithProviders(<AddItemButton />)
-
+      
       const button = screen.getByRole('button')
       fireEvent.click(button)
-
-      expect(mockNavigate).toHaveBeenCalledWith('/groceries/:shopId?openAdd=true')
+      
+      expect(mockNavigate).toHaveBeenCalledWith(Route.AddGroceryItem)
     })
   })
 

@@ -24,8 +24,6 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       ...item,
       ingredients: JSON.parse(item.ingredients || "[]"),
       instructions: item.instructions ? JSON.parse(item.instructions) : undefined,
-      mealTypes: item.mealTypes ? JSON.parse(item.mealTypes) : undefined,
-      dishTypes: item.dishTypes ? JSON.parse(item.dishTypes) : undefined,
     }));
 
     return createResponse({

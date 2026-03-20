@@ -1,7 +1,5 @@
 import { createContext, useContext, useCallback, useMemo, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { MealType } from '../../enums/mealType'
-import { RecipeDishType } from '../../enums/recipeDishType'
 import { IRecipe, IRecipeIngredient } from '../../types/recipe'
 import { getRecipes, addRecipe as addRecipeApi, updateRecipe as updateRecipeApi, deleteRecipe } from '../../api/recipes'
 import { IState, IRecipeProviderProps } from './types'
@@ -11,7 +9,7 @@ const initialState: IState = {
   recipes: [],
   isLoading: false,
   fetchRecipes: async () => {},
-  addRecipe: async (_name, _ingredients, _imagePath?, _instructions?, _externalLink?, _mealTypes?, _dishTypes?) => {},
+  addRecipe: async (_name, _ingredients, _imagePath?, _instructions?, _externalLink?) => {},
   updateRecipe: async (_id, _fields) => {},
   removeRecipe: async () => {},
 }
@@ -43,10 +41,10 @@ export const RecipeProvider = ({ children }: IRecipeProviderProps) => {
     await query.refetch()
   }, [query.refetch])
 
-  const addRecipe = useCallback(async (name: string, ingredients: IRecipeIngredient[], imagePath?: string, instructions?: string[], externalLink?: string, mealTypes?: MealType[], dishTypes?: RecipeDishType[]) => {
+  const addRecipe = useCallback(async (name: string, ingredients: IRecipeIngredient[], imagePath?: string, instructions?: string[], externalLink?: string) => {
     if (!currentProject) return
 
-    const result = await addRecipeApi({ name, ingredients, imagePath, instructions, externalLink, mealTypes, dishTypes }, currentProject.id)
+    const result = await addRecipeApi({ name, ingredients, imagePath, instructions, externalLink }, currentProject.id)
     const newRecipe: IRecipe = {
       ...result,
       name,
@@ -54,14 +52,12 @@ export const RecipeProvider = ({ children }: IRecipeProviderProps) => {
       imagePath,
       instructions,
       externalLink,
-      mealTypes,
-      dishTypes,
       projectId: currentProject.id,
     }
     queryClient.setQueryData<IRecipe[]>(queryKey, (prev = []) => [...prev, newRecipe])
   }, [currentProject, queryClient])
 
-  const updateRecipe = useCallback(async (id: string, fields: { name?: string; ingredients?: IRecipeIngredient[]; instructions?: string[]; imagePath?: string; externalLink?: string; mealTypes?: MealType[]; dishTypes?: RecipeDishType[] }) => {
+  const updateRecipe = useCallback(async (id: string, fields: { name?: string; ingredients?: IRecipeIngredient[]; instructions?: string[]; imagePath?: string; externalLink?: string }) => {
     if (!currentProject) return
 
     await updateRecipeApi(id, fields, currentProject.id)

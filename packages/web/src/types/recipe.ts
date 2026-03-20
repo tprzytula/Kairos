@@ -1,6 +1,4 @@
 import { GroceryItemUnit } from '../enums/groceryItem'
-import { MealType } from '../enums/mealType'
-import { RecipeDishType } from '../enums/recipeDishType'
 
 export interface IRecipeIngredient {
     name: string
@@ -16,8 +14,6 @@ export interface IRecipe {
     externalLink?: string
     ingredients: IRecipeIngredient[]
     instructions?: string[]
-    mealTypes?: MealType[]
-    dishTypes?: RecipeDishType[]
     createdAt: string
     updatedAt: string
 }

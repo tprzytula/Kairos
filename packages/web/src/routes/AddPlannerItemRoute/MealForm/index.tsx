@@ -27,9 +27,17 @@ import {
 } from '../../../components/ItemForm/index.styled'
 import { Box } from '@mui/material'
 import dayjs from 'dayjs'
-import { PLACEHOLDER_GRADIENTS } from '../../../constants/placeholderGradients'
 
 type Mode = 'recipe' | 'custom'
+
+const GRADIENTS = [
+  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+  'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+  'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+  'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+  'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+]
 
 const MealTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
@@ -123,7 +131,7 @@ const RecipeThumbnailPlaceholder = styled(Box)<{ seed: number }>(({ seed }) => (
   width: '36px',
   height: '36px',
   borderRadius: '8px',
-  background: PLACEHOLDER_GRADIENTS[seed % PLACEHOLDER_GRADIENTS.length],
+  background: GRADIENTS[seed % GRADIENTS.length],
   flexShrink: 0,
   display: 'flex',
   alignItems: 'center',
@@ -162,7 +170,7 @@ const RecipePreviewImage = styled('img')({
 const RecipePreviewPlaceholder = styled(Box)<{ seed: number }>(({ seed }) => ({
   width: '100%',
   height: '100%',
-  background: PLACEHOLDER_GRADIENTS[seed % PLACEHOLDER_GRADIENTS.length],
+  background: GRADIENTS[seed % GRADIENTS.length],
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

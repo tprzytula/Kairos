@@ -73,19 +73,6 @@ export const MiniCardTitle = styled('div')(({ theme }) => ({
   letterSpacing: '0.05em',
 }))
 
-export const BirthdayCard = styled(MiniCard)({
-  cursor: 'pointer',
-  '&:before': {
-    background: 'linear-gradient(90deg, #ec4899 0%, #f093fb 100%)',
-  },
-})
-
-export const BirthdayCardIcon = styled(MiniCardIcon)({
-  '& .MuiSvgIcon-root': {
-    background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
-  },
-})
-
 export const MiniCardBody = styled('div')({
   flex: 1,
   display: 'flex',

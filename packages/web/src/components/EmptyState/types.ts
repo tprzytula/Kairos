@@ -1,8 +1,7 @@
-import { ReactElement, ReactNode } from 'react';
+import { ReactElement } from 'react';
 
 export interface EmptyStateProps {
-  icon?: ReactElement;
-  title?: string;
-  subtitle?: string;
-  children?: ReactNode;
+  icon: ReactElement;
+  title: string;
+  subtitle: string;
 }
