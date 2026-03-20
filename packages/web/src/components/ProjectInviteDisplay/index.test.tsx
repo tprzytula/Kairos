@@ -23,16 +23,18 @@ const renderComponent = (props = {}) => {
 }
 
 // Mock clipboard API
-Object.assign(navigator, {
-  clipboard: {
-    writeText: vi.fn(),
-  },
+Object.defineProperty(navigator, 'clipboard', {
+  value: { writeText: vi.fn() },
+  writable: true,
+  configurable: true,
 })
 
 // Mock Web Share API
 const mockShare = vi.fn()
-Object.assign(navigator, {
-  share: mockShare,
+Object.defineProperty(navigator, 'share', {
+  value: mockShare,
+  writable: true,
+  configurable: true,
 })
 
 describe('ProjectInviteDisplay component', () => {

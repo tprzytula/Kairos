@@ -61,7 +61,7 @@ describe('Given the BirthdayFormDialog component', () => {
     it('should show error when name is empty on submit', async () => {
       render(<BirthdayFormDialog open={true} onClose={vi.fn()} />)
       // Trigger via Enter key since button is disabled when name/day are empty
-      fireEvent.keyPress(screen.getByLabelText(/birth year/i), { key: 'Enter', code: 'Enter', charCode: 13 })
+      fireEvent.keyDown(screen.getByLabelText(/birth year/i), { key: 'Enter', code: 'Enter' })
       expect(await screen.findByText('Name is required')).toBeVisible()
       expect(mockAddBirthdayItem).not.toHaveBeenCalled()
     })
@@ -70,7 +70,7 @@ describe('Given the BirthdayFormDialog component', () => {
       render(<BirthdayFormDialog open={true} onClose={vi.fn()} />)
       fireEvent.change(screen.getByLabelText(/person's name/i), { target: { value: 'Alice' } })
       // Trigger via Enter key since button is disabled when day is empty
-      fireEvent.keyPress(screen.getByLabelText(/person's name/i), { key: 'Enter', code: 'Enter', charCode: 13 })
+      fireEvent.keyDown(screen.getByLabelText(/person's name/i), { key: 'Enter', code: 'Enter' })
       expect(await screen.findByText(/valid day/i)).toBeVisible()
     })
 

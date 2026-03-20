@@ -19,9 +19,15 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     setupFiles: ['../testSetup.ts'],
     css: false,
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        isolate: false,
+      },
+    },
     coverage: {
       provider: 'v8',
       reportsDirectory: '../.coverage',

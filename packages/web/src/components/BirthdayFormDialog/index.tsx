@@ -139,7 +139,7 @@ const BirthdayFormDialog: React.FC<BirthdayFormDialogProps> = ({ open, onClose, 
             label="Person's name"
             value={name}
             onChange={e => setName(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             disabled={isLoading}
             placeholder="e.g., Mom, John"
           />
@@ -163,7 +163,7 @@ const BirthdayFormDialog: React.FC<BirthdayFormDialogProps> = ({ open, onClose, 
               type="number"
               value={day}
               onChange={e => setDay(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyPress}
               disabled={isLoading}
               inputProps={{ min: 1, max: 31 }}
               placeholder="e.g., 15"
@@ -177,7 +177,7 @@ const BirthdayFormDialog: React.FC<BirthdayFormDialogProps> = ({ open, onClose, 
             type="number"
             value={birthYear}
             onChange={e => setBirthYear(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             disabled={isLoading}
             placeholder="e.g., 1990"
             helperText="Used to calculate age"
