@@ -62,3 +62,14 @@ export const NoMatchContainer = styled('div')({
   padding: '2rem 0',
   gap: '0.5rem',
 })
+
+export const FilterChipsContainer = styled('div')({
+  display: 'flex',
+  gap: '0.375rem',
+  overflowX: 'auto',
+  paddingBottom: '0.25rem',
+  scrollbarWidth: 'none',
+  '&::-webkit-scrollbar': {
+    display: 'none',
+  },
+})

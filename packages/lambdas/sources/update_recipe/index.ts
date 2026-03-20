@@ -23,9 +23,9 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    const { id, name, ingredients, instructions, imagePath, externalLink } = body;
+    const { id, name, ingredients, instructions, imagePath, externalLink, mealTypes, dishTypes } = body;
 
-    await updateRecipe(id, { name, ingredients, instructions, imagePath, externalLink });
+    await updateRecipe(id, { name, ingredients, instructions, imagePath, externalLink, mealTypes, dishTypes });
 
     return createResponse({
       statusCode: 200,

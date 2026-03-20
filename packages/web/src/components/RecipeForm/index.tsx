@@ -9,6 +9,8 @@ import {
   FormControl,
   Typography,
   CircularProgress,
+  Chip,
+  Box,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
@@ -33,6 +35,8 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { IRecipe, IRecipeIngredient } from '../../types/recipe'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
+import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
+import { RecipeDishType, RecipeDishTypeLabelMap, RecipeDishTypeOrder } from '../../enums/recipeDishType'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
@@ -119,6 +123,8 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   const { dispatch } = useAppState()
   const [name, setName] = useState(initialRecipe?.name ?? '')
   const [externalLink, setExternalLink] = useState(initialRecipe?.externalLink ?? '')
+  const [selectedMealTypes, setSelectedMealTypes] = useState<MealType[]>(initialRecipe?.mealTypes ?? [])
+  const [selectedDishTypes, setSelectedDishTypes] = useState<RecipeDishType[]>(initialRecipe?.dishTypes ?? [])
   const [ingredients, setIngredients] = useState<IngredientWithId[]>(
     (initialRecipe?.ingredients ?? [{ ...DEFAULT_INGREDIENT }]).map((ing) => ({ ...ing, _id: makeId() }))
   )
@@ -199,6 +205,18 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
       setInstructions((prevSteps) => arrayMove(prevSteps, from, to))
       return arrayMove(prev, from, to)
     })
+  }, [])
+
+  const toggleMealType = useCallback((type: MealType) => {
+    setSelectedMealTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    )
+  }, [])
+
+  const toggleDishType = useCallback((type: RecipeDishType) => {
+    setSelectedDishTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    )
   }, [])
 
   const handleImageClick = useCallback(() => {
@@ -282,11 +300,13 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
       const externalLinkValue = externalLink.trim() || undefined
       const validInstructions = instructions.map((s) => s.trim()).filter((s) => s.length > 0)
       const instructionsValue = validInstructions.length > 0 ? validInstructions : undefined
+      const mealTypesValue = selectedMealTypes.length > 0 ? selectedMealTypes : undefined
+      const dishTypesValue = selectedDishTypes.length > 0 ? selectedDishTypes : undefined
       if (initialRecipe) {
-        await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients, instructions: instructionsValue, imagePath: imagePathValue, externalLink: externalLinkValue })
+        await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients, instructions: instructionsValue, imagePath: imagePathValue, externalLink: externalLinkValue, mealTypes: mealTypesValue, dishTypes: dishTypesValue })
         showAlert({ description: 'Recipe updated', severity: 'success' }, dispatch)
       } else {
-        await addRecipe(trimmedName, validIngredients, imagePathValue, instructionsValue, externalLinkValue)
+        await addRecipe(trimmedName, validIngredients, imagePathValue, instructionsValue, externalLinkValue, mealTypesValue, dishTypesValue)
         showAlert({ description: 'Recipe added', severity: 'success' }, dispatch)
       }
       onDone()
@@ -295,7 +315,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
     } finally {
       setIsSaving(false)
     }
-  }, [name, externalLink, ingredients, instructions, imagePath, initialRecipe, addRecipe, updateRecipe, dispatch, onDone])
+  }, [name, externalLink, ingredients, instructions, imagePath, selectedMealTypes, selectedDishTypes, initialRecipe, addRecipe, updateRecipe, dispatch, onDone])
 
   return (
     <FormContainer>
@@ -348,6 +368,52 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
         placeholder="https://..."
         type="url"
       />
+
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <Typography variant="body2" fontWeight={600} color="text.secondary">
+          Meal Type
+        </Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
+          {MEAL_TYPE_ORDER.filter((t) => t !== MealType.Other).map((type) => (
+            <Chip
+              key={type}
+              label={type}
+              size="small"
+              variant={selectedMealTypes.includes(type) ? 'filled' : 'outlined'}
+              onClick={() => toggleMealType(type)}
+              sx={{
+                borderRadius: '8px',
+                ...(selectedMealTypes.includes(type)
+                  ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
+                  : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
+              }}
+            />
+          ))}
+        </Box>
+      </Box>
+
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <Typography variant="body2" fontWeight={600} color="text.secondary">
+          Dish Type
+        </Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
+          {RecipeDishTypeOrder.map((type) => (
+            <Chip
+              key={type}
+              label={RecipeDishTypeLabelMap[type]}
+              size="small"
+              variant={selectedDishTypes.includes(type) ? 'filled' : 'outlined'}
+              onClick={() => toggleDishType(type)}
+              sx={{
+                borderRadius: '8px',
+                ...(selectedDishTypes.includes(type)
+                  ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
+                  : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
+              }}
+            />
+          ))}
+        </Box>
+      </Box>
 
       <IngredientsSection>
         <Typography variant="body2" fontWeight={600} color="text.secondary">

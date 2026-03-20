@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { Box, Button, Checkbox, IconButton, Typography } from '@mui/material'
+import { Box, Button, Checkbox, Chip, IconButton, Typography } from '@mui/material'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit'
@@ -8,6 +8,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { IRecipe } from '../../types/recipe'
 import { IItemDefault } from '../../hooks/useItemDefaults/types'
 import { GroceryItemUnitLabelMap } from '../../enums/groceryItem'
+import { RecipeDishTypeLabelMap, RecipeDishType } from '../../enums/recipeDishType'
 import { findItemIcon } from '../ItemForm/components/ItemImage/utils'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import {
@@ -135,6 +136,39 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, onUseRecipe, defaults }: Re
             <OpenInNewIcon sx={{ fontSize: '0.95rem' }} />
             View original recipe
           </ExternalLinkRow>
+        )}
+
+        {recipe && ((recipe.mealTypes && recipe.mealTypes.length > 0) || (recipe.dishTypes && recipe.dishTypes.length > 0)) && (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
+            {recipe.mealTypes?.map((type) => (
+              <Chip
+                key={type}
+                label={type}
+                size="small"
+                sx={{
+                  background: 'rgba(102, 126, 234, 0.1)',
+                  color: '#667ee2',
+                  fontWeight: 500,
+                  fontSize: '0.75rem',
+                  height: '24px',
+                }}
+              />
+            ))}
+            {recipe.dishTypes?.map((type) => (
+              <Chip
+                key={type}
+                label={RecipeDishTypeLabelMap[type as RecipeDishType] ?? type}
+                size="small"
+                sx={{
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  color: '#059669',
+                  fontWeight: 500,
+                  fontSize: '0.75rem',
+                  height: '24px',
+                }}
+              />
+            ))}
+          </Box>
         )}
 
         {recipe && recipe.ingredients.length > 0 && (

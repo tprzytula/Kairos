@@ -76,9 +76,9 @@ describe('Given the RecipeItem component', () => {
     expect(screen.getByText(/2 steps/i)).toBeVisible()
   })
 
-  it('should render Use Recipe button', () => {
+  it('should render Add to List button', () => {
     render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
-    expect(screen.getByRole('button', { name: /use recipe/i })).toBeVisible()
+    expect(screen.getByRole('button', { name: /add to list/i })).toBeVisible()
   })
 
   it('should call onEdit when card tap area is clicked', () => {
@@ -92,9 +92,9 @@ describe('Given the RecipeItem component', () => {
     expect(screen.queryByText(/Eggs/)).not.toBeInTheDocument()
   })
 
-  it('should show ingredients when Use Recipe is clicked', () => {
+  it('should show ingredients when Add to List is clicked', () => {
     render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
-    fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
+    fireEvent.click(screen.getByRole('button', { name: /add to list/i }))
     expect(screen.getByText(/Pasta — 200/)).toBeVisible()
     expect(screen.getByText(/Eggs — 2/)).toBeVisible()
   })
@@ -105,25 +105,26 @@ describe('Given the RecipeItem component', () => {
   })
 
   describe('When shopId is provided', () => {
-    it('should enter ingredient selection mode when Use Recipe is clicked', () => {
+    it('should enter ingredient selection mode when Add to List is clicked', () => {
       render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
-      fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
-      expect(screen.getByRole('button', { name: /add to list/i })).toBeVisible()
+      fireEvent.click(screen.getByRole('button', { name: /add to list/i }))
       expect(screen.getByRole('button', { name: /cancel/i })).toBeVisible()
     })
 
     it('should exit selection mode when Cancel is clicked', () => {
       render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
-      fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
+      fireEvent.click(screen.getByRole('button', { name: /add to list/i }))
       fireEvent.click(screen.getByRole('button', { name: /cancel/i }))
-      expect(screen.getByRole('button', { name: /use recipe/i })).toBeVisible()
+      expect(screen.getByRole('button', { name: /add to list/i })).toBeVisible()
     })
 
     it('should call addGroceryItems with all ingredients on Add to List', async () => {
       ;(addGroceryItems as jest.Mock).mockResolvedValue(undefined)
       render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
-      fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
       fireEvent.click(screen.getByRole('button', { name: /add to list/i }))
+      // Now in selection mode, there are two "Add to List" buttons - get the one in the interactive area
+      const addButtons = screen.getAllByRole('button', { name: /add to list/i })
+      fireEvent.click(addButtons[addButtons.length - 1])
       await waitFor(() => expect(addGroceryItems).toHaveBeenCalledTimes(1))
       expect(addGroceryItems).toHaveBeenCalledWith(
         expect.arrayContaining([
@@ -138,8 +139,9 @@ describe('Given the RecipeItem component', () => {
     it('should show success alert after adding ingredients', async () => {
       ;(addGroceryItems as jest.Mock).mockResolvedValue(undefined)
       render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
-      fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
       fireEvent.click(screen.getByRole('button', { name: /add to list/i }))
+      const addButtons = screen.getAllByRole('button', { name: /add to list/i })
+      fireEvent.click(addButtons[addButtons.length - 1])
       await waitFor(() => expect(showAlert).toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'success' }),
         mockDispatch
@@ -149,8 +151,9 @@ describe('Given the RecipeItem component', () => {
     it('should show error alert when addGroceryItems fails', async () => {
       ;(addGroceryItems as jest.Mock).mockRejectedValue(new Error('Failed'))
       render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="shop-1" />)
-      fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
       fireEvent.click(screen.getByRole('button', { name: /add to list/i }))
+      const addButtons = screen.getAllByRole('button', { name: /add to list/i })
+      fireEvent.click(addButtons[addButtons.length - 1])
       await waitFor(() => expect(showAlert).toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'error' }),
         mockDispatch
@@ -159,31 +162,31 @@ describe('Given the RecipeItem component', () => {
   })
 
   describe('When shopId is "all" (needs shop selection)', () => {
-    it('should show shop selector when Use Recipe is clicked', () => {
+    it('should show shop selector when Add to List is clicked', () => {
       render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="all" />)
-      fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
+      fireEvent.click(screen.getByRole('button', { name: /add to list/i }))
       expect(screen.getByRole('button', { name: /continue/i })).toBeVisible()
     })
 
     it('should have Continue disabled when no shop is selected', () => {
       render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="all" />)
-      fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
+      fireEvent.click(screen.getByRole('button', { name: /add to list/i }))
       expect(screen.getByRole('button', { name: /continue/i })).toBeDisabled()
     })
 
     it('should cancel shop selection and return to default state', () => {
       render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} shopId="all" />)
-      fireEvent.click(screen.getByRole('button', { name: /use recipe/i }))
+      fireEvent.click(screen.getByRole('button', { name: /add to list/i }))
       fireEvent.click(screen.getByRole('button', { name: /cancel/i }))
-      expect(screen.getByRole('button', { name: /use recipe/i })).toBeVisible()
+      expect(screen.getByRole('button', { name: /add to list/i })).toBeVisible()
     })
   })
 
   describe('When no shops are available', () => {
-    it('should render Use Recipe button as disabled', () => {
+    it('should render Add to List button as disabled', () => {
       ;(useShopContext as jest.Mock).mockReturnValue({ shops: [] })
       render(<RecipeItem recipe={exampleRecipe} onEdit={mockOnEdit} onUseRecipe={mockOnUseRecipe} />)
-      expect(screen.getByRole('button', { name: /use recipe/i })).toBeDisabled()
+      expect(screen.getByRole('button', { name: /add to list/i })).toBeDisabled()
     })
   })
 
