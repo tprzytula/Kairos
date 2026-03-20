@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
+import { gradientTextStyles } from '../../utils/styles/gradientText'
 
 export const DrawerHeader = styled(Box)({
   display: 'flex',
@@ -34,10 +35,7 @@ export const DrawerIconBox = styled(Box)({
 export const DrawerTitle = styled('span')({
   fontSize: '1.1rem',
   fontWeight: '700',
-  background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  backgroundClip: 'text',
+  ...gradientTextStyles('linear-gradient(135deg, #ec4899 0%, #db2777 100%)'),
   letterSpacing: '0.3px',
 })
 
