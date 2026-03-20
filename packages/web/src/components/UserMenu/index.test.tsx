@@ -37,10 +37,7 @@ vi.mock('../../config/oidc', async () => ({
 
 // Mock window.location with getters/setters directly
 const mockHref = vi.fn()
-delete (window as any).location
-
-// Create a location mock with href getter/setter
-;(window as any).location = {
+const locationMock = {
   assign: vi.fn(),
   replace: vi.fn(),
   reload: vi.fn(),
@@ -49,6 +46,7 @@ delete (window as any).location
   get href() { return '' },
   set href(value: string) { mockHref(value) },
 }
+vi.stubGlobal('location', locationMock)
 
 // Mock dependencies used by UserMenu component
 vi.mock('../../providers/ProjectProvider', () => ({

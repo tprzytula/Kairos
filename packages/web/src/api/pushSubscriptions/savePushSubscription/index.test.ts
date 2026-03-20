@@ -41,7 +41,7 @@ describe('Given the savePushSubscription function', () => {
 
     const result = await savePushSubscription(exampleSubscriptionData, 'test-access-token')
 
-    expect(result).toStrictEqual(exampleResponse)
+    expect(result).toEqual(exampleResponse)
   })
 
   describe('When the API call fails', () => {

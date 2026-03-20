@@ -22,10 +22,17 @@ export default defineConfig({
     environment: 'happy-dom',
     setupFiles: ['../testSetup.ts'],
     css: false,
-    pool: 'threads',
+    pool: 'vmThreads',
     poolOptions: {
-      threads: {
-        isolate: false,
+      vmThreads: {
+        useAtomics: true,
+      },
+    },
+    deps: {
+      optimizer: {
+        web: {
+          enabled: true,
+        },
       },
     },
     coverage: {

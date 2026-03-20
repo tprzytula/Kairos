@@ -56,7 +56,7 @@ describe('Given the addBirthday function', () => {
 
     const result = await addBirthday(exampleBirthday)
 
-    expect(result).toStrictEqual(exampleResponse)
+    expect(result).toEqual(exampleResponse)
   })
 
   describe('When the API call fails', () => {

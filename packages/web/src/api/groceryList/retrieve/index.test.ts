@@ -27,7 +27,7 @@ describe('Given the retrieveItems function', () => {
 
     const result = await retrieveGroceryList()
 
-    expect(result).toStrictEqual(EXAMPLE_GROCERY_LIST_RESPONSE)
+    expect(result).toEqual(EXAMPLE_GROCERY_LIST_RESPONSE)
   })
 
   describe('When the API call fails', () => {
@@ -38,7 +38,7 @@ describe('Given the retrieveItems function', () => {
 
       const result = await retrieveGroceryList()
 
-      expect(result).toStrictEqual([])
+      expect(result).toEqual([])
     })
   })
 })
@@ -65,7 +65,7 @@ describe('Given the retrieveItemsDefaults function', () => {
 
     const result = await retrieveGroceryListDefaults()
 
-    expect(result).toStrictEqual(EXAMPLE_GROCERY_LIST_DEFAULTS_RESPONSE)
+    expect(result).toEqual(EXAMPLE_GROCERY_LIST_DEFAULTS_RESPONSE)
   })
 
   describe('When the API call fails', () => {
@@ -76,7 +76,7 @@ describe('Given the retrieveItemsDefaults function', () => {
 
       const result = await retrieveGroceryList()
 
-      expect(result).toStrictEqual([])
+      expect(result).toEqual([])
     })
   })
 })

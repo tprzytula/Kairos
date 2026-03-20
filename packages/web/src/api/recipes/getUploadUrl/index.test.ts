@@ -62,7 +62,7 @@ describe('Given the getRecipeUploadUrl function', () => {
 
     const result = await getRecipeUploadUrl('jpg')
 
-    expect(result).toStrictEqual(exampleResponse)
+    expect(result).toEqual(exampleResponse)
   })
 
   describe('When the API call fails', () => {

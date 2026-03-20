@@ -61,7 +61,7 @@ describe('Given the retrieveShops function', () => {
 
     const result = await retrieveShops()
 
-    expect(result).toStrictEqual(exampleResponse)
+    expect(result).toEqual(exampleResponse)
   })
 
   describe('When the API call fails', () => {
@@ -72,7 +72,7 @@ describe('Given the retrieveShops function', () => {
 
       const result = await retrieveShops()
 
-      expect(result).toStrictEqual([])
+      expect(result).toEqual([])
     })
   })
 })

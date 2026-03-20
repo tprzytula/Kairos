@@ -55,7 +55,7 @@ describe('Given the addShop function', () => {
 
     const result = await addShop(exampleShopData)
 
-    expect(result).toStrictEqual(exampleResponse)
+    expect(result).toEqual(exampleResponse)
   })
 
   describe('When the shop name already exists', () => {

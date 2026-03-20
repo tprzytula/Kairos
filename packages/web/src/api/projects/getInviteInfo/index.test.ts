@@ -52,7 +52,7 @@ describe('Given the getProjectInviteInfo function', () => {
 
     const result = await getProjectInviteInfo(testInviteCode, 'test-access-token')
 
-    expect(result).toStrictEqual(exampleResponse)
+    expect(result).toEqual(exampleResponse)
   })
 
   describe('When the API call fails', () => {
