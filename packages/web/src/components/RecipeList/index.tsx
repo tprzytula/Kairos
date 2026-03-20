@@ -3,6 +3,7 @@ import { Box, Typography, Skeleton } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import SearchIconMui from '@mui/icons-material/Search'
 import TuneIcon from '@mui/icons-material/Tune'
+import { COLORS } from '../../constants/colors'
 import { IRecipe } from '../../types/recipe'
 import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
 import { RecipeDishType } from '../../enums/recipeDishType'
@@ -144,7 +145,7 @@ const RecipeList = ({ onViewRecipe }: RecipeListProps) => {
         </RecipeGrid>
       ) : recipes.length === 0 ? (
         <EmptyStateContainer>
-          <MenuBookIcon sx={{ fontSize: '3rem', color: 'rgba(102, 126, 234, 0.4)' }} />
+          <MenuBookIcon sx={{ fontSize: '3rem', color: COLORS.purple.muted }} />
           <Typography variant="body1" fontWeight={600} color="text.secondary">
             No recipes yet
           </Typography>

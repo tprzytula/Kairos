@@ -43,6 +43,7 @@ import { getRecipeUploadUrl } from '../../api/recipes'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import FilterChip from '../FilterChip'
 import { FormContainer, IngredientRow, IngredientsSection, FormActions, ImageUploadBox, ImagePreview } from './index.styled'
+import { COLORS } from '../../constants/colors'
 import { SECTION_GRADIENTS } from '../../constants/sectionColors'
 import ImageCropModal from './ImageCropModal'
 import { getCroppedBlob } from './cropUtils'
@@ -457,7 +458,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           size="small"
           startIcon={<AddIcon />}
           onClick={handleAddIngredient}
-          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: '#f97316', color: '#f97316', '&:hover': { borderColor: '#f43f5e', color: '#f43f5e', background: 'rgba(249,115,22,0.05)' } }}
+          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: COLORS.orange.primary, color: COLORS.orange.primary, '&:hover': { borderColor: COLORS.rose.primary, color: COLORS.rose.primary, background: COLORS.orange.bgHover } }}
         >
           Add Ingredient
         </Button>
@@ -498,7 +499,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           size="small"
           startIcon={<AddIcon />}
           onClick={handleAddInstruction}
-          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: '#f97316', color: '#f97316', '&:hover': { borderColor: '#f43f5e', color: '#f43f5e', background: 'rgba(249,115,22,0.05)' } }}
+          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: COLORS.orange.primary, color: COLORS.orange.primary, '&:hover': { borderColor: COLORS.rose.primary, color: COLORS.rose.primary, background: COLORS.orange.bgHover } }}
         >
           Add Step
         </Button>
@@ -533,7 +534,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
             borderRadius: '8px',
             background: SECTION_GRADIENTS.recipe,
             boxShadow: 'none',
-            '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
+            '&:hover': { boxShadow: `0 4px 12px ${COLORS.orange.muted}` },
           }}
         >
           {isSaving ? 'Saving...' : (initialRecipe ? 'Update' : 'Save Recipe')}
