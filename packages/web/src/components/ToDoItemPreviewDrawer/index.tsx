@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Box, Button, Checkbox, Chip, FormControlLabel, Typography } from '@mui/material'
+import { Box, Checkbox, Chip, FormControlLabel, Typography } from '@mui/material'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -8,6 +8,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import dayjs from 'dayjs'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
+import DrawerActionButton from '../DrawerActionButton'
 import {
   ContentContainer,
   DescriptionText,
@@ -138,58 +139,28 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle
 
       <Footer>
         {!item?.isDone && onMarkDone && (
-          <Button
-            variant="contained"
-            fullWidth
-            startIcon={<CheckCircleIcon />}
+          <DrawerActionButton
+            gradient="linear-gradient(135deg, #059669 0%, #047857 100%)"
+            icon={<CheckCircleIcon />}
+            label="Mark as Complete"
             onClick={handleMarkDone}
-            sx={{
-              background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-              borderRadius: '10px',
-              textTransform: 'none',
-              fontWeight: 600,
-              py: 1.25,
-              boxShadow: 'none',
-              mb: 1,
-              '&:hover': { boxShadow: 'none', opacity: 0.9 },
-            }}
-          >
-            Mark as Complete
-          </Button>
+            sx={{ mb: 1 }}
+          />
         )}
-        <Button
-          variant="contained"
-          fullWidth
-          startIcon={<EditIcon />}
+        <DrawerActionButton
+          gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+          icon={<EditIcon />}
+          label="Edit Task"
           onClick={handleEdit}
-          sx={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            borderRadius: '10px',
-            textTransform: 'none',
-            fontWeight: 600,
-            py: 1.25,
-            boxShadow: 'none',
-            '&:hover': { boxShadow: 'none', opacity: 0.9 },
-          }}
-        >
-          Edit Task
-        </Button>
-        <Button
+        />
+        <DrawerActionButton
           variant="outlined"
-          fullWidth
-          startIcon={<DeleteIcon />}
+          icon={<DeleteIcon />}
+          label="Delete Task"
           onClick={handleDelete}
           color="error"
-          sx={{
-            borderRadius: '10px',
-            textTransform: 'none',
-            fontWeight: 600,
-            py: 1.25,
-            mt: 1,
-          }}
-        >
-          Delete Task
-        </Button>
+          sx={{ mt: 1 }}
+        />
       </Footer>
     </DraggableBottomDrawer>
   )
