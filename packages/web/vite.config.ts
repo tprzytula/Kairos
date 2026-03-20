@@ -23,11 +23,7 @@ export default defineConfig({
     setupFiles: ['../testSetup.ts'],
     css: false,
     pool: 'vmThreads',
-    poolOptions: {
-      vmThreads: {
-        useAtomics: true,
-      },
-    },
+    useAtomics: true,
     deps: {
       optimizer: {
         web: {
