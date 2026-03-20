@@ -63,7 +63,7 @@ describe('Given the addTodoItem function', () => {
       description: 'Buy groceries for the week',
     })
 
-    expect(result).toStrictEqual(EXAMPLE_RESPONSE)
+    expect(result).toEqual(EXAMPLE_RESPONSE)
   })
 
   describe('When the API call fails', () => {

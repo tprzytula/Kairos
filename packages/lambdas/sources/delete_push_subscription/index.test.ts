@@ -1,9 +1,9 @@
 import { handler } from "./index";
 import { DynamoDBTable, deleteItem } from "@kairos-lambdas-libs/dynamodb";
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
-  ...jest.requireActual("@kairos-lambdas-libs/dynamodb"),
-  deleteItem: jest.fn(),
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
+  ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
+  deleteItem: vi.fn(),
 }));
 
 describe("delete_push_subscription Lambda", () => {
@@ -11,8 +11,8 @@ describe("delete_push_subscription Lambda", () => {
   const mockEndpoint = "https://fcm.googleapis.com/fcm/send/test-endpoint";
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    console.error = jest.fn();
+    vi.clearAllMocks();
+    console.error = vi.fn();
   });
 
   describe("when user is not authenticated", () => {
@@ -77,7 +77,7 @@ describe("delete_push_subscription Lambda", () => {
         }
       } as any;
 
-      jest.mocked(deleteItem).mockResolvedValue({ $metadata: { httpStatusCode: 200 } });
+      vi.mocked(deleteItem).mockResolvedValue({ $metadata: { httpStatusCode: 200 } });
 
       const response = await handler(event, {} as any, {} as any);
       expect(response.statusCode).toBe(200);
@@ -104,7 +104,7 @@ describe("delete_push_subscription Lambda", () => {
         }
       } as any;
 
-      jest.mocked(deleteItem).mockResolvedValue({ $metadata: { httpStatusCode: 200 } });
+      vi.mocked(deleteItem).mockResolvedValue({ $metadata: { httpStatusCode: 200 } });
 
       const response = await handler(event, {} as any, {} as any);
       expect(deleteItem).toHaveBeenCalledWith({
@@ -128,7 +128,7 @@ describe("delete_push_subscription Lambda", () => {
         }
       } as any;
 
-      jest.mocked(deleteItem).mockRejectedValue(new Error("DynamoDB connection failed"));
+      vi.mocked(deleteItem).mockRejectedValue(new Error("DynamoDB connection failed"));
 
       const response = await handler(event, {} as any, {} as any);
       expect(response.statusCode).toBe(500);

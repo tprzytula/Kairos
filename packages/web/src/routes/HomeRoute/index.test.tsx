@@ -1,3 +1,4 @@
+import { Mock, MockedFunction } from 'vitest'
 import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -18,29 +19,29 @@ import { useAppState } from '../../providers/AppStateProvider'
 import { ProjectProvider, useProjectContext } from '../../providers/ProjectProvider'
 import { IProject, ProjectRole } from '../../types/project'
 
-jest.mock('../../providers/AppStateProvider', () => ({
-  ...jest.requireActual('../../providers/AppStateProvider'),
-  useAppState: jest.fn(),
+vi.mock('../../providers/AppStateProvider', async () => ({
+  ...(await vi.importActual('../../providers/AppStateProvider')),
+  useAppState: vi.fn(),
 }))
 
-jest.mock('../../providers/ProjectProvider', () => ({
-  ...jest.requireActual('../../providers/ProjectProvider'),
-  useProjectContext: jest.fn(),
+vi.mock('../../providers/ProjectProvider', async () => ({
+  ...(await vi.importActual('../../providers/ProjectProvider')),
+  useProjectContext: vi.fn(),
 }))
 
-jest.mock('../../api/groceryList')
-jest.mock('../../api/toDoList')
-jest.mock('../../api/noiseTracking')
-jest.mock('../../api/birthdays/retrieve')
-jest.mock('../../api/mealPlans')
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(() => jest.fn()),
+vi.mock('../../api/groceryList')
+vi.mock('../../api/toDoList')
+vi.mock('../../api/noiseTracking')
+vi.mock('../../api/birthdays/retrieve')
+vi.mock('../../api/mealPlans')
+vi.mock('react-router', async () => ({
+  ...(await vi.importActual('react-router')),
+  useNavigate: vi.fn(() => vi.fn()),
 }))
 
 // Mock the useAuth hook for DashboardHeader and ProjectProvider
-jest.mock('react-oidc-context', () => ({
-  useAuth: jest.fn(() => ({
+vi.mock('react-oidc-context', async () => ({
+  useAuth: vi.fn(() => ({
     user: { access_token: 'mock-access-token' },
     isAuthenticated: true,
     isLoading: false,
@@ -48,7 +49,7 @@ jest.mock('react-oidc-context', () => ({
   }))
 }))
 
-const mockUseProjectContext = useProjectContext as jest.MockedFunction<typeof useProjectContext>
+const mockUseProjectContext = useProjectContext as MockedFunction<typeof useProjectContext>
 
 const MOCK_PROJECT: IProject = {
   id: 'test-project-id',
@@ -66,28 +67,28 @@ describe('Given the HomeRoute component', () => {
       projects: [MOCK_PROJECT],
       currentProject: MOCK_PROJECT,
       isLoading: false,
-      fetchProjects: jest.fn(),
-      createProject: jest.fn(),
-      joinProject: jest.fn(),
-      switchProject: jest.fn(),
-      getProjectInviteInfo: jest.fn(),
+      fetchProjects: vi.fn(),
+      createProject: vi.fn(),
+      joinProject: vi.fn(),
+      switchProject: vi.fn(),
+      getProjectInviteInfo: vi.fn(),
     })
     
-    jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
-    jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
-    jest.spyOn(BirthdayAPI, 'retrieveBirthdays').mockResolvedValue([])
-    jest.spyOn(MealPlanAPI, 'getMealPlans').mockResolvedValue([])
+    vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
+    vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+    vi.spyOn(BirthdayAPI, 'retrieveBirthdays').mockResolvedValue([])
+    vi.spyOn(MealPlanAPI, 'getMealPlans').mockResolvedValue([])
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should retrieve all lists', async () => {
-    const groceryListSpy = jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-    const toDoListSpy = jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
-    const noiseListSpy = jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+    const groceryListSpy = vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+    const toDoListSpy = vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
+    const noiseListSpy = vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
 
     await act(async () => {
       renderComponent()
@@ -135,7 +136,7 @@ describe('Given the HomeRoute component', () => {
       { id: '5', name: 'Cheese', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
     ]
 
-    jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
+    vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
 
     await act(async () => {
       renderComponent()
@@ -152,9 +153,9 @@ describe('Given the HomeRoute component', () => {
 
   describe('Noise recordings layout behavior', () => {
     it('should not render grid layout when no noise recordings exist', async () => {
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
 
       await act(async () => {
         renderComponent()
@@ -177,9 +178,9 @@ describe('Given the HomeRoute component', () => {
         { timestamp: today.getTime() + 2 * 60 * 60 * 1000 }
       ]
 
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
 
       await act(async () => {
         renderComponent()
@@ -203,7 +204,7 @@ describe('Given the HomeRoute component', () => {
         { id: '3', name: 'Item 3', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
       ]
 
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
 
       await act(async () => {
         renderComponent()
@@ -230,7 +231,7 @@ describe('Given the HomeRoute component', () => {
         { id: '7', name: 'Item 7', quantity: 1, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', toBeRemoved: false, shopId: 'test-shop-1' },
       ]
 
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
 
       await act(async () => {
         renderComponent()
@@ -261,7 +262,7 @@ describe('Given the HomeRoute component', () => {
         shopId: 'test-shop-1',
       }))
 
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
 
       await act(async () => {
         renderComponent()
@@ -289,7 +290,7 @@ describe('Given the HomeRoute component', () => {
       { id: '3', name: 'Future Task', isDone: false, dueDate: todayMidnight.getTime() + 2 * 86400000 },
     ]
 
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockToDoList)
+    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockToDoList)
 
     await act(async () => {
       renderComponent()
@@ -307,7 +308,7 @@ describe('Given the HomeRoute component', () => {
     const today = new Date()
     const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
 
-    jest.spyOn(MealPlanAPI, 'getMealPlans').mockResolvedValue([
+    vi.spyOn(MealPlanAPI, 'getMealPlans').mockResolvedValue([
       { id: '1', projectId: 'test-project-id', date: todayStr, recipeName: 'Spaghetti Bolognese', createdAt: '', updatedAt: '' }
     ])
 
@@ -326,7 +327,7 @@ describe('Given the HomeRoute component', () => {
       { id: '2', name: 'Banana', quantity: 3, unit: GroceryItemUnit.UNIT, imagePath: '/banana.png', shopId: 'test-shop-1' },
     ]
 
-    jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
+    vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
 
     await act(async () => {
       renderComponent()
@@ -381,7 +382,7 @@ describe('Given the HomeRoute component', () => {
     const today = new Date()
     const nextMonth = today.getMonth() + 2 // +1 for 0-index, +1 for next month
 
-    jest.spyOn(BirthdayAPI, 'retrieveBirthdays').mockResolvedValue([
+    vi.spyOn(BirthdayAPI, 'retrieveBirthdays').mockResolvedValue([
       { id: '1', name: 'John Doe', month: nextMonth > 12 ? nextMonth - 12 : nextMonth, day: 1 }
     ])
 
@@ -407,7 +408,7 @@ describe('Given the HomeRoute component', () => {
       { timestamp: weekAgo.getTime() }, // Week ago (last 30 days)
     ]
 
-    jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
+    vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
 
     await act(async () => {
       renderComponent()
@@ -431,11 +432,11 @@ describe('Given the HomeRoute component', () => {
 
   describe('When API calls fail', () => {
     it('should display error messages in console', async () => {
-      const errorSpy = jest.spyOn(console, 'error')
+      const errorSpy = vi.spyOn(console, 'error')
 
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockRejectedValue(new Error('Grocery API failed'))
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockRejectedValue(new Error('ToDo API failed'))
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockRejectedValue(new Error('Noise API failed'))
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockRejectedValue(new Error('Grocery API failed'))
+      vi.spyOn(ToDoAPI, 'retrieveToDoList').mockRejectedValue(new Error('ToDo API failed'))
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockRejectedValue(new Error('Noise API failed'))
 
       await act(async () => {
         renderComponent()
@@ -452,12 +453,13 @@ describe('Given the HomeRoute component', () => {
   describe('Due date calculations', () => {
     beforeEach(() => {
       // Mock current date to a fixed value for consistent testing
-      jest.useFakeTimers()
-      jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
+      // shouldAdvanceTime: true allows waitFor/promises to still work
+      vi.useFakeTimers({ shouldAdvanceTime: true })
+      vi.setSystemTime(new Date('2024-01-15T12:00:00Z'))
     })
 
     afterEach(() => {
-      jest.useRealTimers()
+      vi.useRealTimers()
     })
 
     it('should show overdue task with overdue label', async () => {
@@ -469,9 +471,9 @@ describe('Given the HomeRoute component', () => {
         dueDate: new Date('2024-01-10T12:00:00Z').getTime() // 5 days ago
       }
 
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([overdueItem])
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+      vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([overdueItem])
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
 
       await act(async () => {
         renderComponent()
@@ -492,9 +494,9 @@ describe('Given the HomeRoute component', () => {
         dueDate: new Date('2024-01-15T12:00:00Z').getTime() // Same moment
       }
 
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([todayItem])
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+      vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([todayItem])
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
 
       await act(async () => {
         renderComponent()
@@ -515,9 +517,9 @@ describe('Given the HomeRoute component', () => {
         dueDate: new Date('2024-01-16T12:00:00Z').getTime() // Next day
       }
 
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([tomorrowItem])
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+      vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([tomorrowItem])
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
 
       await act(async () => {
         renderComponent()
@@ -538,9 +540,9 @@ describe('Given the HomeRoute component', () => {
         dueDate: new Date('2024-01-29T12:00:00Z').getTime() // 14 days later
       }
 
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([weekItem])
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+      vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([weekItem])
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
 
       await act(async () => {
         renderComponent()
@@ -560,9 +562,9 @@ describe('Given the HomeRoute component', () => {
         dueDate: new Date('2024-03-15T12:00:00Z').getTime() // 60 days later
       }
 
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([monthItem])
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+      vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([monthItem])
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
 
       await act(async () => {
         renderComponent()
@@ -582,9 +584,9 @@ describe('Given the HomeRoute component', () => {
         dueDate: undefined
       }
 
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([noDateItem])
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+      vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([noDateItem])
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
 
       await act(async () => {
         renderComponent()
@@ -606,7 +608,7 @@ describe('Given the HomeRoute component', () => {
         { timestamp: today.getTime() + 4 * 60 * 60 * 1000 }, // Today at 4pm  
       ]
 
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
 
       await act(async () => {
         renderComponent()
@@ -653,7 +655,7 @@ describe('Given the HomeRoute component', () => {
         { timestamp: today.getTime() + 2 * 60 * 60 * 1000 },
       ]
 
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
 
       await act(async () => {
         renderComponent()
@@ -696,7 +698,7 @@ describe('Given the HomeRoute component', () => {
         { timestamp: weekAgo.getTime() }, // Outside of 7 days range
       ]
 
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
 
       await act(async () => {
         renderComponent()
@@ -721,8 +723,8 @@ describe('Given the HomeRoute component', () => {
 
   describe('planner mini-cards data', () => {
     it('should show multiple overdue tasks in the task list', async () => {
-      jest.useFakeTimers()
-      jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
+      vi.useFakeTimers({ shouldAdvanceTime: true })
+      vi.setSystemTime(new Date('2024-01-15T12:00:00Z'))
 
       const overdueTasks = [
         { id: '1', name: 'Old Task 1', isDone: false, dueDate: new Date('2024-01-10T12:00:00Z').getTime() },
@@ -730,9 +732,9 @@ describe('Given the HomeRoute component', () => {
         { id: '3', name: 'Old Task 3', isDone: false, dueDate: new Date('2024-01-12T12:00:00Z').getTime() },
       ]
 
-      jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(overdueTasks)
-      jest.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
-      jest.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+      vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(overdueTasks)
+      vi.spyOn(GroceryAPI, 'retrieveGroceryList').mockResolvedValue([])
+      vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue([])
 
       await act(async () => {
         renderComponent()
@@ -745,14 +747,14 @@ describe('Given the HomeRoute component', () => {
         expect(screen.getByText('1 more task')).toBeInTheDocument()
       })
 
-      jest.useRealTimers()
+      vi.useRealTimers()
     })
 
     it('should show birthday that is today', async () => {
-      jest.useFakeTimers()
-      jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
+      vi.useFakeTimers({ shouldAdvanceTime: true })
+      vi.setSystemTime(new Date('2024-01-15T12:00:00Z'))
 
-      jest.spyOn(BirthdayAPI, 'retrieveBirthdays').mockResolvedValue([
+      vi.spyOn(BirthdayAPI, 'retrieveBirthdays').mockResolvedValue([
         { id: '1', name: 'Happy Person', month: 1, day: 15 }
       ])
 
@@ -765,11 +767,11 @@ describe('Given the HomeRoute component', () => {
         expect(screen.getByText('Today!')).toBeInTheDocument()
       })
 
-      jest.useRealTimers()
+      vi.useRealTimers()
     })
 
     it('should not show a meal for a different day', async () => {
-      jest.spyOn(MealPlanAPI, 'getMealPlans').mockResolvedValue([
+      vi.spyOn(MealPlanAPI, 'getMealPlans').mockResolvedValue([
         { id: '1', projectId: 'test-project-id', date: '2020-01-01', recipeName: 'Old Meal', createdAt: '', updatedAt: '' }
       ])
 
@@ -786,11 +788,11 @@ describe('Given the HomeRoute component', () => {
 })
 
 const renderComponent = () => {
-  jest.mocked(useAppState).mockReturnValue({
+  vi.mocked(useAppState).mockReturnValue({
     state: {
       ...initialState,
     },
-    dispatch: jest.fn(),
+    dispatch: vi.fn(),
   })
 
   const queryClient = createTestQueryClient()

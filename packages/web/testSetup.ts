@@ -1,5 +1,6 @@
-import '@testing-library/jest-dom'
-import jestFetchMock from 'jest-fetch-mock'
+import '@testing-library/jest-dom/vitest'
+import createFetchMock from 'vitest-fetch-mock'
+import { vi } from 'vitest'
 import './__mocks__/serviceWorkerMock'
 
 import { TextEncoder } from 'node:util'
@@ -17,17 +18,17 @@ Object.defineProperty(window, 'crypto', {
 // Mock window.matchMedia for PWA detection
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation(query => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   })),
 })
 
-
-jestFetchMock.enableMocks()
+const fetchMock = createFetchMock(vi)
+fetchMock.enableMocks()

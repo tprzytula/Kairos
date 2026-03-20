@@ -48,7 +48,7 @@ describe('Given the getBody function', () => {
         });
 
         it('should log the error', () => {
-            const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+            const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
             
             getBody('invalid JSON');
 

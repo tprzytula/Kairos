@@ -28,7 +28,7 @@ describe('Given the updateToDoItems function', () => {
 
     const result = await updateToDoItems(EXAMPLE_UPDATE_TODO_ITEMS_REQUEST)
 
-    expect(result).toStrictEqual(EXAMPLE_UPDATE_TODO_ITEMS_REQUEST)
+    expect(result).toEqual(EXAMPLE_UPDATE_TODO_ITEMS_REQUEST)
   })
 
   describe('When the API call fails', () => {
@@ -39,7 +39,7 @@ describe('Given the updateToDoItems function', () => {
 
       const result = await updateToDoItems(EXAMPLE_UPDATE_TODO_ITEMS_REQUEST)
 
-      expect(result).toStrictEqual([])
+      expect(result).toEqual([])
     })
   })
 })

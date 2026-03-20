@@ -1,8 +1,9 @@
+import { Mock } from 'vitest';
 import * as executor from './index';
 import * as tracker from '../../tracker';
 import { Migration } from '../types';
 
-jest.mock('../../tracker');
+vi.mock('../../tracker');
 
 describe('Migration Executor Functions', () => {
   let mockMigration: Migration;
@@ -11,10 +12,10 @@ describe('Migration Executor Functions', () => {
     mockMigration = {
       id: '001',
       name: 'Test Migration',
-      execute: jest.fn().mockResolvedValue(undefined),
+      execute: vi.fn().mockResolvedValue(undefined),
     };
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('generateMigrationContent', () => {
@@ -30,7 +31,7 @@ describe('Migration Executor Functions', () => {
 
   describe('executeMigration', () => {
     it('should skip already executed migration', async () => {
-      jest.mocked(tracker.isMigrationExecuted).mockResolvedValue(true);
+      vi.mocked(tracker.isMigrationExecuted).mockResolvedValue(true);
 
       const result = await executor.executeMigration(mockMigration);
 
@@ -40,8 +41,8 @@ describe('Migration Executor Functions', () => {
     });
 
     it('should execute migration successfully', async () => {
-      jest.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
-      jest.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
+      vi.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
+      vi.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
 
       const result = await executor.executeMigration(mockMigration);
 
@@ -53,8 +54,8 @@ describe('Migration Executor Functions', () => {
     });
 
     it('should fail when checksum validation fails', async () => {
-      jest.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
-      jest.mocked(tracker.validateMigrationChecksum).mockResolvedValue(false);
+      vi.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
+      vi.mocked(tracker.validateMigrationChecksum).mockResolvedValue(false);
 
       const result = await executor.executeMigration(mockMigration);
 
@@ -64,9 +65,9 @@ describe('Migration Executor Functions', () => {
     });
 
     it('should handle migration execution errors', async () => {
-      jest.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
-      jest.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
-      (mockMigration.execute as jest.Mock).mockRejectedValue(new Error('Execution failed'));
+      vi.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
+      vi.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
+      (mockMigration.execute as Mock).mockRejectedValue(new Error('Execution failed'));
 
       const result = await executor.executeMigration(mockMigration);
 

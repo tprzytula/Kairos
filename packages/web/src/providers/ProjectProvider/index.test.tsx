@@ -1,3 +1,4 @@
+import { Mock, MockedFunction } from 'vitest'
 import React from 'react'
 import { render, screen, waitFor, act } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -5,30 +6,30 @@ import { ProjectProvider, useProjectContext } from './ProjectProvider'
 import { retrieveUserProjects, createProject, joinProject, getProjectInviteInfo } from '../../api/projects'
 import { getUserPreferences, updateUserPreferences } from '../../api/userPreferences'
 
-const mockUseAuth = jest.fn()
+const mockUseAuth = vi.fn()
 
-jest.mock('react-oidc-context', () => ({
+vi.mock('react-oidc-context', () => ({
   useAuth: () => mockUseAuth(),
 }))
 
-jest.mock('../../api/projects', () => ({
-  retrieveUserProjects: jest.fn(),
-  createProject: jest.fn(),
-  joinProject: jest.fn(),
-  getProjectInviteInfo: jest.fn(),
+vi.mock('../../api/projects', () => ({
+  retrieveUserProjects: vi.fn(),
+  createProject: vi.fn(),
+  joinProject: vi.fn(),
+  getProjectInviteInfo: vi.fn(),
 }))
 
-jest.mock('../../api/userPreferences', () => ({
-  getUserPreferences: jest.fn(),
-  updateUserPreferences: jest.fn(),
+vi.mock('../../api/userPreferences', () => ({
+  getUserPreferences: vi.fn(),
+  updateUserPreferences: vi.fn(),
 }))
 
-const mockRetrieveUserProjects = retrieveUserProjects as jest.MockedFunction<typeof retrieveUserProjects>
-const mockCreateProject = createProject as jest.MockedFunction<typeof createProject>
-const mockJoinProject = joinProject as jest.MockedFunction<typeof joinProject>
-const mockGetProjectInviteInfo = getProjectInviteInfo as jest.MockedFunction<typeof getProjectInviteInfo>
-const mockGetUserPreferences = getUserPreferences as jest.MockedFunction<typeof getUserPreferences>
-const mockUpdateUserPreferences = updateUserPreferences as jest.MockedFunction<typeof updateUserPreferences>
+const mockRetrieveUserProjects = retrieveUserProjects as MockedFunction<typeof retrieveUserProjects>
+const mockCreateProject = createProject as MockedFunction<typeof createProject>
+const mockJoinProject = joinProject as MockedFunction<typeof joinProject>
+const mockGetProjectInviteInfo = getProjectInviteInfo as MockedFunction<typeof getProjectInviteInfo>
+const mockGetUserPreferences = getUserPreferences as MockedFunction<typeof getUserPreferences>
+const mockUpdateUserPreferences = updateUserPreferences as MockedFunction<typeof updateUserPreferences>
 
 const createTestQueryClient = () =>
   new QueryClient({ defaultOptions: { queries: { retry: false } } })
@@ -57,7 +58,7 @@ const renderWithProvider = () => {
 
 describe('ProjectProvider', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       user: {

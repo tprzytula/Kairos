@@ -1,17 +1,19 @@
+import { vi } from 'vitest'
+
 // Mock service worker for testing
 export const mockServiceWorker = {
-  register: jest.fn().mockResolvedValue({
+  register: vi.fn().mockResolvedValue({
     installing: null,
     waiting: null,
     active: null,
-    addEventListener: jest.fn(),
-    update: jest.fn().mockResolvedValue(undefined),
+    addEventListener: vi.fn(),
+    update: vi.fn().mockResolvedValue(undefined),
   }),
-  getRegistration: jest.fn().mockResolvedValue(null),
-  ready: jest.fn().mockResolvedValue({}),
+  getRegistration: vi.fn().mockResolvedValue(null),
+  ready: vi.fn().mockResolvedValue({}),
   controller: null,
-  addEventListener: jest.fn(),
-  removeEventListener: jest.fn(),
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
 }
 
 // Mock navigator.serviceWorker

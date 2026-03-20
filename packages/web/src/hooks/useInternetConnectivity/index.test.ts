@@ -19,7 +19,7 @@ describe('useInternetConnectivity', () => {
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should initialize with navigator.onLine value', () => {

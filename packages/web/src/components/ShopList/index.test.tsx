@@ -1,14 +1,15 @@
+import { Mock } from 'vitest'
 import { render, screen } from "@testing-library/react";
 import ShopList from ".";
 import { useShopContext } from "../../providers/ShopProvider";
 import { useNavigate } from "react-router";
 
-jest.mock("../../providers/ShopProvider");
-jest.mock("react-router", () => ({
-  useNavigate: jest.fn(),
+vi.mock("../../providers/ShopProvider");
+vi.mock("react-router", () => ({
+  useNavigate: vi.fn(),
 }));
-jest.mock("../SwipeableList", () => {
-  return function MockSwipeableList({ list, component: Component }: any) {
+vi.mock("../SwipeableList", () => ({
+  default: function MockSwipeableList({ list, component: Component }: any) {
     return (
       <div data-testid="swipeable-list">
         {list.map((item: any) => (
@@ -18,14 +19,14 @@ jest.mock("../SwipeableList", () => {
         ))}
       </div>
     );
-  };
-});
+  }
+}));
 
 describe("Given the ShopList component", () => {
   beforeEach(() => {
     mockShopContext();
-    const mockNavigate = jest.fn();
-    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+    const mockNavigate = vi.fn();
+    (useNavigate as Mock).mockReturnValue(mockNavigate);
   });
 
   it("should render all shops in the list", () => {
@@ -52,10 +53,10 @@ describe("Given the ShopList component", () => {
   describe("When the shops list is empty", () => {
     it("should render without errors", () => {
       mockShopContext();
-      const mockNavigate = jest.fn();
-      (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+      const mockNavigate = vi.fn();
+      (useNavigate as Mock).mockReturnValue(mockNavigate);
       
-      render(<ShopList shops={[]} onDelete={jest.fn()} onEdit={jest.fn()} />);
+      render(<ShopList shops={[]} onDelete={vi.fn()} onEdit={vi.fn()} />);
       
       expect(screen.getByTestId("swipeable-list")).toBeVisible();
       expect(screen.queryAllByTestId("shop-item")).toHaveLength(0);
@@ -64,13 +65,13 @@ describe("Given the ShopList component", () => {
 
   describe("When the shops list is loading", () => {
     it("should render the loading placeholder", () => {
-      (useShopContext as jest.Mock).mockReturnValue({
+      (useShopContext as Mock).mockReturnValue({
         currentShop: null,
-        setCurrentShop: jest.fn(),
+        setCurrentShop: vi.fn(),
         isLoading: true,
       });
       
-      render(<ShopList shops={[]} onDelete={jest.fn()} onEdit={jest.fn()} />);
+      render(<ShopList shops={[]} onDelete={vi.fn()} onEdit={vi.fn()} />);
 
       expect(screen.getByLabelText('Loading shops')).toBeInTheDocument();
       expect(screen.getAllByLabelText('Shop item placeholder')).toHaveLength(4);
@@ -82,16 +83,16 @@ const renderShopList = () => {
   render(
     <ShopList 
       shops={EXAMPLE_SHOPS} 
-      onDelete={jest.fn()} 
-      onEdit={jest.fn()} 
+      onDelete={vi.fn()} 
+      onEdit={vi.fn()} 
     />
   );
 };
 
 const mockShopContext = () => {
-  (useShopContext as jest.Mock).mockReturnValue({
+  (useShopContext as Mock).mockReturnValue({
     currentShop: null,
-    setCurrentShop: jest.fn(),
+    setCurrentShop: vi.fn(),
     isLoading: false,
   });
 };

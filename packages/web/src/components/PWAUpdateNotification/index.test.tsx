@@ -9,12 +9,12 @@ const mockUsePWAUpdate = {
   isUpdating: false,
   updateError: null as string | null,
   isOnline: true,
-  installUpdate: jest.fn(),
-  dismissUpdate: jest.fn(),
-  checkForUpdate: jest.fn(),
+  installUpdate: vi.fn(),
+  dismissUpdate: vi.fn(),
+  checkForUpdate: vi.fn(),
 }
 
-jest.mock('../../hooks/usePWAUpdate', () => ({
+vi.mock('../../hooks/usePWAUpdate', () => ({
   usePWAUpdate: () => mockUsePWAUpdate,
 }))
 
@@ -28,7 +28,7 @@ const renderWithTheme = (component: React.ReactElement) => {
 
 describe('PWAUpdateNotification', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUsePWAUpdate.isUpdateAvailable = false
     mockUsePWAUpdate.isUpdating = false
     mockUsePWAUpdate.updateError = null

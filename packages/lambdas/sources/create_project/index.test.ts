@@ -6,16 +6,16 @@ import { DynamoDBTable } from "@kairos-lambdas-libs/dynamodb/enums";
 import { ICreateProjectRequestBody } from "./body/types";
 import { ProjectRole } from "@kairos-lambdas-libs/dynamodb/types/projects";
 
-jest.mock("./body", () => ({
-  getBody: jest.fn(),
+vi.mock("./body", async () => ({
+  getBody: vi.fn(),
 }));
 
-jest.mock("./utils", () => ({
-  generateInviteCode: jest.fn(),
-  validateProjectLimit: jest.fn(),
+vi.mock("./utils", async () => ({
+  generateInviteCode: vi.fn(),
+  validateProjectLimit: vi.fn(),
 }));
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
   DynamoDBTable: {
     PROJECT_MEMBERS: "ProjectMembers",
     PROJECTS: "Projects",
@@ -23,20 +23,20 @@ jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
   DynamoDBIndex: {
     PROJECT_MEMBERS_USER_PROJECTS: "UserProjectsIndex",
   },
-  query: jest.fn(),
-  putItem: jest.fn(),
+  query: vi.fn(),
+  putItem: vi.fn(),
 }));
 
-jest.mock("node:crypto", () => ({
-  randomUUID: jest.fn(() => "uuid-1234"),
+vi.mock("node:crypto", async () => ({
+  randomUUID: vi.fn(() => "uuid-1234"),
 }));
 
 describe("Given the create_project lambda handler", () => {
   beforeEach(() => {
-    jest.mocked(generateInviteCode).mockReturnValue("ABC123");
-    jest.mocked(validateProjectLimit).mockResolvedValue(true);
-    jest.mocked(query).mockResolvedValue([]);
-    jest.mocked(putItem).mockResolvedValue({
+    vi.mocked(generateInviteCode).mockReturnValue("ABC123");
+    vi.mocked(validateProjectLimit).mockResolvedValue(true);
+    vi.mocked(query).mockResolvedValue([]);
+    vi.mocked(putItem).mockResolvedValue({
       $metadata: {},
       Attributes: undefined,
       ConsumedCapacity: undefined,
@@ -45,7 +45,7 @@ describe("Given the create_project lambda handler", () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("When user is not authenticated", () => {
@@ -59,7 +59,7 @@ describe("Given the create_project lambda handler", () => {
 
   describe("When body is invalid", () => {
     it("should return status 400", async () => {
-      jest.mocked(getBody).mockReturnValue(null);
+      vi.mocked(getBody).mockReturnValue(null);
 
       const result = await runHandler({ userId: "user-123", body: "invalid" });
 
@@ -70,8 +70,8 @@ describe("Given the create_project lambda handler", () => {
 
   describe("When user has reached project limit", () => {
     it("should return status 400", async () => {
-      jest.mocked(getBody).mockReturnValue(EXAMPLE_PROJECT_REQUEST);
-      jest.mocked(validateProjectLimit).mockResolvedValue(false);
+      vi.mocked(getBody).mockReturnValue(EXAMPLE_PROJECT_REQUEST);
+      vi.mocked(validateProjectLimit).mockResolvedValue(false);
 
       const result = await runHandler({ userId: "user-123", body: JSON.stringify(EXAMPLE_PROJECT_REQUEST) });
 
@@ -87,7 +87,7 @@ describe("Given the create_project lambda handler", () => {
         isPersonal: true,
       };
 
-      jest.mocked(getBody).mockReturnValue(personalProjectRequest);
+      vi.mocked(getBody).mockReturnValue(personalProjectRequest);
 
       const result = await runHandler({ userId: "user-123", body: JSON.stringify(personalProjectRequest) });
 
@@ -116,7 +116,7 @@ describe("Given the create_project lambda handler", () => {
 
   describe("When creating a shared project", () => {
     it("should create project with generated UUID and invite code", async () => {
-      jest.mocked(getBody).mockReturnValue(EXAMPLE_PROJECT_REQUEST);
+      vi.mocked(getBody).mockReturnValue(EXAMPLE_PROJECT_REQUEST);
 
       const result = await runHandler({ userId: "user-123", body: JSON.stringify(EXAMPLE_PROJECT_REQUEST) });
 
@@ -143,7 +143,7 @@ describe("Given the create_project lambda handler", () => {
     });
 
     it("should create project member entry for owner", async () => {
-      jest.mocked(getBody).mockReturnValue(EXAMPLE_PROJECT_REQUEST);
+      vi.mocked(getBody).mockReturnValue(EXAMPLE_PROJECT_REQUEST);
 
       await runHandler({ userId: "user-123", body: JSON.stringify(EXAMPLE_PROJECT_REQUEST) });
 
@@ -160,8 +160,8 @@ describe("Given the create_project lambda handler", () => {
 
   describe("When database operation fails", () => {
     it("should return status 500", async () => {
-      jest.mocked(getBody).mockReturnValue(EXAMPLE_PROJECT_REQUEST);
-      jest.mocked(putItem).mockRejectedValue(new Error("Database error"));
+      vi.mocked(getBody).mockReturnValue(EXAMPLE_PROJECT_REQUEST);
+      vi.mocked(putItem).mockRejectedValue(new Error("Database error"));
 
       const result = await runHandler({ userId: "user-123", body: JSON.stringify(EXAMPLE_PROJECT_REQUEST) });
 
@@ -172,8 +172,8 @@ describe("Given the create_project lambda handler", () => {
 
   describe("When checking existing projects fails", () => {
     it("should return status 500", async () => {
-      jest.mocked(getBody).mockReturnValue(EXAMPLE_PROJECT_REQUEST);
-      jest.mocked(query).mockRejectedValue(new Error("Query error"));
+      vi.mocked(getBody).mockReturnValue(EXAMPLE_PROJECT_REQUEST);
+      vi.mocked(query).mockRejectedValue(new Error("Query error"));
 
       const result = await runHandler({ userId: "user-123", body: JSON.stringify(EXAMPLE_PROJECT_REQUEST) });
 

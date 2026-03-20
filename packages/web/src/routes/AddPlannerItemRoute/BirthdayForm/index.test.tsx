@@ -1,33 +1,34 @@
+import { Mock } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import BirthdayForm from './index'
 import { useBirthdayContext } from '../../../providers/BirthdayProvider'
 
-const mockNavigate = jest.fn()
+const mockNavigate = vi.fn()
 
-jest.mock('react-router', () => ({
+vi.mock('react-router', () => ({
   useNavigate: () => mockNavigate,
 }))
 
-jest.mock('../../../providers/BirthdayProvider', () => ({
-  useBirthdayContext: jest.fn(),
+vi.mock('../../../providers/BirthdayProvider', () => ({
+  useBirthdayContext: vi.fn(),
 }))
 
-jest.mock('../../../components/ItemForm/index.styled', () => ({
+vi.mock('../../../components/ItemForm/index.styled', () => ({
   FormContainer: ({ children }: any) => <div>{children}</div>,
   FormCard: ({ children }: any) => <div>{children}</div>,
   FormContent: ({ children }: any) => <div>{children}</div>,
   FormFieldsContainer: ({ children }: any) => <div>{children}</div>,
 }))
 
-const mockAddBirthdayItem = jest.fn()
+const mockAddBirthdayItem = vi.fn()
 
 beforeEach(() => {
-  jest.clearAllMocks()
-  ;(useBirthdayContext as jest.Mock).mockReturnValue({
+  vi.clearAllMocks()
+  ;(useBirthdayContext as Mock).mockReturnValue({
     addBirthdayItem: mockAddBirthdayItem,
-    updateBirthdayItem: jest.fn(),
-    removeBirthdayItem: jest.fn(),
-    refetchBirthdays: jest.fn(),
+    updateBirthdayItem: vi.fn(),
+    removeBirthdayItem: vi.fn(),
+    refetchBirthdays: vi.fn(),
     birthdays: [],
     isLoading: false,
   })

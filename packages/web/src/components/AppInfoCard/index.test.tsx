@@ -3,18 +3,21 @@ import { ThemeProvider } from '@mui/material/styles'
 import { createTheme } from '@mui/material/styles'
 import AppInfoCard from './index'
 
+import { useVersion } from '../../hooks/useVersion'
+import { useProjectContext } from '../../providers/ProjectProvider'
+
 // Mock the useVersion hook
-jest.mock('../../hooks/useVersion', () => ({
-  useVersion: jest.fn()
+vi.mock('../../hooks/useVersion', () => ({
+  useVersion: vi.fn()
 }))
 
 // Mock the useProjectContext hook
-jest.mock('../../providers/ProjectProvider', () => ({
-  useProjectContext: jest.fn()
+vi.mock('../../providers/ProjectProvider', () => ({
+  useProjectContext: vi.fn()
 }))
 
-const mockUseVersion = require('../../hooks/useVersion').useVersion
-const mockUseProjectContext = require('../../providers/ProjectProvider').useProjectContext
+const mockUseVersion = vi.mocked(useVersion)
+const mockUseProjectContext = vi.mocked(useProjectContext)
 
 const theme = createTheme()
 
@@ -28,7 +31,7 @@ const renderWithTheme = (component: React.ReactElement) => {
 
 describe('AppInfoCard', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     
     // Default mock for version hook
     mockUseVersion.mockReturnValue({
@@ -46,11 +49,11 @@ describe('AppInfoCard', () => {
       },
       projects: [],
       isLoading: false,
-      createProject: jest.fn(),
-      joinProject: jest.fn(),
-      switchProject: jest.fn(),
-      fetchProjects: jest.fn(),
-      getProjectInviteInfo: jest.fn()
+      createProject: vi.fn(),
+      joinProject: vi.fn(),
+      switchProject: vi.fn(),
+      fetchProjects: vi.fn(),
+      getProjectInviteInfo: vi.fn()
     })
   })
 
@@ -64,11 +67,11 @@ describe('AppInfoCard', () => {
         },
         projects: [],
         isLoading: false,
-        createProject: jest.fn(),
-        joinProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn(),
-        getProjectInviteInfo: jest.fn()
+        createProject: vi.fn(),
+        joinProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn(),
+        getProjectInviteInfo: vi.fn()
       })
 
       renderWithTheme(<AppInfoCard />)
@@ -86,11 +89,11 @@ describe('AppInfoCard', () => {
         },
         projects: [],
         isLoading: false,
-        createProject: jest.fn(),
-        joinProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn(),
-        getProjectInviteInfo: jest.fn()
+        createProject: vi.fn(),
+        joinProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn(),
+        getProjectInviteInfo: vi.fn()
       })
 
       renderWithTheme(<AppInfoCard />)
@@ -104,11 +107,11 @@ describe('AppInfoCard', () => {
         currentProject: null,
         projects: [],
         isLoading: true,
-        createProject: jest.fn(),
-        joinProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn(),
-        getProjectInviteInfo: jest.fn()
+        createProject: vi.fn(),
+        joinProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn(),
+        getProjectInviteInfo: vi.fn()
       })
 
       renderWithTheme(<AppInfoCard />)
@@ -299,11 +302,11 @@ describe('AppInfoCard', () => {
         },
         projects: [],
         isLoading: false,
-        createProject: jest.fn(),
-        joinProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn(),
-        getProjectInviteInfo: jest.fn()
+        createProject: vi.fn(),
+        joinProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn(),
+        getProjectInviteInfo: vi.fn()
       })
 
       renderWithTheme(<AppInfoCard />)

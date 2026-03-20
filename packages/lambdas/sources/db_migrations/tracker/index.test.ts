@@ -2,16 +2,16 @@ import * as tracker from './index';
 import { DynamoDBTable, getItem, putItem, scan } from '@kairos-lambdas-libs/dynamodb';
 import { MigrationRecord, LastMigrationRecord } from './types';
 
-jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
-  ...jest.requireActual('@kairos-lambdas-libs/dynamodb'),
-  getItem: jest.fn(),
-  putItem: jest.fn(),
-  scan: jest.fn(),
+vi.mock('@kairos-lambdas-libs/dynamodb', async () => ({
+  ...(await vi.importActual('@kairos-lambdas-libs/dynamodb')),
+  getItem: vi.fn(),
+  putItem: vi.fn(),
+  scan: vi.fn(),
 }));
 
 describe('Migration Tracker Functions', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('getExecutedMigrations', () => {
@@ -21,7 +21,7 @@ describe('Migration Tracker Functions', () => {
         { id: '002', name: 'Test Migration 2', executedAt: '2024-01-02T00:00:00Z', checksum: 'hash2' },
       ];
       
-      jest.mocked(scan).mockResolvedValue(mockMigrations);
+      vi.mocked(scan).mockResolvedValue(mockMigrations);
 
       const result = await tracker.getExecutedMigrations();
 
@@ -32,8 +32,8 @@ describe('Migration Tracker Functions', () => {
     });
 
     it('should return empty array when table does not exist', async () => {
-      jest.mocked(scan).mockRejectedValue(new Error('Table not found'));
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      vi.mocked(scan).mockRejectedValue(new Error('Table not found'));
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation();
 
       const result = await tracker.getExecutedMigrations();
 
@@ -51,7 +51,7 @@ describe('Migration Tracker Functions', () => {
         checksum: 'hash1',
       };
 
-      jest.mocked(getItem).mockResolvedValue(mockMigration);
+      vi.mocked(getItem).mockResolvedValue(mockMigration);
 
       const result = await tracker.getMigration('001');
 
@@ -63,8 +63,8 @@ describe('Migration Tracker Functions', () => {
     });
 
     it('should return null when migration is not found', async () => {
-      jest.mocked(getItem).mockRejectedValue(new Error('Not found'));
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      vi.mocked(getItem).mockRejectedValue(new Error('Not found'));
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation();
 
       const result = await tracker.getMigration('001');
 
@@ -76,7 +76,7 @@ describe('Migration Tracker Functions', () => {
   describe('recordMigration', () => {
     it('should record a migration with checksum', async () => {
       const mockDate = '2024-01-01T00:00:00.000Z';
-      jest.spyOn(Date.prototype, 'toISOString').mockReturnValue(mockDate);
+      vi.spyOn(Date.prototype, 'toISOString').mockReturnValue(mockDate);
 
       await tracker.recordMigration('001', 'Test Migration', 'migration content');
 
@@ -120,7 +120,7 @@ describe('Migration Tracker Functions', () => {
         checksum: 'hash1',
       };
 
-      jest.mocked(getItem).mockResolvedValue(mockMigration);
+      vi.mocked(getItem).mockResolvedValue(mockMigration);
 
       const result = await tracker.isMigrationExecuted('001');
 
@@ -128,7 +128,7 @@ describe('Migration Tracker Functions', () => {
     });
 
     it('should return false when migration does not exist', async () => {
-      jest.mocked(getItem).mockResolvedValue(null);
+      vi.mocked(getItem).mockResolvedValue(null);
 
       const result = await tracker.isMigrationExecuted('001');
 
@@ -138,7 +138,7 @@ describe('Migration Tracker Functions', () => {
 
   describe('validateMigrationChecksum', () => {
     it('should return true when migration does not exist yet', async () => {
-      jest.mocked(getItem).mockResolvedValue(null);
+      vi.mocked(getItem).mockResolvedValue(null);
 
       const result = await tracker.validateMigrationChecksum('001', 'content');
 
@@ -155,7 +155,7 @@ describe('Migration Tracker Functions', () => {
         checksum,
       };
 
-      jest.mocked(getItem).mockResolvedValue(mockMigration);
+      vi.mocked(getItem).mockResolvedValue(mockMigration);
 
       const result = await tracker.validateMigrationChecksum('001', content);
 
@@ -170,7 +170,7 @@ describe('Migration Tracker Functions', () => {
         checksum: 'different-hash',
       };
 
-      jest.mocked(getItem).mockResolvedValue(mockMigration);
+      vi.mocked(getItem).mockResolvedValue(mockMigration);
 
       const result = await tracker.validateMigrationChecksum('001', 'content');
 
@@ -188,7 +188,7 @@ describe('Migration Tracker Functions', () => {
         totalExecuted: 2,
       };
 
-      jest.mocked(getItem).mockResolvedValue(mockLastMigration);
+      vi.mocked(getItem).mockResolvedValue(mockLastMigration);
 
       const result = await tracker.getLastExecutedMigration();
 
@@ -200,8 +200,8 @@ describe('Migration Tracker Functions', () => {
     });
 
     it('should return null when last migration record does not exist', async () => {
-      jest.mocked(getItem).mockRejectedValue(new Error('Not found'));
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      vi.mocked(getItem).mockRejectedValue(new Error('Not found'));
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation();
 
       const result = await tracker.getLastExecutedMigration();
 
@@ -218,8 +218,8 @@ describe('Migration Tracker Functions', () => {
       ];
       const mockDate = '2024-01-02T12:00:00.000Z';
 
-      jest.mocked(scan).mockResolvedValue(mockExecutedMigrations);
-      jest.spyOn(Date.prototype, 'toISOString').mockReturnValue(mockDate);
+      vi.mocked(scan).mockResolvedValue(mockExecutedMigrations);
+      vi.spyOn(Date.prototype, 'toISOString').mockReturnValue(mockDate);
 
       await tracker.updateLastExecutedMigration('002', 'Migration 2');
 

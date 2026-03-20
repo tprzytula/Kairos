@@ -31,16 +31,16 @@ const mockProjectContext = {
   projects: mockProjects,
   currentProject: mockProjects[0],
   isLoading: false,
-  createProject: jest.fn(),
-  joinProject: jest.fn(),
-  switchProject: jest.fn().mockResolvedValue(undefined),
-  fetchProjects: jest.fn(),
-  getProjectInviteInfo: jest.fn()
+  createProject: vi.fn(),
+  joinProject: vi.fn(),
+  switchProject: vi.fn().mockResolvedValue(undefined),
+  fetchProjects: vi.fn(),
+  getProjectInviteInfo: vi.fn()
 }
 
-const mockUseProjectContext = jest.fn()
+const mockUseProjectContext = vi.fn()
 
-jest.mock('../../providers/ProjectProvider', () => ({
+vi.mock('../../providers/ProjectProvider', () => ({
   useProjectContext: () => mockUseProjectContext(),
 }))
 
@@ -54,7 +54,7 @@ const renderProjectSelector = (props = {}) => {
 
 describe('ProjectSelector', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUseProjectContext.mockReturnValue(mockProjectContext)
   })
 
@@ -88,7 +88,7 @@ describe('ProjectSelector', () => {
   })
 
   it('should call onProjectSelect callback when provided', () => {
-    const onProjectSelect = jest.fn()
+    const onProjectSelect = vi.fn()
     renderProjectSelector({ onProjectSelect })
 
     const select = screen.getByRole('combobox')

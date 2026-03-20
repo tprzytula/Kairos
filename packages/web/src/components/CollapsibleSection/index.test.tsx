@@ -77,7 +77,7 @@ describe('CollapsibleSection', () => {
   })
 
   it('should handle controlled state', async () => {
-    const mockToggle = jest.fn()
+    const mockToggle = vi.fn()
     
     render(
       <CollapsibleSection

@@ -9,14 +9,14 @@ const mockAuthState = {
   user: null,
 }
 
-const mockUseAuth = jest.fn(() => mockAuthState)
+const mockUseAuth = vi.fn(() => mockAuthState)
 
-jest.mock('react-oidc-context', () => ({
+vi.mock('react-oidc-context', () => ({
   useAuth: () => mockUseAuth(),
 }))
 
 // Mock LoginScreen component
-jest.mock('../LoginScreen', () => {
+vi.mock('../LoginScreen', () => {
   return {
     __esModule: true,
     default: () => <div data-testid="login-screen">Login Screen</div>,
@@ -25,7 +25,7 @@ jest.mock('../LoginScreen', () => {
 
 describe('ProtectedRoute', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     Object.assign(mockAuthState, {
       isLoading: false,
       isAuthenticated: false,

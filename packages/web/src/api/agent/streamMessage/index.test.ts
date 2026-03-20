@@ -11,30 +11,30 @@ function makeMockBody(sseChunks: string[]) {
   const encoded = sseChunks.map(c => encoder.encode(c))
   let index = 0
   const reader = {
-    read: jest.fn(async () => {
+    read: vi.fn(async () => {
       if (index < encoded.length) {
         return { done: false, value: encoded[index++] }
       }
       return { done: true, value: undefined }
     }),
-    releaseLock: jest.fn(),
+    releaseLock: vi.fn(),
   }
   return { getReader: () => reader, _reader: reader }
 }
 
 describe('Given the streamAgentMessage function', () => {
   afterEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   it('should POST to /agent/stream with Authorization and X-Project-ID headers', async () => {
-    const fetchSpy = jest.spyOn(global, 'fetch').mockResolvedValue({
+    const fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: true,
       status: 200,
       body: makeMockBody(['data: {"type":"done"}\n\n']),
     } as any)
 
-    await streamAgentMessage('Hello', 'access-token-123', jest.fn(), undefined, [], 'test-project-id')
+    await streamAgentMessage('Hello', 'access-token-123', vi.fn(), undefined, [], 'test-project-id')
 
     expect(fetchSpy).toHaveBeenCalledWith('/agent/stream', {
       method: 'POST',
@@ -49,13 +49,13 @@ describe('Given the streamAgentMessage function', () => {
   })
 
   it('should omit Authorization header when no accessToken is provided', async () => {
-    const fetchSpy = jest.spyOn(global, 'fetch').mockResolvedValue({
+    const fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: true,
       status: 200,
       body: makeMockBody(['data: {"type":"done"}\n\n']),
     } as any)
 
-    await streamAgentMessage('Hello', undefined, jest.fn(), undefined, [])
+    await streamAgentMessage('Hello', undefined, vi.fn(), undefined, [])
 
     expect(fetchSpy).toHaveBeenCalledWith('/agent/stream', expect.objectContaining({
       headers: { 'Content-Type': 'application/json' },
@@ -63,13 +63,13 @@ describe('Given the streamAgentMessage function', () => {
   })
 
   it('should omit X-Project-ID header when no projectId is provided', async () => {
-    const fetchSpy = jest.spyOn(global, 'fetch').mockResolvedValue({
+    const fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: true,
       status: 200,
       body: makeMockBody(['data: {"type":"done"}\n\n']),
     } as any)
 
-    await streamAgentMessage('Hello', 'token', jest.fn(), undefined, [])
+    await streamAgentMessage('Hello', 'token', vi.fn(), undefined, [])
 
     expect(fetchSpy).toHaveBeenCalledWith('/agent/stream', expect.objectContaining({
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer token' },
@@ -77,7 +77,7 @@ describe('Given the streamAgentMessage function', () => {
   })
 
   it('should call onChunk for each text_delta event', async () => {
-    jest.spyOn(global, 'fetch').mockResolvedValue({
+    vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: true,
       status: 200,
       body: makeMockBody([
@@ -87,7 +87,7 @@ describe('Given the streamAgentMessage function', () => {
       ]),
     } as any)
 
-    const onChunk = jest.fn()
+    const onChunk = vi.fn()
     await streamAgentMessage('Hi', 'token', onChunk)
 
     expect(onChunk).toHaveBeenCalledWith({ type: 'text_delta', content: 'Hello' })
@@ -95,7 +95,7 @@ describe('Given the streamAgentMessage function', () => {
   })
 
   it('should stop processing after receiving a done chunk', async () => {
-    jest.spyOn(global, 'fetch').mockResolvedValue({
+    vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: true,
       status: 200,
       body: makeMockBody([
@@ -103,14 +103,14 @@ describe('Given the streamAgentMessage function', () => {
       ]),
     } as any)
 
-    const onChunk = jest.fn()
+    const onChunk = vi.fn()
     await streamAgentMessage('Hi', 'token', onChunk)
 
     expect(onChunk).not.toHaveBeenCalledWith(expect.objectContaining({ content: 'after done' }))
   })
 
   it('should call onChunk with an error chunk on an error event', async () => {
-    jest.spyOn(global, 'fetch').mockResolvedValue({
+    vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: true,
       status: 200,
       body: makeMockBody([
@@ -119,28 +119,28 @@ describe('Given the streamAgentMessage function', () => {
       ]),
     } as any)
 
-    const onChunk = jest.fn()
+    const onChunk = vi.fn()
     await streamAgentMessage('Hi', 'token', onChunk)
 
     expect(onChunk).toHaveBeenCalledWith({ type: 'error', content: 'Something went wrong' })
   })
 
   it('should throw when response status is not ok', async () => {
-    jest.spyOn(global, 'fetch').mockResolvedValue({
+    vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: false,
       status: 500,
       body: null,
     } as any)
 
-    await expect(streamAgentMessage('Hi', 'token', jest.fn())).rejects.toThrow('Stream failed: 500')
+    await expect(streamAgentMessage('Hi', 'token', vi.fn())).rejects.toThrow('Stream failed: 500')
   })
 
   it('should release the reader lock after streaming completes', async () => {
     const mockBody = makeMockBody(['data: {"type":"done"}\n\n'])
     const reader = mockBody._reader
-    jest.spyOn(global, 'fetch').mockResolvedValue({ ok: true, status: 200, body: mockBody } as any)
+    vi.spyOn(global, 'fetch').mockResolvedValue({ ok: true, status: 200, body: mockBody } as any)
 
-    await streamAgentMessage('Hi', 'token', jest.fn())
+    await streamAgentMessage('Hi', 'token', vi.fn())
 
     expect(reader.releaseLock).toHaveBeenCalled()
   })
@@ -149,17 +149,17 @@ describe('Given the streamAgentMessage function', () => {
     const encoder = new TextEncoder()
     let calls = 0
     const reader = {
-      read: jest.fn(async () => {
+      read: vi.fn(async () => {
         if (calls++ === 0) return { done: false, value: encoder.encode('data: {"type":"text_delta","content":"hi"}\n\n') }
         throw new Error('stream interrupted')
       }),
-      releaseLock: jest.fn(),
+      releaseLock: vi.fn(),
     }
-    jest.spyOn(global, 'fetch').mockResolvedValue({
+    vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: true, status: 200, body: { getReader: () => reader },
     } as any)
 
-    await expect(streamAgentMessage('Hi', 'token', jest.fn())).rejects.toThrow('stream interrupted')
+    await expect(streamAgentMessage('Hi', 'token', vi.fn())).rejects.toThrow('stream interrupted')
     expect(reader.releaseLock).toHaveBeenCalled()
   })
 })

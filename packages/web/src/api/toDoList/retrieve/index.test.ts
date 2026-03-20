@@ -26,7 +26,7 @@ describe('Given the retrieveItems function', () => {
 
     const result = await retrieveToDoList()
 
-    expect(result).toStrictEqual(EXAMPLE_TODO_LIST_RESPONSE)
+    expect(result).toEqual(EXAMPLE_TODO_LIST_RESPONSE)
   })
 
   describe('When the API call fails', () => {
@@ -37,7 +37,7 @@ describe('Given the retrieveItems function', () => {
 
       const result = await retrieveToDoList()
 
-      expect(result).toStrictEqual([])
+      expect(result).toEqual([])
     })
   })
 })

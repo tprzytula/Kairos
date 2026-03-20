@@ -3,7 +3,7 @@ import RecipeItem from './index'
 import { IRecipe } from '../../types/recipe'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 
-const mockOnView = jest.fn()
+const mockOnView = vi.fn()
 
 const exampleRecipe: IRecipe = {
   id: 'recipe-1',
@@ -19,7 +19,7 @@ const exampleRecipe: IRecipe = {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('Given the RecipeItem component', () => {

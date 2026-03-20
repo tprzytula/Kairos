@@ -40,7 +40,7 @@ const renderWithTheme = (component: React.ReactElement) => {
 }
 
 describe('GroceryItemPreviewPopup component', () => {
-  const mockOnClose = jest.fn()
+  const mockOnClose = vi.fn()
 
   beforeEach(() => {
     mockOnClose.mockClear()
@@ -223,11 +223,11 @@ describe('GroceryItemPreviewPopup component', () => {
 
   describe('document click handling', () => {
     beforeEach(() => {
-      jest.clearAllMocks()
+      vi.clearAllMocks()
     })
 
     it('should close when clicking outside of bubble and grocery items', async () => {
-      jest.useFakeTimers()
+      vi.useFakeTimers()
       
       renderWithTheme(
         <GroceryItemPreviewPopup
@@ -240,7 +240,7 @@ describe('GroceryItemPreviewPopup component', () => {
 
       // Fast forward the timeout for document listener
       act(() => {
-        jest.advanceTimersByTime(50)
+        vi.advanceTimersByTime(50)
       })
 
       // Click somewhere on the document (outside bubble and grocery items)
@@ -250,11 +250,11 @@ describe('GroceryItemPreviewPopup component', () => {
 
       expect(mockOnClose).toHaveBeenCalledTimes(1)
       
-      jest.useRealTimers()
+      vi.useRealTimers()
     })
 
     it('should not close when clicking on the bubble itself via document listener', async () => {
-      jest.useFakeTimers()
+      vi.useFakeTimers()
       
       renderWithTheme(
         <GroceryItemPreviewPopup
@@ -267,7 +267,7 @@ describe('GroceryItemPreviewPopup component', () => {
 
       // Fast forward the timeout for document listener
       act(() => {
-        jest.advanceTimersByTime(50)
+        vi.advanceTimersByTime(50)
       })
 
       const bubble = document.body.querySelector('[role="tooltip"]') as HTMLElement
@@ -280,11 +280,11 @@ describe('GroceryItemPreviewPopup component', () => {
       // Should close via the onClick handler (1 call)
       expect(mockOnClose).toHaveBeenCalledTimes(1)
       
-      jest.useRealTimers()
+      vi.useRealTimers()
     })
 
     it('should not close when clicking on grocery items', async () => {
-      jest.useFakeTimers()
+      vi.useFakeTimers()
       
       // Create a mock grocery item in the DOM
       const groceryItem = document.createElement('div')
@@ -302,7 +302,7 @@ describe('GroceryItemPreviewPopup component', () => {
 
       // Fast forward the timeout for document listener
       act(() => {
-        jest.advanceTimersByTime(50)
+        vi.advanceTimersByTime(50)
       })
 
       // Click on the grocery item
@@ -315,11 +315,11 @@ describe('GroceryItemPreviewPopup component', () => {
       
       // Clean up
       document.body.removeChild(groceryItem)
-      jest.useRealTimers()
+      vi.useRealTimers()
     })
 
     it('should close when clicking on other UI elements like buttons', async () => {
-      jest.useFakeTimers()
+      vi.useFakeTimers()
       
       // Create a mock button like "+X more items"
       const button = document.createElement('div')
@@ -338,7 +338,7 @@ describe('GroceryItemPreviewPopup component', () => {
 
       // Fast forward the timeout for document listener
       act(() => {
-        jest.advanceTimersByTime(50)
+        vi.advanceTimersByTime(50)
       })
 
       // Click on the button
@@ -351,7 +351,7 @@ describe('GroceryItemPreviewPopup component', () => {
       
       // Clean up
       document.body.removeChild(button)
-      jest.useRealTimers()
+      vi.useRealTimers()
     })
   })
 })

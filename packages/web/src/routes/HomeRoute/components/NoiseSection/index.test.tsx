@@ -27,16 +27,16 @@ const renderWithTheme = (component: React.ReactElement) => {
 }
 
 describe('NoiseSection component', () => {
-  const mockOnNoiseViewChange = jest.fn()
+  const mockOnNoiseViewChange = vi.fn()
 
   beforeEach(() => {
     mockOnNoiseViewChange.mockClear()
-    jest.useFakeTimers()
-    jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2024-01-15T12:00:00Z'))
   })
 
   afterEach(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   describe('when loading', () => {

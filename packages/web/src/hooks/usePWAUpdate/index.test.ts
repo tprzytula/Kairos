@@ -6,15 +6,15 @@ const mockRegistration = {
   installing: null as any,
   waiting: null as any,
   active: null as any,
-  addEventListener: jest.fn(),
-  update: jest.fn().mockResolvedValue(undefined),
+  addEventListener: vi.fn(),
+  update: vi.fn().mockResolvedValue(undefined),
 }
 
 const mockServiceWorker = {
-  register: jest.fn().mockResolvedValue(mockRegistration),
+  register: vi.fn().mockResolvedValue(mockRegistration),
   controller: null,
-  addEventListener: jest.fn(),
-  removeEventListener: jest.fn(),
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
 }
 
 // Mock document.hidden
@@ -30,10 +30,11 @@ Object.defineProperty(navigator, 'onLine', {
 })
 
 // Mock MessageChannel
-global.MessageChannel = jest.fn().mockImplementation(() => ({
-  port1: { postMessage: jest.fn(), close: jest.fn() },
-  port2: { postMessage: jest.fn(), close: jest.fn() }
-}))
+class MockMessageChannel {
+  port1 = { postMessage: vi.fn(), close: vi.fn(), onmessage: null as any }
+  port2 = { postMessage: vi.fn(), close: vi.fn(), onmessage: null as any }
+}
+global.MessageChannel = MockMessageChannel as any
 
 // Store original location
 const originalLocation = window.location
@@ -41,8 +42,8 @@ let originalConsoleError: any
 
 describe('usePWAUpdate', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.useFakeTimers()
+    vi.clearAllMocks()
+    vi.useFakeTimers({ shouldAdvanceTime: true })
     // Reset mocks
     mockRegistration.installing = null
     mockRegistration.waiting = null
@@ -54,7 +55,7 @@ describe('usePWAUpdate', () => {
       value: {
         ...mockServiceWorker,
         controller: {
-          postMessage: jest.fn()
+          postMessage: vi.fn()
         }
       },
       writable: true,
@@ -63,11 +64,11 @@ describe('usePWAUpdate', () => {
     // Suppress console errors from JSDOM navigation attempts
     // JSDOM doesn't support actual navigation so we'll get errors, but we can suppress them
     originalConsoleError = console.error
-    console.error = jest.fn()
+    console.error = vi.fn()
   })
 
   afterEach(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
     // Restore console.error
     if (originalConsoleError) {
       console.error = originalConsoleError
@@ -216,8 +217,8 @@ describe('usePWAUpdate', () => {
   it('should handle service worker installation states', async () => {
     const mockNewWorker = {
       state: 'installed',
-      addEventListener: jest.fn(),
-      postMessage: jest.fn(),
+      addEventListener: vi.fn(),
+      postMessage: vi.fn(),
     }
 
     mockRegistration.installing = mockNewWorker
@@ -248,8 +249,8 @@ describe('usePWAUpdate', () => {
   it('should handle first installation (no controller)', async () => {
     const mockNewWorker = {
       state: 'installed',
-      addEventListener: jest.fn(),
-      postMessage: jest.fn(),
+      addEventListener: vi.fn(),
+      postMessage: vi.fn(),
     }
 
     // No controller - first install
@@ -308,7 +309,7 @@ describe('usePWAUpdate', () => {
 
     // Should trigger reload after delay
     await act(async () => {
-      jest.advanceTimersByTime(200)
+      vi.advanceTimersByTime(200)
     })
   })
 
@@ -333,15 +334,15 @@ describe('usePWAUpdate', () => {
 
     // Should trigger reload after delay
     await act(async () => {
-      jest.advanceTimersByTime(200)
+      vi.advanceTimersByTime(200)
     })
   })
 
   it('should handle installUpdate', async () => {
     const mockWorker = {
-      postMessage: jest.fn(),
+      postMessage: vi.fn(),
       state: 'installed',
-      addEventListener: jest.fn(),
+      addEventListener: vi.fn(),
     }
 
     mockRegistration.installing = mockWorker
@@ -443,15 +444,15 @@ describe('usePWAUpdate', () => {
     })
 
     // Mock matchMedia for PWA detection
-    window.matchMedia = jest.fn().mockImplementation(query => ({
+    window.matchMedia = vi.fn().mockImplementation(query => ({
       matches: query === '(display-mode: standalone)',
       media: query,
       onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
     }))
 
     const { unmount } = renderHook(() => usePWAUpdate())
@@ -474,7 +475,7 @@ describe('usePWAUpdate', () => {
 
       // iOS should use longer delay and special reload
       await act(async () => {
-        jest.advanceTimersByTime(600)
+        vi.advanceTimersByTime(600)
       })
     }
 
@@ -508,15 +509,15 @@ describe('usePWAUpdate', () => {
     })
 
     // Mock matchMedia for PWA detection
-    window.matchMedia = jest.fn().mockImplementation(query => ({
+    window.matchMedia = vi.fn().mockImplementation(query => ({
       matches: query === '(display-mode: standalone)',
       media: query,
       onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
     }))
 
     const { unmount } = renderHook(() => usePWAUpdate())
@@ -536,7 +537,7 @@ describe('usePWAUpdate', () => {
 
     // Should trigger update check with delay for iOS
     await act(async () => {
-      jest.advanceTimersByTime(1100)
+      vi.advanceTimersByTime(1100)
     })
 
     expect(mockRegistration.update).toHaveBeenCalled()
@@ -582,15 +583,15 @@ describe('usePWAUpdate', () => {
     })
 
     // Mock matchMedia for PWA detection
-    window.matchMedia = jest.fn().mockImplementation(query => ({
+    window.matchMedia = vi.fn().mockImplementation(query => ({
       matches: query === '(display-mode: standalone)',
       media: query,
       onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
     }))
 
     const { unmount } = renderHook(() => usePWAUpdate())
@@ -601,7 +602,7 @@ describe('usePWAUpdate', () => {
 
     // Fast-forward 5 minutes for periodic check
     await act(async () => {
-      jest.advanceTimersByTime(5 * 60 * 1000)
+      vi.advanceTimersByTime(5 * 60 * 1000)
     })
 
     // Should trigger periodic update check

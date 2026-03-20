@@ -5,8 +5,8 @@ import { Context } from "../../providers/AppStateProvider/types"
 import { IAlert } from "../Alert/types";
 import { hideAlert } from "../../utils/alert";
 
-jest.mock('../../providers/AppStateProvider');
-jest.mock('../../utils/alert');
+vi.mock('../../providers/AppStateProvider');
+vi.mock('../../utils/alert');
 
 describe('Given the AlertContainer component', () => {
     describe('When there are no alerts', () => {
@@ -47,9 +47,9 @@ describe('Given the AlertContainer component', () => {
 })
 
 const mockUseAppState = (alerts: Map<string, IAlert>) => {
-    const dispatchMock = jest.fn()
+    const dispatchMock = vi.fn()
 
-    jest.mocked(useAppState).mockReturnValue({
+    vi.mocked(useAppState).mockReturnValue({
         state: {
             alerts
         },

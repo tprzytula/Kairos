@@ -1,3 +1,4 @@
+import { Mock } from 'vitest'
 import { render, screen, waitFor } from "@testing-library/react";
 import GroceryItem from ".";
 import { useAppState } from "../../providers/AppStateProvider";
@@ -6,9 +7,9 @@ import { useShopContext } from "../../providers/ShopProvider";
 import { GroceryItemUnit } from "../../enums/groceryItem";
 import { ActionName } from "../../providers/AppStateProvider/enums";
 
-jest.mock("../../providers/AppStateProvider");
-jest.mock("../../providers/GroceryListProvider");
-jest.mock("../../providers/ShopProvider");
+vi.mock("../../providers/AppStateProvider");
+vi.mock("../../providers/GroceryListProvider");
+vi.mock("../../providers/ShopProvider");
 
 describe("Given the GroceryItem component", () => {
   it("should render the component with correct props", () => {
@@ -134,9 +135,9 @@ const renderGroceryItem = () => {
 };
 
 const mockAppState = (purchasedItems: Set<string> = new Set()) => {
-  const dispatch = jest.fn();
+  const dispatch = vi.fn();
 
-  (useAppState as jest.Mock).mockReturnValue({
+  (useAppState as Mock).mockReturnValue({
     state: { purchasedItems },
     dispatch,
   });
@@ -145,9 +146,9 @@ const mockAppState = (purchasedItems: Set<string> = new Set()) => {
 };
 
 const mockGroceryListContext = () => {
-  const updateGroceryItem = jest.fn();
+  const updateGroceryItem = vi.fn();
 
-  (useGroceryListContext as jest.Mock).mockReturnValue({
+  (useGroceryListContext as Mock).mockReturnValue({
     updateGroceryItem,
     isAllItemsView: false,
   });
@@ -156,7 +157,7 @@ const mockGroceryListContext = () => {
 };
 
 const mockShopContext = () => {
-  (useShopContext as jest.Mock).mockReturnValue({
+  (useShopContext as Mock).mockReturnValue({
     shops: [],
   });
 };

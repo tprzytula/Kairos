@@ -1,3 +1,4 @@
+import { Mock, MockedFunction } from 'vitest'
 import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -15,31 +16,31 @@ import { ProjectProvider, useProjectContext } from '../../providers/ProjectProvi
 import { useShopContext } from '../../providers/ShopProvider'
 import { IProject, ProjectRole } from '../../types/project'
 
-jest.mock('../../providers/AppStateProvider', () => ({
-  ...jest.requireActual('../../providers/AppStateProvider'),
-  useAppState: jest.fn(),
+vi.mock('../../providers/AppStateProvider', async () => ({
+  ...(await vi.importActual('../../providers/AppStateProvider')),
+  useAppState: vi.fn(),
 }))
 
-jest.mock('../../providers/ProjectProvider', () => ({
-  ...jest.requireActual('../../providers/ProjectProvider'),
-  useProjectContext: jest.fn(),
+vi.mock('../../providers/ProjectProvider', async () => ({
+  ...(await vi.importActual('../../providers/ProjectProvider')),
+  useProjectContext: vi.fn(),
 }))
 
-jest.mock('../../providers/ShopProvider', () => ({
-  useShopContext: jest.fn(),
+vi.mock('../../providers/ShopProvider', async () => ({
+  useShopContext: vi.fn(),
 }))
 
-jest.mock('../../api/groceryList')
-jest.mock('../../api/recipes')
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
-  useParams: jest.fn(),
+vi.mock('../../api/groceryList')
+vi.mock('../../api/recipes')
+vi.mock('react-router', async () => ({
+  ...(await vi.importActual('react-router')),
+  useNavigate: vi.fn(),
+  useParams: vi.fn(),
 }))
 
 // Mock the useAuth hook for ProjectProvider
-jest.mock('react-oidc-context', () => ({
-  useAuth: jest.fn(() => ({
+vi.mock('react-oidc-context', async () => ({
+  useAuth: vi.fn(() => ({
     user: { access_token: 'mock-access-token' },
     isAuthenticated: true,
     isLoading: false,
@@ -47,11 +48,11 @@ jest.mock('react-oidc-context', () => ({
   }))
 }))
 
-const mockUseProjectContext = useProjectContext as jest.MockedFunction<typeof useProjectContext>
-const mockUseShopContext = useShopContext as jest.MockedFunction<typeof useShopContext>
-const mockNavigate = jest.fn()
-const mockUseNavigate = useNavigate as jest.MockedFunction<typeof useNavigate>
-const mockUseParams = useParams as jest.MockedFunction<typeof useParams>
+const mockUseProjectContext = useProjectContext as MockedFunction<typeof useProjectContext>
+const mockUseShopContext = useShopContext as MockedFunction<typeof useShopContext>
+const mockNavigate = vi.fn()
+const mockUseNavigate = useNavigate as MockedFunction<typeof useNavigate>
+const mockUseParams = useParams as MockedFunction<typeof useParams>
 
 const MOCK_PROJECT: IProject = {
   id: 'test-project-id',
@@ -69,11 +70,11 @@ describe('Given the GroceryListRoute component', () => {
       projects: [MOCK_PROJECT],
       currentProject: MOCK_PROJECT,
       isLoading: false,
-      fetchProjects: jest.fn(),
-      createProject: jest.fn(),
-      joinProject: jest.fn(),
-      switchProject: jest.fn(),
-      getProjectInviteInfo: jest.fn(),
+      fetchProjects: vi.fn(),
+      createProject: vi.fn(),
+      joinProject: vi.fn(),
+      switchProject: vi.fn(),
+      getProjectInviteInfo: vi.fn(),
     })
 
     mockUseShopContext.mockReturnValue({
@@ -86,11 +87,11 @@ describe('Given the GroceryListRoute component', () => {
       }],
       isLoading: false,
       currentShop: null,
-      fetchShops: jest.fn(),
-      addShop: jest.fn(),
-      updateShop: jest.fn(),
-      deleteShop: jest.fn(),
-      setCurrentShop: jest.fn(),
+      fetchShops: vi.fn(),
+      addShop: vi.fn(),
+      updateShop: vi.fn(),
+      deleteShop: vi.fn(),
+      setCurrentShop: vi.fn(),
     })
     
     mockNavigate.mockClear()
@@ -99,10 +100,10 @@ describe('Given the GroceryListRoute component', () => {
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   it('should have the correct title', async () => {
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
 
     await act(async () => {
       renderComponent()
@@ -112,7 +113,7 @@ describe('Given the GroceryListRoute component', () => {
   })
 
   it('should retrieve the grocery list', async () => {
-    const groceryListSpy = jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
+    const groceryListSpy = vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
 
     await act(async () => {
       renderComponent()
@@ -127,7 +128,7 @@ describe('Given the GroceryListRoute component', () => {
       { id: '2', name: 'Bread', quantity: 2, unit: GroceryItemUnit.UNIT, imagePath: 'https://hostname.com/image.png', shopId: 'test-shop-1' },
     ]
 
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(mockGroceryList)
 
     await act(async () => {
       renderComponent()
@@ -140,7 +141,7 @@ describe('Given the GroceryListRoute component', () => {
   })
 
   it('should render back to shops action button', async () => {
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
 
     await act(async () => {
       renderComponent()
@@ -150,7 +151,7 @@ describe('Given the GroceryListRoute component', () => {
   })
 
   it('should navigate to shops when back to shops button is clicked', async () => {
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
 
     await act(async () => {
       renderComponent()
@@ -163,7 +164,7 @@ describe('Given the GroceryListRoute component', () => {
   })
 
   it('should display "All Grocery Items" title when shopId is "all"', async () => {
-    const groceryListSpy = jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
+    const groceryListSpy = vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
     mockUseParams.mockReturnValue({ shopId: 'all' })
 
     await act(async () => {
@@ -176,9 +177,9 @@ describe('Given the GroceryListRoute component', () => {
 
   describe('When the fetch fails', () => {
     it('should display an error message', async () => {
-      const errorSpy = jest.spyOn(console, 'error')
+      const errorSpy = vi.spyOn(console, 'error')
 
-      jest.spyOn(API, 'retrieveGroceryList').mockRejectedValue(new Error('Bad things happen all the time'))
+      vi.spyOn(API, 'retrieveGroceryList').mockRejectedValue(new Error('Bad things happen all the time'))
 
       await act(async () => {
         renderComponent()
@@ -192,11 +193,11 @@ describe('Given the GroceryListRoute component', () => {
 })
 
 const renderComponent = () => {
-  jest.mocked(useAppState).mockReturnValue({
+  vi.mocked(useAppState).mockReturnValue({
     state: {
       ...initialState,
     },
-    dispatch: jest.fn(),
+    dispatch: vi.fn(),
   })
 
   const queryClient = createTestQueryClient()

@@ -5,11 +5,11 @@ import { DynamoDBTable, DynamoDBIndex } from "@kairos-lambdas-libs/dynamodb/enum
 import { IProject, IProjectMember, ProjectRole } from "@kairos-lambdas-libs/dynamodb/types/projects";
 import { IJoinProjectRequestBody } from "./body/types";
 
-jest.mock("./body", () => ({
-  getBody: jest.fn(),
+vi.mock("./body", async () => ({
+  getBody: vi.fn(),
 }));
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
   DynamoDBTable: {
     PROJECT_MEMBERS: "ProjectMembers",
     PROJECTS: "Projects",
@@ -18,14 +18,14 @@ jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
     PROJECTS_INVITE_CODE: "InviteCodeIndex",
     PROJECT_MEMBERS_USER_PROJECTS: "UserProjectsIndex",
   },
-  query: jest.fn(),
-  getItem: jest.fn(),
-  putItem: jest.fn(),
+  query: vi.fn(),
+  getItem: vi.fn(),
+  putItem: vi.fn(),
 }));
 
 describe("Given the join_project lambda handler", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("When user is not authenticated", () => {
@@ -39,7 +39,7 @@ describe("Given the join_project lambda handler", () => {
 
   describe("When body is invalid", () => {
     it("should return status 400", async () => {
-      jest.mocked(getBody).mockReturnValue(null);
+      vi.mocked(getBody).mockReturnValue(null);
 
       const result = await runHandler({ userId: "user-123", body: "invalid" });
 
@@ -50,8 +50,8 @@ describe("Given the join_project lambda handler", () => {
 
   describe("When invite code is invalid", () => {
     it("should return status 404", async () => {
-      jest.mocked(getBody).mockReturnValue({ inviteCode: "INVALID" });
-      jest.mocked(query).mockResolvedValue([]);
+      vi.mocked(getBody).mockReturnValue({ inviteCode: "INVALID" });
+      vi.mocked(query).mockResolvedValue([]);
 
       const result = await runHandler({ userId: "user-123", body: JSON.stringify({ inviteCode: "INVALID" }) });
 
@@ -78,8 +78,8 @@ describe("Given the join_project lambda handler", () => {
         isPersonal: true,
       };
 
-      jest.mocked(getBody).mockReturnValue({ inviteCode: "ABC123" });
-      jest.mocked(query).mockResolvedValue([personalProject]);
+      vi.mocked(getBody).mockReturnValue({ inviteCode: "ABC123" });
+      vi.mocked(query).mockResolvedValue([personalProject]);
 
       const result = await runHandler({ userId: "user-123", body: JSON.stringify({ inviteCode: "ABC123" }) });
 
@@ -106,9 +106,9 @@ describe("Given the join_project lambda handler", () => {
         joinedAt: 1234567890,
       };
 
-      jest.mocked(getBody).mockReturnValue({ inviteCode: "ABC123" });
-      jest.mocked(query).mockResolvedValue([sharedProject]);
-      jest.mocked(getItem).mockResolvedValue(existingMembership);
+      vi.mocked(getBody).mockReturnValue({ inviteCode: "ABC123" });
+      vi.mocked(query).mockResolvedValue([sharedProject]);
+      vi.mocked(getItem).mockResolvedValue(existingMembership);
 
       const result = await runHandler({ userId: "user-123", body: JSON.stringify({ inviteCode: "ABC123" }) });
 
@@ -144,11 +144,11 @@ describe("Given the join_project lambda handler", () => {
         joinedAt: 1234567890,
       }));
 
-      jest.mocked(getBody).mockReturnValue({ inviteCode: "ABC123" });
-      jest.mocked(query)
+      vi.mocked(getBody).mockReturnValue({ inviteCode: "ABC123" });
+      vi.mocked(query)
         .mockResolvedValueOnce([sharedProject])
         .mockResolvedValueOnce(userProjects);
-      jest.mocked(getItem).mockResolvedValue(null);
+      vi.mocked(getItem).mockResolvedValue(null);
 
       const result = await runHandler({ userId: "user-123", body: JSON.stringify({ inviteCode: "ABC123" }) });
 
@@ -176,12 +176,12 @@ describe("Given the join_project lambda handler", () => {
         joinedAt: 1234567890,
       }));
 
-      jest.mocked(getBody).mockReturnValue({ inviteCode: "ABC123" });
-      jest.mocked(query)
+      vi.mocked(getBody).mockReturnValue({ inviteCode: "ABC123" });
+      vi.mocked(query)
         .mockResolvedValueOnce([sharedProject])
         .mockResolvedValueOnce([]) // User has no projects
         .mockResolvedValueOnce(projectMembers); // Project is full
-      jest.mocked(getItem).mockResolvedValue(null);
+      vi.mocked(getItem).mockResolvedValue(null);
 
       const result = await runHandler({ userId: "user-123", body: JSON.stringify({ inviteCode: "ABC123" }) });
 
@@ -201,13 +201,13 @@ describe("Given the join_project lambda handler", () => {
         inviteCode: "ABC123",
       };
 
-      jest.mocked(getBody).mockReturnValue({ inviteCode: "ABC123" });
-      jest.mocked(query)
+      vi.mocked(getBody).mockReturnValue({ inviteCode: "ABC123" });
+      vi.mocked(query)
         .mockResolvedValueOnce([sharedProject])
         .mockResolvedValueOnce([]) // User has no projects
         .mockResolvedValueOnce([]); // Project has no members
-      jest.mocked(getItem).mockResolvedValue(null);
-      jest.mocked(putItem).mockResolvedValue(undefined);
+      vi.mocked(getItem).mockResolvedValue(null);
+      vi.mocked(putItem).mockResolvedValue(undefined);
 
       const result = await runHandler({ userId: "user-123", body: JSON.stringify({ inviteCode: "ABC123" }) });
 
@@ -231,8 +231,8 @@ describe("Given the join_project lambda handler", () => {
 
   describe("When database operation fails", () => {
     it("should return status 500", async () => {
-      jest.mocked(getBody).mockReturnValue({ inviteCode: "ABC123" });
-      jest.mocked(query).mockRejectedValue(new Error("Database error"));
+      vi.mocked(getBody).mockReturnValue({ inviteCode: "ABC123" });
+      vi.mocked(query).mockRejectedValue(new Error("Database error"));
 
       const result = await runHandler({ userId: "user-123", body: JSON.stringify({ inviteCode: "ABC123" }) });
 

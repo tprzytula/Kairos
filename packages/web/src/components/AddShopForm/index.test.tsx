@@ -1,19 +1,19 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AddShopForm from ".";
 
-const mockOnSubmit = jest.fn();
-const mockOnCancel = jest.fn();
-const mockGetShopUploadUrl = jest.fn();
+const mockOnSubmit = vi.fn();
+const mockOnCancel = vi.fn();
+const mockGetShopUploadUrl = vi.fn();
 
-jest.mock('../../providers/ProjectProvider', () => ({
+vi.mock('../../providers/ProjectProvider', () => ({
   useProjectContext: () => ({ currentProject: { id: 'test-project-id' } })
 }));
 
-jest.mock('../../api/shops/getUploadUrl', () => ({
+vi.mock('../../api/shops/getUploadUrl', () => ({
   getShopUploadUrl: (...args: any[]) => mockGetShopUploadUrl(...args)
 }));
 
-jest.mock('../RecipeForm/ImageCropModal', () => {
+vi.mock('../RecipeForm/ImageCropModal', () => {
   const { useEffect } = require('react');
   return {
     __esModule: true,
@@ -26,14 +26,14 @@ jest.mock('../RecipeForm/ImageCropModal', () => {
   };
 });
 
-jest.mock('../RecipeForm/cropUtils', () => ({
-  getCroppedBlob: jest.fn().mockResolvedValue(new Blob(['img'], { type: 'image/jpeg' }))
+vi.mock('../RecipeForm/cropUtils', () => ({
+  getCroppedBlob: vi.fn().mockResolvedValue(new Blob(['img'], { type: 'image/jpeg' }))
 }));
 
 describe("Given the AddShopForm component", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    global.URL.createObjectURL = jest.fn().mockReturnValue('blob:mock-url');
+    vi.clearAllMocks();
+    global.URL.createObjectURL = vi.fn().mockReturnValue('blob:mock-url');
   });
 
   it("should render form fields correctly", () => {

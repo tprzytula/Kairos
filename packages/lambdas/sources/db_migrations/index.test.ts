@@ -4,16 +4,16 @@ import * as tracker from './tracker';
 import { Migration, MigrationResult } from './runner/types';
 import { LastMigrationRecord } from './tracker/types';
 
-jest.mock('./runner');
-jest.mock('./tracker');
+vi.mock('./runner');
+vi.mock('./tracker');
 
-jest.mock('./migrations/001_add_grocery_defaults', () => ({
-  default: { id: '001', name: 'Migration 1', execute: jest.fn() }
+vi.mock('./migrations/001_add_grocery_defaults', async () => ({
+  default: { id: '001', name: 'Migration 1', execute: vi.fn() }
 }));
 
 describe('db_migrations lambda handler', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   const runHandler = (event: any = {}) => 
@@ -25,9 +25,9 @@ describe('db_migrations lambda handler', () => {
         { id: '001', name: 'Migration 1', status: 'skipped' },
       ];
       
-      jest.mocked(runner.runMigrations).mockResolvedValue(mockResults);
-      jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(null);
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      vi.mocked(runner.runMigrations).mockResolvedValue(mockResults);
+      vi.mocked(tracker.getLastExecutedMigration).mockResolvedValue(null);
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation();
 
       const result = await runHandler();
 
@@ -50,8 +50,8 @@ describe('db_migrations lambda handler', () => {
 
   describe('when migrations are found', () => {
     const mockMigrations: Migration[] = [
-      { id: '001', name: 'Migration 1', execute: jest.fn() },
-      { id: '002', name: 'Migration 2', execute: jest.fn() },
+      { id: '001', name: 'Migration 1', execute: vi.fn() },
+      { id: '002', name: 'Migration 2', execute: vi.fn() },
     ];
 
     const mockResults: MigrationResult[] = [
@@ -68,8 +68,8 @@ describe('db_migrations lambda handler', () => {
     };
 
     it('should execute migrations successfully', async () => {
-      jest.mocked(runner.runMigrations).mockResolvedValue(mockResults);
-      jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(mockLastMigration);
+      vi.mocked(runner.runMigrations).mockResolvedValue(mockResults);
+      vi.mocked(tracker.getLastExecutedMigration).mockResolvedValue(mockLastMigration);
 
       const result = await runHandler();
 
@@ -96,8 +96,8 @@ describe('db_migrations lambda handler', () => {
         { id: '003', name: 'Migration 3', status: 'failed', error: 'Something went wrong' },
       ];
 
-      jest.mocked(runner.runMigrations).mockResolvedValue(mixedResults);
-      jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(mockLastMigration);
+      vi.mocked(runner.runMigrations).mockResolvedValue(mixedResults);
+      vi.mocked(tracker.getLastExecutedMigration).mockResolvedValue(mockLastMigration);
 
       const result = await runHandler();
 
@@ -114,10 +114,10 @@ describe('db_migrations lambda handler', () => {
     });
 
     it('should log migration progress', async () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation();
       
-      jest.mocked(runner.runMigrations).mockResolvedValue(mockResults);
-      jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(mockLastMigration);
+      vi.mocked(runner.runMigrations).mockResolvedValue(mockResults);
+      vi.mocked(tracker.getLastExecutedMigration).mockResolvedValue(mockLastMigration);
 
       await runHandler();
 
@@ -135,8 +135,8 @@ describe('db_migrations lambda handler', () => {
   describe('when migration execution fails', () => {
     it('should handle errors gracefully', async () => {
       const error = new Error('Migration execution failed');
-      jest.mocked(runner.runMigrations).mockRejectedValue(error);
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      vi.mocked(runner.runMigrations).mockRejectedValue(error);
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation();
 
       const result = await runHandler();
 
@@ -157,8 +157,8 @@ describe('db_migrations lambda handler', () => {
         { id: '001', name: 'Migration 1', status: 'success', executedAt: '2024-01-01T00:00:00Z' },
       ];
 
-      jest.mocked(runner.runMigrations).mockResolvedValue(mockResults);
-      jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(null);
+      vi.mocked(runner.runMigrations).mockResolvedValue(mockResults);
+      vi.mocked(tracker.getLastExecutedMigration).mockResolvedValue(null);
 
       const result = await runHandler();
 

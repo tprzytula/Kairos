@@ -4,7 +4,7 @@ import { IAlertPayload } from "../../components/Alert/types"
 
 describe('Given the hideAlert function', () => {
   it('should call the dispatch function with the correct action', () => {
-    const dispatch = jest.fn()
+    const dispatch = vi.fn()
     const id = '123'
 
     hideAlert(id, dispatch)
@@ -18,7 +18,7 @@ describe('Given the hideAlert function', () => {
 
 describe('Given the showAlert function', () => {
   it('should call the dispatch function with the correct action', () => {
-    const dispatch = jest.fn()
+    const dispatch = vi.fn()
     const alert: IAlertPayload = {
       description: 'Test',
       severity: 'success',

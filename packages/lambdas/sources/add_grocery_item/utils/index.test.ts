@@ -3,24 +3,24 @@ import { scan } from "@kairos-lambdas-libs/dynamodb";
 import { GroceryItemCategory } from "@kairos-lambdas-libs/dynamodb/enums";
 import { getCategory } from "../../db_migrations/migrations/001_add_grocery_defaults/data/categoryMappings";
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
-  scan: jest.fn(),
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
+  scan: vi.fn(),
   DynamoDBTable: {
     GROCERY_ITEMS_DEFAULTS: "GroceryItemsDefaults",
   },
 }));
 
-jest.mock("../../db_migrations/migrations/001_add_grocery_defaults/data/categoryMappings", () => ({
-  getCategory: jest.fn(),
+vi.mock("../../db_migrations/migrations/001_add_grocery_defaults/data/categoryMappings", async () => ({
+  getCategory: vi.fn(),
 }));
 
 describe('fetchDefaults', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should scan the grocery items defaults table', async () => {
-    jest.mocked(scan).mockResolvedValue(mockDefaults);
+    vi.mocked(scan).mockResolvedValue(mockDefaults);
 
     const result = await fetchDefaults();
 
@@ -31,8 +31,8 @@ describe('fetchDefaults', () => {
   });
 
   it('should return empty array on scan error', async () => {
-    jest.mocked(scan).mockRejectedValue(new Error("Database error"));
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+    vi.mocked(scan).mockRejectedValue(new Error("Database error"));
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation();
 
     const result = await fetchDefaults();
 
@@ -44,11 +44,11 @@ describe('fetchDefaults', () => {
 
 describe('getCategoryForItem', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should return category for item found in defaults', () => {
-    jest.mocked(getCategory).mockReturnValue(GroceryItemCategory.FRUITS_VEGETABLES);
+    vi.mocked(getCategory).mockReturnValue(GroceryItemCategory.FRUITS_VEGETABLES);
 
     const result = getCategoryForItem("apple", mockDefaults);
 
@@ -57,7 +57,7 @@ describe('getCategoryForItem', () => {
   });
 
   it('should return category for item not found in defaults using fallback', () => {
-    jest.mocked(getCategory).mockReturnValue(GroceryItemCategory.OTHER);
+    vi.mocked(getCategory).mockReturnValue(GroceryItemCategory.OTHER);
 
     const result = getCategoryForItem("unknown item", mockDefaults);
 
@@ -66,7 +66,7 @@ describe('getCategoryForItem', () => {
   });
 
   it('should handle case insensitive matching', () => {
-    jest.mocked(getCategory).mockReturnValue(GroceryItemCategory.FRUITS_VEGETABLES);
+    vi.mocked(getCategory).mockReturnValue(GroceryItemCategory.FRUITS_VEGETABLES);
 
     const result = getCategoryForItem("APPLE", mockDefaults);
 

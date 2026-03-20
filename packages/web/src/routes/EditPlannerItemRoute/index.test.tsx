@@ -9,11 +9,11 @@ import { FormFieldType } from '../../components/ItemForm/enums'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import theme from '../../theme'
 
-jest.mock('../../components/ItemForm', () => {
-  return jest.fn(() => <div>ItemForm Mock</div>)
-})
+vi.mock('../../components/ItemForm', () => ({
+  default: vi.fn(() => <div>ItemForm Mock</div>)
+}))
 
-const mockNavigate = jest.fn()
+const mockNavigate = vi.fn()
 const mockToDoListContext = {
   toDoList: [
     {
@@ -25,20 +25,20 @@ const mockToDoListContext = {
     } as ITodoItem
   ],
   isLoading: false,
-  refetchToDoList: jest.fn(),
-  removeFromToDoList: jest.fn(),
-  updateToDoItemFields: jest.fn()
+  refetchToDoList: vi.fn(),
+  removeFromToDoList: vi.fn(),
+  updateToDoItemFields: vi.fn()
 }
 
-jest.mock('../../providers/PlannerProvider', () => ({
+vi.mock('../../providers/PlannerProvider', async () => ({
   PlannerProvider: ({ children }: any) => children,
   usePlannerContext: () => mockToDoListContext,
 }))
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(() => jest.fn()),
-  useParams: jest.fn(),
+vi.mock('react-router', async () => ({
+  ...(await vi.importActual('react-router')),
+  useNavigate: vi.fn(() => vi.fn()),
+  useParams: vi.fn(),
 }))
 
 const renderComponent = async () => {
@@ -55,8 +55,8 @@ const renderComponent = async () => {
 
 describe('Given the EditPlannerItemRoute component', () => {
   beforeEach(() => {
-    jest.mocked(ReactRouter.useNavigate).mockReturnValue(mockNavigate)
-    jest.mocked(ReactRouter.useParams).mockReturnValue({ id: '1' })
+    vi.mocked(ReactRouter.useNavigate).mockReturnValue(mockNavigate)
+    vi.mocked(ReactRouter.useParams).mockReturnValue({ id: '1' })
     mockNavigate.mockClear()
     mockToDoListContext.updateToDoItemFields.mockClear()
   })
@@ -69,7 +69,7 @@ describe('Given the EditPlannerItemRoute component', () => {
   it('should render the ItemForm component with prefilled values', async () => {
     await renderComponent()
     
-    const [firstCall] = jest.mocked(ItemForm).mock.calls
+    const [firstCall] = vi.mocked(ItemForm).mock.calls
     const props = firstCall[0]
     
     expect(props.fields).toHaveLength(3)
@@ -88,7 +88,7 @@ describe('Given the EditPlannerItemRoute component', () => {
   })
 
   it('should show loading when todo item is not found initially', async () => {
-    jest.mocked(ReactRouter.useParams).mockReturnValue({ id: 'non-existent' })
+    vi.mocked(ReactRouter.useParams).mockReturnValue({ id: 'non-existent' })
     
     await renderComponent()
     
@@ -99,7 +99,7 @@ describe('Given the EditPlannerItemRoute component', () => {
     it('should call updateToDoItemFields with correct data', async () => {
       await renderComponent()
       
-      const [firstCall] = jest.mocked(ItemForm).mock.calls
+      const [firstCall] = vi.mocked(ItemForm).mock.calls
       const props = firstCall[0]
       
       const mockFields = [
@@ -141,7 +141,7 @@ describe('Given the EditPlannerItemRoute component', () => {
     it('should call updateToDoItemFields with only name when other fields are empty', async () => {
       await renderComponent()
       
-      const [firstCall] = jest.mocked(ItemForm).mock.calls
+      const [firstCall] = vi.mocked(ItemForm).mock.calls
       const props = firstCall[0]
       
       const mockFields = [
@@ -183,7 +183,7 @@ describe('Given the EditPlannerItemRoute component', () => {
       
       await renderComponent()
       
-      const [firstCall] = jest.mocked(ItemForm).mock.calls
+      const [firstCall] = vi.mocked(ItemForm).mock.calls
       const props = firstCall[0]
       
       const mockFields = [

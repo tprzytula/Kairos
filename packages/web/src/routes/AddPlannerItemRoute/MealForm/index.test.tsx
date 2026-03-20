@@ -1,35 +1,36 @@
+import { Mock } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import MealForm from './index'
 import { useMealPlanContext } from '../../../providers/MealPlanProvider'
 import { useRecipeContext } from '../../../providers/RecipeProvider'
 import { useAppState } from '../../../providers/AppStateProvider'
 
-const mockNavigate = jest.fn()
+const mockNavigate = vi.fn()
 
-jest.mock('react-router', () => ({
+vi.mock('react-router', () => ({
   useNavigate: () => mockNavigate,
 }))
 
-jest.mock('../../../providers/MealPlanProvider', () => ({
-  useMealPlanContext: jest.fn(),
+vi.mock('../../../providers/MealPlanProvider', () => ({
+  useMealPlanContext: vi.fn(),
 }))
 
-jest.mock('../../../providers/RecipeProvider', () => ({
-  useRecipeContext: jest.fn(),
+vi.mock('../../../providers/RecipeProvider', () => ({
+  useRecipeContext: vi.fn(),
 }))
 
-jest.mock('../../../providers/AppStateProvider', () => ({
-  useAppState: jest.fn(),
+vi.mock('../../../providers/AppStateProvider', () => ({
+  useAppState: vi.fn(),
 }))
 
-jest.mock('../../../components/ItemForm/index.styled', () => ({
+vi.mock('../../../components/ItemForm/index.styled', () => ({
   FormContainer: ({ children }: any) => <div>{children}</div>,
   FormCard: ({ children }: any) => <div>{children}</div>,
   FormContent: ({ children }: any) => <div>{children}</div>,
   FormFieldsContainer: ({ children }: any) => <div>{children}</div>,
 }))
 
-const mockAddMealPlan = jest.fn()
+const mockAddMealPlan = vi.fn()
 
 const exampleRecipes = [
   { id: 'recipe-1', name: 'Pasta', projectId: 'proj-1', ingredients: [], instructions: [], createdAt: '2026-01-01', updatedAt: '2026-01-01' },
@@ -37,12 +38,12 @@ const exampleRecipes = [
 ]
 
 beforeEach(() => {
-  jest.clearAllMocks()
-  ;(useMealPlanContext as jest.Mock).mockReturnValue({ addMealPlan: mockAddMealPlan })
-  ;(useRecipeContext as jest.Mock).mockReturnValue({ recipes: exampleRecipes })
-  ;(useAppState as jest.Mock).mockReturnValue({
+  vi.clearAllMocks()
+  ;(useMealPlanContext as Mock).mockReturnValue({ addMealPlan: mockAddMealPlan })
+  ;(useRecipeContext as Mock).mockReturnValue({ recipes: exampleRecipes })
+  ;(useAppState as Mock).mockReturnValue({
     state: { selectedCalendarDate: '2026-06-15' },
-    dispatch: jest.fn(),
+    dispatch: vi.fn(),
   })
 })
 
@@ -156,15 +157,15 @@ describe('Given the MealForm component', () => {
   })
 
   it('should show no recipes yet when recipe list is empty', () => {
-    ;(useRecipeContext as jest.Mock).mockReturnValue({ recipes: [] })
+    ;(useRecipeContext as Mock).mockReturnValue({ recipes: [] })
     render(<MealForm />)
     expect(screen.getByText(/no recipes yet/i)).toBeVisible()
   })
 
   it('should use today as default date when selectedCalendarDate is null', () => {
-    ;(useAppState as jest.Mock).mockReturnValue({
+    ;(useAppState as Mock).mockReturnValue({
       state: { selectedCalendarDate: null },
-      dispatch: jest.fn(),
+      dispatch: vi.fn(),
     })
     render(<MealForm />)
     const input = screen.getByDisplayValue(/^\d{4}-\d{2}-\d{2}$/)

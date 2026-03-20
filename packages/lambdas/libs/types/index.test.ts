@@ -4,7 +4,7 @@ import { middleware } from ".";
 describe("Given the middleware", () => {
   describe("When invoked with a function", () => {
     it("should return a handler for the wrapped function", () => {
-      const myFunction = jest.fn();
+      const myFunction = vi.fn();
       const handler = middleware(myFunction);
 
       expect(typeof handler).toBe("function");
@@ -12,7 +12,7 @@ describe("Given the middleware", () => {
 
     describe("And the function handler is invoked", () => {
       it("should execute the original function", async () => {
-        const myFunction = jest.fn();
+        const myFunction = vi.fn();
         const handler = middleware(myFunction);
 
         const event = {};
@@ -29,7 +29,7 @@ describe("Given the middleware", () => {
           statusCode: 200,
           body: "Well Done",
         };
-        const myFunction = jest.fn().mockReturnValue(exampleResponse);
+        const myFunction = vi.fn().mockReturnValue(exampleResponse);
         const handler = middleware(myFunction);
 
         const event = {};
@@ -45,7 +45,7 @@ describe("Given the middleware", () => {
 
   describe("When invoked with a lambda handler that throws an exception", () => {
     it("should log the error", async () => {
-      const logSpy = jest.spyOn(console, "log");
+      const logSpy = vi.spyOn(console, "log");
       const myExceptionFunction = () => {
         throw Error("EXCEPTION");
       };

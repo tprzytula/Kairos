@@ -7,8 +7,8 @@ describe('Given the useForm hook', () => {
     it('should return the form fields', () => {
         const { result } = renderHook(() => useForm({
             initialFields: EXAMPLE_FIELDS,
-            onSubmit: jest.fn(),
-            onValueChange: jest.fn()
+            onSubmit: vi.fn(),
+            onValueChange: vi.fn()
         }))
 
         expect(result.current.formFields).toEqual(EXAMPLE_FIELDS)
@@ -16,12 +16,12 @@ describe('Given the useForm hook', () => {
 
     describe('When the form is submitted', () => {
         it('should call the onSubmit function', async () => {
-            const event = { preventDefault: jest.fn() } as unknown as React.FormEvent<HTMLFormElement>
-            const onSubmit = jest.fn()
+            const event = { preventDefault: vi.fn() } as unknown as React.FormEvent<HTMLFormElement>
+            const onSubmit = vi.fn()
             const { result } = renderHook(() => useForm({
                 initialFields: EXAMPLE_FIELDS,
                 onSubmit,
-                onValueChange: jest.fn()
+                onValueChange: vi.fn()
             }))
 
             await act(async () => {
@@ -33,12 +33,12 @@ describe('Given the useForm hook', () => {
         })
 
         it('should set the isSubmitting state to true', async () => {
-            const event = { preventDefault: jest.fn() } as unknown as React.FormEvent<HTMLFormElement>
-            const onSubmit = jest.fn().mockImplementation(() => new Promise(() => {}))
+            const event = { preventDefault: vi.fn() } as unknown as React.FormEvent<HTMLFormElement>
+            const onSubmit = vi.fn().mockImplementation(() => new Promise(() => {}))
             const { result } = renderHook(() => useForm({
                 initialFields: EXAMPLE_FIELDS,
                 onSubmit,
-                onValueChange: jest.fn()
+                onValueChange: vi.fn()
             }))
 
             await act(async () => {
@@ -50,8 +50,8 @@ describe('Given the useForm hook', () => {
 
         describe('And the fields are invalid', () => {
             it('should not call the onSubmit function', async () => {
-                const event = { preventDefault: jest.fn() } as unknown as React.FormEvent<HTMLFormElement>
-                const onSubmit = jest.fn()
+                const event = { preventDefault: vi.fn() } as unknown as React.FormEvent<HTMLFormElement>
+                const onSubmit = vi.fn()
                 const { result } = renderHook(() => useForm({
                     initialFields: [
                         EXAMPLE_FIELDS[0],
@@ -61,7 +61,7 @@ describe('Given the useForm hook', () => {
                         }
                     ],
                     onSubmit,
-                    onValueChange: jest.fn()
+                    onValueChange: vi.fn()
                 }))
 
                 await act(async () => {
@@ -72,8 +72,8 @@ describe('Given the useForm hook', () => {
             })
 
             it('should set the errors state to the errors', async () => {
-                const event = { preventDefault: jest.fn() } as unknown as React.FormEvent<HTMLFormElement>
-                const onSubmit = jest.fn()
+                const event = { preventDefault: vi.fn() } as unknown as React.FormEvent<HTMLFormElement>
+                const onSubmit = vi.fn()
                 const { result } = renderHook(() => useForm({
                     initialFields: [
                         EXAMPLE_FIELDS[0],
@@ -83,7 +83,7 @@ describe('Given the useForm hook', () => {
                         }
                     ],
                     onSubmit,
-                    onValueChange: jest.fn()
+                    onValueChange: vi.fn()
                 }))
                 
                 await act(async () => {
@@ -97,8 +97,8 @@ describe('Given the useForm hook', () => {
 
             describe('And the onChange event is triggered for the field', () => {
                 it('should clear the field error', async () => {
-                    const event = { preventDefault: jest.fn() } as unknown as React.FormEvent<HTMLFormElement>
-                    const onSubmit = jest.fn()
+                    const event = { preventDefault: vi.fn() } as unknown as React.FormEvent<HTMLFormElement>
+                    const onSubmit = vi.fn()
                     const { result } = renderHook(() => useForm({
                         initialFields: [
                             EXAMPLE_FIELDS[0],
@@ -108,7 +108,7 @@ describe('Given the useForm hook', () => {
                             }
                         ],
                         onSubmit,
-                        onValueChange: jest.fn()
+                        onValueChange: vi.fn()
                     }))
                     
                     await act(async () => {
@@ -132,12 +132,12 @@ describe('Given the useForm hook', () => {
 
         describe('And the submit completed', () => {
             it('should set the isSubmitting state to false', async () => {
-                const event = { preventDefault: jest.fn() } as unknown as React.FormEvent<HTMLFormElement>
-                const onSubmit = jest.fn().mockImplementation(() => Promise.resolve())
+                const event = { preventDefault: vi.fn() } as unknown as React.FormEvent<HTMLFormElement>
+                const onSubmit = vi.fn().mockImplementation(() => Promise.resolve())
                 const { result } = renderHook(() => useForm({
                     initialFields: EXAMPLE_FIELDS,
                     onSubmit,
-                    onValueChange: jest.fn()
+                    onValueChange: vi.fn()
                 }))
 
                 await act(async () => {
@@ -150,12 +150,12 @@ describe('Given the useForm hook', () => {
 
         describe('And the submit failed', () => {
             it('should set the submitError state to the error message', async () => {
-                const event = { preventDefault: jest.fn() } as unknown as React.FormEvent<HTMLFormElement>
-                const onSubmit = jest.fn().mockImplementation(() => Promise.reject(new Error('Error')))
+                const event = { preventDefault: vi.fn() } as unknown as React.FormEvent<HTMLFormElement>
+                const onSubmit = vi.fn().mockImplementation(() => Promise.reject(new Error('Error')))
                 const { result } = renderHook(() => useForm({
                     initialFields: EXAMPLE_FIELDS,
                     onSubmit,
-                    onValueChange: jest.fn()
+                    onValueChange: vi.fn()
                 }))
 
                 await act(async () => {
@@ -167,12 +167,12 @@ describe('Given the useForm hook', () => {
 
             describe('And the error is not an instance of Error', () => {
                 it('should set the submitError state to the error message', async () => {
-                    const event = { preventDefault: jest.fn() } as unknown as React.FormEvent<HTMLFormElement>
-                    const onSubmit = jest.fn().mockImplementation(() => Promise.reject('Error'))
+                    const event = { preventDefault: vi.fn() } as unknown as React.FormEvent<HTMLFormElement>
+                    const onSubmit = vi.fn().mockImplementation(() => Promise.reject('Error'))
                     const { result } = renderHook(() => useForm({
                         initialFields: EXAMPLE_FIELDS,
                         onSubmit,
-                        onValueChange: jest.fn()
+                        onValueChange: vi.fn()
                     }))
 
                     await act(async () => {
@@ -189,8 +189,8 @@ describe('Given the useForm hook', () => {
         it('should update the form fields', async () => {
             const { result } = renderHook(() => useForm({
                 initialFields: EXAMPLE_FIELDS,
-                onSubmit: jest.fn(),
-                onValueChange: jest.fn()
+                onSubmit: vi.fn(),
+                onValueChange: vi.fn()
             }))
 
             await act(async () => {

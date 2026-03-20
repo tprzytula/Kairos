@@ -3,7 +3,7 @@ import { query } from "@kairos-lambdas-libs/dynamodb";
 import { DynamoDBTable, DynamoDBIndex } from "@kairos-lambdas-libs/dynamodb/enums";
 import { IProject, IProjectMember, ProjectRole } from "@kairos-lambdas-libs/dynamodb/types/projects";
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
   DynamoDBTable: {
     PROJECT_MEMBERS: "ProjectMembers",
     PROJECTS: "Projects",
@@ -11,12 +11,12 @@ jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
   DynamoDBIndex: {
     PROJECTS_INVITE_CODE: "InviteCodeIndex",
   },
-  query: jest.fn(),
+  query: vi.fn(),
 }));
 
 describe("Given the get_project_invite_info lambda handler", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("When invite code is not provided", () => {
@@ -30,7 +30,7 @@ describe("Given the get_project_invite_info lambda handler", () => {
 
   describe("When invite code is invalid", () => {
     it("should return status 404", async () => {
-      jest.mocked(query).mockResolvedValue([]);
+      vi.mocked(query).mockResolvedValue([]);
 
       const result = await runHandler({ inviteCode: "INVALID" });
 
@@ -74,7 +74,7 @@ describe("Given the get_project_invite_info lambda handler", () => {
         },
       ];
 
-      jest.mocked(query)
+      vi.mocked(query)
         .mockResolvedValueOnce([mockProject])
         .mockResolvedValueOnce(mockMembers);
 
@@ -126,7 +126,7 @@ describe("Given the get_project_invite_info lambda handler", () => {
         },
       ];
 
-      jest.mocked(query)
+      vi.mocked(query)
         .mockResolvedValueOnce([mockProject])
         .mockResolvedValueOnce(mockMembers);
 
@@ -155,7 +155,7 @@ describe("Given the get_project_invite_info lambda handler", () => {
         },
       ];
 
-      jest.mocked(query)
+      vi.mocked(query)
         .mockResolvedValueOnce([mockProject])
         .mockResolvedValueOnce(mockMembers);
 
@@ -168,7 +168,7 @@ describe("Given the get_project_invite_info lambda handler", () => {
 
   describe("When database operation fails", () => {
     it("should return status 500", async () => {
-      jest.mocked(query).mockRejectedValue(new Error("Database error"));
+      vi.mocked(query).mockRejectedValue(new Error("Database error"));
 
       const result = await runHandler({ inviteCode: "ABC123" });
 
@@ -188,7 +188,7 @@ describe("Given the get_project_invite_info lambda handler", () => {
         inviteCode: "ABC123",
       };
 
-      jest.mocked(query)
+      vi.mocked(query)
         .mockResolvedValueOnce([mockProject])
         .mockRejectedValueOnce(new Error("Members query failed"));
 

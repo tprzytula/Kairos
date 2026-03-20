@@ -30,7 +30,7 @@ describe('Given the useItemDefaults hook', () => {
 })
 
 const createFetchMethod = (defaults: Array<IItemDefault>) => {
-    return jest.fn().mockResolvedValue(defaults)
+    return vi.fn().mockResolvedValue(defaults)
 }
 
 const EXAMPLE_DEFAULTS: Array<IItemDefault> = [

@@ -2,16 +2,16 @@ import { handler } from "./index";
 import { putItem } from "@kairos-lambdas-libs/dynamodb";
 import { DynamoDBTable } from "@kairos-lambdas-libs/dynamodb/enums";
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
   DynamoDBTable: {
     USER_PREFERENCES: "UserPreferences",
   },
-  putItem: jest.fn(),
+  putItem: vi.fn(),
 }));
 
 describe("Given the update_user_preferences lambda handler", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("When user is not authenticated", () => {
@@ -60,7 +60,7 @@ describe("Given the update_user_preferences lambda handler", () => {
 
   describe("When request is valid", () => {
     it("should update preferences and return success", async () => {
-      jest.mocked(putItem).mockResolvedValue(undefined);
+      vi.mocked(putItem).mockResolvedValue(undefined);
 
       const result = await runHandler({ 
         userId: "user-123", 
@@ -86,7 +86,7 @@ describe("Given the update_user_preferences lambda handler", () => {
     });
 
     it("should handle undefined currentProjectId", async () => {
-      jest.mocked(putItem).mockResolvedValue(undefined);
+      vi.mocked(putItem).mockResolvedValue(undefined);
 
       const result = await runHandler({ 
         userId: "user-123", 
@@ -111,7 +111,7 @@ describe("Given the update_user_preferences lambda handler", () => {
     });
 
     it("should return status 500 when database operation fails", async () => {
-      jest.mocked(putItem).mockRejectedValue(new Error("Database error"));
+      vi.mocked(putItem).mockRejectedValue(new Error("Database error"));
 
       const result = await runHandler({ 
         userId: "user-123", 

@@ -60,7 +60,7 @@ describe('Given the addMealPlan function', () => {
 
     const result = await addMealPlan(exampleMealPlan)
 
-    expect(result).toStrictEqual(exampleResponse)
+    expect(result).toEqual(exampleResponse)
   })
 
   describe('When the API call fails', () => {

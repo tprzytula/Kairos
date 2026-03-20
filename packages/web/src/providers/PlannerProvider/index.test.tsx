@@ -8,15 +8,15 @@ import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import { ProjectContext } from '../ProjectProvider'
 import { IProject } from '../../types/project'
 
-jest.mock('../../api/toDoList')
-jest.mock('react-oidc-context', () => ({
+vi.mock('../../api/toDoList')
+vi.mock('react-oidc-context', () => ({
   useAuth: () => ({
     isAuthenticated: true,
     user: { access_token: 'mock-token' }
   })
 }))
-jest.mock('../../api/projects', () => ({
-  retrieveUserProjects: jest.fn().mockResolvedValue([])
+vi.mock('../../api/projects', () => ({
+  retrieveUserProjects: vi.fn().mockResolvedValue([])
 }))
 
 const createTestQueryClient = () =>
@@ -32,7 +32,7 @@ describe('Given the PlannerProvider component', () => {
   })
 
   it('should make a request to the API', async () => {
-    jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
+    vi.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
 
     await act(async () => {
       renderPlannerProvider()
@@ -43,8 +43,8 @@ describe('Given the PlannerProvider component', () => {
 
   describe('When the API request fails', () => {
     it('should log an error', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error')
-      jest.spyOn(API, 'retrieveToDoList').mockRejectedValue(new Error('It is what it is'))
+      const consoleErrorSpy = vi.spyOn(console, 'error')
+      vi.spyOn(API, 'retrieveToDoList').mockRejectedValue(new Error('It is what it is'))
 
       await act(async () => {
         renderPlannerProvider()
@@ -59,7 +59,7 @@ describe('Given the PlannerProvider component', () => {
 
 describe('Given the usePlannerContext hook', () => {
   it('should return the todo list', async () => {
-    jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
+    vi.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -80,7 +80,7 @@ describe('Given the usePlannerContext hook', () => {
   })
 
   it('should allow you to refetch the todo list', async () => {
-    jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
+    vi.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -99,7 +99,7 @@ describe('Given the usePlannerContext hook', () => {
       expect(result.current.toDoList).toStrictEqual(EXAMPLE_TODO_LIST)
     })
 
-    jest.spyOn(API, 'retrieveToDoList').mockResolvedValue([
+    vi.spyOn(API, 'retrieveToDoList').mockResolvedValue([
       {
         id: '1',
         name: 'Something Else',
@@ -128,7 +128,7 @@ describe('Given the usePlannerContext hook', () => {
 
   describe('When the API request fails', () => {
     it('should return an empty array', async () => {
-      jest.spyOn(API, 'retrieveToDoList').mockRejectedValue(new Error('It is what it is'))
+      vi.spyOn(API, 'retrieveToDoList').mockRejectedValue(new Error('It is what it is'))
 
       const queryClient = createTestQueryClient()
       const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -150,7 +150,7 @@ describe('Given the usePlannerContext hook', () => {
   })
 
   it('should handle removing items from the todo list', async () => {
-    jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
+    vi.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -182,8 +182,8 @@ describe('Given the usePlannerContext hook', () => {
 
 
   it('should handle updating todo item fields', async () => {
-    jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
-    jest.spyOn(API, 'updateToDoItemFields').mockResolvedValue()
+    vi.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
+    vi.spyOn(API, 'updateToDoItemFields').mockResolvedValue()
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -216,9 +216,9 @@ describe('Given the usePlannerContext hook', () => {
   })
 
   it('should handle errors when updating todo item fields fails', async () => {
-    jest.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
-    jest.spyOn(API, 'updateToDoItemFields').mockRejectedValue(new Error('Update failed'))
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    vi.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
+    vi.spyOn(API, 'updateToDoItemFields').mockRejectedValue(new Error('Update failed'))
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation()
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -253,7 +253,7 @@ describe('Given the usePlannerContext hook', () => {
       resolvePromise = resolve
     })
 
-    jest.spyOn(API, 'retrieveToDoList').mockReturnValue(promise)
+    vi.spyOn(API, 'retrieveToDoList').mockReturnValue(promise)
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -315,11 +315,11 @@ const MockProjectProvider = ({ children }: { children: React.ReactNode }) => {
     projects: [MOCK_PROJECT],
     currentProject: MOCK_PROJECT,
     isLoading: false,
-    createProject: jest.fn(),
-    joinProject: jest.fn(),
-    switchProject: jest.fn(),
-    fetchProjects: jest.fn(),
-    getProjectInviteInfo: jest.fn(),
+    createProject: vi.fn(),
+    joinProject: vi.fn(),
+    switchProject: vi.fn(),
+    fetchProjects: vi.fn(),
+    getProjectInviteInfo: vi.fn(),
   }
 
   return (

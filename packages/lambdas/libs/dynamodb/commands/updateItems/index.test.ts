@@ -3,8 +3,8 @@ import { DynamoDBTable } from "../../enums";
 import * as Client from '../../client';
 import { TransactWriteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
-jest.mock("../../client");
-jest.mock("@aws-sdk/lib-dynamodb");
+vi.mock("../../client");
+vi.mock("@aws-sdk/lib-dynamodb");
 
 describe("Given the updateItems function", () => {
   it("should pass the right table name and items to the updateItems command", async () => {
@@ -59,10 +59,10 @@ describe("Given the updateItems function", () => {
 
 const mockDocumentClient = () => {
   const mockDocumentClient = {
-    send: jest.fn().mockResolvedValue('send response'),
+    send: vi.fn().mockResolvedValue('send response'),
   } as unknown as DynamoDBDocumentClient;
 
-  jest.spyOn(Client, "getDocumentClient").mockReturnValue(mockDocumentClient);
+  vi.spyOn(Client, "getDocumentClient").mockReturnValue(mockDocumentClient);
 
   return mockDocumentClient;
 };

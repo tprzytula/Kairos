@@ -20,16 +20,16 @@ describe('ActionButtonsBar component', () => {
       const props: IActionButtonsBarProps = {
         expandCollapseButton: {
           isExpanded: true,
-          onToggle: jest.fn(),
+          onToggle: vi.fn(),
         },
         actionButton: {
           isEnabled: true,
-          onClick: jest.fn(),
+          onClick: vi.fn(),
           children: 'Test Action',
         },
         viewToggleButton: {
           children: <ViewModuleIcon />,
-          onClick: jest.fn(),
+          onClick: vi.fn(),
         },
       }
 
@@ -44,7 +44,7 @@ describe('ActionButtonsBar component', () => {
   describe('expand collapse button', () => {
     describe('when expanded is true', () => {
       it('should display collapse icon and tooltip', () => {
-        const onToggle = jest.fn()
+        const onToggle = vi.fn()
         const props: IActionButtonsBarProps = {
           expandCollapseButton: {
             isExpanded: true,
@@ -64,7 +64,7 @@ describe('ActionButtonsBar component', () => {
 
     describe('when expanded is false', () => {
       it('should display expand icon and tooltip', () => {
-        const onToggle = jest.fn()
+        const onToggle = vi.fn()
         const props: IActionButtonsBarProps = {
           expandCollapseButton: {
             isExpanded: false,
@@ -87,7 +87,7 @@ describe('ActionButtonsBar component', () => {
         const props: IActionButtonsBarProps = {
           expandCollapseButton: {
             isExpanded: false,
-            onToggle: jest.fn(),
+            onToggle: vi.fn(),
             disabled: true,
           },
         }
@@ -103,7 +103,7 @@ describe('ActionButtonsBar component', () => {
   describe('action button', () => {
     describe('when enabled is true', () => {
       it('should render action button and handle click', () => {
-        const onClick = jest.fn()
+        const onClick = vi.fn()
         const props: IActionButtonsBarProps = {
           actionButton: {
             isEnabled: true,
@@ -127,7 +127,7 @@ describe('ActionButtonsBar component', () => {
         const props: IActionButtonsBarProps = {
           actionButton: {
             isEnabled: false,
-            onClick: jest.fn(),
+            onClick: vi.fn(),
             children: 'Mark as Done',
             statusText: 'Select items to mark as done',
           },
@@ -145,7 +145,7 @@ describe('ActionButtonsBar component', () => {
         const props: IActionButtonsBarProps = {
           actionButton: {
             isEnabled: true,
-            onClick: jest.fn(),
+            onClick: vi.fn(),
             children: 'Mark as Done',
             disabled: true,
           },
@@ -161,7 +161,7 @@ describe('ActionButtonsBar component', () => {
 
   describe('view toggle button', () => {
     it('should render view toggle button and handle click', () => {
-      const onClick = jest.fn()
+      const onClick = vi.fn()
       const props: IActionButtonsBarProps = {
         viewToggleButton: {
           children: <ViewModuleIcon />,
@@ -183,7 +183,7 @@ describe('ActionButtonsBar component', () => {
         const props: IActionButtonsBarProps = {
           viewToggleButton: {
             children: <ViewModuleIcon />,
-            onClick: jest.fn(),
+            onClick: vi.fn(),
             disabled: true,
           },
         }
@@ -215,7 +215,7 @@ describe('ActionButtonsBar component', () => {
       const props: IActionButtonsBarProps = {
         actionButton: {
           isEnabled: false,
-          onClick: jest.fn(),
+          onClick: vi.fn(),
           children: 'Action',
           statusText: 'No items selected',
         },
@@ -237,11 +237,11 @@ describe('ActionButtonsBar component', () => {
       const props: IActionButtonsBarProps = {
         expandCollapseButton: {
           isExpanded: false,
-          onToggle: jest.fn(),
+          onToggle: vi.fn(),
         },
         viewToggleButton: {
           children: <span>Toggle</span>,
-          onClick: jest.fn(),
+          onClick: vi.fn(),
         },
       }
 

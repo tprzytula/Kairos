@@ -5,9 +5,9 @@ const { DynamoDBTable, DynamoDBIndex } = DynamoDB;
 import { handler } from "./index";
 import { ITodoItem } from "@kairos-lambdas-libs/dynamodb/types/index";
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
-    ...jest.requireActual("@kairos-lambdas-libs/dynamodb"),
-    query: jest.fn(),
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
+    ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
+    query: vi.fn(),
 }));
 
 describe('Given the get_todo_items lambda handler', () => {
@@ -33,7 +33,7 @@ describe('Given the get_todo_items lambda handler', () => {
     });
 
     it('should log the response', async () => {
-        const logSpy = jest.spyOn(console, 'info').mockImplementation(() => { });
+        const logSpy = vi.spyOn(console, 'info').mockImplementation(() => { });
 
         await handler(createMockEvent(), {} as any, {} as any);
 
@@ -54,7 +54,7 @@ describe('Given the get_todo_items lambda handler', () => {
 
     describe('When the query request fails', () => {
         it('should log the error', async () => {
-            const logSpy = jest.spyOn(console, 'error');
+            const logSpy = vi.spyOn(console, 'error');
 
             const querySpy = mockQuery();
             querySpy.mockRejectedValue(new Error('Query failed'));
@@ -83,7 +83,7 @@ describe('Given the get_todo_items lambda handler', () => {
     });
 });
 
-const mockQuery = () => jest.spyOn(DynamoDB, 'query').mockResolvedValue(EXAMPLE_DB_TODO_ITEMS);
+const mockQuery = () => vi.spyOn(DynamoDB, 'query').mockResolvedValue(EXAMPLE_DB_TODO_ITEMS);
 
 const createMockEvent = (projectId: string = "test-project") => ({
     headers: {

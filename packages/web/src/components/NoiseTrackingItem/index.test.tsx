@@ -3,9 +3,9 @@ import NoiseTrackingItem from "."
 import * as NoiseTrackingProvider from "../../providers/NoiseTrackingProvider"
 
 // Mock the provider
-const mockRefetchNoiseTrackingItems = jest.fn()
+const mockRefetchNoiseTrackingItems = vi.fn()
 
-jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
+vi.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
   noiseTrackingItems: [],
   isLoading: false,
   refetchNoiseTrackingItems: mockRefetchNoiseTrackingItems,
@@ -15,7 +15,7 @@ const originalToLocaleDateString = Date.prototype.toLocaleDateString
 
 describe('Given the NoiseTrackingItem component', () => {
   beforeAll(() => {
-    jest.spyOn(Date.prototype, 'toLocaleDateString').mockImplementation(function(
+    vi.spyOn(Date.prototype, 'toLocaleDateString').mockImplementation(function(
       this: Date,
       locale?: Intl.LocalesArgument,
       options?: Intl.DateTimeFormatOptions
@@ -28,11 +28,11 @@ describe('Given the NoiseTrackingItem component', () => {
   })
 
   afterAll(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should render the noise tracking item with correct format', () => {

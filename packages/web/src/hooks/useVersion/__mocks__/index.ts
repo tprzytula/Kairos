@@ -3,7 +3,7 @@ import { VersionInfo } from '../../../types/version'
 import { UseVersionResult } from '../types'
 
 // Mock function to control localhost detection in tests
-export const isLocalhost = jest.fn(() => false)
+export const isLocalhost = vi.fn(() => false)
 
 export const useVersion = (): UseVersionResult => {
   const [version, setVersion] = useState<string | null>(null)

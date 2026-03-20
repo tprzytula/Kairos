@@ -4,9 +4,9 @@ import NavigateButton from '.'
 
 const { BrowserRouter } = ReactRouter;
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
+vi.mock('react-router', async () => ({
+  ...(await vi.importActual('react-router')),
+  useNavigate: vi.fn(),
 }));
 
 describe('Given the NavigateButton component', () => {
@@ -22,9 +22,9 @@ describe('Given the NavigateButton component', () => {
 
   describe('When the navigate icon is pressed', () => {
     it('should change view to /groceries/add', () => {
-      const navigateSpy = jest.fn()
+      const navigateSpy = vi.fn()
       
-      jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
+      vi.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
 
       render(
         <BrowserRouter>

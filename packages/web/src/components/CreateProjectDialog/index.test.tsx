@@ -23,23 +23,23 @@ const mockProjectContext = {
   projects: mockProjects,
   currentProject: mockProjects[0],
   isLoading: false,
-  createProject: jest.fn(),
-  joinProject: jest.fn(),
-  switchProject: jest.fn(),
-  fetchProjects: jest.fn(),
-  getProjectInviteInfo: jest.fn()
+  createProject: vi.fn(),
+  joinProject: vi.fn(),
+  switchProject: vi.fn(),
+  fetchProjects: vi.fn(),
+  getProjectInviteInfo: vi.fn()
 }
 
-const mockUseProjectContext = jest.fn()
+const mockUseProjectContext = vi.fn()
 
-jest.mock('../../providers/ProjectProvider', () => ({
+vi.mock('../../providers/ProjectProvider', () => ({
   useProjectContext: () => mockUseProjectContext(),
 }))
 
 const defaultProps = {
   open: true,
-  onClose: jest.fn(),
-  onSuccess: jest.fn()
+  onClose: vi.fn(),
+  onSuccess: vi.fn()
 }
 
 const renderDialog = (props = {}) => {
@@ -52,7 +52,7 @@ const renderDialog = (props = {}) => {
 
 describe('CreateProjectDialog', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUseProjectContext.mockReturnValue(mockProjectContext)
   })
 
@@ -71,7 +71,7 @@ describe('CreateProjectDialog', () => {
   })
 
   it('should call onClose when cancel button is clicked', () => {
-    const onClose = jest.fn()
+    const onClose = vi.fn()
     renderDialog({ onClose })
 
     fireEvent.click(screen.getByText('Cancel'))
@@ -110,7 +110,7 @@ describe('CreateProjectDialog', () => {
   })
 
   it('should call createProject with correct data', async () => {
-    const createProject = jest.fn().mockResolvedValue({ id: 'new-project' })
+    const createProject = vi.fn().mockResolvedValue({ id: 'new-project' })
     mockUseProjectContext.mockReturnValue({
       ...mockProjectContext,
       createProject
@@ -156,7 +156,7 @@ describe('CreateProjectDialog', () => {
   })
 
   it('should handle creation errors', async () => {
-    const createProject = jest.fn().mockRejectedValue(new Error('Creation failed'))
+    const createProject = vi.fn().mockRejectedValue(new Error('Creation failed'))
     mockUseProjectContext.mockReturnValue({
       ...mockProjectContext,
       createProject

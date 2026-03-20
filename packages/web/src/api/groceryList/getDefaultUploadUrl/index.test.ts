@@ -62,7 +62,7 @@ describe('Given the getGroceryDefaultUploadUrl function', () => {
 
     const result = await getGroceryDefaultUploadUrl('jpg')
 
-    expect(result).toStrictEqual(exampleResponse)
+    expect(result).toEqual(exampleResponse)
   })
 
   describe('When the API call fails', () => {

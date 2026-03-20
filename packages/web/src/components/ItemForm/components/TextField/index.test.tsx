@@ -54,7 +54,7 @@ const EXAMPLE_FIELD: IFormField = {
 }
 
 const EXAMPLE_FIELD_PROPS: IFieldProps = {
-    onChange: jest.fn(),
+    onChange: vi.fn(),
     value: "test"
 }
 

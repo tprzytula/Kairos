@@ -2,16 +2,16 @@ import { formatDueDateRelative, getDueDateClass, formatNoiseTimestamp } from './
 
 describe('formatDueDateRelative', () => {
   beforeAll(() => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
   })
 
   afterAll(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   beforeEach(() => {
     const mockDate = new Date('2024-01-15T12:00:00Z')
-    jest.setSystemTime(mockDate)
+    vi.setSystemTime(mockDate)
   })
 
   describe('when dueDate is undefined', () => {
@@ -117,16 +117,16 @@ describe('formatDueDateRelative', () => {
 
 describe('getDueDateClass', () => {
   beforeAll(() => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
   })
 
   afterAll(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   beforeEach(() => {
     const mockDate = new Date('2024-01-15T12:00:00Z')
-    jest.setSystemTime(mockDate)
+    vi.setSystemTime(mockDate)
   })
 
   describe('when dueDate is undefined', () => {
@@ -188,16 +188,16 @@ describe('getDueDateClass', () => {
 
 describe('formatNoiseTimestamp', () => {
   beforeAll(() => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
   })
 
   afterAll(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   beforeEach(() => {
     const mockDate = new Date('2024-01-15T12:00:00Z')
-    jest.setSystemTime(mockDate)
+    vi.setSystemTime(mockDate)
   })
 
   describe('when timestamp is today', () => {

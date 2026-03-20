@@ -1,11 +1,15 @@
+import { Mock } from 'vitest';
 import type { IRequestBody } from './body/types';
 
-jest.mock('aws-sdk', () => {
-    const mockPublish = jest.fn().mockReturnValue({
-        promise: jest.fn().mockResolvedValue({ MessageId: 'test-message-id' }),
+vi.mock('aws-sdk', () => {
+    const mockPublish = vi.fn().mockReturnValue({
+        promise: vi.fn().mockResolvedValue({ MessageId: 'test-message-id' }),
     });
+    class MockSNS {
+        publish = mockPublish;
+    }
     return {
-        SNS: jest.fn().mockImplementation(() => ({ publish: mockPublish })),
+        SNS: MockSNS,
         __mocks: { publish: mockPublish },
     };
 });
@@ -15,27 +19,28 @@ import { getBody } from './body';
 import { DynamoDBTable, putItem } from '@kairos-lambdas-libs/dynamodb';
 import { randomUUID } from 'node:crypto';
 
-const mockSNSPublish: jest.Mock = (jest.requireMock('aws-sdk') as { __mocks: { publish: jest.Mock } }).__mocks.publish;
+const { __mocks } = await import('aws-sdk') as unknown as { __mocks: { publish: Mock } };
+const mockSNSPublish: Mock = __mocks.publish;
 
-jest.mock('./body', () => ({
-    getBody: jest.fn()
+vi.mock('./body', async () => ({
+    getBody: vi.fn()
 }));
 
-jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
+vi.mock('@kairos-lambdas-libs/dynamodb', async () => ({
     DynamoDBTable: {
         TODO_LIST: 'TodoList'
     },
-    putItem: jest.fn()
+    putItem: vi.fn()
 }));
 
-jest.mock('node:crypto', () => ({
-    randomUUID: jest.fn()
+vi.mock('node:crypto', async () => ({
+    randomUUID: vi.fn()
 }));
 
 describe('Given the add_todo_item lambda handler', () => {
     beforeEach(() => {
         process.env.TODO_NOTIFICATIONS_TOPIC_ARN = 'arn:aws:sns:us-east-1:123456789012:test-topic';
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     afterEach(() => {
@@ -58,7 +63,7 @@ describe('Given the add_todo_item lambda handler', () => {
 
     describe('When the body is invalid', () => {
         it('should return status 400', async () => {
-            jest.mocked(getBody).mockReturnValue(null);
+            vi.mocked(getBody).mockReturnValue(null);
 
             const result = await runHandler({ body: null }, true, true);
 
@@ -68,12 +73,12 @@ describe('Given the add_todo_item lambda handler', () => {
 
     describe('When the body is valid', () => {
         it('should upsert the item in the todo list table', async () => {
-            jest.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
-            jest.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
+            vi.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
+            vi.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
 
             await runHandler({ body: JSON.stringify(EXAMPLE_TODO_ITEM) }, true, true);
 
-            expect(jest.mocked(putItem)).toHaveBeenCalledWith({
+            expect(vi.mocked(putItem)).toHaveBeenCalledWith({
                 tableName: DynamoDBTable.TODO_LIST,
                 item: {
                     id: EXAMPLE_ID,
@@ -86,9 +91,9 @@ describe('Given the add_todo_item lambda handler', () => {
 
         describe('And the upsert succeeds', () => {
             it('should return status 201 and send notification', async () => {
-                jest.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
-                jest.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
-                jest.mocked(putItem).mockResolvedValue({
+                vi.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
+                vi.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
+                vi.mocked(putItem).mockResolvedValue({
                     $metadata: {
                         httpStatusCode: 201,
                     },
@@ -118,20 +123,20 @@ describe('Given the add_todo_item lambda handler', () => {
             });
 
             it('should continue if notification fails', async () => {
-                const mockFailedPromise = jest.fn().mockRejectedValue(new Error('SNS failed'));
+                const mockFailedPromise = vi.fn().mockRejectedValue(new Error('SNS failed'));
                 mockSNSPublish.mockReturnValueOnce({
                     promise: mockFailedPromise
                 });
 
-                jest.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
-                jest.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
-                jest.mocked(putItem).mockResolvedValue({
+                vi.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
+                vi.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
+                vi.mocked(putItem).mockResolvedValue({
                     $metadata: {
                         httpStatusCode: 201,
                     },
                 });
 
-                const mockConsoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+                const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
                 const result = await runHandler({ 
                     body: JSON.stringify(EXAMPLE_TODO_ITEM)
@@ -144,9 +149,9 @@ describe('Given the add_todo_item lambda handler', () => {
             });
 
             it('should fallback to email when given_name is not available', async () => {
-                jest.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
-                jest.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
-                jest.mocked(putItem).mockResolvedValue({
+                vi.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
+                vi.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
+                vi.mocked(putItem).mockResolvedValue({
                     $metadata: {
                         httpStatusCode: 201,
                     },
@@ -177,7 +182,7 @@ describe('Given the add_todo_item lambda handler', () => {
 
         describe('And the upsert fails', () => {
             it('should return status 500', async () => {
-                jest.mocked(putItem).mockRejectedValue(new Error('Upsert failed'));
+                vi.mocked(putItem).mockRejectedValue(new Error('Upsert failed'));
 
                 const result = await runHandler({ 
                     body: JSON.stringify(EXAMPLE_TODO_ITEM)

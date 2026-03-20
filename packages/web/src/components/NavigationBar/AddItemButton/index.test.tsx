@@ -9,18 +9,18 @@ import * as NoiseTrackingAPI from '../../../api/noiseTracking'
 import theme from '../../../theme'
 
 // Mock the external dependencies
-const mockNavigate = jest.fn()
-const mockRefetchNoiseTrackingItems = jest.fn()
-const mockAddNoiseTrackingItem = jest.fn()
+const mockNavigate = vi.fn()
+const mockRefetchNoiseTrackingItems = vi.fn()
+const mockAddNoiseTrackingItem = vi.fn()
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
+vi.mock('react-router', async () => ({
+  ...(await vi.importActual('react-router')),
   useNavigate: () => mockNavigate,
-  useLocation: jest.fn(),
+  useLocation: vi.fn(),
 }))
 
-jest.mock('../../../providers/NoiseTrackingProvider')
-jest.mock('../../../api/noiseTracking')
+vi.mock('../../../providers/NoiseTrackingProvider')
+vi.mock('../../../api/noiseTracking')
 
 const renderWithProviders = (children: React.ReactNode) => {
   return render(
@@ -34,20 +34,20 @@ const renderWithProviders = (children: React.ReactNode) => {
 
 describe('Given the AddItemButton component', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     
-    jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
+    vi.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
       noiseTrackingItems: [],
       isLoading: false,
       refetchNoiseTrackingItems: mockRefetchNoiseTrackingItems,
     })
     
-    jest.spyOn(NoiseTrackingAPI, 'addNoiseTrackingItem').mockImplementation(mockAddNoiseTrackingItem)
+    vi.spyOn(NoiseTrackingAPI, 'addNoiseTrackingItem').mockImplementation(mockAddNoiseTrackingItem)
   })
 
   describe('When on the Home page', () => {
     beforeEach(() => {
-      jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      vi.spyOn(ReactRouter, 'useLocation').mockReturnValue({
         pathname: Route.Home,
         search: '',
         hash: '',
@@ -75,7 +75,7 @@ describe('Given the AddItemButton component', () => {
 
   describe('When on the Grocery List page', () => {
     beforeEach(() => {
-      jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      vi.spyOn(ReactRouter, 'useLocation').mockReturnValue({
         pathname: Route.GroceryList,
         search: '',
         hash: '',
@@ -103,7 +103,7 @@ describe('Given the AddItemButton component', () => {
 
   describe('When on the Planner page', () => {
     beforeEach(() => {
-      jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      vi.spyOn(ReactRouter, 'useLocation').mockReturnValue({
         pathname: Route.Planner,
         search: '',
         hash: '',
@@ -131,7 +131,7 @@ describe('Given the AddItemButton component', () => {
 
   describe('When on the Noise Tracking page', () => {
     beforeEach(() => {
-      jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      vi.spyOn(ReactRouter, 'useLocation').mockReturnValue({
         pathname: Route.NoiseTracking,
         search: '',
         hash: '',
@@ -165,7 +165,7 @@ describe('Given the AddItemButton component', () => {
     })
 
     it('should handle API errors gracefully', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       mockAddNoiseTrackingItem.mockRejectedValue(new Error('API Error'))
       
       renderWithProviders(<AddItemButton />)
@@ -186,7 +186,7 @@ describe('Given the AddItemButton component', () => {
 
   describe('When on an unknown route', () => {
     beforeEach(() => {
-      jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      vi.spyOn(ReactRouter, 'useLocation').mockReturnValue({
         pathname: '/unknown-route' as Route,
         search: '',
         hash: '',
@@ -214,7 +214,7 @@ describe('Given the AddItemButton component', () => {
 
   describe('Throttling behavior', () => {
     beforeEach(() => {
-      jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+      vi.spyOn(ReactRouter, 'useLocation').mockReturnValue({
         pathname: Route.GroceryList,
         search: '',
         hash: '',
@@ -224,7 +224,7 @@ describe('Given the AddItemButton component', () => {
     })
 
     it('should throttle multiple quick clicks', async () => {
-      jest.useFakeTimers()
+      vi.useFakeTimers()
       
       renderWithProviders(<AddItemButton />)
       
@@ -239,7 +239,7 @@ describe('Given the AddItemButton component', () => {
       expect(mockNavigate).toHaveBeenCalledTimes(1)
       
       // Wait for throttle to reset
-      jest.advanceTimersByTime(1000)
+      vi.advanceTimersByTime(1000)
       
       // Click again
       fireEvent.click(button)
@@ -247,12 +247,12 @@ describe('Given the AddItemButton component', () => {
       // Should navigate again
       expect(mockNavigate).toHaveBeenCalledTimes(2)
       
-      jest.useRealTimers()
+      vi.useRealTimers()
     })
   })
 
   it('should render the Add Circle icon', () => {
-    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
+    vi.spyOn(ReactRouter, 'useLocation').mockReturnValue({
       pathname: Route.GroceryList,
       search: '',
       hash: '',

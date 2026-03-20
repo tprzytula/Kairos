@@ -1,13 +1,13 @@
-jest.mock('web-push', () => ({
-  setVapidDetails: jest.fn(),
-  sendNotification: jest.fn(),
+vi.mock('web-push', async () => ({
+  setVapidDetails: vi.fn(),
+  sendNotification: vi.fn(),
 }));
 
 import { handler } from "./index";
 import { query, getItem } from "@kairos-lambdas-libs/dynamodb";
 import * as webPush from 'web-push';
 
-jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
+vi.mock('@kairos-lambdas-libs/dynamodb', async () => ({
   DynamoDBTable: {
     PROJECT_MEMBERS: 'ProjectMembers',
     PROJECTS: 'Projects',
@@ -17,17 +17,17 @@ jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
     PROJECT_MEMBERS_PROJECT: 'ProjectMembersIndex',
     PUSH_SUBSCRIPTIONS_USER: 'UserPushSubscriptionsIndex'
   },
-  query: jest.fn(),
-  getItem: jest.fn()
+  query: vi.fn(),
+  getItem: vi.fn()
 }));
 
-const mockQuery = jest.mocked(query);
-const mockGetItem = jest.mocked(getItem);
-const mockSendNotification = jest.mocked(webPush.sendNotification);
+const mockQuery = vi.mocked(query);
+const mockGetItem = vi.mocked(getItem);
+const mockSendNotification = vi.mocked(webPush.sendNotification);
 
 describe('send_todo_notifications Lambda', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockQuery.mockClear();
     mockGetItem.mockClear();
     mockSendNotification.mockClear();

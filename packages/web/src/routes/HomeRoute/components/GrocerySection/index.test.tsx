@@ -35,7 +35,7 @@ const renderWithTheme = (component: React.ReactElement) => {
 }
 
 describe('GrocerySection component', () => {
-  const mockOnGroceryItemClick = jest.fn()
+  const mockOnGroceryItemClick = vi.fn()
 
   beforeEach(() => {
     mockOnGroceryItemClick.mockClear()

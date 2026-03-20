@@ -2,16 +2,16 @@ import * as utils from './index';
 import * as tracker from '../tracker';
 import { LastMigrationRecord, MigrationRecord } from '../tracker/types';
 
-jest.mock('../tracker');
+vi.mock('../tracker');
 
 describe('Migration Utils', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('getLastMigrationStatus', () => {
     it('should return status when no migrations have been executed', async () => {
-      jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(null);
+      vi.mocked(tracker.getLastExecutedMigration).mockResolvedValue(null);
 
       const result = await utils.getLastMigrationStatus();
 
@@ -30,7 +30,7 @@ describe('Migration Utils', () => {
         totalExecuted: 3,
       };
 
-      jest.mocked(tracker.getLastExecutedMigration).mockResolvedValue(mockLastMigration);
+      vi.mocked(tracker.getLastExecutedMigration).mockResolvedValue(mockLastMigration);
 
       const result = await utils.getLastMigrationStatus();
 
@@ -68,7 +68,7 @@ describe('Migration Utils', () => {
         },
       ];
 
-      jest.mocked(tracker.getExecutedMigrations).mockResolvedValue(mockMigrations);
+      vi.mocked(tracker.getExecutedMigrations).mockResolvedValue(mockMigrations);
 
       const result = await utils.getAllExecutedMigrations();
 
@@ -77,7 +77,7 @@ describe('Migration Utils', () => {
     });
 
     it('should return empty array when no migrations have been executed', async () => {
-      jest.mocked(tracker.getExecutedMigrations).mockResolvedValue([]);
+      vi.mocked(tracker.getExecutedMigrations).mockResolvedValue([]);
 
       const result = await utils.getAllExecutedMigrations();
 

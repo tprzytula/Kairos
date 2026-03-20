@@ -71,8 +71,8 @@ describe('Given the createFieldProps function', () => {
     it('should create the field props', () => {
         const fieldProps = createFieldProps({
             field: EXAMPLE_FIELDS[0],
-            onValueChange: jest.fn(),
-            onErrorClear: jest.fn()
+            onValueChange: vi.fn(),
+            onErrorClear: vi.fn()
         })
 
         expect(fieldProps).toEqual({
@@ -88,8 +88,8 @@ describe('Given the createFieldProps function', () => {
                     ...EXAMPLE_FIELDS[0],
                     value: undefined
                 },
-                onValueChange: jest.fn(),
-                onErrorClear: jest.fn()
+                onValueChange: vi.fn(),
+                onErrorClear: vi.fn()
             })
 
             expect(fieldProps).toEqual({
@@ -101,10 +101,10 @@ describe('Given the createFieldProps function', () => {
 
     describe('When the onChange event is triggered', () => {
         it('should clear the field error', () => {
-            const onErrorClear = jest.fn()
+            const onErrorClear = vi.fn()
             const fieldProps = createFieldProps({
                 field: EXAMPLE_FIELDS[0],
-                onValueChange: jest.fn(),
+                onValueChange: vi.fn(),
                 onErrorClear
             })
 
@@ -116,11 +116,11 @@ describe('Given the createFieldProps function', () => {
         })
 
         it('should call the onValueChange function', () => {
-            const onValueChange = jest.fn()
+            const onValueChange = vi.fn()
             const fieldProps = createFieldProps({
                 field: EXAMPLE_FIELDS[0],
                 onValueChange,
-                onErrorClear: jest.fn()
+                onErrorClear: vi.fn()
             })
 
             fieldProps.onChange({
@@ -136,11 +136,11 @@ describe('Given the createFieldProps function', () => {
 
         describe('When the field is a number', () => {
             it('should call the onValueChange function with the processed value', () => {
-                const onValueChange = jest.fn()
+                const onValueChange = vi.fn()
                 const fieldProps = createFieldProps({
                     field: EXAMPLE_FIELDS[1],
                     onValueChange,
-                    onErrorClear: jest.fn()
+                    onErrorClear: vi.fn()
                 })
 
                 fieldProps.onChange({

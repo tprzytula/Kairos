@@ -1,18 +1,19 @@
+import { Mock, MockedFunction } from 'vitest'
 import { createProject } from './index'
 import { createFetchOptions } from '../../../utils/api'
 
-jest.mock('../../../utils/api', () => ({
-  createFetchOptions: jest.fn()
+vi.mock('../../../utils/api', () => ({
+  createFetchOptions: vi.fn()
 }))
 
-const mockCreateFetchOptions = createFetchOptions as jest.MockedFunction<typeof createFetchOptions>
+const mockCreateFetchOptions = createFetchOptions as MockedFunction<typeof createFetchOptions>
 
-global.fetch = jest.fn()
-const mockFetch = fetch as jest.MockedFunction<typeof fetch>
+global.fetch = vi.fn()
+const mockFetch = fetch as MockedFunction<typeof fetch>
 
 describe('createProject', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockCreateFetchOptions.mockReturnValue({
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',

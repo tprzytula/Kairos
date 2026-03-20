@@ -58,12 +58,12 @@ describe('formatTimeElapsed', () => {
 
 describe('formatTimestamp', () => {
   beforeEach(() => {
-    jest.useFakeTimers()
-    jest.setSystemTime(new Date('2024-01-15T10:00:00Z'))
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2024-01-15T10:00:00Z'))
   })
 
   afterEach(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   it('should format today time correctly', () => {

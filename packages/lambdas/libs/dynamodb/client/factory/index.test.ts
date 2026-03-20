@@ -2,16 +2,17 @@ import { DynamoDBClientFactory } from ".";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
-jest.mock("@aws-sdk/client-dynamodb", () => ({
-  DynamoDBClient: jest.fn().mockImplementation(() => ({
-    send: jest.fn(),
-  })),
-}));
+vi.mock("@aws-sdk/client-dynamodb", () => {
+  const MockDynamoDBClient = vi.fn(function(this: any) {
+    this.send = vi.fn();
+  });
+  return { DynamoDBClient: MockDynamoDBClient };
+});
 
-jest.mock("@aws-sdk/lib-dynamodb", () => ({
+vi.mock("@aws-sdk/lib-dynamodb", () => ({
   DynamoDBDocumentClient: {
-    from: jest.fn().mockReturnValue({
-      send: jest.fn(),
+    from: vi.fn().mockReturnValue({
+      send: vi.fn(),
     }),
   },
 }));

@@ -3,16 +3,16 @@ import { getItem } from "@kairos-lambdas-libs/dynamodb";
 import { DynamoDBTable } from "@kairos-lambdas-libs/dynamodb/enums";
 import { IUserPreferences } from "@kairos-lambdas-libs/dynamodb/types";
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
   DynamoDBTable: {
     USER_PREFERENCES: "UserPreferences",
   },
-  getItem: jest.fn(),
+  getItem: vi.fn(),
 }));
 
 describe("Given the get_user_preferences lambda handler", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("When user is not authenticated", () => {
@@ -27,7 +27,7 @@ describe("Given the get_user_preferences lambda handler", () => {
   describe("When user is authenticated", () => {
     describe("And user has no saved preferences", () => {
       it("should return default preferences", async () => {
-        jest.mocked(getItem).mockResolvedValue(null);
+        vi.mocked(getItem).mockResolvedValue(null);
 
         const result = await runHandler({ userId: "user-123" });
 
@@ -54,7 +54,7 @@ describe("Given the get_user_preferences lambda handler", () => {
           lastUpdated: 1234567890,
         };
 
-        jest.mocked(getItem).mockResolvedValue(mockPreferences);
+        vi.mocked(getItem).mockResolvedValue(mockPreferences);
 
         const result = await runHandler({ userId: "user-123" });
 
@@ -72,7 +72,7 @@ describe("Given the get_user_preferences lambda handler", () => {
 
     describe("And database query fails", () => {
       it("should return default preferences with status 200", async () => {
-        jest.mocked(getItem).mockRejectedValue(new Error("Database error"));
+        vi.mocked(getItem).mockRejectedValue(new Error("Database error"));
 
         const result = await runHandler({ userId: "user-123" });
 

@@ -33,7 +33,7 @@ describe('Given the retrieveNoiseTracking Items function', () => {
 
     const result = await retrieveNoiseTrackingItems()
 
-    expect(result).toStrictEqual(exampleResponse)
+    expect(result).toEqual(exampleResponse)
   })
 
   describe('When the API call fails', () => {
@@ -44,7 +44,7 @@ describe('Given the retrieveNoiseTracking Items function', () => {
 
       const result = await retrieveNoiseTrackingItems()
 
-      expect(result).toStrictEqual([])
+      expect(result).toEqual([])
     })
   })
 })

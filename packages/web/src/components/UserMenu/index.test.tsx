@@ -1,16 +1,17 @@
+import { Mock } from 'vitest'
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router'
 import UserMenu from './index'
 
-jest.mock('react-router', () => ({
-  useNavigate: jest.fn(),
+vi.mock('react-router', async () => ({
+  useNavigate: vi.fn(),
 }))
 
 // Mock the react-oidc-context hook
 const defaultMockAuthState = {
-  removeUser: jest.fn(),
+  removeUser: vi.fn(),
   user: {
     profile: {
       name: 'John Doe',
@@ -20,42 +21,63 @@ const defaultMockAuthState = {
   } as any,
 }
 
-const mockUseAuth = jest.fn(() => defaultMockAuthState)
+const mockUseAuth = vi.fn(() => defaultMockAuthState)
 
-jest.mock('react-oidc-context', () => ({
+vi.mock('react-oidc-context', async () => ({
   useAuth: () => mockUseAuth(),
 }))
 
 // Mock the oidc config
-jest.mock('../../config/oidc', () => ({
+vi.mock('../../config/oidc', async () => ({
   oidcConfig: {
     client_id: 'test-client-id',
   },
-  getPostLogoutRedirectUri: jest.fn(() => 'https://test.com/'),
+  getPostLogoutRedirectUri: vi.fn(() => 'https://test.com/'),
 }))
 
 // Mock window.location with getters/setters directly
-const mockHref = jest.fn()
-delete (window as any).location
-
-// Create a location mock with href getter/setter
-;(window as any).location = {
-  assign: jest.fn(),
-  replace: jest.fn(),
-  reload: jest.fn(),
-  toString: jest.fn(() => ''),
+const mockHref = vi.fn()
+const locationMock = {
+  assign: vi.fn(),
+  replace: vi.fn(),
+  reload: vi.fn(),
+  toString: vi.fn(() => ''),
+  hostname: 'localhost',
   get href() { return '' },
   set href(value: string) { mockHref(value) },
 }
+vi.stubGlobal('location', locationMock)
+
+// Mock dependencies used by UserMenu component
+vi.mock('../../providers/ProjectProvider', () => ({
+  useProjectContext: vi.fn(() => ({
+    currentProject: { id: 'project-1', name: 'Test Project', isPersonal: false },
+    projects: [],
+    isLoading: false,
+    switchProject: vi.fn(),
+    createProject: vi.fn(),
+    joinProject: vi.fn(),
+    fetchProjects: vi.fn(),
+    getProjectInviteInfo: vi.fn(),
+  })),
+}))
+
+vi.mock('../../hooks/useVersion', () => ({
+  useVersion: vi.fn(() => ({
+    version: 'v1.0.0',
+    isLoading: false,
+    error: null,
+  })),
+}))
 
 // Mock createPortal to render in the same container for testing
-jest.mock('react-dom', () => ({
-  ...jest.requireActual('react-dom'),
-  createPortal: jest.fn((element) => element),
+vi.mock('react-dom', async () => ({
+  ...(await vi.importActual('react-dom')),
+  createPortal: vi.fn((element) => element),
 }))
 
 // Mock getBoundingClientRect
-const mockGetBoundingClientRect = jest.fn(() => ({
+const mockGetBoundingClientRect = vi.fn(() => ({
   bottom: 100,
   right: 200,
   top: 50,
@@ -76,14 +98,14 @@ Object.defineProperty(window, 'innerWidth', {
 })
 
 describe('UserMenu', () => {
-  const mockNavigate = jest.fn()
+  const mockNavigate = vi.fn()
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUseAuth.mockReturnValue(defaultMockAuthState)
     // Reset location mock
     mockHref.mockClear()
-    ;(useNavigate as jest.Mock).mockReturnValue(mockNavigate)
+    ;(useNavigate as Mock).mockReturnValue(mockNavigate)
   })
 
   it('should render user button', () => {
@@ -103,30 +125,20 @@ describe('UserMenu', () => {
   })
 
   it('should attempt to navigate to Cognito logout URL when logout is clicked', () => {
-    // Suppress console.error for the JSDOM navigation warning
-    const originalError = console.error
-    console.error = jest.fn()
-    
     render(<UserMenu />)
-    
+
     fireEvent.click(screen.getByRole('button'))
-    
+
     // The logout should execute without throwing an error
-    // (JSDOM will show a warning but the function should complete)
     expect(() => {
       fireEvent.click(screen.getByRole('button', { name: /sign out/i }))
     }).not.toThrow()
-    
-    // Verify the logout logic was invoked by checking that console.error was called
-    // (JSDOM's navigation warning indicates the href assignment was attempted)
-    expect(console.error).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: expect.stringContaining('Not implemented: navigation')
-      })
+
+    // Verify the logout logic was invoked by checking that href was set
+    // (our mock captures href assignments via mockHref)
+    expect(mockHref).toHaveBeenCalledWith(
+      expect.stringContaining('logout')
     )
-    
-    // Restore original console.error
-    console.error = originalError
   })
 
   it('should show user initials when no picture', () => {
@@ -149,7 +161,7 @@ describe('UserMenu', () => {
 
   it('should not render when no user', () => {
     mockUseAuth.mockReturnValue({
-      removeUser: jest.fn(),
+      removeUser: vi.fn(),
       user: null,
     })
 
@@ -261,7 +273,7 @@ describe('UserMenu', () => {
       expect(screen.getByText('John Doe')).toBeVisible()
       
       // Find and click overlay (it's rendered as the first child in the portal)
-      const portalCall = (createPortal as jest.Mock).mock.calls.find(call => 
+      const portalCall = (createPortal as Mock).mock.calls.find(call => 
         call[0]?.props?.children?.some?.((child: any) => 
           child?.props?.onClick
         )
@@ -344,7 +356,7 @@ describe('UserMenu', () => {
 
   describe('Component lifecycle', () => {
     it('should clean up event listeners when component unmounts', () => {
-      const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener')
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener')
       
       const { unmount } = render(<UserMenu />)
       

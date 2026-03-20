@@ -1,3 +1,4 @@
+import { Mock } from 'vitest'
 import { act, render, screen } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider } from '../../providers/AppStateProvider'
@@ -15,20 +16,24 @@ import { useGroceryListContext } from '../../providers/GroceryListProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { useShopContext } from '../../providers/ShopProvider'
 
-jest.mock('../../api/groceryList');
-jest.mock('../../components/ItemForm');
-jest.mock('../../hooks/useItemDefaults');
-jest.mock('../../providers/GroceryListProvider');
-jest.mock('../../providers/ProjectProvider');
-jest.mock('../../providers/ShopProvider', () => ({
-  useShopContext: jest.fn(),
+vi.mock('../../api/groceryList');
+vi.mock('../../components/ItemForm');
+vi.mock('../../hooks/useItemDefaults');
+vi.mock('../../providers/GroceryListProvider');
+vi.mock('../../providers/ProjectProvider');
+vi.mock('../../providers/ShopProvider', async () => ({
+  useShopContext: vi.fn(),
 }));
-jest.mock('../../components/ModernPageHeader', () => ({ title }: any) => <div>{title}</div>);
-jest.mock('@mui/icons-material/ShoppingCart', () => () => <div>ShoppingCartIcon</div>);
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(() => jest.fn()),
-  useParams: jest.fn(),
+vi.mock('../../components/ModernPageHeader', () => ({
+  default: ({ title }: any) => <div>{title}</div>
+}));
+vi.mock('@mui/icons-material/ShoppingCart', () => ({
+  default: () => <div>ShoppingCartIcon</div>
+}));
+vi.mock('react-router', async () => ({
+  ...(await vi.importActual('react-router')),
+  useNavigate: vi.fn(() => vi.fn()),
+  useParams: vi.fn(),
 }))
 
 describe('Given the AddGroceryItemContent component', () => {
@@ -40,37 +45,37 @@ describe('Given the AddGroceryItemContent component', () => {
 
   beforeEach(() => {
     // Clear all mocks before each test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    (useGroceryListContext as jest.Mock).mockReturnValue({
+    (useGroceryListContext as Mock).mockReturnValue({
       groceryList: [],
       isLoading: false,
       viewMode: 'CATEGORIZED' as any,
-      setViewMode: jest.fn(),
-      refetchGroceryList: jest.fn(),
-      removeGroceryItem: jest.fn(),
-      updateGroceryItem: jest.fn(),
-      updateGroceryItemFields: jest.fn(),
+      setViewMode: vi.fn(),
+      refetchGroceryList: vi.fn(),
+      removeGroceryItem: vi.fn(),
+      updateGroceryItem: vi.fn(),
+      updateGroceryItemFields: vi.fn(),
     });
 
-    (useProjectContext as jest.Mock).mockReturnValue({
+    (useProjectContext as Mock).mockReturnValue({
       currentProject: mockProject,
       projects: [mockProject],
       isLoading: false,
-      createProject: jest.fn(),
-      joinProject: jest.fn(),
-      switchProject: jest.fn(),
-      fetchProjects: jest.fn(),
-      getProjectInviteInfo: jest.fn(),
+      createProject: vi.fn(),
+      joinProject: vi.fn(),
+      switchProject: vi.fn(),
+      fetchProjects: vi.fn(),
+      getProjectInviteInfo: vi.fn(),
     });
 
-    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({ shopId: 'test-shop-1' });
+    vi.spyOn(ReactRouter, 'useParams').mockReturnValue({ shopId: 'test-shop-1' });
 
-    (useItemDefaults as jest.Mock).mockReturnValue({
+    (useItemDefaults as Mock).mockReturnValue({
       defaults: []
     });
 
-    (useShopContext as jest.Mock).mockReturnValue({
+    (useShopContext as Mock).mockReturnValue({
       shops: [{ 
         id: 'test-shop-1', 
         name: 'Test Shop',
@@ -80,11 +85,11 @@ describe('Given the AddGroceryItemContent component', () => {
       }],
       isLoading: false,
       currentShop: null,
-      fetchShops: jest.fn(),
-      addShop: jest.fn(),
-      updateShop: jest.fn(),
-      deleteShop: jest.fn(),
-      setCurrentShop: jest.fn(),
+      fetchShops: vi.fn(),
+      addShop: vi.fn(),
+      updateShop: vi.fn(),
+      deleteShop: vi.fn(),
+      setCurrentShop: vi.fn(),
     });
   })
 
@@ -102,7 +107,7 @@ describe('Given the AddGroceryItemContent component', () => {
     it('should create a new grocery item', async () => {
       let onSubmitCallback: any;
 
-      jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
+      vi.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
         onSubmitCallback = onSubmit;
         return <div>ItemForm</div>
       })
@@ -142,13 +147,13 @@ describe('Given the AddGroceryItemContent component', () => {
 
     describe('And the createGroceryItem call succeeds', () => {
       it('should navigate to the grocery list page', async () => {
-        const navigateSpy = jest.fn()
+        const navigateSpy = vi.fn()
 
-        jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
+        vi.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
 
         let onSubmitCallback: any;
 
-        jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
+        vi.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
           onSubmitCallback = onSubmit;
           return <div>ItemForm</div>
         })
@@ -183,15 +188,15 @@ describe('Given the AddGroceryItemContent component', () => {
 
     describe('And the createGroceryItem call fails', () => {
       it('should log the error', async () => {
-        const consoleSpy = jest.spyOn(console, 'error')
+        const consoleSpy = vi.spyOn(console, 'error')
         let onSubmitCallback: any;
 
-        jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
+        vi.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
           onSubmitCallback = onSubmit;
           return <div>ItemForm</div>
         })
 
-        jest.mocked(addGroceryItem).mockRejectedValue(new Error('Error creating grocery item'))
+        vi.mocked(addGroceryItem).mockRejectedValue(new Error('Error creating grocery item'))
         
         renderComponent()
         await act(async () => {
@@ -223,20 +228,20 @@ describe('Given the AddGroceryItemContent component', () => {
 
     describe('And no project is selected', () => {
       it('should show an error alert and not call addGroceryItem', async () => {
-        (useProjectContext as jest.Mock).mockReturnValue({
+        (useProjectContext as Mock).mockReturnValue({
           currentProject: null,
           projects: [],
           isLoading: false,
-          createProject: jest.fn(),
-          joinProject: jest.fn(),
-          switchProject: jest.fn(),
-          fetchProjects: jest.fn(),
-          getProjectInviteInfo: jest.fn(),
+          createProject: vi.fn(),
+          joinProject: vi.fn(),
+          switchProject: vi.fn(),
+          fetchProjects: vi.fn(),
+          getProjectInviteInfo: vi.fn(),
         });
 
         let onSubmitCallback: any;
 
-        jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
+        vi.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
           onSubmitCallback = onSubmit;
           return <div>ItemForm</div>
         })

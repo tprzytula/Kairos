@@ -3,15 +3,15 @@ import { useThrottle } from './index';
 
 describe('Given the useThrottle hook', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('should execute callback immediately on first call', () => {
-    const callback = jest.fn();
+    const callback = vi.fn();
     const { result } = renderHook(() => useThrottle(callback, 1000));
 
     act(() => {
@@ -22,7 +22,7 @@ describe('Given the useThrottle hook', () => {
   });
 
   it('should throttle subsequent calls within delay period', () => {
-    const callback = jest.fn();
+    const callback = vi.fn();
     const { result } = renderHook(() => useThrottle(callback, 1000));
 
     // First call - should execute immediately
@@ -39,14 +39,14 @@ describe('Given the useThrottle hook', () => {
 
     // Fast forward past the delay
     act(() => {
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
     });
 
     expect(callback).toHaveBeenCalledTimes(2);
   });
 
   it('should pass arguments to the callback function', () => {
-    const callback = jest.fn();
+    const callback = vi.fn();
     const { result } = renderHook(() => useThrottle(callback, 1000));
 
     const testArg1 = 'test';
@@ -60,7 +60,7 @@ describe('Given the useThrottle hook', () => {
   });
 
   it('should cancel pending timeout on new call', () => {
-    const callback = jest.fn();
+    const callback = vi.fn();
     const { result } = renderHook(() => useThrottle(callback, 1000));
 
     // First call
@@ -72,7 +72,7 @@ describe('Given the useThrottle hook', () => {
 
     // Wait 500ms
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
 
     // Second call - should not trigger immediate execution or reset timer
@@ -84,7 +84,7 @@ describe('Given the useThrottle hook', () => {
 
     // Wait for the original timeout
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
 
     // Should execute with the most recent arguments
@@ -93,7 +93,7 @@ describe('Given the useThrottle hook', () => {
   });
 
   it('should handle multiple rapid calls correctly', () => {
-    const callback = jest.fn();
+    const callback = vi.fn();
     const { result } = renderHook(() => useThrottle(callback, 1000));
 
     // Simulate 5 rapid calls
@@ -108,7 +108,7 @@ describe('Given the useThrottle hook', () => {
 
     // Fast forward past the delay
     act(() => {
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
     });
 
     expect(callback).toHaveBeenCalledTimes(2);
@@ -116,7 +116,7 @@ describe('Given the useThrottle hook', () => {
   });
 
   it('should update when delay changes', () => {
-    const callback = jest.fn();
+    const callback = vi.fn();
     const { rerender } = renderHook(
       ({ delay }) => useThrottle(callback, delay),
       { initialProps: { delay: 1000 } }

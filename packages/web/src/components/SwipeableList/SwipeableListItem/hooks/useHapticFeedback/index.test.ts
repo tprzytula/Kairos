@@ -2,7 +2,7 @@ import { renderHook, act } from '@testing-library/react';
 import { useHapticFeedback } from './index';
 
 // Mock navigator.vibrate
-const mockVibrate = jest.fn();
+const mockVibrate = vi.fn();
 Object.defineProperty(navigator, 'vibrate', {
   writable: true,
   value: mockVibrate,

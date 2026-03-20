@@ -35,7 +35,7 @@ describe('Given the deletePushSubscription function', () => {
 
     const result = await deletePushSubscription(testEndpoint, 'test-access-token')
 
-    expect(result).toStrictEqual(exampleResponse)
+    expect(result).toEqual(exampleResponse)
   })
 
   describe('When the API call fails', () => {

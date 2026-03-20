@@ -4,17 +4,17 @@ import { IRequestBody } from "./body/types";
 import { DynamoDBTable, updateItems } from "@kairos-lambdas-libs/dynamodb";
 import { randomUUID } from "node:crypto";
 
-jest.mock('node:crypto', () => ({
-    randomUUID: jest.fn(),
+vi.mock('node:crypto', async () => ({
+    randomUUID: vi.fn(),
 }));
 
-jest.mock('./body', () => ({
-    getBody: jest.fn(),
+vi.mock('./body', async () => ({
+    getBody: vi.fn(),
 }));
 
-jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
-    ...jest.requireActual('@kairos-lambdas-libs/dynamodb'),
-    updateItems: jest.fn(),
+vi.mock('@kairos-lambdas-libs/dynamodb', async () => ({
+    ...(await vi.importActual('@kairos-lambdas-libs/dynamodb')),
+    updateItems: vi.fn(),
 }));
 
 describe('Given the update_todo_items lambda handler', () => {
@@ -27,7 +27,7 @@ describe('Given the update_todo_items lambda handler', () => {
 
     describe('When the body is invalid', () => {
         it('should return status 400', async () => {
-            jest.mocked(getBody).mockReturnValue(null);
+            vi.mocked(getBody).mockReturnValue(null);
 
             const result = await runHandler({ body: null }, true);
 
@@ -37,12 +37,12 @@ describe('Given the update_todo_items lambda handler', () => {
 
     describe('When the body is valid', () => {
         it('should update the item in the todo list table', async () => {
-            jest.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
-            jest.mocked(getBody).mockReturnValue(EXAMPLE_UPDATE_TODO_ITEM_STATUS_BODY);
+            vi.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
+            vi.mocked(getBody).mockReturnValue(EXAMPLE_UPDATE_TODO_ITEM_STATUS_BODY);
 
             await runHandler(EXAMPLE_REQUEST, true);
 
-            expect(jest.mocked(updateItems)).toHaveBeenCalledWith({
+            expect(vi.mocked(updateItems)).toHaveBeenCalledWith({
                 tableName: DynamoDBTable.TODO_LIST,
                 items: [
                     {
@@ -63,8 +63,8 @@ describe('Given the update_todo_items lambda handler', () => {
 
         describe('And the upsert succeeds', () => {
             it('should return status 200', async () => {
-                jest.mocked(getBody).mockReturnValue(EXAMPLE_UPDATE_TODO_ITEM_STATUS_BODY);
-                jest.mocked(updateItems).mockResolvedValue({
+                vi.mocked(getBody).mockReturnValue(EXAMPLE_UPDATE_TODO_ITEM_STATUS_BODY);
+                vi.mocked(updateItems).mockResolvedValue({
                     $metadata: {
                         httpStatusCode: 200,
                     },
@@ -79,7 +79,7 @@ describe('Given the update_todo_items lambda handler', () => {
 
         describe('And the upsert fails', () => {
             it('should return status 500', async () => {
-                jest.mocked(updateItems).mockRejectedValue(new Error('Update failed'));
+                vi.mocked(updateItems).mockRejectedValue(new Error('Update failed'));
 
                 const result = await runHandler(EXAMPLE_REQUEST, true)
 

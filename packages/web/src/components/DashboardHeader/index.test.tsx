@@ -6,18 +6,20 @@ import DashboardHeader from './index'
 
 
 // Mock the useAuth hook
-jest.mock('react-oidc-context', () => ({
-  useAuth: jest.fn()
+vi.mock('react-oidc-context', () => ({
+  useAuth: vi.fn()
 }))
 
+import { useAuth } from 'react-oidc-context'
+
 // Mock the UserMenu component
-jest.mock('../UserMenu', () => {
-  return function MockUserMenu() {
+vi.mock('../UserMenu', () => ({
+  default: function MockUserMenu() {
     return <div data-testid="user-menu">UserMenu</div>
   }
-})
+}))
 
-const mockUseAuth = require('react-oidc-context').useAuth
+const mockUseAuth = vi.mocked(useAuth)
 
 const theme = createTheme()
 
@@ -31,10 +33,10 @@ const renderWithTheme = (component: React.ReactElement) => {
 
 describe('DashboardHeader', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     // Mock Date to have consistent tests
-    jest.useFakeTimers()
-    jest.setSystemTime(new Date('2025-01-08T14:30:00.000Z')) // 2:30 PM UTC
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    vi.setSystemTime(new Date('2025-01-08T14:30:00.000Z')) // 2:30 PM UTC
     
     // Mock auth context - default to no user
     mockUseAuth.mockReturnValue({
@@ -46,7 +48,7 @@ describe('DashboardHeader', () => {
   })
 
   afterEach(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
 
@@ -54,7 +56,7 @@ describe('DashboardHeader', () => {
   describe('greeting display', () => {
     beforeEach(() => {
       // Set time to morning (8 AM)
-      jest.setSystemTime(new Date('2025-01-08T08:00:00.000Z'))
+      vi.setSystemTime(new Date('2025-01-08T08:00:00.000Z'))
     })
 
     it('should display "Good morning" when time is before 12 PM', () => {
@@ -76,7 +78,7 @@ describe('DashboardHeader', () => {
 
     it('should display "Good afternoon" when time is between 12 PM and 6 PM', () => {
       // Set time to afternoon (2:30 PM)
-      jest.setSystemTime(new Date('2025-01-08T14:30:00.000Z'))
+      vi.setSystemTime(new Date('2025-01-08T14:30:00.000Z'))
 
       mockUseAuth.mockReturnValue({
         user: {
@@ -96,7 +98,7 @@ describe('DashboardHeader', () => {
 
     it('should display "Good evening" when time is after 6 PM', () => {
       // Set time to evening (8 PM)
-      jest.setSystemTime(new Date('2025-01-08T20:00:00.000Z'))
+      vi.setSystemTime(new Date('2025-01-08T20:00:00.000Z'))
 
       mockUseAuth.mockReturnValue({
         user: {

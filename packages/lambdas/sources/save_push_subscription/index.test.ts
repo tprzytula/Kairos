@@ -3,13 +3,13 @@ import { getBody } from "./body";
 import { DynamoDBTable, putItem } from "@kairos-lambdas-libs/dynamodb";
 import { IRequestBody } from "./body/types";
 
-jest.mock("./body", () => ({
-  getBody: jest.fn(),
+vi.mock("./body", async () => ({
+  getBody: vi.fn(),
 }));
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
-  ...jest.requireActual("@kairos-lambdas-libs/dynamodb"),
-  putItem: jest.fn(),
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
+  ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
+  putItem: vi.fn(),
 }));
 
 describe("save_push_subscription Lambda", () => {
@@ -23,8 +23,8 @@ describe("save_push_subscription Lambda", () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    console.error = jest.fn();
+    vi.clearAllMocks();
+    console.error = vi.fn();
   });
 
   describe("when user is not authenticated", () => {
@@ -52,7 +52,7 @@ describe("save_push_subscription Lambda", () => {
           }
         }
       } as any;
-      jest.mocked(getBody).mockReturnValue(null);
+      vi.mocked(getBody).mockReturnValue(null);
 
       const response = await handler(event, {} as any, {} as any);
       expect(response.statusCode).toBe(400);
@@ -70,7 +70,7 @@ describe("save_push_subscription Lambda", () => {
           }
         }
       } as any;
-      jest.mocked(getBody).mockReturnValue({ endpoint: "", keys: { p256dh: "test", auth: "test" } });
+      vi.mocked(getBody).mockReturnValue({ endpoint: "", keys: { p256dh: "test", auth: "test" } });
 
       const response = await handler(event, {} as any, {} as any);
       expect(response.statusCode).toBe(400);
@@ -88,7 +88,7 @@ describe("save_push_subscription Lambda", () => {
           }
         }
       } as any;
-      jest.mocked(getBody).mockReturnValue({ endpoint: "https://test.com", keys: { p256dh: "", auth: "test" } });
+      vi.mocked(getBody).mockReturnValue({ endpoint: "https://test.com", keys: { p256dh: "", auth: "test" } });
 
       const response = await handler(event, {} as any, {} as any);
       expect(response.statusCode).toBe(400);
@@ -109,8 +109,8 @@ describe("save_push_subscription Lambda", () => {
         }
       } as any;
 
-      jest.mocked(getBody).mockReturnValue(mockRequestBody);
-      jest.mocked(putItem).mockResolvedValue({ $metadata: { httpStatusCode: 200 } });
+      vi.mocked(getBody).mockReturnValue(mockRequestBody);
+      vi.mocked(putItem).mockResolvedValue({ $metadata: { httpStatusCode: 200 } });
 
       const response = await handler(event, {} as any, {} as any);
       expect(response.statusCode).toBe(201);
@@ -138,8 +138,8 @@ describe("save_push_subscription Lambda", () => {
         }
       } as any;
 
-      jest.mocked(getBody).mockReturnValue(mockRequestBody);
-      jest.mocked(putItem).mockRejectedValue(new Error("DynamoDB connection failed"));
+      vi.mocked(getBody).mockReturnValue(mockRequestBody);
+      vi.mocked(putItem).mockRejectedValue(new Error("DynamoDB connection failed"));
 
       const response = await handler(event, {} as any, {} as any);
       expect(response.statusCode).toBe(500);

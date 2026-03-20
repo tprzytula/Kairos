@@ -3,21 +3,21 @@ import { DynamoDBTable, DynamoDBIndex } from "@kairos-lambdas-libs/dynamodb";
 import { upsertItem, queryProjectItems } from ".";
 import { IGroceryItem } from "@kairos-lambdas-libs/dynamodb/types/index";
 
-jest.mock('@kairos-lambdas-libs/dynamodb', () => ({
-    ...jest.requireActual('@kairos-lambdas-libs/dynamodb'),
-    getItem: jest.fn(),
-    putItem: jest.fn(),
-    updateItem: jest.fn(),
-    query: jest.fn(),
+vi.mock('@kairos-lambdas-libs/dynamodb', async () => ({
+    ...(await vi.importActual('@kairos-lambdas-libs/dynamodb')),
+    getItem: vi.fn(),
+    putItem: vi.fn(),
+    updateItem: vi.fn(),
+    query: vi.fn(),
 }));
 
 describe('Given the queryProjectItems function', () => {
     it('should query the grocery list by project ID', async () => {
-        jest.mocked(query).mockResolvedValue([]);
+        vi.mocked(query).mockResolvedValue([]);
 
         await queryProjectItems('test-project');
 
-        expect(jest.mocked(query)).toHaveBeenCalledWith({
+        expect(vi.mocked(query)).toHaveBeenCalledWith({
             tableName: DynamoDBTable.GROCERY_LIST,
             indexName: DynamoDBIndex.GROCERY_LIST_PROJECT,
             attributes: { projectId: 'test-project' },
@@ -27,7 +27,7 @@ describe('Given the queryProjectItems function', () => {
 
 describe('Given the upsertItem function', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('should update the existing item when a match is found in projectItems', async () => {
@@ -35,7 +35,7 @@ describe('Given the upsertItem function', () => {
 
         await upsertItem(EXAMPLE_GROCERY_ITEM, projectItems);
 
-        expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
+        expect(vi.mocked(updateItem)).toHaveBeenCalledWith({
             key: { id: "1" },
             tableName: DynamoDBTable.GROCERY_LIST,
             updatedFields: { quantity: 2 }
@@ -63,7 +63,7 @@ describe('Given the upsertItem function', () => {
 
         await upsertItem(EXAMPLE_GROCERY_ITEM, projectItems);
 
-        expect(jest.mocked(putItem)).toHaveBeenCalledWith({
+        expect(vi.mocked(putItem)).toHaveBeenCalledWith({
             tableName: DynamoDBTable.GROCERY_LIST,
             item: expect.objectContaining({
                 projectId: EXAMPLE_GROCERY_ITEM.projectId,
@@ -97,7 +97,7 @@ describe('Given the upsertItem function', () => {
 
         await upsertItem(EXAMPLE_GROCERY_ITEM, projectItems);
 
-        expect(jest.mocked(query)).not.toHaveBeenCalled();
+        expect(vi.mocked(query)).not.toHaveBeenCalled();
     });
 });
 

@@ -11,9 +11,9 @@ const renderWithContext = (contextValue: Partial<IState> = {}) => {
     messages: [],
     isOpen: true,
     isTyping: false,
-    openChat: jest.fn(),
-    closeChat: jest.fn(),
-    sendMessage: jest.fn(),
+    openChat: vi.fn(),
+    closeChat: vi.fn(),
+    sendMessage: vi.fn(),
     ...contextValue,
   }
 
@@ -58,7 +58,7 @@ describe('Given the AgentChatDrawer component', () => {
 
     describe('When the backdrop is clicked', () => {
       it('should call closeChat', () => {
-        const closeChat = jest.fn()
+        const closeChat = vi.fn()
         renderWithContext({ closeChat })
 
         // MUI Drawer exposes onClose via the backdrop — verify it is wired to closeChat
@@ -94,7 +94,7 @@ describe('Given the AgentChatDrawer component', () => {
 
   describe('When the user types and sends a message', () => {
     it('should call sendMessage with the message content', () => {
-      const sendMessage = jest.fn()
+      const sendMessage = vi.fn()
       renderWithContext({ sendMessage })
 
       const input = screen.getByPlaceholderText('Message agent…')
@@ -105,7 +105,7 @@ describe('Given the AgentChatDrawer component', () => {
     })
 
     it('should not call sendMessage when Shift+Enter is pressed', () => {
-      const sendMessage = jest.fn()
+      const sendMessage = vi.fn()
       renderWithContext({ sendMessage })
 
       const input = screen.getByPlaceholderText('Message agent…')
@@ -116,7 +116,7 @@ describe('Given the AgentChatDrawer component', () => {
     })
 
     it('should not call sendMessage when input is empty', () => {
-      const sendMessage = jest.fn()
+      const sendMessage = vi.fn()
       renderWithContext({ sendMessage })
 
       const sendBtn = screen.getByLabelText('Send message')
