@@ -9,6 +9,8 @@ export const createRecipe = async (recipe: {
   instructions?: string[];
   imagePath?: string;
   externalLink?: string;
+  mealTypes?: string[];
+  dishTypes?: string[];
 }): Promise<string> => {
   const id = randomUUID();
   const now = new Date().toISOString();
@@ -32,6 +34,14 @@ export const createRecipe = async (recipe: {
 
   if (recipe.externalLink) {
     item.externalLink = recipe.externalLink;
+  }
+
+  if (recipe.mealTypes && recipe.mealTypes.length > 0) {
+    item.mealTypes = JSON.stringify(recipe.mealTypes);
+  }
+
+  if (recipe.dishTypes && recipe.dishTypes.length > 0) {
+    item.dishTypes = JSON.stringify(recipe.dishTypes);
   }
 
   await putItem({

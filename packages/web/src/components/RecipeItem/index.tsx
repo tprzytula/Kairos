@@ -4,6 +4,7 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { IRecipe } from '../../types/recipe'
 import { IItemDefault } from '../../hooks/useItemDefaults/types'
+import { RecipeDishTypeLabelMap, RecipeDishType } from '../../enums/recipeDishType'
 import { findItemIcon } from '../ItemForm/components/ItemImage/utils'
 
 const GENERIC_ITEM_NAME = 'generic'
@@ -204,6 +205,34 @@ const RecipeItem = ({ recipe, onEdit, onUseRecipe, shopId, defaults }: RecipeIte
                 }}
               />
             )}
+            {recipe.mealTypes?.map((type) => (
+              <Chip
+                key={type}
+                label={type}
+                size="small"
+                sx={{
+                  background: 'rgba(102, 126, 234, 0.1)',
+                  color: '#667ee2',
+                  fontWeight: 500,
+                  fontSize: '0.7rem',
+                  height: '22px',
+                }}
+              />
+            ))}
+            {recipe.dishTypes?.map((type) => (
+              <Chip
+                key={type}
+                label={RecipeDishTypeLabelMap[type as RecipeDishType] ?? type}
+                size="small"
+                sx={{
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  color: '#059669',
+                  fontWeight: 500,
+                  fontSize: '0.7rem',
+                  height: '22px',
+                }}
+              />
+            ))}
           </Box>
           {!isExpanded && (
             <Tooltip title={canUseRecipe ? 'Select ingredients to add to your list' : 'No shops available'}>
