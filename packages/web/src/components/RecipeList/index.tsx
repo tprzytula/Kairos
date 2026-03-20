@@ -1,7 +1,6 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { Box, Typography, Skeleton } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
-import SearchIconMui from '@mui/icons-material/Search'
 import TuneIcon from '@mui/icons-material/Tune'
 import { COLORS } from '../../constants/colors'
 import { IRecipe } from '../../types/recipe'
@@ -13,9 +12,6 @@ import FilterChip from '../FilterChip'
 import RecipeFilterSheet from '../RecipeFilterSheet'
 import {
   RecipeListContainer,
-  SearchContainer,
-  SearchIcon,
-  SearchInput,
   EmptyStateContainer,
   NoMatchContainer,
   FilterChipsContainer,
@@ -26,6 +22,7 @@ import {
 } from './index.styled'
 
 interface RecipeListProps {
+  search?: string
   onViewRecipe: (recipe: IRecipe) => void
 }
 
@@ -42,9 +39,8 @@ const RecipeSkeletonCard = () => (
   </Box>
 )
 
-const RecipeList = ({ onViewRecipe }: RecipeListProps) => {
+const RecipeList = ({ search = '', onViewRecipe }: RecipeListProps) => {
   const { recipes, isLoading } = useRecipeContext()
-  const [search, setSearch] = useState('')
   const [selectedMealTypes, setSelectedMealTypes] = useState<MealType[]>([])
   const [selectedDishTypes, setSelectedDishTypes] = useState<RecipeDishType[]>([])
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false)
@@ -109,18 +105,11 @@ const RecipeList = ({ onViewRecipe }: RecipeListProps) => {
     <RecipeListContainer>
       <div ref={sentinelRef} />
       <StickyHeader className={isStuck ? 'stuck' : ''}>
-        <SearchContainer>
-          <SearchIcon>
-            <SearchIconMui />
-          </SearchIcon>
-          <SearchInput
-            placeholder="Search recipes..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </SearchContainer>
-
         <FilterChipsContainer>
+          <FilterButton onClick={() => setIsFilterSheetOpen(true)} aria-label="More filters">
+            <TuneIcon />
+            {mealTypeFilterCount > 0 && <FilterBadge>{mealTypeFilterCount}</FilterBadge>}
+          </FilterButton>
           {RecipeDishTypeOrder.map((type) => (
             <FilterChip
               key={type}
@@ -129,10 +118,6 @@ const RecipeList = ({ onViewRecipe }: RecipeListProps) => {
               onClick={() => toggleDishType(type)}
             />
           ))}
-          <FilterButton onClick={() => setIsFilterSheetOpen(true)} aria-label="More filters">
-            <TuneIcon />
-            {mealTypeFilterCount > 0 && <FilterBadge>{mealTypeFilterCount}</FilterBadge>}
-          </FilterButton>
         </FilterChipsContainer>
       </StickyHeader>
 

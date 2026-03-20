@@ -81,9 +81,8 @@ export const NoMatchContainer = styled('div')({
 
 export const FilterChipsContainer = styled('div')({
   display: 'flex',
-  gap: '0.375rem',
+  gap: '0.5rem',
   overflowX: 'auto',
-  paddingBottom: '0.25rem',
   scrollbarWidth: 'none',
   '&::-webkit-scrollbar': {
     display: 'none',

@@ -32,6 +32,7 @@ export interface ModernPageHeaderProps {
   }>
   actionButton?: ActionButtonProps
   secondaryActionButton?: ActionButtonProps
+  children?: React.ReactNode
 }
 
 const ActionButtonItem: React.FC<ActionButtonProps & { accentRgb?: string }> = ({ icon, onClick, tooltip, ariaLabel, label, accentRgb }) => {
@@ -85,6 +86,7 @@ const ModernPageHeader: React.FC<ModernPageHeaderProps> = ({
   stats,
   actionButton,
   secondaryActionButton,
+  children,
 }) => {
   return (
     <HeaderWrapper>
@@ -105,6 +107,8 @@ const ModernPageHeader: React.FC<ModernPageHeaderProps> = ({
               </div>
             )}
           </div>
+
+          {children}
 
           {stats && stats.length > 0 && (
             <HeaderStats>

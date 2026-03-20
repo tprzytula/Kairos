@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react'
 import { IconButton } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import SearchIconMui from '@mui/icons-material/Search'
 import StandardLayout from '../../layout/standardLayout'
 import ModernPageHeader from '../../components/ModernPageHeader'
 import RecipeList from '../../components/RecipeList'
@@ -13,6 +14,7 @@ import { IRecipe } from '../../types/recipe'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { retrieveGroceryListDefaults } from '../../api/groceryList'
 import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
+import { SearchContainer, SearchIcon, SearchInput } from '../../components/RecipeList/index.styled'
 import {
   DrawerHeader,
   DrawerHeaderLeft,
@@ -24,11 +26,12 @@ import { Container, ScrollableContainer } from './index.styled'
 import { useSearchParams, useNavigate } from 'react-router'
 
 const RecipesContent = () => {
-  const { recipes, removeRecipe } = useRecipeContext()
+  const { removeRecipe } = useRecipeContext()
   const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<IRecipe | null>(null)
   const [viewingRecipe, setViewingRecipe] = useState<IRecipe | null>(null)
+  const [search, setSearch] = useState('')
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
@@ -69,15 +72,6 @@ const RecipesContent = () => {
     setIsFormOpen(false)
   }, [])
 
-  const withPhotos = recipes.filter((r) => r.imagePath).length
-  const categorised = recipes.filter((r) => r.dishTypes && r.dishTypes.length > 0).length
-
-  const stats = [
-    { value: recipes.length, label: 'Total' },
-    { value: withPhotos, label: 'With Photos' },
-    { value: categorised, label: 'Categorised' },
-  ]
-
   return (
     <StandardLayout>
       <ModernPageHeader
@@ -85,11 +79,22 @@ const RecipesContent = () => {
         icon={<MenuBookIcon />}
         accentGradient={SECTION_GRADIENTS.recipe}
         accentRgb={SECTION_ACCENT_RGB.recipe}
-        stats={stats}
-      />
+      >
+        <SearchContainer>
+          <SearchIcon>
+            <SearchIconMui />
+          </SearchIcon>
+          <SearchInput
+            placeholder="Search recipes..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </SearchContainer>
+      </ModernPageHeader>
       <Container>
         <ScrollableContainer>
           <RecipeList
+            search={search}
             onViewRecipe={handleViewRecipe}
           />
         </ScrollableContainer>
