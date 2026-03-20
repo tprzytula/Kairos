@@ -64,5 +64,5 @@ const SwipeableList = memo(<T extends { id: string }>({
 
 SwipeableList.displayName = 'SwipeableList';
 
-export { ISwipeableListProps } from './types';
+export type { ISwipeableListProps } from './types';
 export default SwipeableList;

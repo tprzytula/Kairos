@@ -1,8 +1,9 @@
+import { Mock, MockedFunction } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { VersionInfo } from '../../types/version'
 
 // Mock fetch
-const mockFetch = jest.fn()
+const mockFetch = vi.fn()
 global.fetch = mockFetch
 
 const mockVersionInfo: VersionInfo = {
@@ -17,16 +18,16 @@ const mockVersionInfo: VersionInfo = {
 }
 
 // Mock the entire module
-jest.mock('./index')
+vi.mock('./index')
 
 // Import the hook and mocked isLocalhost function  
 import { useVersion, isLocalhost } from './index'
 
-const mockIsLocalhost = isLocalhost as jest.MockedFunction<typeof isLocalhost>
+const mockIsLocalhost = isLocalhost as MockedFunction<typeof isLocalhost>
 
 describe('useVersion', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockIsLocalhost.mockReturnValue(false)
   })
 

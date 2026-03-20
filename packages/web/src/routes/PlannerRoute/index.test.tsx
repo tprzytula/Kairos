@@ -13,20 +13,20 @@ import { IProject } from '../../types/project'
 const createTestQueryClient = () =>
   new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
-jest.mock('../../providers/AppStateProvider', () => ({
-  ...jest.requireActual('../../providers/AppStateProvider'),
-  useAppState: jest.fn(),
+vi.mock('../../providers/AppStateProvider', async () => ({
+  ...(await vi.importActual('../../providers/AppStateProvider')),
+  useAppState: vi.fn(),
 }))
 
-jest.mock('../../providers/ProjectProvider', () => ({
-  ...jest.requireActual('../../providers/ProjectProvider'),
-  useProjectContext: jest.fn(),
+vi.mock('../../providers/ProjectProvider', async () => ({
+  ...(await vi.importActual('../../providers/ProjectProvider')),
+  useProjectContext: vi.fn(),
 }))
 
-jest.mock('../../api/toDoList')
+vi.mock('../../api/toDoList')
 
-jest.mock('react-oidc-context', () => ({
-  useAuth: jest.fn(() => ({ user: { access_token: 'test-access-token' } })),
+vi.mock('react-oidc-context', async () => ({
+  useAuth: vi.fn(() => ({ user: { access_token: 'test-access-token' } })),
 }))
 
 const MOCK_PROJECT: IProject = {
@@ -41,19 +41,19 @@ const MOCK_PROJECT: IProject = {
 
 describe('Given the PlannerRoute component', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
+    vi.clearAllMocks()
+    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
     
     // Mock ProjectProvider
-    jest.mocked(useProjectContext).mockReturnValue({
+    vi.mocked(useProjectContext).mockReturnValue({
       projects: [MOCK_PROJECT],
       currentProject: MOCK_PROJECT,
       isLoading: false,
-      createProject: jest.fn(),
-      joinProject: jest.fn(),
-      switchProject: jest.fn(),
-      fetchProjects: jest.fn(),
-      getProjectInviteInfo: jest.fn(),
+      createProject: vi.fn(),
+      joinProject: vi.fn(),
+      switchProject: vi.fn(),
+      fetchProjects: vi.fn(),
+      getProjectInviteInfo: vi.fn(),
     })
   })
 
@@ -66,7 +66,7 @@ describe('Given the PlannerRoute component', () => {
   })
 
   it('should display stats for empty list', async () => {
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
+    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
 
     await act(async () => {
       renderComponent()
@@ -89,7 +89,7 @@ describe('Given the PlannerRoute component', () => {
       { id: '5', name: 'Task 5', isDone: false, description: '', dueDate: undefined },
     ]
 
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
+    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
 
     await act(async () => {
       renderComponent()
@@ -114,7 +114,7 @@ describe('Given the PlannerRoute component', () => {
       { id: '2', name: 'Task 2', isDone: false, description: '', dueDate: undefined },
     ]
 
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
+    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
 
     await act(async () => {
       renderComponent()
@@ -139,7 +139,7 @@ describe('Given the PlannerRoute component', () => {
       { id: '2', name: 'Task 2', isDone: true, description: '', dueDate: undefined },
     ]
 
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
+    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
 
     await act(async () => {
       renderComponent()
@@ -176,12 +176,12 @@ describe('Given the PlannerRoute component', () => {
 
   it('should render the ActionButtonsBar with enabled button when items are selected', async () => {
     // Mock state with selected items
-    jest.mocked(useAppState).mockReturnValue({
+    vi.mocked(useAppState).mockReturnValue({
       state: {
         ...initialState,
         selectedTodoItems: new Set(['1', '2'])
       },
-      dispatch: jest.fn(),
+      dispatch: vi.fn(),
     })
 
     const mockTodoItems = [
@@ -189,7 +189,7 @@ describe('Given the PlannerRoute component', () => {
       { id: '2', name: 'Task 2', isDone: false, description: '', dueDate: undefined },
     ]
 
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
+    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
 
     const queryClient = createTestQueryClient()
     await act(async () => {
@@ -230,7 +230,7 @@ describe('Given the PlannerRoute component', () => {
       { id: '2', name: 'Task 2', isDone: false, description: '', dueDate: undefined },
     ]
 
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
+    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
 
     await act(async () => {
       renderComponent()
@@ -249,7 +249,7 @@ describe('Given the PlannerRoute component', () => {
       { id: '2', name: 'Task 2', isDone: true, description: '', dueDate: undefined },
     ]
 
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
+    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
 
     await act(async () => {
       renderComponent()
@@ -267,7 +267,7 @@ describe('Given the PlannerRoute component', () => {
       { id: '1', name: 'Task 1', isDone: false, description: '', dueDate: undefined },
     ]
 
-    jest.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
+    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
 
     await act(async () => {
       renderComponent()
@@ -283,9 +283,9 @@ describe('Given the PlannerRoute component', () => {
 })
 
 const renderComponent = () => {
-  jest.mocked(useAppState).mockReturnValue({
+  vi.mocked(useAppState).mockReturnValue({
     state: initialState,
-    dispatch: jest.fn(),
+    dispatch: vi.fn(),
   })
 
   const queryClient = createTestQueryClient()

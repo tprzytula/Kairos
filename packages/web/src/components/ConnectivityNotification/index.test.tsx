@@ -1,22 +1,23 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import { MockedFunction } from 'vitest'
+import { act, render, screen, fireEvent } from '@testing-library/react'
 import ConnectivityNotification from './index'
 import { useInternetConnectivity } from '../../hooks/useInternetConnectivity'
 
-jest.mock('../../hooks/useInternetConnectivity')
+vi.mock('../../hooks/useInternetConnectivity')
 
-const mockUseInternetConnectivity = useInternetConnectivity as jest.MockedFunction<typeof useInternetConnectivity>
+const mockUseInternetConnectivity = useInternetConnectivity as MockedFunction<typeof useInternetConnectivity>
 
 describe('ConnectivityNotification', () => {
-  const mockResetOfflineState = jest.fn()
+  const mockResetOfflineState = vi.fn()
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.useFakeTimers()
+    vi.clearAllMocks()
+    vi.useFakeTimers()
   })
 
   afterEach(() => {
-    jest.runOnlyPendingTimers()
-    jest.useRealTimers()
+    vi.runOnlyPendingTimers()
+    vi.useRealTimers()
   })
 
   it('should show offline notification when not connected', () => {
@@ -27,7 +28,7 @@ describe('ConnectivityNotification', () => {
     })
 
     render(<ConnectivityNotification />)
-    
+
     expect(screen.getByText('Offline')).toBeInTheDocument()
   })
 
@@ -39,7 +40,7 @@ describe('ConnectivityNotification', () => {
     })
 
     render(<ConnectivityNotification />)
-    
+
     expect(screen.queryByText('No internet connection')).not.toBeInTheDocument()
   })
 
@@ -51,11 +52,11 @@ describe('ConnectivityNotification', () => {
     })
 
     render(<ConnectivityNotification />)
-    
+
     expect(screen.getByText('Connection restored')).toBeInTheDocument()
   })
 
-  it('should auto-hide reconnected notification after 4 seconds', async () => {
+  it('should auto-hide reconnected notification after 4 seconds', () => {
     mockUseInternetConnectivity.mockReturnValue({
       isOnline: true,
       wasOffline: true,
@@ -63,17 +64,23 @@ describe('ConnectivityNotification', () => {
     })
 
     render(<ConnectivityNotification />)
-    
+
     expect(screen.getByText('Connection restored')).toBeInTheDocument()
-    
-    jest.advanceTimersByTime(4000)
-    
-    await waitFor(() => {
-      expect(mockResetOfflineState).toHaveBeenCalled()
+
+    // Advance past the 4000ms auto-hide timer
+    act(() => {
+      vi.advanceTimersByTime(4000)
     })
+
+    // Advance past the 300ms exit animation timer
+    act(() => {
+      vi.advanceTimersByTime(300)
+    })
+
+    expect(mockResetOfflineState).toHaveBeenCalled()
   })
 
-  it('should manually close reconnected notification when clicked', async () => {
+  it('should manually close reconnected notification when clicked', () => {
     mockUseInternetConnectivity.mockReturnValue({
       isOnline: true,
       wasOffline: true,
@@ -81,18 +88,18 @@ describe('ConnectivityNotification', () => {
     })
 
     render(<ConnectivityNotification />)
-    
+
     const notification = screen.getByText('Connection restored').closest('div')
     fireEvent.click(notification!)
-    
-    jest.advanceTimersByTime(300)
-    
-    await waitFor(() => {
-      expect(mockResetOfflineState).toHaveBeenCalled()
+
+    act(() => {
+      vi.advanceTimersByTime(300)
     })
+
+    expect(mockResetOfflineState).toHaveBeenCalled()
   })
 
-  it('should manually close reconnected notification when close button clicked', async () => {
+  it('should manually close reconnected notification when close button clicked', () => {
     mockUseInternetConnectivity.mockReturnValue({
       isOnline: true,
       wasOffline: true,
@@ -100,15 +107,15 @@ describe('ConnectivityNotification', () => {
     })
 
     render(<ConnectivityNotification />)
-    
+
     const closeButton = screen.getByRole('button', { name: /close notification/i })
     fireEvent.click(closeButton)
-    
-    jest.advanceTimersByTime(300)
-    
-    await waitFor(() => {
-      expect(mockResetOfflineState).toHaveBeenCalled()
+
+    act(() => {
+      vi.advanceTimersByTime(300)
     })
+
+    expect(mockResetOfflineState).toHaveBeenCalled()
   })
 
   it('should not show reconnected notification when online without being offline first', () => {
@@ -119,7 +126,7 @@ describe('ConnectivityNotification', () => {
     })
 
     render(<ConnectivityNotification />)
-    
+
     expect(screen.queryByText('Connection restored')).not.toBeInTheDocument()
   })
 
@@ -131,7 +138,7 @@ describe('ConnectivityNotification', () => {
     })
 
     render(<ConnectivityNotification />)
-    
+
     expect(screen.getByText('Offline')).toBeInTheDocument()
     expect(screen.queryByText('Connection restored')).not.toBeInTheDocument()
   })

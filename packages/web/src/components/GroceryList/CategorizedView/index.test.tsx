@@ -38,11 +38,11 @@ const mockCategorizedGroups: ICategorizedGroceryGroup[] = [
 ];
 
 describe('Given the CategorizedView component', () => {
-  const mockOnDelete = jest.fn();
-  const mockOnEdit = jest.fn();
+  const mockOnDelete = vi.fn();
+  const mockOnEdit = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('When rendering with categorized groups', () => {

@@ -41,11 +41,11 @@ const mockGroupedToDoItems: IGroupedTodoItem[] = [
 ];
 
 describe('Given the GroupedView component', () => {
-  const mockOnSwipeAction = jest.fn();
-  const mockOnEditAction = jest.fn();
+  const mockOnSwipeAction = vi.fn();
+  const mockOnEditAction = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('When rendering with grouped to-do items', () => {

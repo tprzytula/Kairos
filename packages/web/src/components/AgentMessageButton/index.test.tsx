@@ -11,9 +11,9 @@ const renderWithContext = (contextValue: Partial<IState> = {}) => {
     messages: [],
     isOpen: false,
     isTyping: false,
-    openChat: jest.fn(),
-    closeChat: jest.fn(),
-    sendMessage: jest.fn(),
+    openChat: vi.fn(),
+    closeChat: vi.fn(),
+    sendMessage: vi.fn(),
     ...contextValue,
   }
 
@@ -42,7 +42,7 @@ describe('Given the AgentMessageButton component', () => {
 
   describe('When the button is clicked', () => {
     it('should call openChat', () => {
-      const openChat = jest.fn()
+      const openChat = vi.fn()
       renderWithContext({ openChat })
 
       fireEvent.click(screen.getByTestId('agent-message-button'))

@@ -43,7 +43,7 @@ describe('Given the FormField component', () => {
     });
 });
 
-const mockGetFieldProps = jest.fn().mockImplementation((field: IFormField) => ({
-    onChange: jest.fn(),
+const mockGetFieldProps = vi.fn().mockImplementation((field: IFormField) => ({
+    onChange: vi.fn(),
     value: field.value
 }));

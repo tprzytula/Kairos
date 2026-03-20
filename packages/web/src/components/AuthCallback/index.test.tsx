@@ -8,16 +8,16 @@ const mockAuthState = {
   error: null as any,
 }
 
-const mockUseAuth = jest.fn(() => mockAuthState)
+const mockUseAuth = vi.fn(() => mockAuthState)
 
-jest.mock('react-oidc-context', () => ({
+vi.mock('react-oidc-context', async () => ({
   useAuth: () => mockUseAuth(),
 }))
 
 // Mock useNavigate
-const mockNavigate = jest.fn()
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
+const mockNavigate = vi.fn()
+vi.mock('react-router', async () => ({
+  ...(await vi.importActual('react-router')),
   useNavigate: () => mockNavigate,
 }))
 
@@ -31,7 +31,7 @@ const renderAuthCallback = () => {
 
 describe('AuthCallback', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     Object.assign(mockAuthState, {
       isAuthenticated: false,
       error: null,

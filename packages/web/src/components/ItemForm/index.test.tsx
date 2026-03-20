@@ -6,8 +6,8 @@ import { useForm } from './hooks/useForm'
 import { IItemDefault } from '../../hooks/useItemDefaults/types'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 
-jest.mock('../../api/groceryList');
-jest.mock('./hooks/useForm');
+vi.mock('../../api/groceryList');
+vi.mock('./hooks/useForm');
 
 describe('Given the ItemForm component', () => {
     it('should render the form fields', () => {
@@ -28,7 +28,7 @@ describe('Given the ItemForm component', () => {
         mockUseForm();
         renderItemForm();
 
-        expect(jest.mocked(useForm)).toHaveBeenCalledWith({
+        expect(vi.mocked(useForm)).toHaveBeenCalledWith({
             initialFields: EXAMPLE_FIELDS,
             onSubmit: expect.any(Function),
             onValueChange: expect.any(Function)
@@ -83,12 +83,12 @@ const mockUseForm = ({
     isSubmitting?: boolean,
     submitError?: string | null
 } = {}) => {
-    const useFormMock = jest.mocked(useForm);
-    const getFieldPropsMock = jest.fn().mockImplementation((field: IFormField) => ({
-        onChange: jest.fn(),
+    const useFormMock = vi.mocked(useForm);
+    const getFieldPropsMock = vi.fn().mockImplementation((field: IFormField) => ({
+        onChange: vi.fn(),
         value: field.value
     }));
-    const handleSubmitMock = jest.fn().mockImplementation((e) => {
+    const handleSubmitMock = vi.fn().mockImplementation((e) => {
         e.preventDefault();
         return Promise.resolve();
     });
@@ -112,7 +112,7 @@ const submitForm = async () => {
 }
 
 const renderItemForm = () => {
-    const onSubmit = jest.fn()
+    const onSubmit = vi.fn()
     const component = render(<ItemForm defaults={EXAMPLE_DEFAULTS} fields={EXAMPLE_FIELDS} onSubmit={onSubmit} />)
 
     return { ...component, onSubmit }

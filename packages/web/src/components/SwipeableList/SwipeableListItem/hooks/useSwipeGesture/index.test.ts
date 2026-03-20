@@ -1,10 +1,11 @@
+import { Mock } from 'vitest'
 import { renderHook, act } from '@testing-library/react';
 import { useSwipeGesture } from './index';
 
 // Mock React events
 const createMockTouchEvent = (clientX: number, clientY: number = 0): React.TouchEvent => ({
   touches: [{ clientX, clientY }],
-  preventDefault: jest.fn(),
+  preventDefault: vi.fn(),
   cancelable: true,
 } as any);
 
@@ -15,12 +16,12 @@ const createMockMouseEvent = (clientX: number): React.MouseEvent => ({
 describe('useSwipeGesture', () => {
   beforeEach(() => {
     // Mock document event listeners
-    jest.spyOn(document, 'addEventListener');
-    jest.spyOn(document, 'removeEventListener');
+    vi.spyOn(document, 'addEventListener');
+    vi.spyOn(document, 'removeEventListener');
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should return initial state and handlers', () => {
@@ -39,7 +40,7 @@ describe('useSwipeGesture', () => {
   });
 
   it('should handle touch start correctly', () => {
-    const onSwipeUpdate = jest.fn();
+    const onSwipeUpdate = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
     
     const touchEvent = createMockTouchEvent(100);
@@ -52,7 +53,7 @@ describe('useSwipeGesture', () => {
   });
 
   it('should handle touch move and update translateX', () => {
-    const onSwipeUpdate = jest.fn();
+    const onSwipeUpdate = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
     
     // Start touch
@@ -70,7 +71,7 @@ describe('useSwipeGesture', () => {
   });
 
   it('should allow bidirectional swipe', () => {
-    const onSwipeUpdate = jest.fn();
+    const onSwipeUpdate = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
     
     // Start touch
@@ -99,7 +100,7 @@ describe('useSwipeGesture', () => {
   });
 
   it('should limit swipe distance to MAX_SWIPE_DISTANCE in both directions', () => {
-    const onSwipeUpdate = jest.fn();
+    const onSwipeUpdate = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
     
     // Test positive direction (left swipe - revealing right actions)
@@ -128,7 +129,7 @@ describe('useSwipeGesture', () => {
   });
 
   it('should handle touch end and call onSwipeEnd', () => {
-    const onSwipeEnd = jest.fn();
+    const onSwipeEnd = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeEnd }));
     
     // Start and move touch
@@ -150,8 +151,8 @@ describe('useSwipeGesture', () => {
   });
 
   it('should handle mouse events', () => {
-    const onSwipeUpdate = jest.fn();
-    const onSwipeEnd = jest.fn();
+    const onSwipeUpdate = vi.fn();
+    const onSwipeEnd = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate, onSwipeEnd }));
     
     const mouseEvent = createMockMouseEvent(100);
@@ -166,7 +167,7 @@ describe('useSwipeGesture', () => {
   });
 
   it('should handle mouse move events', () => {
-    const onSwipeUpdate = jest.fn();
+    const onSwipeUpdate = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
     
     // Start mouse down
@@ -175,7 +176,7 @@ describe('useSwipeGesture', () => {
     });
     
     // Get the mouse move handler that was registered
-    const mouseMoveHandler = (document.addEventListener as jest.Mock).mock.calls.find(
+    const mouseMoveHandler = (document.addEventListener as Mock).mock.calls.find(
       call => call[0] === 'mousemove'
     )[1];
     
@@ -189,7 +190,7 @@ describe('useSwipeGesture', () => {
   });
 
   it('should handle mouse move with rightward motion (negative delta)', () => {
-    const onSwipeUpdate = jest.fn();
+    const onSwipeUpdate = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
     
     // Start mouse down
@@ -198,7 +199,7 @@ describe('useSwipeGesture', () => {
     });
     
     // Get the mouse move handler
-    const mouseMoveHandler = (document.addEventListener as jest.Mock).mock.calls.find(
+    const mouseMoveHandler = (document.addEventListener as Mock).mock.calls.find(
       call => call[0] === 'mousemove'
     )[1];
     
@@ -211,7 +212,7 @@ describe('useSwipeGesture', () => {
   });
 
   it('should handle mouse up events', () => {
-    const onSwipeEnd = jest.fn();
+    const onSwipeEnd = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeEnd }));
     
     // Start mouse down and move
@@ -219,7 +220,7 @@ describe('useSwipeGesture', () => {
       result.current.handlers.onMouseDown(createMockMouseEvent(100));
     });
     
-    const mouseMoveHandler = (document.addEventListener as jest.Mock).mock.calls.find(
+    const mouseMoveHandler = (document.addEventListener as Mock).mock.calls.find(
       call => call[0] === 'mousemove'
     )[1];
     
@@ -228,7 +229,7 @@ describe('useSwipeGesture', () => {
     });
     
     // Get the mouse up handler
-    const mouseUpHandler = (document.addEventListener as jest.Mock).mock.calls.find(
+    const mouseUpHandler = (document.addEventListener as Mock).mock.calls.find(
       call => call[0] === 'mouseup'
     )[1];
     
@@ -244,7 +245,7 @@ describe('useSwipeGesture', () => {
   });
 
   it('should not respond when disabled', () => {
-    const onSwipeUpdate = jest.fn();
+    const onSwipeUpdate = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ disabled: true, onSwipeUpdate }));
     
     act(() => {
@@ -284,7 +285,7 @@ describe('useSwipeGesture', () => {
   });
 
   it('should not handle touch move when not dragging', () => {
-    const onSwipeUpdate = jest.fn();
+    const onSwipeUpdate = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
     
     // Don't start dragging, just call touch move
@@ -299,7 +300,7 @@ describe('useSwipeGesture', () => {
   });
 
   it('should not handle touch end when not dragging', () => {
-    const onSwipeEnd = jest.fn();
+    const onSwipeEnd = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeEnd }));
     
     // Don't start dragging, just call touch end
@@ -330,7 +331,7 @@ describe('useSwipeGesture', () => {
 
   describe('vertical gesture detection', () => {
     it('should prevent horizontal swiping when vertical movement exceeds threshold', () => {
-      const onSwipeUpdate = jest.fn();
+      const onSwipeUpdate = vi.fn();
       const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
       
       // Start touch
@@ -349,7 +350,7 @@ describe('useSwipeGesture', () => {
     });
 
     it('should allow horizontal swiping when vertical movement is below threshold', () => {
-      const onSwipeUpdate = jest.fn();
+      const onSwipeUpdate = vi.fn();
       const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
       
       // Start touch
@@ -368,7 +369,7 @@ describe('useSwipeGesture', () => {
     });
 
     it('should ignore subsequent horizontal movements after vertical gesture is detected', () => {
-      const onSwipeUpdate = jest.fn();
+      const onSwipeUpdate = vi.fn();
       const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
       
       // Start touch
@@ -391,7 +392,7 @@ describe('useSwipeGesture', () => {
     });
 
     it('should not trigger onSwipeEnd when gesture was vertical', () => {
-      const onSwipeEnd = jest.fn();
+      const onSwipeEnd = vi.fn();
       const { result } = renderHook(() => useSwipeGesture({ onSwipeEnd }));
       
       // Start touch
@@ -414,7 +415,7 @@ describe('useSwipeGesture', () => {
     });
 
     it('should reset vertical gesture state on touch start', () => {
-      const onSwipeUpdate = jest.fn();
+      const onSwipeUpdate = vi.fn();
       const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
       
       // First gesture: vertical
@@ -444,7 +445,7 @@ describe('useSwipeGesture', () => {
     });
 
     it('should handle simultaneous horizontal and vertical movement correctly', () => {
-      const onSwipeUpdate = jest.fn();
+      const onSwipeUpdate = vi.fn();
       const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
       
       // Start touch

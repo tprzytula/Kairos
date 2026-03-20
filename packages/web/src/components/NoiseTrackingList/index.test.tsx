@@ -1,9 +1,10 @@
+import { Mock } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import * as NoiseTrackingProvider from '../../providers/NoiseTrackingProvider'
 import NoiseTrackingList from './index'
 import { ViewMode } from './types'
 
-jest.mock('../../providers/NoiseTrackingProvider')
+vi.mock('../../providers/NoiseTrackingProvider')
 
 const MOCK_ITEMS = [
   { id: '1', timestamp: new Date().setHours(14, 58, 0, 0) },
@@ -13,19 +14,19 @@ const MOCK_ITEMS = [
 const EXAMPLE_NOISE_TRACKING_CONTEXT = {
   noiseTrackingItems: MOCK_ITEMS,
   isLoading: false,
-  refetchNoiseTrackingItems: jest.fn(),
+  refetchNoiseTrackingItems: vi.fn(),
 }
 
-const mockRefetch = jest.fn()
+const mockRefetch = vi.fn()
 
 describe('Given the NoiseTrackingList component', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    ;(NoiseTrackingProvider.useNoiseTrackingContext as jest.Mock).mockReturnValue(EXAMPLE_NOISE_TRACKING_CONTEXT)
+    vi.clearAllMocks()
+    ;(NoiseTrackingProvider.useNoiseTrackingContext as Mock).mockReturnValue(EXAMPLE_NOISE_TRACKING_CONTEXT)
   })
 
   it('should render loading state', () => {
-    jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
+    vi.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
       noiseTrackingItems: [],
       isLoading: true,
       refetchNoiseTrackingItems: mockRefetch,
@@ -41,7 +42,7 @@ describe('Given the NoiseTrackingList component', () => {
   })
 
   it('should render empty state when no items', () => {
-    jest.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
+    vi.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
       noiseTrackingItems: [],
       isLoading: false,
       refetchNoiseTrackingItems: mockRefetch,

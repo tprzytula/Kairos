@@ -1,12 +1,13 @@
+import { Mock, MockedFunction } from 'vitest'
 import { updateUserPreferences } from './index'
 import { API_BASE_URL } from '../../index'
 import { createFetchOptions } from '../../../utils/api'
 
-jest.mock('../../../utils/api', () => ({
-  createFetchOptions: jest.fn()
+vi.mock('../../../utils/api', () => ({
+  createFetchOptions: vi.fn()
 }))
 
-const mockCreateFetchOptions = createFetchOptions as jest.MockedFunction<typeof createFetchOptions>
+const mockCreateFetchOptions = createFetchOptions as MockedFunction<typeof createFetchOptions>
 
 describe('Given the updateUserPreferences function', () => {
   beforeEach(() => {
@@ -21,7 +22,7 @@ describe('Given the updateUserPreferences function', () => {
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should make the correct request to the API', async () => {
@@ -32,7 +33,7 @@ describe('Given the updateUserPreferences function', () => {
       lastUpdated: 1234567890
     }
 
-    global.fetch = jest.fn().mockResolvedValue({
+    global.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockResponse)
     })
@@ -62,7 +63,7 @@ describe('Given the updateUserPreferences function', () => {
   it('should handle API errors', async () => {
     const requestData = { currentProjectId: 'project-123' }
 
-    global.fetch = jest.fn().mockResolvedValue({
+    global.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 500
     })
@@ -88,7 +89,7 @@ describe('Given the updateUserPreferences function', () => {
       body: JSON.stringify(requestData)
     })
 
-    global.fetch = jest.fn().mockResolvedValue({
+    global.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockResponse)
     })
@@ -109,7 +110,7 @@ describe('Given the updateUserPreferences function', () => {
       lastUpdated: 1234567890
     }
 
-    global.fetch = jest.fn().mockResolvedValue({
+    global.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockResponse)
     })

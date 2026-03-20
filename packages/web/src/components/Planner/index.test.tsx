@@ -9,19 +9,19 @@ import { ThemeProvider, createTheme } from '@mui/material/styles'
 import * as ToDoAPI from '../../api/toDoList'
 import { PlannerViewMode } from '../../enums/plannerViewMode'
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
+vi.mock('react-router', async () => ({
+  ...(await vi.importActual('react-router')),
+  useNavigate: vi.fn(),
 }))
 
-jest.mock('react-oidc-context', () => ({
-  useAuth: jest.fn(() => ({ user: { access_token: 'test-access-token' } })),
+vi.mock('react-oidc-context', async () => ({
+  useAuth: vi.fn(() => ({ user: { access_token: 'test-access-token' } })),
 }))
 
-jest.mock('../../providers/ProjectProvider')
-jest.mock('../../api/toDoList')
+vi.mock('../../providers/ProjectProvider')
+vi.mock('../../api/toDoList')
 
-jest.mock('./CalendarView', () => ({
+vi.mock('./CalendarView', async () => ({
   __esModule: true,
   default: ({ visibleToDoItems, onItemClick }: { visibleToDoItems: Array<{ id: string; name: string }>, onItemClick: (id: string) => void }) => (
     <div data-testid="calendar-view">
@@ -35,11 +35,11 @@ jest.mock('./CalendarView', () => ({
 }))
 
 describe('Given the Planner component', () => {
-  const mockNavigate = jest.fn()
+  const mockNavigate = vi.fn()
 
   beforeEach(() => {
-    jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate)
-    jest.spyOn(ProjectProvider, 'useProjectContext').mockReturnValue({
+    vi.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate)
+    vi.spyOn(ProjectProvider, 'useProjectContext').mockReturnValue({
       currentProject: { 
         id: 'test-project-id', 
         name: 'Test Project',
@@ -50,17 +50,17 @@ describe('Given the Planner component', () => {
         createdAt: '2023-01-01T00:00:00Z'
       },
       projects: [],
-      createProject: jest.fn(),
-      joinProject: jest.fn(),
-      switchProject: jest.fn(),
-      fetchProjects: jest.fn(),
-      getProjectInviteInfo: jest.fn(),
+      createProject: vi.fn(),
+      joinProject: vi.fn(),
+      switchProject: vi.fn(),
+      fetchProjects: vi.fn(),
+      getProjectInviteInfo: vi.fn(),
       isLoading: false,
     })
     mockNavigate.mockClear()
   })
   it('should render only the not completed items grouped by time', () => {
-    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
     renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
@@ -72,7 +72,7 @@ describe('Given the Planner component', () => {
   })
 
   it('should pass edit and swipe functions to time sections', () => {
-    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
     renderWithTheme(<Planner />)
 
@@ -82,7 +82,7 @@ describe('Given the Planner component', () => {
   })
 
   it('should pass expand/collapse props to time sections when provided', () => {
-    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
     renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} allExpanded={false} expandKey="test-key" />)
 
@@ -91,7 +91,7 @@ describe('Given the Planner component', () => {
   })
 
   it('should render in grouped mode when viewMode is GROUPED', () => {
-    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
     renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
@@ -109,7 +109,7 @@ describe('Given the Planner component', () => {
       ]
     }
 
-    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(contextWithMixedItems)
+    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(contextWithMixedItems)
 
     renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
@@ -131,7 +131,7 @@ describe('Given the Planner component', () => {
       ]
     }
     
-    jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(contextWithDifferentDueDates)
+    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(contextWithDifferentDueDates)
 
     renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
@@ -153,12 +153,12 @@ describe('Given the Planner component', () => {
 
   describe('When the to do list is empty', () => {
     it('should render the empty list icon and helpful text', () => {
-      jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
+      vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
         toDoList: [],
         isLoading: false,
-        refetchToDoList: jest.fn(),
-        removeFromToDoList: jest.fn(),
-        updateToDoItemFields: jest.fn(),
+        refetchToDoList: vi.fn(),
+        removeFromToDoList: vi.fn(),
+        updateToDoItemFields: vi.fn(),
       })
 
       renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
@@ -170,12 +170,12 @@ describe('Given the Planner component', () => {
 
     describe('Empty state layout behavior', () => {
       it('should center empty state vertically within available space', () => {
-        jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
+        vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
           toDoList: [],
           isLoading: false,
-          refetchToDoList: jest.fn(),
-          removeFromToDoList: jest.fn(),
-          updateToDoItemFields: jest.fn(),
+          refetchToDoList: vi.fn(),
+          removeFromToDoList: vi.fn(),
+          updateToDoItemFields: vi.fn(),
         })
 
         renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
@@ -192,12 +192,12 @@ describe('Given the Planner component', () => {
       })
 
       it('should maintain proper spacing and opacity in empty state', () => {
-        jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
+        vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
           toDoList: [],
           isLoading: false,
-          refetchToDoList: jest.fn(),
-          removeFromToDoList: jest.fn(),
-          updateToDoItemFields: jest.fn(),
+          refetchToDoList: vi.fn(),
+          removeFromToDoList: vi.fn(),
+          updateToDoItemFields: vi.fn(),
         })
 
         renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
@@ -214,12 +214,12 @@ describe('Given the Planner component', () => {
 
   describe('When the to do list is loading', () => {
     it('should render the loading placeholder', () => {
-      jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
+      vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
         toDoList: [],
         isLoading: true,
-        refetchToDoList: jest.fn(),
-        removeFromToDoList: jest.fn(),
-        updateToDoItemFields: jest.fn(),
+        refetchToDoList: vi.fn(),
+        removeFromToDoList: vi.fn(),
+        updateToDoItemFields: vi.fn(),
       })
 
       renderWithTheme(<Planner />)
@@ -230,10 +230,10 @@ describe('Given the Planner component', () => {
 
   describe('When the user deletes a todo item', () => {
     it('should call removeTodoItems API and removeFromToDoList on successful deletion', async () => {
-      const removeFromToDoListMock = jest.fn()
-      const removeTodoItemsSpy = jest.mocked(ToDoAPI.removeTodoItems).mockResolvedValue(undefined)
+      const removeFromToDoListMock = vi.fn()
+      const removeTodoItemsSpy = vi.mocked(ToDoAPI.removeTodoItems).mockResolvedValue(undefined)
 
-      jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
+      vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
         ...EXAMPLE_TO_DO_LIST_CONTEXT,
         removeFromToDoList: removeFromToDoListMock,
       })
@@ -250,10 +250,10 @@ describe('Given the Planner component', () => {
     })
 
     it('should not call removeFromToDoList when the API call fails', async () => {
-      const removeFromToDoListMock = jest.fn()
-      jest.mocked(ToDoAPI.removeTodoItems).mockRejectedValue(new Error('API error'))
+      const removeFromToDoListMock = vi.fn()
+      vi.mocked(ToDoAPI.removeTodoItems).mockRejectedValue(new Error('API error'))
 
-      jest.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
+      vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
         ...EXAMPLE_TO_DO_LIST_CONTEXT,
         removeFromToDoList: removeFromToDoListMock,
       })
@@ -307,7 +307,7 @@ const EXAMPLE_TO_DO_LIST_CONTEXT: IState = {
     },
   ],
   isLoading: false,
-  refetchToDoList: jest.fn(),
-  removeFromToDoList: jest.fn(),
-  updateToDoItemFields: jest.fn(),
+  refetchToDoList: vi.fn(),
+  removeFromToDoList: vi.fn(),
+  updateToDoItemFields: vi.fn(),
 }

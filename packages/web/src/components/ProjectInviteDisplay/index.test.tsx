@@ -1,3 +1,4 @@
+import { Mock } from 'vitest'
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -10,8 +11,8 @@ const renderComponent = (props = {}) => {
   const defaultProps = {
     inviteCode: 'ABC123',
     projectName: 'Test Project',
-    onCopySuccess: jest.fn(),
-    onShareSuccess: jest.fn()
+    onCopySuccess: vi.fn(),
+    onShareSuccess: vi.fn()
   }
 
   return render(
@@ -24,19 +25,19 @@ const renderComponent = (props = {}) => {
 // Mock clipboard API
 Object.assign(navigator, {
   clipboard: {
-    writeText: jest.fn(),
+    writeText: vi.fn(),
   },
 })
 
 // Mock Web Share API
-const mockShare = jest.fn()
+const mockShare = vi.fn()
 Object.assign(navigator, {
   share: mockShare,
 })
 
 describe('ProjectInviteDisplay component', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('Display and Layout', () => {
@@ -92,10 +93,10 @@ describe('ProjectInviteDisplay component', () => {
 
   describe('Copy Functionality', () => {
     it('should copy invite code to clipboard when copy button is clicked', async () => {
-      const mockWriteText = navigator.clipboard.writeText as jest.Mock
+      const mockWriteText = navigator.clipboard.writeText as Mock
       mockWriteText.mockResolvedValue(undefined)
       
-      const onCopySuccess = jest.fn()
+      const onCopySuccess = vi.fn()
       renderComponent({ onCopySuccess })
       
       const copyButton = screen.getByRole('button', { name: 'Copy' })
@@ -108,7 +109,7 @@ describe('ProjectInviteDisplay component', () => {
     })
 
     it('should show visual feedback after successful copy', async () => {
-      const mockWriteText = navigator.clipboard.writeText as jest.Mock
+      const mockWriteText = navigator.clipboard.writeText as Mock
       mockWriteText.mockResolvedValue(undefined)
       
       renderComponent()
@@ -122,9 +123,9 @@ describe('ProjectInviteDisplay component', () => {
     })
 
     it('should handle clipboard write failure gracefully', async () => {
-      const mockWriteText = navigator.clipboard.writeText as jest.Mock
+      const mockWriteText = navigator.clipboard.writeText as Mock
       mockWriteText.mockRejectedValue(new Error('Clipboard error'))
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation()
       
       renderComponent()
       
@@ -140,7 +141,7 @@ describe('ProjectInviteDisplay component', () => {
   describe('Share Functionality', () => {
     beforeEach(() => {
       delete (window as any).open
-      Object.assign(window, { open: jest.fn() })
+      Object.assign(window, { open: vi.fn() })
     })
 
     it('should have WhatsApp share button', () => {
@@ -165,7 +166,7 @@ describe('ProjectInviteDisplay component', () => {
     })
 
     it('should open share URL when share buttons are clicked', async () => {
-      const mockOpen = jest.fn()
+      const mockOpen = vi.fn()
       Object.assign(window, { open: mockOpen })
       
       renderComponent()
@@ -181,7 +182,7 @@ describe('ProjectInviteDisplay component', () => {
 
     it('should use native share API when available', async () => {
       mockShare.mockResolvedValue(undefined)
-      const onShareSuccess = jest.fn()
+      const onShareSuccess = vi.fn()
       
       renderComponent({ onShareSuccess })
       
@@ -232,7 +233,7 @@ describe('ProjectInviteDisplay component', () => {
 
   describe('Props handling', () => {
     it('should work without optional callbacks', async () => {
-      const mockWriteText = navigator.clipboard.writeText as jest.Mock
+      const mockWriteText = navigator.clipboard.writeText as Mock
       mockWriteText.mockResolvedValue(undefined)
       
       renderComponent({ onCopySuccess: undefined, onShareSuccess: undefined })

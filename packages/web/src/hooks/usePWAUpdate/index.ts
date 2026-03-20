@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-// @ts-ignore
-import swUrl from 'url:../../sw.js'
+
+const swUrl = '/sw.js'
 
 // Detect iOS devices
 const isIOS = () => {

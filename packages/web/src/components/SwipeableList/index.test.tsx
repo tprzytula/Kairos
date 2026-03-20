@@ -3,10 +3,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import SwipeableList from './index';
 
 // Mock the hooks used in SwipeableListItem
-const mockSetTranslateX = jest.fn();
-const mockClose = jest.fn();
+const mockSetTranslateX = vi.fn();
+const mockClose = vi.fn();
 
-jest.mock('./SwipeableListItem/hooks/useSwipeGesture', () => ({
+vi.mock('./SwipeableListItem/hooks/useSwipeGesture', () => ({
   useSwipeGesture: ({ onSwipeUpdate }: any) => ({
     containerRef: { current: null },
     translateX: 0,
@@ -24,20 +24,20 @@ jest.mock('./SwipeableListItem/hooks/useSwipeGesture', () => ({
   }),
 }));
 
-jest.mock('./SwipeableListItem/hooks/useHapticFeedback', () => ({
+vi.mock('./SwipeableListItem/hooks/useHapticFeedback', () => ({
   useHapticFeedback: () => ({
-    triggerFeedback: jest.fn(),
+    triggerFeedback: vi.fn(),
   }),
 }));
 
-jest.mock('./SwipeableListItem/hooks/useActionVisibility', () => ({
+vi.mock('./SwipeableListItem/hooks/useActionVisibility', () => ({
   useActionVisibility: () => ({
     isRightActionsVisible: false,
     isLeftActionsVisible: false,
-    updateVisibility: jest.fn(),
-    handleSwipeEnd: jest.fn(() => 0),
-    createActionClickHandler: jest.fn(() => jest.fn()),
-    setupOutsideClickHandler: jest.fn(() => () => {}),
+    updateVisibility: vi.fn(),
+    handleSwipeEnd: vi.fn(() => 0),
+    createActionClickHandler: vi.fn(() => vi.fn()),
+    setupOutsideClickHandler: vi.fn(() => () => {}),
   }),
 }));
 
@@ -58,7 +58,7 @@ const mockItems: TestItem[] = [
 
 describe('SwipeableList', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should render all items', () => {
@@ -66,8 +66,8 @@ describe('SwipeableList', () => {
       <SwipeableList
         component={TestComponent}
         list={mockItems}
-        onSwipeAction={jest.fn()}
-        onEditAction={jest.fn()}
+        onSwipeAction={vi.fn()}
+        onEditAction={vi.fn()}
       />
     );
 
@@ -77,14 +77,14 @@ describe('SwipeableList', () => {
   });
 
   it('should call onSwipeAction when an item is swiped for deletion', () => {
-    const mockOnSwipeAction = jest.fn();
+    const mockOnSwipeAction = vi.fn();
     
     render(
       <SwipeableList
         component={TestComponent}
         list={mockItems}
         onSwipeAction={mockOnSwipeAction}
-        onEditAction={jest.fn()}
+        onEditAction={vi.fn()}
       />
     );
 
@@ -94,13 +94,13 @@ describe('SwipeableList', () => {
   });
 
   it('should call onEditAction when an item is swiped for editing', () => {
-    const mockOnEditAction = jest.fn();
+    const mockOnEditAction = vi.fn();
     
     render(
       <SwipeableList
         component={TestComponent}
         list={mockItems}
-        onSwipeAction={jest.fn()}
+        onSwipeAction={vi.fn()}
         onEditAction={mockOnEditAction}
       />
     );
@@ -115,8 +115,8 @@ describe('SwipeableList', () => {
       <SwipeableList
         component={TestComponent}
         list={mockItems}
-        onSwipeAction={jest.fn()}
-        onEditAction={jest.fn()}
+        onSwipeAction={vi.fn()}
+        onEditAction={vi.fn()}
       />
     );
 
@@ -146,8 +146,8 @@ describe('SwipeableList', () => {
       <SwipeableList
         component={TestComponent}
         list={mockItems}
-        onSwipeAction={jest.fn()}
-        onEditAction={jest.fn()}
+        onSwipeAction={vi.fn()}
+        onEditAction={vi.fn()}
         threshold={customThreshold}
       />
     );
@@ -163,8 +163,8 @@ describe('SwipeableList', () => {
       <SwipeableList
         component={TestComponent}
         list={[]}
-        onSwipeAction={jest.fn()}
-        onEditAction={jest.fn()}
+        onSwipeAction={vi.fn()}
+        onEditAction={vi.fn()}
       />
     );
 
@@ -173,7 +173,7 @@ describe('SwipeableList', () => {
   });
 
   it('should handle optional onEditAction prop', () => {
-    const mockOnSwipeAction = jest.fn();
+    const mockOnSwipeAction = vi.fn();
     
     render(
       <SwipeableList
@@ -188,7 +188,7 @@ describe('SwipeableList', () => {
   });
 
   it('should handle optional onSwipeAction prop', () => {
-    const mockOnEditAction = jest.fn();
+    const mockOnEditAction = vi.fn();
     
     render(
       <SwipeableList
@@ -203,7 +203,7 @@ describe('SwipeableList', () => {
   });
 
   it('should memoize list properly when props change', () => {
-    const mockOnSwipeAction = jest.fn();
+    const mockOnSwipeAction = vi.fn();
     const { rerender } = render(
       <SwipeableList
         component={TestComponent}

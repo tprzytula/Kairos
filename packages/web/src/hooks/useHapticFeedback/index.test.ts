@@ -2,7 +2,7 @@ import { renderHook, act } from '@testing-library/react'
 import { useHapticFeedback } from './index'
 
 // Mock navigator.vibrate
-const mockVibrate = jest.fn()
+const mockVibrate = vi.fn()
 
 Object.defineProperty(navigator, 'vibrate', {
   value: mockVibrate,
@@ -11,7 +11,7 @@ Object.defineProperty(navigator, 'vibrate', {
 
 describe('useHapticFeedback', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should trigger light haptic feedback by default', () => {

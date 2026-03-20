@@ -4,7 +4,7 @@ import ItemImage from ".";
 describe("Given the ItemImage component", () => {
   describe("When the item name is not provided", () => {
     it("should render the default image", () => {
-      render(<ItemImage itemName={undefined} defaults={[]} onChange={jest.fn()} />);
+      render(<ItemImage itemName={undefined} defaults={[]} onChange={vi.fn()} />);
 
       expect(screen.getByLabelText("Placeholder image")).toBeVisible();
     });
@@ -17,7 +17,7 @@ describe("Given the ItemImage component", () => {
           <ItemImage
             itemName="something"
             defaults={EXAMPLE_DEFAULTS}
-            onChange={jest.fn()}
+            onChange={vi.fn()}
           />
         );
 
@@ -31,7 +31,7 @@ describe("Given the ItemImage component", () => {
           <ItemImage
             itemName="test"
             defaults={EXAMPLE_DEFAULTS}
-            onChange={jest.fn()}
+            onChange={vi.fn()}
           />
         );
 
@@ -42,7 +42,7 @@ describe("Given the ItemImage component", () => {
 
   describe("When the image path is changed", () => {
     it("should call the onChange function", () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       
       render(
         <ItemImage itemName="test" defaults={EXAMPLE_DEFAULTS} onChange={onChange} />
@@ -53,7 +53,7 @@ describe("Given the ItemImage component", () => {
 
     describe('And the image path is a generic image', () => {
       it('should call the onChange function', () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
        
         render(
           <ItemImage itemName="something" defaults={EXAMPLE_DEFAULTS} onChange={onChange} />
@@ -66,7 +66,7 @@ describe("Given the ItemImage component", () => {
 
   describe('When the defaults are not provided', () => {
     it('should render the placeholder image', () => {
-      render(<ItemImage itemName="test" defaults={undefined} onChange={jest.fn()} />);
+      render(<ItemImage itemName="test" defaults={undefined} onChange={vi.fn()} />);
 
       expect(screen.getByLabelText("Placeholder image")).toBeVisible();
     });
@@ -74,7 +74,7 @@ describe("Given the ItemImage component", () => {
 
   describe('When initialImagePath is provided', () => {
     it('should use the initial image path and call onChange', () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const initialImagePath = '/path/to/existing/image.png';
       
       render(
@@ -91,7 +91,7 @@ describe("Given the ItemImage component", () => {
     });
 
     it('should prioritize initialImagePath over defaults', () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const initialImagePath = '/path/to/existing/image.png';
       
       render(

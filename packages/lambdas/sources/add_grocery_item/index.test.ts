@@ -6,26 +6,26 @@ import { GroceryItemCategory } from "@kairos-lambdas-libs/dynamodb/enums";
 
 import { handler } from "./index";
 
-jest.mock('./body', () => ({
-    getBody: jest.fn(),
+vi.mock('./body', async () => ({
+    getBody: vi.fn(),
 }));
 
-jest.mock('./database', () => ({
-    upsertItem: jest.fn(),
-    queryProjectItems: jest.fn(),
+vi.mock('./database', async () => ({
+    upsertItem: vi.fn(),
+    queryProjectItems: vi.fn(),
 }));
 
-jest.mock('./utils', () => ({
-    fetchDefaults: jest.fn(),
-    getCategoryForItem: jest.fn(),
+vi.mock('./utils', async () => ({
+    fetchDefaults: vi.fn(),
+    getCategoryForItem: vi.fn(),
 }));
 
 describe('Given the add_grocery_item lambda handler', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
-        jest.mocked(queryProjectItems).mockResolvedValue([]);
-        jest.mocked(fetchDefaults).mockResolvedValue([]);
-        jest.mocked(getCategoryForItem).mockReturnValue(GroceryItemCategory.OTHER);
+        vi.clearAllMocks();
+        vi.mocked(queryProjectItems).mockResolvedValue([]);
+        vi.mocked(fetchDefaults).mockResolvedValue([]);
+        vi.mocked(getCategoryForItem).mockReturnValue(GroceryItemCategory.OTHER);
     });
 
     it('should require project ID', async () => {
@@ -37,7 +37,7 @@ describe('Given the add_grocery_item lambda handler', () => {
 
     describe('When the body is invalid', () => {
         it('should return status 400', async () => {
-            jest.mocked(getBody).mockReturnValue(null);
+            vi.mocked(getBody).mockReturnValue(null);
 
             const result = await runHandler({ body: null }, true);
 
@@ -47,16 +47,16 @@ describe('Given the add_grocery_item lambda handler', () => {
 
     describe('When the body is valid with a single item', () => {
         it('should query project items and defaults once, then upsert', async () => {
-            jest.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
-            jest.mocked(getCategoryForItem).mockReturnValue(GroceryItemCategory.FRUITS_VEGETABLES);
-            jest.mocked(upsertItem).mockResolvedValue({ id: EXAMPLE_ID, statusCode: 201 });
+            vi.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
+            vi.mocked(getCategoryForItem).mockReturnValue(GroceryItemCategory.FRUITS_VEGETABLES);
+            vi.mocked(upsertItem).mockResolvedValue({ id: EXAMPLE_ID, statusCode: 201 });
 
             await runHandler({ body: JSON.stringify(EXAMPLE_BODY) }, true);
 
-            expect(jest.mocked(queryProjectItems)).toHaveBeenCalledWith("test-project");
-            expect(jest.mocked(fetchDefaults)).toHaveBeenCalledTimes(1);
-            expect(jest.mocked(getCategoryForItem)).toHaveBeenCalledWith("Apple", []);
-            expect(jest.mocked(upsertItem)).toHaveBeenCalledWith(
+            expect(vi.mocked(queryProjectItems)).toHaveBeenCalledWith("test-project");
+            expect(vi.mocked(fetchDefaults)).toHaveBeenCalledTimes(1);
+            expect(vi.mocked(getCategoryForItem)).toHaveBeenCalledWith("Apple", []);
+            expect(vi.mocked(upsertItem)).toHaveBeenCalledWith(
                 expect.objectContaining({
                     projectId: "test-project",
                     name: "Apple",
@@ -67,8 +67,8 @@ describe('Given the add_grocery_item lambda handler', () => {
         });
 
         it('should return items array with status 201 when all items are created', async () => {
-            jest.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
-            jest.mocked(upsertItem).mockResolvedValue({ id: EXAMPLE_ID, statusCode: 201 });
+            vi.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
+            vi.mocked(upsertItem).mockResolvedValue({ id: EXAMPLE_ID, statusCode: 201 });
 
             const result = await runHandler({ body: JSON.stringify(EXAMPLE_BODY) }, true);
 
@@ -79,14 +79,14 @@ describe('Given the add_grocery_item lambda handler', () => {
 
     describe('When the body contains multiple items', () => {
         it('should upsert each item sequentially', async () => {
-            jest.mocked(getBody).mockReturnValue(EXAMPLE_MULTI_BODY);
-            jest.mocked(upsertItem)
+            vi.mocked(getBody).mockReturnValue(EXAMPLE_MULTI_BODY);
+            vi.mocked(upsertItem)
                 .mockResolvedValueOnce({ id: "id-1", statusCode: 201 })
                 .mockResolvedValueOnce({ id: "id-2", statusCode: 201 });
 
             const result = await runHandler({ body: JSON.stringify(EXAMPLE_MULTI_BODY) }, true);
 
-            expect(jest.mocked(upsertItem)).toHaveBeenCalledTimes(2);
+            expect(vi.mocked(upsertItem)).toHaveBeenCalledTimes(2);
             expect(result.statusCode).toBe(201);
             expect(result.body).toEqual(JSON.stringify({
                 items: [{ id: "id-1" }, { id: "id-2" }],
@@ -94,8 +94,8 @@ describe('Given the add_grocery_item lambda handler', () => {
         });
 
         it('should return status 200 when some items are updates', async () => {
-            jest.mocked(getBody).mockReturnValue(EXAMPLE_MULTI_BODY);
-            jest.mocked(upsertItem)
+            vi.mocked(getBody).mockReturnValue(EXAMPLE_MULTI_BODY);
+            vi.mocked(upsertItem)
                 .mockResolvedValueOnce({ id: "id-1", statusCode: 200 })
                 .mockResolvedValueOnce({ id: "id-2", statusCode: 201 });
 
@@ -107,8 +107,8 @@ describe('Given the add_grocery_item lambda handler', () => {
 
     describe('When the upsert fails', () => {
         it('should return status 500', async () => {
-            jest.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
-            jest.mocked(upsertItem).mockRejectedValue(new Error('Upsert failed'));
+            vi.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
+            vi.mocked(upsertItem).mockRejectedValue(new Error('Upsert failed'));
 
             const result = await runHandler({ body: JSON.stringify(EXAMPLE_BODY) }, true);
 

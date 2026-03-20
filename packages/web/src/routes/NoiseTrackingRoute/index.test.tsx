@@ -14,27 +14,27 @@ import { useAppState } from '../../providers/AppStateProvider'
 import { ProjectContext } from '../../providers/ProjectProvider'
 import { IProject } from '../../types/project'
 
-jest.mock('../../providers/AppStateProvider', () => ({
-  ...jest.requireActual('../../providers/AppStateProvider'),
-  useAppState: jest.fn(),
+vi.mock('../../providers/AppStateProvider', async () => ({
+  ...(await vi.importActual('../../providers/AppStateProvider')),
+  useAppState: vi.fn(),
 }))
 
-jest.mock('../../api/noiseTracking')
-jest.mock('react-oidc-context', () => ({
+vi.mock('../../api/noiseTracking')
+vi.mock('react-oidc-context', async () => ({
   useAuth: () => ({
     isAuthenticated: true,
     user: { access_token: 'mock-token' }
   })
 }))
-jest.mock('../../api/projects', () => ({
-  retrieveUserProjects: jest.fn().mockResolvedValue([])
+vi.mock('../../api/projects', async () => ({
+  retrieveUserProjects: vi.fn().mockResolvedValue([])
 }))
 
 const originalToLocaleDateString = Date.prototype.toLocaleDateString
 
 describe('Given the NoiseTrackingRoute component', () => {
   beforeAll(() => {
-    jest.spyOn(Date.prototype, 'toLocaleDateString').mockImplementation(function(
+    vi.spyOn(Date.prototype, 'toLocaleDateString').mockImplementation(function(
       this: Date,
       locale?: Intl.LocalesArgument,
       options?: Intl.DateTimeFormatOptions
@@ -47,11 +47,11 @@ describe('Given the NoiseTrackingRoute component', () => {
   })
 
   afterAll(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   it('should have the correct title', async () => {
-    jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+    vi.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue([])
 
     await act(async () => {
       renderComponent()
@@ -61,7 +61,7 @@ describe('Given the NoiseTrackingRoute component', () => {
   })
 
   it('should retrieve the noise tracking items', async () => {
-    const noiseTrackingItemsSpy = jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue([])
+    const noiseTrackingItemsSpy = vi.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue([])
 
     await act(async () => {
       renderComponent()
@@ -78,7 +78,7 @@ describe('Given the NoiseTrackingRoute component', () => {
       { timestamp: 1724003200001 }, // 18 Aug 2024, 18:46 (6:46 PM)
     ]
 
-    jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseTrackingItems)
+    vi.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseTrackingItems)
 
     await act(async () => {
       renderComponent()
@@ -101,9 +101,9 @@ describe('Given the NoiseTrackingRoute component', () => {
 
   describe('When the fetch fails', () => {
     it('should display an error message', async () => {
-      const errorSpy = jest.spyOn(console, 'error')
+      const errorSpy = vi.spyOn(console, 'error')
 
-      jest.spyOn(API, 'retrieveNoiseTrackingItems').mockRejectedValue(new Error('Bad things happen all the time'))
+      vi.spyOn(API, 'retrieveNoiseTrackingItems').mockRejectedValue(new Error('Bad things happen all the time'))
 
       await act(async () => {
         renderComponent()
@@ -131,11 +131,11 @@ const MockProjectProvider = ({ children }: { children: React.ReactNode }) => {
     projects: [MOCK_PROJECT],
     currentProject: MOCK_PROJECT,
     isLoading: false,
-    createProject: jest.fn(),
-    joinProject: jest.fn(),
-    switchProject: jest.fn(),
-    fetchProjects: jest.fn(),
-    getProjectInviteInfo: jest.fn(),
+    createProject: vi.fn(),
+    joinProject: vi.fn(),
+    switchProject: vi.fn(),
+    fetchProjects: vi.fn(),
+    getProjectInviteInfo: vi.fn(),
   }
 
   return (
@@ -146,9 +146,9 @@ const MockProjectProvider = ({ children }: { children: React.ReactNode }) => {
 }
 
 const renderComponent = () => {
-  jest.mocked(useAppState).mockReturnValue({
+  vi.mocked(useAppState).mockReturnValue({
     state: initialState,
-    dispatch: jest.fn(),
+    dispatch: vi.fn(),
   })
 
   const queryClient = createTestQueryClient()

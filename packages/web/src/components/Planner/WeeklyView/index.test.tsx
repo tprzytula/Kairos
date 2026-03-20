@@ -42,30 +42,30 @@ const makeMeal = (overrides: Partial<IMealPlan> = {}): IMealPlan => ({
 
 describe('Given the WeeklyView component', () => {
   it('should render the week range label', () => {
-    render(<WeeklyView visibleToDoItems={[]} onItemClick={jest.fn()} />)
+    render(<WeeklyView visibleToDoItems={[]} onItemClick={vi.fn()} />)
     const start = dayjs().startOf('week').format('MMM D')
     expect(screen.getByText(new RegExp(start))).toBeVisible()
   })
 
   it('should render navigation buttons', () => {
-    render(<WeeklyView visibleToDoItems={[]} onItemClick={jest.fn()} />)
+    render(<WeeklyView visibleToDoItems={[]} onItemClick={vi.fn()} />)
     expect(screen.getByLabelText('Previous week')).toBeVisible()
     expect(screen.getByLabelText('Next week')).toBeVisible()
   })
 
   it('should not show Today button when already on current week', () => {
-    render(<WeeklyView visibleToDoItems={[]} onItemClick={jest.fn()} />)
+    render(<WeeklyView visibleToDoItems={[]} onItemClick={vi.fn()} />)
     expect(screen.queryByRole('button', { name: /today/i })).not.toBeInTheDocument()
   })
 
   it('should show Today button after navigating away', () => {
-    render(<WeeklyView visibleToDoItems={[]} onItemClick={jest.fn()} />)
+    render(<WeeklyView visibleToDoItems={[]} onItemClick={vi.fn()} />)
     fireEvent.click(screen.getByLabelText('Next week'))
     expect(screen.getByRole('button', { name: /today/i })).toBeVisible()
   })
 
   it('should navigate back to current week when Today is clicked', () => {
-    render(<WeeklyView visibleToDoItems={[]} onItemClick={jest.fn()} />)
+    render(<WeeklyView visibleToDoItems={[]} onItemClick={vi.fn()} />)
     fireEvent.click(screen.getByLabelText('Next week'))
     const todayBtn = screen.getByRole('button', { name: /today/i })
     fireEvent.click(todayBtn)
@@ -74,12 +74,12 @@ describe('Given the WeeklyView component', () => {
 
   it('should render a pending todo on the correct day', () => {
     const todo = makeTodo({ name: 'Buy groceries' })
-    render(<WeeklyView visibleToDoItems={[todo]} onItemClick={jest.fn()} />)
+    render(<WeeklyView visibleToDoItems={[todo]} onItemClick={vi.fn()} />)
     expect(screen.getByText('Buy groceries')).toBeVisible()
   })
 
   it('should call onItemClick when a todo item is clicked', () => {
-    const onItemClick = jest.fn()
+    const onItemClick = vi.fn()
     const todo = makeTodo({ id: 'todo-abc', name: 'Test task' })
     render(<WeeklyView visibleToDoItems={[todo]} onItemClick={onItemClick} />)
     fireEvent.click(screen.getByText('Test task'))
@@ -88,17 +88,17 @@ describe('Given the WeeklyView component', () => {
 
   it('should render a birthday item', () => {
     const birthday = makeBirthday({ name: 'Alice' })
-    render(<WeeklyView visibleToDoItems={[]} onItemClick={jest.fn()} birthdayItems={[birthday]} />)
+    render(<WeeklyView visibleToDoItems={[]} onItemClick={vi.fn()} birthdayItems={[birthday]} />)
     expect(screen.getByText('Alice')).toBeVisible()
   })
 
   it('should call onBirthdayClick when a birthday item is clicked', () => {
-    const onBirthdayClick = jest.fn()
+    const onBirthdayClick = vi.fn()
     const birthday = makeBirthday({ id: 'bday-xyz', name: 'Alice' })
     render(
       <WeeklyView
         visibleToDoItems={[]}
-        onItemClick={jest.fn()}
+        onItemClick={vi.fn()}
         birthdayItems={[birthday]}
         onBirthdayClick={onBirthdayClick}
       />
@@ -109,17 +109,17 @@ describe('Given the WeeklyView component', () => {
 
   it('should render a meal plan item', () => {
     const meal = makeMeal({ recipeName: 'Pasta' })
-    render(<WeeklyView visibleToDoItems={[]} onItemClick={jest.fn()} mealPlans={[meal]} />)
+    render(<WeeklyView visibleToDoItems={[]} onItemClick={vi.fn()} mealPlans={[meal]} />)
     expect(screen.getByText('Pasta')).toBeVisible()
   })
 
   it('should call onMealPlanClick when a meal is clicked', () => {
-    const onMealPlanClick = jest.fn()
+    const onMealPlanClick = vi.fn()
     const meal = makeMeal()
     render(
       <WeeklyView
         visibleToDoItems={[]}
-        onItemClick={jest.fn()}
+        onItemClick={vi.fn()}
         mealPlans={[meal]}
         onMealPlanClick={onMealPlanClick}
       />
@@ -131,7 +131,7 @@ describe('Given the WeeklyView component', () => {
   it('should not render a todo with no dueDate in the weekly grid', () => {
     const todo = makeTodo({ id: 'no-date', name: 'No due date task' })
     todo.dueDate = undefined
-    render(<WeeklyView visibleToDoItems={[todo]} onItemClick={jest.fn()} />)
+    render(<WeeklyView visibleToDoItems={[todo]} onItemClick={vi.fn()} />)
     expect(screen.queryByText('No due date task')).not.toBeInTheDocument()
   })
 })

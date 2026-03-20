@@ -4,9 +4,9 @@ const { DynamoDBTable } = DynamoDB;
 
 import { handler } from "./index";
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
-    ...jest.requireActual("@kairos-lambdas-libs/dynamodb"),
-    scan: jest.fn(),
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
+    ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
+    scan: vi.fn(),
 }));
 
 describe('Given the get_grocery_items_defaults lambda handler', () => {
@@ -21,7 +21,7 @@ describe('Given the get_grocery_items_defaults lambda handler', () => {
     });
 
     it('should log the response', async () => {
-        const logSpy = jest.spyOn(console, 'info').mockImplementation(() => { });
+        const logSpy = vi.spyOn(console, 'info').mockImplementation(() => { });
 
         await handler({} as any, {} as any, {} as any);
 
@@ -42,7 +42,7 @@ describe('Given the get_grocery_items_defaults lambda handler', () => {
 
     describe('When the scan request fails', () => {
         it('should log the error', async () => {
-            const logSpy = jest.spyOn(console, 'error');
+            const logSpy = vi.spyOn(console, 'error');
 
             const scanSpy = mockScan();
             scanSpy.mockRejectedValue(new Error('Scan failed'));
@@ -71,7 +71,7 @@ describe('Given the get_grocery_items_defaults lambda handler', () => {
     });
 });
 
-const mockScan = () => jest.spyOn(DynamoDB, 'scan').mockResolvedValue(EXAMPLE_DB_GROCERY_ITEMS_DEFAULTS);
+const mockScan = () => vi.spyOn(DynamoDB, 'scan').mockResolvedValue(EXAMPLE_DB_GROCERY_ITEMS_DEFAULTS);
 
 const EXAMPLE_DB_GROCERY_ITEMS_DEFAULTS: Record<string, unknown>[] = [
     {

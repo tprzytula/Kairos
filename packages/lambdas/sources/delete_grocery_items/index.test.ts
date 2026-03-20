@@ -4,9 +4,9 @@ const { DynamoDBTable } = DynamoDB;
 
 import { handler } from "./index";
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
-    ...jest.requireActual("@kairos-lambdas-libs/dynamodb"),
-    deleteItems: jest.fn(),
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
+    ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
+    deleteItems: vi.fn(),
 }));
 
 describe('Given the delete_grocery_item lambda handler', () => {
@@ -38,7 +38,7 @@ describe('Given the delete_grocery_item lambda handler', () => {
 
     describe('When the delete request fails', () => {
         it('should log the error', async () => {
-            const logSpy = jest.spyOn(console, 'error');
+            const logSpy = vi.spyOn(console, 'error');
 
             const deleteSpy = mockDelete();
             deleteSpy.mockRejectedValue(new Error('Delete failed'));
@@ -67,7 +67,7 @@ describe('Given the delete_grocery_item lambda handler', () => {
     });
 });
 
-const mockDelete = () => jest.spyOn(DynamoDB, 'deleteItems');
+const mockDelete = () => vi.spyOn(DynamoDB, 'deleteItems');
 
 interface IAPIGatewayProxyEvent {
     body: { ids?: Array<string> };

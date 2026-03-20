@@ -2,18 +2,18 @@ import { renderHook, act } from '@testing-library/react'
 import { useDragToClose } from './index'
 
 const createPointerEvent = (clientY: number) =>
-  ({ clientY, pointerId: 1, currentTarget: { setPointerCapture: jest.fn() } }) as any
+  ({ clientY, pointerId: 1, currentTarget: { setPointerCapture: vi.fn() } }) as any
 
 describe('useDragToClose', () => {
   describe('initial state', () => {
     it('should return dragOffset of 0', () => {
-      const { result } = renderHook(() => useDragToClose({ onClose: jest.fn() }))
+      const { result } = renderHook(() => useDragToClose({ onClose: vi.fn() }))
 
       expect(result.current.dragOffset).toBe(0)
     })
 
     it('should return isDragging as false', () => {
-      const { result } = renderHook(() => useDragToClose({ onClose: jest.fn() }))
+      const { result } = renderHook(() => useDragToClose({ onClose: vi.fn() }))
 
       expect(result.current.isDragging.current).toBe(false)
     })
@@ -21,7 +21,7 @@ describe('useDragToClose', () => {
 
   describe('onPointerDown', () => {
     it('should set isDragging to true', () => {
-      const { result } = renderHook(() => useDragToClose({ onClose: jest.fn() }))
+      const { result } = renderHook(() => useDragToClose({ onClose: vi.fn() }))
 
       act(() => {
         result.current.onPointerDown(createPointerEvent(100))
@@ -31,8 +31,8 @@ describe('useDragToClose', () => {
     })
 
     it('should capture pointer on the element', () => {
-      const { result } = renderHook(() => useDragToClose({ onClose: jest.fn() }))
-      const setPointerCapture = jest.fn()
+      const { result } = renderHook(() => useDragToClose({ onClose: vi.fn() }))
+      const setPointerCapture = vi.fn()
       const event = { clientY: 100, pointerId: 42, currentTarget: { setPointerCapture } } as any
 
       act(() => {
@@ -45,7 +45,7 @@ describe('useDragToClose', () => {
 
   describe('onPointerMove', () => {
     it('should update dragOffset as pointer moves down', () => {
-      const { result } = renderHook(() => useDragToClose({ onClose: jest.fn() }))
+      const { result } = renderHook(() => useDragToClose({ onClose: vi.fn() }))
 
       act(() => { result.current.onPointerDown(createPointerEvent(100)) })
       act(() => { result.current.onPointerMove(createPointerEvent(160)) })
@@ -54,7 +54,7 @@ describe('useDragToClose', () => {
     })
 
     it('should clamp dragOffset to 0 when moving upward past start', () => {
-      const { result } = renderHook(() => useDragToClose({ onClose: jest.fn() }))
+      const { result } = renderHook(() => useDragToClose({ onClose: vi.fn() }))
 
       act(() => { result.current.onPointerDown(createPointerEvent(200)) })
       act(() => { result.current.onPointerMove(createPointerEvent(100)) })
@@ -63,7 +63,7 @@ describe('useDragToClose', () => {
     })
 
     it('should not update dragOffset when not dragging', () => {
-      const { result } = renderHook(() => useDragToClose({ onClose: jest.fn() }))
+      const { result } = renderHook(() => useDragToClose({ onClose: vi.fn() }))
 
       act(() => { result.current.onPointerMove(createPointerEvent(200)) })
 
@@ -73,7 +73,7 @@ describe('useDragToClose', () => {
 
   describe('onPointerUp', () => {
     it('should reset dragOffset to 0', () => {
-      const { result } = renderHook(() => useDragToClose({ onClose: jest.fn() }))
+      const { result } = renderHook(() => useDragToClose({ onClose: vi.fn() }))
 
       act(() => { result.current.onPointerDown(createPointerEvent(100)) })
       act(() => { result.current.onPointerMove(createPointerEvent(150)) })
@@ -83,7 +83,7 @@ describe('useDragToClose', () => {
     })
 
     it('should reset isDragging to false', () => {
-      const { result } = renderHook(() => useDragToClose({ onClose: jest.fn() }))
+      const { result } = renderHook(() => useDragToClose({ onClose: vi.fn() }))
 
       act(() => { result.current.onPointerDown(createPointerEvent(100)) })
       act(() => { result.current.onPointerUp(createPointerEvent(150)) })
@@ -92,7 +92,7 @@ describe('useDragToClose', () => {
     })
 
     it('should call onClose when offset meets the default threshold', () => {
-      const onClose = jest.fn()
+      const onClose = vi.fn()
       const { result } = renderHook(() => useDragToClose({ onClose }))
 
       act(() => { result.current.onPointerDown(createPointerEvent(0)) })
@@ -102,7 +102,7 @@ describe('useDragToClose', () => {
     })
 
     it('should call onClose when offset exceeds the default threshold', () => {
-      const onClose = jest.fn()
+      const onClose = vi.fn()
       const { result } = renderHook(() => useDragToClose({ onClose }))
 
       act(() => { result.current.onPointerDown(createPointerEvent(0)) })
@@ -112,7 +112,7 @@ describe('useDragToClose', () => {
     })
 
     it('should not call onClose when offset is below the default threshold', () => {
-      const onClose = jest.fn()
+      const onClose = vi.fn()
       const { result } = renderHook(() => useDragToClose({ onClose }))
 
       act(() => { result.current.onPointerDown(createPointerEvent(0)) })
@@ -122,7 +122,7 @@ describe('useDragToClose', () => {
     })
 
     it('should respect a custom threshold', () => {
-      const onClose = jest.fn()
+      const onClose = vi.fn()
       const { result } = renderHook(() => useDragToClose({ onClose, threshold: 50 }))
 
       act(() => { result.current.onPointerDown(createPointerEvent(0)) })
@@ -132,7 +132,7 @@ describe('useDragToClose', () => {
     })
 
     it('should not call onClose when releasing without a prior pointerdown', () => {
-      const onClose = jest.fn()
+      const onClose = vi.fn()
       const { result } = renderHook(() => useDragToClose({ onClose }))
 
       act(() => { result.current.onPointerUp(createPointerEvent(200)) })

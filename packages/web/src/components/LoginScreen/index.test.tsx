@@ -2,8 +2,8 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import LoginScreen from './index'
 
 // Mock the react-oidc-context hook
-const mockSigninRedirect = jest.fn()
-jest.mock('react-oidc-context', () => ({
+const mockSigninRedirect = vi.fn()
+vi.mock('react-oidc-context', () => ({
   useAuth: () => ({
     signinRedirect: mockSigninRedirect,
   }),
@@ -11,7 +11,7 @@ jest.mock('react-oidc-context', () => ({
 
 describe('LoginScreen', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should render the welcome screen', () => {

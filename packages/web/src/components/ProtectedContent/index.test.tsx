@@ -4,10 +4,10 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from '../../theme';
 import ProtectedContent from '.';
 
-const mockIsAuthenticated = jest.fn();
-const mockSigninRedirect = jest.fn();
+const mockIsAuthenticated = vi.fn();
+const mockSigninRedirect = vi.fn();
 
-jest.mock('react-oidc-context', () => ({
+vi.mock('react-oidc-context', () => ({
   useAuth: () => ({
     isAuthenticated: mockIsAuthenticated(),
     signinRedirect: mockSigninRedirect,
@@ -15,35 +15,35 @@ jest.mock('react-oidc-context', () => ({
   })
 }));
 
-jest.mock('../../hooks/useInternetConnectivity', () => ({
+vi.mock('../../hooks/useInternetConnectivity', () => ({
   useInternetConnectivity: () => ({ isOnline: true })
 }));
 
-jest.mock('../../hooks/usePWAUpdate', () => ({
+vi.mock('../../hooks/usePWAUpdate', () => ({
   usePWAUpdate: () => ({ 
     isUpdateAvailable: false,
-    updateApp: jest.fn()
+    updateApp: vi.fn()
   })
 }));
 
-jest.mock('../../providers/AppStateProvider', () => ({
+vi.mock('../../providers/AppStateProvider', () => ({
   useAppState: () => ({
     state: { alerts: [], selectedTodoItems: [] },
-    dispatch: jest.fn()
+    dispatch: vi.fn()
   })
 }));
 
-jest.mock('../../providers/ShopProvider', () => ({
+vi.mock('../../providers/ShopProvider', () => ({
   ShopProvider: ({ children }: any) => children,
   useShopContext: () => ({
     shops: [],
     isLoading: false,
     currentShop: null,
-    fetchShops: jest.fn(),
-    addShop: jest.fn(),
-    updateShop: jest.fn(),
-    deleteShop: jest.fn(),
-    setCurrentShop: jest.fn(),
+    fetchShops: vi.fn(),
+    addShop: vi.fn(),
+    updateShop: vi.fn(),
+    deleteShop: vi.fn(),
+    setCurrentShop: vi.fn(),
   })
 }));
 
@@ -61,7 +61,7 @@ const renderWithProviders = (component: React.ReactElement) => {
 
 describe('Given the ProtectedContent component', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('When user is authenticated', () => {

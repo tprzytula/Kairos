@@ -1,3 +1,4 @@
+import { Mock } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -11,44 +12,44 @@ import { useLocation } from 'react-router'
 import { IShop } from '../AppStateProvider/types'
 import { IProject } from '../../types/project'
 
-jest.mock('../../api/shops', () => ({
-  retrieveShops: jest.fn(),
-  addShop: jest.fn(),
-  updateShop: jest.fn(),
-  deleteShop: jest.fn(),
+vi.mock('../../api/shops', () => ({
+  retrieveShops: vi.fn(),
+  addShop: vi.fn(),
+  updateShop: vi.fn(),
+  deleteShop: vi.fn(),
 }))
 
-jest.mock('../../api/groceryList/retrieve', () => ({
-  retrieveGroceryList: jest.fn(),
+vi.mock('../../api/groceryList/retrieve', () => ({
+  retrieveGroceryList: vi.fn(),
 }))
 
-jest.mock('../../api/userPreferences', () => ({
-  getUserPreferences: jest.fn(),
-  updateUserPreferences: jest.fn(),
+vi.mock('../../api/userPreferences', () => ({
+  getUserPreferences: vi.fn(),
+  updateUserPreferences: vi.fn(),
 }))
 
-jest.mock('react-oidc-context', () => ({
-  useAuth: jest.fn(),
+vi.mock('react-oidc-context', () => ({
+  useAuth: vi.fn(),
 }))
 
-jest.mock('../ProjectProvider', () => ({
-  useProjectContext: jest.fn(),
+vi.mock('../ProjectProvider', () => ({
+  useProjectContext: vi.fn(),
 }))
 
-jest.mock('react-router', () => ({
-  useLocation: jest.fn(),
+vi.mock('react-router', () => ({
+  useLocation: vi.fn(),
 }))
 
-const mockRetrieveShops = retrieveShops as jest.Mock
-const mockAddShop = addShop as jest.Mock
-const mockUpdateShop = updateShop as jest.Mock
-const mockDeleteShop = deleteShop as jest.Mock
-const mockRetrieveGroceryList = retrieveGroceryList as jest.Mock
-const mockGetUserPreferences = getUserPreferences as jest.Mock
-const mockUpdateUserPreferences = updateUserPreferences as jest.Mock
-const mockUseAuth = useAuth as jest.Mock
-const mockUseProjectContext = useProjectContext as jest.Mock
-const mockUseLocation = useLocation as jest.Mock
+const mockRetrieveShops = retrieveShops as Mock
+const mockAddShop = addShop as Mock
+const mockUpdateShop = updateShop as Mock
+const mockDeleteShop = deleteShop as Mock
+const mockRetrieveGroceryList = retrieveGroceryList as Mock
+const mockGetUserPreferences = getUserPreferences as Mock
+const mockUpdateUserPreferences = updateUserPreferences as Mock
+const mockUseAuth = useAuth as Mock
+const mockUseProjectContext = useProjectContext as Mock
+const mockUseLocation = useLocation as Mock
 
 const createTestQueryClient = () =>
   new QueryClient({ defaultOptions: { queries: { retry: false } } })
@@ -83,7 +84,7 @@ const createWrapper = () => {
 
 describe('Given the ShopProvider', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
     mockUseAuth.mockReturnValue({
       user: { access_token: 'test-access-token' },
@@ -257,7 +258,7 @@ describe('Given the ShopProvider', () => {
 
   describe('When the fetch fails', () => {
     it('should log an error and set shops to an empty array', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation()
       mockRetrieveShops.mockRejectedValue(new Error('Network error'))
 
       const { result } = renderHook(() => useShopContext(), { wrapper: createWrapper() })

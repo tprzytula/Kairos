@@ -22,7 +22,7 @@
       "url": "/grocery-list/add",
       "icons": [
         {
-          "src": "../assets/webManifest/96x96.png",
+          "src": "/96x96.png",
           "sizes": "96x96",
           "type": "image/png"
         }
@@ -35,7 +35,7 @@
       "url": "/todo-list/add",
       "icons": [
         {
-          "src": "../assets/webManifest/96x96.png",
+          "src": "/96x96.png",
           "sizes": "96x96",
           "type": "image/png"
         }
@@ -44,25 +44,25 @@
   ],
   "icons": [
     {
-      "src": "../assets/webManifest/72x72.png",
+      "src": "/72x72.png",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "../assets/webManifest/96x96.png",
+      "src": "/96x96.png",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "../assets/webManifest/96x96.png",
+      "src": "/96x96.png",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "../assets/webManifest/72x72.png",
+      "src": "/72x72.png",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "maskable"

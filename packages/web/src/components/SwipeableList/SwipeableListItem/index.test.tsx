@@ -3,38 +3,38 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import { SwipeableListItem, SwipeableListItemRef } from './index';
 
 // Mock the hooks
-jest.mock('./hooks/useSwipeGesture', () => ({
+vi.mock('./hooks/useSwipeGesture', () => ({
   useSwipeGesture: ({ onSwipeUpdate }: any) => ({
     containerRef: { current: null },
     translateX: 0,
     isDragging: false,
     handlers: {
-      onTouchStart: jest.fn(),
-      onTouchMove: jest.fn((e) => {
+      onTouchStart: vi.fn(),
+      onTouchMove: vi.fn((e) => {
         // Simulate swipe update to test onSwipeStart callback
         onSwipeUpdate?.(10, true);
       }),
-      onTouchEnd: jest.fn(),
-      onMouseDown: jest.fn(),
+      onTouchEnd: vi.fn(),
+      onMouseDown: vi.fn(),
     },
-    setTranslateX: jest.fn(),
+    setTranslateX: vi.fn(),
   }),
 }));
 
-jest.mock('./hooks/useHapticFeedback', () => ({
+vi.mock('./hooks/useHapticFeedback', () => ({
   useHapticFeedback: () => ({
-    triggerFeedback: jest.fn(),
+    triggerFeedback: vi.fn(),
   }),
 }));
 
-jest.mock('./hooks/useActionVisibility', () => ({
+vi.mock('./hooks/useActionVisibility', () => ({
   useActionVisibility: () => ({
     isRightActionsVisible: false,
     isLeftActionsVisible: false,
-    updateVisibility: jest.fn(),
-    handleSwipeEnd: jest.fn(() => 0),
-    createActionClickHandler: jest.fn(() => jest.fn()),
-    setupOutsideClickHandler: jest.fn(() => () => {}),
+    updateVisibility: vi.fn(),
+    handleSwipeEnd: vi.fn(() => 0),
+    createActionClickHandler: vi.fn(() => vi.fn()),
+    setupOutsideClickHandler: vi.fn(() => () => {}),
   }),
 }));
 
@@ -42,7 +42,7 @@ const TestChild = () => <div data-testid="test-child">Test Content</div>;
 
 describe('SwipeableListItem', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should render children', () => {
@@ -56,7 +56,7 @@ describe('SwipeableListItem', () => {
   });
 
   it('should call onSwipeStart when swipe begins', () => {
-    const mockOnSwipeStart = jest.fn();
+    const mockOnSwipeStart = vi.fn();
     
     render(
       <SwipeableListItem onSwipeStart={mockOnSwipeStart}>
@@ -105,7 +105,7 @@ describe('SwipeableListItem', () => {
   });
 
   it('should handle onSwipeAction prop', () => {
-    const mockOnSwipeAction = jest.fn();
+    const mockOnSwipeAction = vi.fn();
     
     render(
       <SwipeableListItem onSwipeAction={mockOnSwipeAction}>
@@ -117,7 +117,7 @@ describe('SwipeableListItem', () => {
   });
 
   it('should handle onEditAction prop', () => {
-    const mockOnEditAction = jest.fn();
+    const mockOnEditAction = vi.fn();
     
     render(
       <SwipeableListItem onEditAction={mockOnEditAction}>

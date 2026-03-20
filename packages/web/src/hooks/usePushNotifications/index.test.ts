@@ -1,25 +1,26 @@
+import { Mock } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { usePushNotifications } from './index'
 
-jest.mock('react-oidc-context', () => ({
-  useAuth: jest.fn(),
+vi.mock('react-oidc-context', () => ({
+  useAuth: vi.fn(),
 }))
 
-jest.mock('../../api/pushSubscriptions', () => ({
-  savePushSubscription: jest.fn(),
-  deletePushSubscription: jest.fn(),
+vi.mock('../../api/pushSubscriptions', () => ({
+  savePushSubscription: vi.fn(),
+  deletePushSubscription: vi.fn(),
 }))
 
 import { useAuth } from 'react-oidc-context'
 import { savePushSubscription, deletePushSubscription } from '../../api/pushSubscriptions'
 
-const mockUseAuth = useAuth as jest.Mock
-const mockSavePushSubscription = savePushSubscription as jest.Mock
-const mockDeletePushSubscription = deletePushSubscription as jest.Mock
+const mockUseAuth = useAuth as Mock
+const mockSavePushSubscription = savePushSubscription as Mock
+const mockDeletePushSubscription = deletePushSubscription as Mock
 
-const mockGetSubscription = jest.fn()
-const mockSubscribe = jest.fn()
-const mockPushSubscriptionUnsubscribe = jest.fn()
+const mockGetSubscription = vi.fn()
+const mockSubscribe = vi.fn()
+const mockPushSubscriptionUnsubscribe = vi.fn()
 
 const mockPushManager = {
   getSubscription: mockGetSubscription,
@@ -44,20 +45,20 @@ Object.defineProperty(window, 'PushManager', {
 })
 
 Object.defineProperty(window, 'Notification', {
-  value: Object.assign(jest.fn(), {
+  value: Object.assign(vi.fn(), {
     permission: 'default' as NotificationPermission,
-    requestPermission: jest.fn(),
+    requestPermission: vi.fn(),
   }),
   writable: true,
   configurable: true,
 })
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
   ;(navigator as any).serviceWorker = { ready: Promise.resolve(mockRegistration) }
   ;(window as any).PushManager = class PushManager {}
   ;(window.Notification as any).permission = 'default'
-  ;(window.Notification as any).requestPermission = jest.fn()
+  ;(window.Notification as any).requestPermission = vi.fn()
 
   mockUseAuth.mockReturnValue({ user: { access_token: 'test-token' } })
   mockGetSubscription.mockResolvedValue(null)
@@ -131,7 +132,7 @@ describe('usePushNotifications', () => {
 
   describe('requestPermission', () => {
     it('should set permission to granted on success', async () => {
-      ;(window.Notification as any).requestPermission = jest.fn().mockResolvedValue('granted')
+      ;(window.Notification as any).requestPermission = vi.fn().mockResolvedValue('granted')
 
       const { result } = renderHook(() => usePushNotifications())
 
@@ -144,7 +145,7 @@ describe('usePushNotifications', () => {
 
     it('should set isLoading during the request and clear it after', async () => {
       let resolvePermission: (v: string) => void
-      ;(window.Notification as any).requestPermission = jest.fn(
+      ;(window.Notification as any).requestPermission = vi.fn(
         () => new Promise(resolve => { resolvePermission = resolve })
       )
 
@@ -158,7 +159,7 @@ describe('usePushNotifications', () => {
     })
 
     it('should set error and throw when permission is denied', async () => {
-      ;(window.Notification as any).requestPermission = jest.fn().mockResolvedValue('denied')
+      ;(window.Notification as any).requestPermission = vi.fn().mockResolvedValue('denied')
 
       const { result } = renderHook(() => usePushNotifications())
 
@@ -188,7 +189,7 @@ describe('usePushNotifications', () => {
     it('should subscribe and save the subscription to the server', async () => {
       const mockSubscription = {
         endpoint: 'https://push.example.com/sub',
-        getKey: jest.fn(() => new ArrayBuffer(8)),
+        getKey: vi.fn(() => new ArrayBuffer(8)),
       }
       mockGetSubscription.mockResolvedValue(null)
       mockSubscribe.mockResolvedValue(mockSubscription)
@@ -222,7 +223,7 @@ describe('usePushNotifications', () => {
     it('should clear isLoading after subscription completes', async () => {
       const mockSubscription = {
         endpoint: 'https://push.example.com/sub',
-        getKey: jest.fn(() => new ArrayBuffer(8)),
+        getKey: vi.fn(() => new ArrayBuffer(8)),
       }
       mockGetSubscription.mockResolvedValue(null)
       mockSubscribe.mockResolvedValue(mockSubscription)
@@ -305,7 +306,7 @@ describe('usePushNotifications', () => {
     it('should set error and throw when unsubscribe fails', async () => {
       const mockSubscription = {
         endpoint: 'https://push.example.com/sub',
-        unsubscribe: jest.fn().mockRejectedValue(new Error('Unsubscribe failed')),
+        unsubscribe: vi.fn().mockRejectedValue(new Error('Unsubscribe failed')),
       }
       mockGetSubscription.mockResolvedValue(mockSubscription)
 

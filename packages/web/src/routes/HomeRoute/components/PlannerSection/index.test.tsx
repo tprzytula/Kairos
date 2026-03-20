@@ -49,18 +49,18 @@ const defaultProps = {
   toDoStats: createMockToDoStats(),
   todayMeals: [],
   isLoading: false,
-  onStepToggle: jest.fn(),
-  onCardClick: jest.fn(),
+  onStepToggle: vi.fn(),
+  onCardClick: vi.fn(),
 }
 
 describe('PlannerSection component', () => {
   beforeEach(() => {
-    jest.useFakeTimers()
-    jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2024-01-15T12:00:00Z'))
   })
 
   afterEach(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   describe('section layout', () => {
@@ -113,7 +113,7 @@ describe('PlannerSection component', () => {
     })
 
     it('should call onStepToggle when a step is clicked', () => {
-      const onStepToggle = jest.fn()
+      const onStepToggle = vi.fn()
       const item = createMockTodoItem({
         id: '1',
         name: 'Trip',
@@ -133,7 +133,7 @@ describe('PlannerSection component', () => {
     })
 
     it('should call onCardClick when a task header is clicked', () => {
-      const onCardClick = jest.fn()
+      const onCardClick = vi.fn()
       const item = createMockTodoItem({ id: '1', name: 'My Task' })
       const toDoStats = createMockToDoStats({ sortedItems: [item], pendingItems: [item] })
 
@@ -228,12 +228,12 @@ const createMockBirthday = (overrides: Partial<IBirthdayItem> = {}): IBirthdayIt
 
 describe('UpcomingBirthdaysCard component', () => {
   beforeEach(() => {
-    jest.useFakeTimers()
-    jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2024-01-15T12:00:00Z'))
   })
 
   afterEach(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   const renderBirthdays = (birthdays: IBirthdayItem[], isExpanded = false) =>

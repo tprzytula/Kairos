@@ -25,11 +25,11 @@ const mockGroceryItems: IGroceryItem[] = [
 ];
 
 describe('Given the UncategorizedView component', () => {
-  const mockOnDelete = jest.fn();
-  const mockOnEdit = jest.fn();
+  const mockOnDelete = vi.fn();
+  const mockOnEdit = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('When rendering with grocery items', () => {

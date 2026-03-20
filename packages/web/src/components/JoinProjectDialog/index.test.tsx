@@ -1,3 +1,4 @@
+import { Mock, MockedFunction } from 'vitest'
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -6,9 +7,9 @@ import JoinProjectDialog from './index'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { IProjectInviteInfo } from '../../types/project'
 
-jest.mock('../../providers/ProjectProvider')
+vi.mock('../../providers/ProjectProvider')
 
-const mockUseProjectContext = useProjectContext as jest.MockedFunction<typeof useProjectContext>
+const mockUseProjectContext = useProjectContext as MockedFunction<typeof useProjectContext>
 
 const theme = createTheme()
 
@@ -23,8 +24,8 @@ const mockProjectInviteInfo: IProjectInviteInfo = {
 const renderDialog = (props = {}) => {
   const defaultProps = {
     open: true,
-    onClose: jest.fn(),
-    onSuccess: jest.fn()
+    onClose: vi.fn(),
+    onSuccess: vi.fn()
   }
 
   return render(
@@ -37,19 +38,19 @@ const renderDialog = (props = {}) => {
 describe('JoinProjectDialog component', () => {
   beforeEach(() => {
     mockUseProjectContext.mockReturnValue({
-      joinProject: jest.fn(),
-      getProjectInviteInfo: jest.fn(),
+      joinProject: vi.fn(),
+      getProjectInviteInfo: vi.fn(),
       projects: [],
       currentProject: null,
       isLoading: false,
-      createProject: jest.fn(),
-      switchProject: jest.fn(),
-      fetchProjects: jest.fn()
+      createProject: vi.fn(),
+      switchProject: vi.fn(),
+      fetchProjects: vi.fn()
     })
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('Dialog Display', () => {
@@ -134,16 +135,16 @@ describe('JoinProjectDialog component', () => {
 
     it('should handle paste of 6-character code', async () => {
       const user = userEvent.setup()
-      const mockGetProjectInviteInfo = jest.fn().mockResolvedValue(mockProjectInviteInfo)
+      const mockGetProjectInviteInfo = vi.fn().mockResolvedValue(mockProjectInviteInfo)
       mockUseProjectContext.mockReturnValue({
-        joinProject: jest.fn(),
+        joinProject: vi.fn(),
         getProjectInviteInfo: mockGetProjectInviteInfo,
         projects: [],
         currentProject: null,
         isLoading: false,
-        createProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn()
+        createProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn()
       })
       
       renderDialog()
@@ -169,16 +170,16 @@ describe('JoinProjectDialog component', () => {
   describe('Project Preview', () => {
     it('should fetch and display project info when 6 characters entered', async () => {
       const user = userEvent.setup()
-      const mockGetProjectInviteInfo = jest.fn().mockResolvedValue(mockProjectInviteInfo)
+      const mockGetProjectInviteInfo = vi.fn().mockResolvedValue(mockProjectInviteInfo)
       mockUseProjectContext.mockReturnValue({
-        joinProject: jest.fn(),
+        joinProject: vi.fn(),
         getProjectInviteInfo: mockGetProjectInviteInfo,
         projects: [],
         currentProject: null,
         isLoading: false,
-        createProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn()
+        createProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn()
       })
       
       renderDialog()
@@ -202,16 +203,16 @@ describe('JoinProjectDialog component', () => {
 
     it('should show loading state while fetching project info', async () => {
       const user = userEvent.setup()
-      const mockGetProjectInviteInfo = jest.fn().mockImplementation(() => new Promise(() => {}))
+      const mockGetProjectInviteInfo = vi.fn().mockImplementation(() => new Promise(() => {}))
       mockUseProjectContext.mockReturnValue({
-        joinProject: jest.fn(),
+        joinProject: vi.fn(),
         getProjectInviteInfo: mockGetProjectInviteInfo,
         projects: [],
         currentProject: null,
         isLoading: false,
-        createProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn()
+        createProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn()
       })
       
       renderDialog()
@@ -229,16 +230,16 @@ describe('JoinProjectDialog component', () => {
 
     it('should show error when invalid invite code entered', async () => {
       const user = userEvent.setup()
-      const mockGetProjectInviteInfo = jest.fn().mockRejectedValue(new Error('Invalid code'))
+      const mockGetProjectInviteInfo = vi.fn().mockRejectedValue(new Error('Invalid code'))
       mockUseProjectContext.mockReturnValue({
-        joinProject: jest.fn(),
+        joinProject: vi.fn(),
         getProjectInviteInfo: mockGetProjectInviteInfo,
         projects: [],
         currentProject: null,
         isLoading: false,
-        createProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn()
+        createProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn()
       })
       
       renderDialog()
@@ -258,16 +259,16 @@ describe('JoinProjectDialog component', () => {
   describe('Join Project Action', () => {
     it('should enable join button when valid project info loaded', async () => {
       const user = userEvent.setup()
-      const mockGetProjectInviteInfo = jest.fn().mockResolvedValue(mockProjectInviteInfo)
+      const mockGetProjectInviteInfo = vi.fn().mockResolvedValue(mockProjectInviteInfo)
       mockUseProjectContext.mockReturnValue({
-        joinProject: jest.fn(),
+        joinProject: vi.fn(),
         getProjectInviteInfo: mockGetProjectInviteInfo,
         projects: [],
         currentProject: null,
         isLoading: false,
-        createProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn()
+        createProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn()
       })
       
       renderDialog()
@@ -288,10 +289,10 @@ describe('JoinProjectDialog component', () => {
 
     it('should successfully join project when button clicked', async () => {
       const user = userEvent.setup()
-      const mockJoinProject = jest.fn().mockResolvedValue(undefined)
-      const mockGetProjectInviteInfo = jest.fn().mockResolvedValue(mockProjectInviteInfo)
-      const mockOnSuccess = jest.fn()
-      const mockOnClose = jest.fn()
+      const mockJoinProject = vi.fn().mockResolvedValue(undefined)
+      const mockGetProjectInviteInfo = vi.fn().mockResolvedValue(mockProjectInviteInfo)
+      const mockOnSuccess = vi.fn()
+      const mockOnClose = vi.fn()
       
       mockUseProjectContext.mockReturnValue({
         joinProject: mockJoinProject,
@@ -299,9 +300,9 @@ describe('JoinProjectDialog component', () => {
         projects: [],
         currentProject: null,
         isLoading: false,
-        createProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn()
+        createProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn()
       })
       
       renderDialog({ onSuccess: mockOnSuccess, onClose: mockOnClose })
@@ -328,8 +329,8 @@ describe('JoinProjectDialog component', () => {
 
     it('should handle join project error', async () => {
       const user = userEvent.setup()
-      const mockJoinProject = jest.fn().mockRejectedValue(new Error('Join failed'))
-      const mockGetProjectInviteInfo = jest.fn().mockResolvedValue(mockProjectInviteInfo)
+      const mockJoinProject = vi.fn().mockRejectedValue(new Error('Join failed'))
+      const mockGetProjectInviteInfo = vi.fn().mockResolvedValue(mockProjectInviteInfo)
       
       mockUseProjectContext.mockReturnValue({
         joinProject: mockJoinProject,
@@ -337,9 +338,9 @@ describe('JoinProjectDialog component', () => {
         projects: [],
         currentProject: null,
         isLoading: false,
-        createProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn()
+        createProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn()
       })
       
       renderDialog()
@@ -364,8 +365,8 @@ describe('JoinProjectDialog component', () => {
 
     it('should handle Enter key to join project', async () => {
       const user = userEvent.setup()
-      const mockJoinProject = jest.fn().mockResolvedValue(undefined)
-      const mockGetProjectInviteInfo = jest.fn().mockResolvedValue(mockProjectInviteInfo)
+      const mockJoinProject = vi.fn().mockResolvedValue(undefined)
+      const mockGetProjectInviteInfo = vi.fn().mockResolvedValue(mockProjectInviteInfo)
       
       mockUseProjectContext.mockReturnValue({
         joinProject: mockJoinProject,
@@ -373,9 +374,9 @@ describe('JoinProjectDialog component', () => {
         projects: [],
         currentProject: null,
         isLoading: false,
-        createProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn()
+        createProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn()
       })
       
       renderDialog()
@@ -411,14 +412,14 @@ describe('JoinProjectDialog component', () => {
       }))
       
       mockUseProjectContext.mockReturnValue({
-        joinProject: jest.fn(),
-        getProjectInviteInfo: jest.fn(),
+        joinProject: vi.fn(),
+        getProjectInviteInfo: vi.fn(),
         projects: mockProjects,
         currentProject: null,
         isLoading: false,
-        createProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn()
+        createProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn()
       })
       
       renderDialog()
@@ -428,7 +429,7 @@ describe('JoinProjectDialog component', () => {
 
     it('should prevent joining when already a member', async () => {
       const user = userEvent.setup()
-      const mockGetProjectInviteInfo = jest.fn().mockResolvedValue(mockProjectInviteInfo)
+      const mockGetProjectInviteInfo = vi.fn().mockResolvedValue(mockProjectInviteInfo)
       const existingProjects = [{
         id: 'test-project-id',
         name: 'Test Project',
@@ -440,14 +441,14 @@ describe('JoinProjectDialog component', () => {
       }]
       
       mockUseProjectContext.mockReturnValue({
-        joinProject: jest.fn(),
+        joinProject: vi.fn(),
         getProjectInviteInfo: mockGetProjectInviteInfo,
         projects: existingProjects,
         currentProject: null,
         isLoading: false,
-        createProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn()
+        createProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn()
       })
       
       renderDialog()
@@ -473,17 +474,17 @@ describe('JoinProjectDialog component', () => {
     it('should prevent joining when project is full', async () => {
       const user = userEvent.setup()
       const fullProjectInfo = { ...mockProjectInviteInfo, memberCount: 10, maxMembers: 10 }
-      const mockGetProjectInviteInfo = jest.fn().mockResolvedValue(fullProjectInfo)
+      const mockGetProjectInviteInfo = vi.fn().mockResolvedValue(fullProjectInfo)
       
       mockUseProjectContext.mockReturnValue({
-        joinProject: jest.fn(),
+        joinProject: vi.fn(),
         getProjectInviteInfo: mockGetProjectInviteInfo,
         projects: [],
         currentProject: null,
         isLoading: false,
-        createProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn()
+        createProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn()
       })
       
       renderDialog()
@@ -510,7 +511,7 @@ describe('JoinProjectDialog component', () => {
   describe('Dialog Close and Reset', () => {
     it('should reset state when dialog closes', async () => {
       const user = userEvent.setup()
-      const mockOnClose = jest.fn()
+      const mockOnClose = vi.fn()
       
       renderDialog({ onClose: mockOnClose })
       
@@ -527,8 +528,8 @@ describe('JoinProjectDialog component', () => {
 
     it('should disable inputs during join process', async () => {
       const user = userEvent.setup()
-      const mockJoinProject = jest.fn().mockImplementation(() => new Promise(() => {}))
-      const mockGetProjectInviteInfo = jest.fn().mockResolvedValue(mockProjectInviteInfo)
+      const mockJoinProject = vi.fn().mockImplementation(() => new Promise(() => {}))
+      const mockGetProjectInviteInfo = vi.fn().mockResolvedValue(mockProjectInviteInfo)
       
       mockUseProjectContext.mockReturnValue({
         joinProject: mockJoinProject,
@@ -536,9 +537,9 @@ describe('JoinProjectDialog component', () => {
         projects: [],
         currentProject: null,
         isLoading: false,
-        createProject: jest.fn(),
-        switchProject: jest.fn(),
-        fetchProjects: jest.fn()
+        createProject: vi.fn(),
+        switchProject: vi.fn(),
+        fetchProjects: vi.fn()
       })
       
       renderDialog()

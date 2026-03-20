@@ -1,3 +1,4 @@
+import { Mock } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { useNavigate, useLocation } from 'react-router'
 import ShopListRoute from '.'
@@ -5,61 +6,61 @@ import { useShopContext } from '../../providers/ShopProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { Route } from '../../enums/route'
 
-jest.mock('react-router', () => ({
-  useNavigate: jest.fn(),
-  useLocation: jest.fn(),
+vi.mock('react-router', () => ({
+  useNavigate: vi.fn(),
+  useLocation: vi.fn(),
 }))
 
-jest.mock('../../providers/ShopProvider', () => ({
+vi.mock('../../providers/ShopProvider', () => ({
   ShopProvider: ({ children }: any) => children,
-  useShopContext: jest.fn(),
+  useShopContext: vi.fn(),
 }))
 
-jest.mock('../../providers/AppStateProvider', () => ({
-  useAppState: jest.fn(),
+vi.mock('../../providers/AppStateProvider', () => ({
+  useAppState: vi.fn(),
 }))
 
-jest.mock('../../components/ShopList', () => {
-  return function MockShopList() {
+vi.mock('../../components/ShopList', () => ({
+  default: function MockShopList() {
     return <div data-testid="shop-list">Shop List</div>
   }
-})
+}))
 
-jest.mock('../../components/AddShopForm', () => {
-  return function MockAddShopForm() {
+vi.mock('../../components/AddShopForm', () => ({
+  default: function MockAddShopForm() {
     return <div data-testid="add-shop-form">Add Shop Form</div>
   }
-})
+}))
 
-jest.mock('../../components/EditShopForm', () => {
-  return function MockEditShopForm() {
+vi.mock('../../components/EditShopForm', () => ({
+  default: function MockEditShopForm() {
     return <div data-testid="edit-shop-form">Edit Shop Form</div>
   }
-})
+}))
 
 describe('Given the ShopListRoute component', () => {
-  const mockNavigate = jest.fn()
-  const mockDispatch = jest.fn()
+  const mockNavigate = vi.fn()
+  const mockDispatch = vi.fn()
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    ;(useNavigate as jest.Mock).mockReturnValue(mockNavigate)
-    ;(useLocation as jest.Mock).mockReturnValue({ search: '', pathname: '/shops' })
-    ;(useAppState as jest.Mock).mockReturnValue({
+    vi.clearAllMocks()
+    ;(useNavigate as Mock).mockReturnValue(mockNavigate)
+    ;(useLocation as Mock).mockReturnValue({ search: '', pathname: '/shops' })
+    ;(useAppState as Mock).mockReturnValue({
       dispatch: mockDispatch,
     })
   })
 
   describe('When there are no shops with items', () => {
     beforeEach(() => {
-      ;(useShopContext as jest.Mock).mockReturnValue({
+      ;(useShopContext as Mock).mockReturnValue({
         shops: [
           { id: 'shop1', name: 'Shop 1', itemCount: 0 },
           { id: 'shop2', name: 'Shop 2', itemCount: 0 },
         ],
-        addShop: jest.fn(),
-        updateShop: jest.fn(),
-        deleteShop: jest.fn(),
+        addShop: vi.fn(),
+        updateShop: vi.fn(),
+        deleteShop: vi.fn(),
       })
     })
 
@@ -78,14 +79,14 @@ describe('Given the ShopListRoute component', () => {
 
   describe('When there are shops with items', () => {
     beforeEach(() => {
-      ;(useShopContext as jest.Mock).mockReturnValue({
+      ;(useShopContext as Mock).mockReturnValue({
         shops: [
           { id: 'shop1', name: 'Shop 1', itemCount: 5 },
           { id: 'shop2', name: 'Shop 2', itemCount: 3 },
         ],
-        addShop: jest.fn(),
-        updateShop: jest.fn(),
-        deleteShop: jest.fn(),
+        addShop: vi.fn(),
+        updateShop: vi.fn(),
+        deleteShop: vi.fn(),
       })
     })
 
@@ -126,14 +127,14 @@ describe('Given the ShopListRoute component', () => {
 
   describe('When shops have undefined item counts', () => {
     beforeEach(() => {
-      ;(useShopContext as jest.Mock).mockReturnValue({
+      ;(useShopContext as Mock).mockReturnValue({
         shops: [
           { id: 'shop1', name: 'Shop 1', itemCount: undefined },
           { id: 'shop2', name: 'Shop 2', itemCount: 3 },
         ],
-        addShop: jest.fn(),
-        updateShop: jest.fn(),
-        deleteShop: jest.fn(),
+        addShop: vi.fn(),
+        updateShop: vi.fn(),
+        deleteShop: vi.fn(),
       })
     })
 

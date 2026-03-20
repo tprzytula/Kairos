@@ -1,3 +1,4 @@
+import { Mock, MockedFunction } from 'vitest'
 import { render, screen, renderHook, waitFor, act } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useGroceryListContext } from './index'
@@ -8,13 +9,13 @@ import { GroceryItemUnit } from '../../enums/groceryItem'
 import { ProjectProvider, useProjectContext } from '../ProjectProvider'
 import { IProject, ProjectRole } from '../../types/project'
 
-jest.mock('../../api/groceryList')
-jest.mock('../ProjectProvider', () => ({
-  ...jest.requireActual('../ProjectProvider'),
-  useProjectContext: jest.fn(),
+vi.mock('../../api/groceryList')
+vi.mock('../ProjectProvider', async () => ({
+  ...(await vi.importActual('../ProjectProvider')),
+  useProjectContext: vi.fn(),
 }))
 
-const mockUseProjectContext = useProjectContext as jest.MockedFunction<typeof useProjectContext>
+const mockUseProjectContext = useProjectContext as MockedFunction<typeof useProjectContext>
 
 const MOCK_PROJECT: IProject = {
   id: 'test-project-id',
@@ -35,16 +36,16 @@ describe('Given the GroceryListProvider component', () => {
       projects: [MOCK_PROJECT],
       currentProject: MOCK_PROJECT,
       isLoading: false,
-      fetchProjects: jest.fn(),
-      createProject: jest.fn(),
-      joinProject: jest.fn(),
-      switchProject: jest.fn(),
-      getProjectInviteInfo: jest.fn(),
+      fetchProjects: vi.fn(),
+      createProject: vi.fn(),
+      joinProject: vi.fn(),
+      switchProject: vi.fn(),
+      getProjectInviteInfo: vi.fn(),
     })
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should render the component', async () => {
@@ -56,7 +57,7 @@ describe('Given the GroceryListProvider component', () => {
   })
 
   it('should make a request to the API', async () => {
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
 
     await act(async () => {
       renderGroceryListProvider()
@@ -67,7 +68,7 @@ describe('Given the GroceryListProvider component', () => {
 
   describe('When shopId is "all"', () => {
     it('should call retrieveGroceryList with undefined shopId to get all items', async () => {
-      jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
+      vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue([])
 
       await act(async () => {
         renderGroceryListProvider({ shopId: 'all' })
@@ -81,8 +82,8 @@ describe('Given the GroceryListProvider component', () => {
 
   describe('When the API request fails', () => {
     it('should log an error', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error')
-      jest.spyOn(API, 'retrieveGroceryList').mockRejectedValue(new Error('It is what it is'))
+      const consoleErrorSpy = vi.spyOn(console, 'error')
+      vi.spyOn(API, 'retrieveGroceryList').mockRejectedValue(new Error('It is what it is'))
 
       await act(async () => {
         renderGroceryListProvider()
@@ -101,20 +102,20 @@ describe('Given the useGroceryListContext hook', () => {
       projects: [MOCK_PROJECT],
       currentProject: MOCK_PROJECT,
       isLoading: false,
-      fetchProjects: jest.fn(),
-      createProject: jest.fn(),
-      joinProject: jest.fn(),
-      switchProject: jest.fn(),
-      getProjectInviteInfo: jest.fn(),
+      fetchProjects: vi.fn(),
+      createProject: vi.fn(),
+      joinProject: vi.fn(),
+      switchProject: vi.fn(),
+      getProjectInviteInfo: vi.fn(),
     })
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should return the grocery list', async () => {
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -133,7 +134,7 @@ describe('Given the useGroceryListContext hook', () => {
   })
 
   it('should allow you to refetch the grocery list', async () => {
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -150,7 +151,7 @@ describe('Given the useGroceryListContext hook', () => {
       expect(result.current.groceryList).toStrictEqual(EXAMPLE_GROCERY_LIST)
     })
 
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue([
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue([
       {
         id: '1',
         name: 'Something Else',
@@ -182,7 +183,7 @@ describe('Given the useGroceryListContext hook', () => {
 
   describe('When the API request fails', () => {
     it('should return an empty array', async () => {
-      jest.spyOn(API, 'retrieveGroceryList').mockRejectedValue(new Error('It is what it is'))
+      vi.spyOn(API, 'retrieveGroceryList').mockRejectedValue(new Error('It is what it is'))
 
       const queryClient = createTestQueryClient()
       const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -202,8 +203,8 @@ describe('Given the useGroceryListContext hook', () => {
   })
 
   it('should allow you to update a grocery item quantity', async () => {
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
-    jest.spyOn(API, 'updateGroceryItem').mockResolvedValue()
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    vi.spyOn(API, 'updateGroceryItem').mockResolvedValue()
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -251,8 +252,8 @@ describe('Given the useGroceryListContext hook', () => {
   })
 
   it('should allow you to update a grocery item with multiple fields', async () => {
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
-    jest.spyOn(API, 'updateGroceryItemFields').mockResolvedValue()
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    vi.spyOn(API, 'updateGroceryItemFields').mockResolvedValue()
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -308,8 +309,8 @@ describe('Given the useGroceryListContext hook', () => {
   })
 
   it('should handle removeGroceryItem', async () => {
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
-    jest.spyOn(API, 'removeGroceryItems').mockResolvedValue()
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    vi.spyOn(API, 'removeGroceryItems').mockResolvedValue()
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -338,9 +339,9 @@ describe('Given the useGroceryListContext hook', () => {
   })
 
   it('should handle error when removeGroceryItem fails', async () => {
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
-    jest.spyOn(API, 'removeGroceryItems').mockRejectedValue(new Error('Remove failed'))
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    vi.spyOn(API, 'removeGroceryItems').mockRejectedValue(new Error('Remove failed'))
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation()
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -366,9 +367,9 @@ describe('Given the useGroceryListContext hook', () => {
   })
 
   it('should handle error when updateGroceryItem fails', async () => {
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
-    jest.spyOn(API, 'updateGroceryItem').mockRejectedValue(new Error('Update failed'))
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    vi.spyOn(API, 'updateGroceryItem').mockRejectedValue(new Error('Update failed'))
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation()
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -394,9 +395,9 @@ describe('Given the useGroceryListContext hook', () => {
   })
 
   it('should handle error when updateGroceryItemFields fails', async () => {
-    jest.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
-    jest.spyOn(API, 'updateGroceryItemFields').mockRejectedValue(new Error('Update fields failed'))
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
+    vi.spyOn(API, 'updateGroceryItemFields').mockRejectedValue(new Error('Update fields failed'))
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation()
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (

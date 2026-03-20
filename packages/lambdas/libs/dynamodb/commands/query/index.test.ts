@@ -3,8 +3,8 @@ import { DynamoDBTable } from "../../enums";
 import * as Client from '../../client';
 import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
-jest.mock("../../client");
-jest.mock('@aws-sdk/lib-dynamodb');
+vi.mock("../../client");
+vi.mock('@aws-sdk/lib-dynamodb');
 
 describe("Given the query command", () => {
   it('should create a query command with the right table name and attributes', async () => {
@@ -59,12 +59,12 @@ const EXAMPLE_ITEM = {
 
 const mockDocumentClient = (Items: Array<unknown> = [EXAMPLE_ITEM]) => {
   const mockDocumentClient = {
-    send: jest.fn().mockResolvedValue({
+    send: vi.fn().mockResolvedValue({
       Items,
     }),
   } as unknown as DynamoDBDocumentClient;
 
-  jest.spyOn(Client, "getDocumentClient").mockReturnValue(mockDocumentClient);
+  vi.spyOn(Client, "getDocumentClient").mockReturnValue(mockDocumentClient);
 
   return mockDocumentClient;
 };

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import Alert from "."
 
-jest.useFakeTimers()
+vi.useFakeTimers()
 
 describe("Given the Alert component", () => {
   it("should render the description", () => {
@@ -29,7 +29,7 @@ describe("Given the Alert component", () => {
       it("should call the onClose function", () => {
         const { onCloseSpy } = renderComponent()
 
-        jest.advanceTimersByTime(3000)
+        vi.advanceTimersByTime(3000)
 
         expect(onCloseSpy).toHaveBeenCalled()
       })
@@ -40,8 +40,8 @@ describe("Given the Alert component", () => {
         const { onCloseSpy } = renderComponent()
 
         screen.getByRole("button").click()
-        jest.clearAllMocks()
-        jest.advanceTimersByTime(3000)
+        vi.clearAllMocks()
+        vi.advanceTimersByTime(3000)
 
         expect(onCloseSpy).not.toHaveBeenCalled()
       })
@@ -50,7 +50,7 @@ describe("Given the Alert component", () => {
 })
 
 const renderComponent = () => {
-  const onCloseSpy = jest.fn()
+  const onCloseSpy = vi.fn()
   const component = render(
     <Alert 
       description="alert description" 

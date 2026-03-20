@@ -3,8 +3,8 @@ import { getBody } from "./body";
 import { updateItem } from "@kairos-lambdas-libs/dynamodb";
 import { DynamoDBTable } from "@kairos-lambdas-libs/dynamodb";
 
-jest.mock("./body");
-jest.mock("@kairos-lambdas-libs/dynamodb");
+vi.mock("./body");
+vi.mock("@kairos-lambdas-libs/dynamodb");
 
 describe("Given the update_todo_item lambda handler", () => {
   const runHandler = (event: any, includeProjectId: boolean = false) => {
@@ -28,7 +28,7 @@ describe("Given the update_todo_item lambda handler", () => {
 
   describe("When the body is invalid", () => {
     it("should return status 400", async () => {
-      jest.mocked(getBody).mockReturnValue(null);
+      vi.mocked(getBody).mockReturnValue(null);
 
       const result = await runHandler({ body: null }, true);
 
@@ -38,11 +38,11 @@ describe("Given the update_todo_item lambda handler", () => {
 
   describe("When the body is valid", () => {
     it("should update the item in the todo list table with name only", async () => {
-      jest.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
+      vi.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
 
       await runHandler({ body: JSON.stringify(EXAMPLE_BODY) }, true);
 
-      expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
+      expect(vi.mocked(updateItem)).toHaveBeenCalledWith({
         tableName: DynamoDBTable.TODO_LIST,
         key: { id: "test-id" },
         updatedFields: {
@@ -60,11 +60,11 @@ describe("Given the update_todo_item lambda handler", () => {
         isDone: true,
       };
       
-      jest.mocked(getBody).mockReturnValue(multiFieldBody);
+      vi.mocked(getBody).mockReturnValue(multiFieldBody);
 
       await runHandler({ body: JSON.stringify(multiFieldBody) }, true);
 
-      expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
+      expect(vi.mocked(updateItem)).toHaveBeenCalledWith({
         tableName: DynamoDBTable.TODO_LIST,
         key: { id: "test-id" },
         updatedFields: {
@@ -82,11 +82,11 @@ describe("Given the update_todo_item lambda handler", () => {
         isDone: false,
       };
       
-      jest.mocked(getBody).mockReturnValue(isDoneOnlyBody);
+      vi.mocked(getBody).mockReturnValue(isDoneOnlyBody);
 
       await runHandler({ body: JSON.stringify(isDoneOnlyBody) }, true);
 
-      expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
+      expect(vi.mocked(updateItem)).toHaveBeenCalledWith({
         tableName: DynamoDBTable.TODO_LIST,
         key: { id: "test-id" },
         updatedFields: {
@@ -101,11 +101,11 @@ describe("Given the update_todo_item lambda handler", () => {
         description: "New description",
       };
       
-      jest.mocked(getBody).mockReturnValue(descriptionOnlyBody);
+      vi.mocked(getBody).mockReturnValue(descriptionOnlyBody);
 
       await runHandler({ body: JSON.stringify(descriptionOnlyBody) }, true);
 
-      expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
+      expect(vi.mocked(updateItem)).toHaveBeenCalledWith({
         tableName: DynamoDBTable.TODO_LIST,
         key: { id: "test-id" },
         updatedFields: {
@@ -120,11 +120,11 @@ describe("Given the update_todo_item lambda handler", () => {
         dueDate: 1234567890,
       };
       
-      jest.mocked(getBody).mockReturnValue(dueDateOnlyBody);
+      vi.mocked(getBody).mockReturnValue(dueDateOnlyBody);
 
       await runHandler({ body: JSON.stringify(dueDateOnlyBody) }, true);
 
-      expect(jest.mocked(updateItem)).toHaveBeenCalledWith({
+      expect(vi.mocked(updateItem)).toHaveBeenCalledWith({
         tableName: DynamoDBTable.TODO_LIST,
         key: { id: "test-id" },
         updatedFields: {
@@ -135,8 +135,8 @@ describe("Given the update_todo_item lambda handler", () => {
 
     describe("And the update succeeds", () => {
       it("should return status 200 with the updated item", async () => {
-        jest.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
-        jest.mocked(updateItem).mockResolvedValue({
+        vi.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
+        vi.mocked(updateItem).mockResolvedValue({
           $metadata: {
             httpStatusCode: 200,
           },
@@ -154,8 +154,8 @@ describe("Given the update_todo_item lambda handler", () => {
 
     describe("And the update fails", () => {
       it("should return status 500", async () => {
-        jest.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
-        jest.mocked(updateItem).mockRejectedValue(new Error("Update failed"));
+        vi.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
+        vi.mocked(updateItem).mockRejectedValue(new Error("Update failed"));
 
         const result = await runHandler({ body: JSON.stringify(EXAMPLE_BODY) }, true);
 

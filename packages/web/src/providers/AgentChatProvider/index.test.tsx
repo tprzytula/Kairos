@@ -1,3 +1,4 @@
+import { Mock } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { ReactNode } from 'react'
 import { AgentChatProvider, useAgentChatContext } from './index'
@@ -5,21 +6,21 @@ import { streamAgentMessage } from '../../api/agent/streamMessage'
 import { useAuth } from 'react-oidc-context'
 import { useProjectContext } from '../ProjectProvider/ProjectProvider'
 
-jest.mock('../../api/agent/streamMessage', () => ({
-  streamAgentMessage: jest.fn(),
+vi.mock('../../api/agent/streamMessage', () => ({
+  streamAgentMessage: vi.fn(),
 }))
 
-jest.mock('react-oidc-context', () => ({
-  useAuth: jest.fn(),
+vi.mock('react-oidc-context', () => ({
+  useAuth: vi.fn(),
 }))
 
-jest.mock('../ProjectProvider/ProjectProvider', () => ({
-  useProjectContext: jest.fn(),
+vi.mock('../ProjectProvider/ProjectProvider', () => ({
+  useProjectContext: vi.fn(),
 }))
 
-const mockStreamAgentMessage = streamAgentMessage as jest.Mock
-const mockUseAuth = useAuth as jest.Mock
-const mockUseProjectContext = useProjectContext as jest.Mock
+const mockStreamAgentMessage = streamAgentMessage as Mock
+const mockUseAuth = useAuth as Mock
+const mockUseProjectContext = useProjectContext as Mock
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <AgentChatProvider>{children}</AgentChatProvider>
@@ -27,7 +28,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('Given the AgentChatProvider', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
     mockUseAuth.mockReturnValue({
       user: { access_token: 'test-access-token' },

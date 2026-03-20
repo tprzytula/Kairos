@@ -158,7 +158,7 @@ describe('ModernPageHeader', () => {
 
   describe('action button', () => {
     it('should render action button when provided', () => {
-      const mockOnClick = jest.fn()
+      const mockOnClick = vi.fn()
       
       renderWithTheme(
         <ModernPageHeader
@@ -178,7 +178,7 @@ describe('ModernPageHeader', () => {
     })
 
     it('should call onClick when action button is clicked', () => {
-      const mockOnClick = jest.fn()
+      const mockOnClick = vi.fn()
       
       renderWithTheme(
         <ModernPageHeader
@@ -212,7 +212,7 @@ describe('ModernPageHeader', () => {
     })
 
     it('should render action button alongside stats', () => {
-      const mockOnClick = jest.fn()
+      const mockOnClick = vi.fn()
       const mockStats = [
         { value: 10, label: 'Total Items' },
         { value: 3, label: 'Remaining' }

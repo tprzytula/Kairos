@@ -7,15 +7,15 @@ import { NoiseTrackingProvider, useNoiseTrackingContext } from './index'
 import { ProjectContext } from '../ProjectProvider'
 import { IProject } from '../../types/project'
 
-jest.mock('../../api/noiseTracking')
-jest.mock('react-oidc-context', () => ({
+vi.mock('../../api/noiseTracking')
+vi.mock('react-oidc-context', () => ({
   useAuth: () => ({
     isAuthenticated: true,
     user: { access_token: 'mock-token' }
   })
 }))
-jest.mock('../../api/projects', () => ({
-  retrieveUserProjects: jest.fn().mockResolvedValue([])
+vi.mock('../../api/projects', () => ({
+  retrieveUserProjects: vi.fn().mockResolvedValue([])
 }))
 
 const createTestQueryClient = () =>
@@ -31,7 +31,7 @@ describe('Given the NoiseTrackingProvider component', () => {
   })
 
   it('should make a request to the API', async () => {
-    jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(EXAMPLE_NOISE_TRACKING_ITEMS)
+    vi.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(EXAMPLE_NOISE_TRACKING_ITEMS)
 
     await act(async () => {
       renderNoiseTrackingProvider()
@@ -42,8 +42,8 @@ describe('Given the NoiseTrackingProvider component', () => {
 
   describe('When the API request fails', () => {
     it('should log an error', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error')
-      jest.spyOn(API, 'retrieveNoiseTrackingItems').mockRejectedValue(new Error('It is what it is'))
+      const consoleErrorSpy = vi.spyOn(console, 'error')
+      vi.spyOn(API, 'retrieveNoiseTrackingItems').mockRejectedValue(new Error('It is what it is'))
 
       await act(async () => {
         renderNoiseTrackingProvider()
@@ -58,7 +58,7 @@ describe('Given the NoiseTrackingProvider component', () => {
 
 describe('Given the useNoiseTrackingContext hook', () => {
   it('should return the noise tracking items', async () => {
-      jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(EXAMPLE_NOISE_TRACKING_ITEMS)
+      vi.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(EXAMPLE_NOISE_TRACKING_ITEMS)
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -79,7 +79,7 @@ describe('Given the useNoiseTrackingContext hook', () => {
   })
 
   it('should allow you to refetch the noise tracking items', async () => {
-    jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(EXAMPLE_NOISE_TRACKING_ITEMS)
+    vi.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(EXAMPLE_NOISE_TRACKING_ITEMS)
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -98,7 +98,7 @@ describe('Given the useNoiseTrackingContext hook', () => {
       expect(result.current.noiseTrackingItems).toStrictEqual(EXAMPLE_NOISE_TRACKING_ITEMS)
     })
 
-    jest.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue([
+    vi.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue([
       {
         timestamp: 1714003200000,
       },
@@ -119,7 +119,7 @@ describe('Given the useNoiseTrackingContext hook', () => {
 
   describe('When the API request fails', () => {
     it('should return an empty array', async () => {
-      jest.spyOn(API, 'retrieveNoiseTrackingItems').mockRejectedValue(new Error('It is what it is'))
+      vi.spyOn(API, 'retrieveNoiseTrackingItems').mockRejectedValue(new Error('It is what it is'))
 
       const queryClient = createTestQueryClient()
       const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -198,11 +198,11 @@ const MockProjectProvider = ({ children }: { children: React.ReactNode }) => {
     projects: [MOCK_PROJECT],
     currentProject: MOCK_PROJECT,
     isLoading: false,
-    createProject: jest.fn(),
-    joinProject: jest.fn(),
-    switchProject: jest.fn(),
-    fetchProjects: jest.fn(),
-    getProjectInviteInfo: jest.fn(),
+    createProject: vi.fn(),
+    joinProject: vi.fn(),
+    switchProject: vi.fn(),
+    fetchProjects: vi.fn(),
+    getProjectInviteInfo: vi.fn(),
   }
 
   return (

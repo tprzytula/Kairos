@@ -1,3 +1,4 @@
+import { Mock } from 'vitest'
 import { act, render, screen } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { AppStateProvider } from '../../providers/AppStateProvider'
@@ -11,19 +12,23 @@ import * as ReactRouter from 'react-router'
 import { usePlannerContext } from '../../providers/PlannerProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 
-jest.mock('react-router', () => ({  
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(() => jest.fn()),
+vi.mock('react-router', async () => ({  
+  ...(await vi.importActual('react-router')),
+  useNavigate: vi.fn(() => vi.fn()),
 }))
 
-jest.mock('../../api/toDoList');
-jest.mock('../../components/ItemForm');
-jest.mock('../../providers/PlannerProvider');
-jest.mock('../../providers/ProjectProvider');
-jest.mock('../../components/ModernPageHeader', () => ({ title }: any) => <div>{title}</div>);
-jest.mock('@mui/icons-material/Checklist', () => () => <div>ChecklistIcon</div>)
-jest.mock('react-oidc-context', () => ({
-  useAuth: jest.fn(() => ({
+vi.mock('../../api/toDoList');
+vi.mock('../../components/ItemForm');
+vi.mock('../../providers/PlannerProvider');
+vi.mock('../../providers/ProjectProvider');
+vi.mock('../../components/ModernPageHeader', () => ({
+  default: ({ title }: any) => <div>{title}</div>
+}));
+vi.mock('@mui/icons-material/Checklist', () => ({
+  default: () => <div>ChecklistIcon</div>
+}))
+vi.mock('react-oidc-context', async () => ({
+  useAuth: vi.fn(() => ({
     user: { access_token: 'test-access-token' }
   }))
 }))
@@ -36,25 +41,25 @@ describe('Given the AddPlannerItemContent component', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    (usePlannerContext as jest.Mock).mockReturnValue({
+    (usePlannerContext as Mock).mockReturnValue({
       toDoList: [],
       isLoading: false,
-      refetchToDoList: jest.fn(),
-      removeFromToDoList: jest.fn(),
-      updateToDoItemFields: jest.fn(),
+      refetchToDoList: vi.fn(),
+      removeFromToDoList: vi.fn(),
+      updateToDoItemFields: vi.fn(),
     });
 
-    (useProjectContext as jest.Mock).mockReturnValue({
+    (useProjectContext as Mock).mockReturnValue({
       projects: [mockProject],
       currentProject: mockProject,
       isLoading: false,
-      createProject: jest.fn(),
-      joinProject: jest.fn(),
-      switchProject: jest.fn(),
-      fetchProjects: jest.fn(),
-      getProjectInviteInfo: jest.fn(),
+      createProject: vi.fn(),
+      joinProject: vi.fn(),
+      switchProject: vi.fn(),
+      fetchProjects: vi.fn(),
+      getProjectInviteInfo: vi.fn(),
     });
   })
 
@@ -72,7 +77,7 @@ describe('Given the AddPlannerItemContent component', () => {
     it('should create a new to do item', async () => {
       let onSubmitCallback: any;
 
-      jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
+      vi.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
         onSubmitCallback = onSubmit;
         return <div>ItemForm</div>
       })
@@ -111,13 +116,13 @@ describe('Given the AddPlannerItemContent component', () => {
 
     describe('And the createToDoItem call succeeds', () => {
       it('should navigate to the planner page', async () => {
-        const navigateSpy = jest.fn()
+        const navigateSpy = vi.fn()
 
-        jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
+        vi.spyOn(ReactRouter, 'useNavigate').mockReturnValue(navigateSpy)
 
         let onSubmitCallback: any;
 
-        jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
+        vi.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
           onSubmitCallback = onSubmit;
           return <div>ItemForm</div>
         })
@@ -152,15 +157,15 @@ describe('Given the AddPlannerItemContent component', () => {
 
     describe('And the createToDoItem call fails', () => {
       it('should log the error', async () => {
-        const consoleSpy = jest.spyOn(console, 'error')
+        const consoleSpy = vi.spyOn(console, 'error')
         let onSubmitCallback: any;
 
-        jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
+        vi.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
           onSubmitCallback = onSubmit;
           return <div>ItemForm</div>
         })
 
-        jest.mocked(addTodoItem).mockRejectedValue(new Error('Error creating to do item'))
+        vi.mocked(addTodoItem).mockRejectedValue(new Error('Error creating to do item'))
         
         renderComponent()
         await act(async () => {

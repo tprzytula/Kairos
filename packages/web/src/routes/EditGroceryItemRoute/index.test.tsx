@@ -16,17 +16,17 @@ import ItemForm from '../../components/ItemForm'
 import { FormFieldType } from '../../components/ItemForm/enums'
 import { GroceryItemUnit } from '../../enums/groceryItem'
 
-jest.mock('../../hooks/useItemDefaults', () => ({
+vi.mock('../../hooks/useItemDefaults', async () => ({
   useItemDefaults: () => ({
     defaults: [],
   }),
 }))
 
-jest.mock('../../components/ItemForm');
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(() => jest.fn()),
-  useParams: jest.fn(),
+vi.mock('../../components/ItemForm');
+vi.mock('react-router', async () => ({
+  ...(await vi.importActual('react-router')),
+  useNavigate: vi.fn(() => vi.fn()),
+  useParams: vi.fn(),
 }))
 
 const mockGroceryItem = {
@@ -42,28 +42,28 @@ const mockGroceryItem = {
 const mockGroceryListContext = {
   groceryList: [mockGroceryItem],
   isLoading: false,
-  refetchGroceryList: jest.fn(),
-  removeGroceryItem: jest.fn(),
-  updateGroceryItem: jest.fn(),
-  updateGroceryItemFields: jest.fn(),
+  refetchGroceryList: vi.fn(),
+  removeGroceryItem: vi.fn(),
+  updateGroceryItem: vi.fn(),
+  updateGroceryItemFields: vi.fn(),
 }
 
-jest.mock('../../providers/GroceryListProvider', () => ({
-  ...jest.requireActual('../../providers/GroceryListProvider'),
+vi.mock('../../providers/GroceryListProvider', async () => ({
+  ...(await vi.importActual('../../providers/GroceryListProvider')),
   useGroceryListContext: () => mockGroceryListContext,
 }))
 
-const mockUseShopContext = jest.fn()
-jest.mock('../../providers/ShopProvider', () => ({
+const mockUseShopContext = vi.fn()
+vi.mock('../../providers/ShopProvider', async () => ({
   useShopContext: () => mockUseShopContext(),
 }))
 
 describe('Given the EditGroceryItemRoute component', () => {
-  const mockNavigate = jest.fn()
+  const mockNavigate = vi.fn()
 
   beforeEach(() => {
-    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({ id: '1', shopId: 'test-shop-1' })
-    jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate)
+    vi.spyOn(ReactRouter, 'useParams').mockReturnValue({ id: '1', shopId: 'test-shop-1' })
+    vi.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate)
     mockNavigate.mockClear()
 
     mockUseShopContext.mockReturnValue({
@@ -76,11 +76,11 @@ describe('Given the EditGroceryItemRoute component', () => {
       }],
       isLoading: false,
       currentShop: null,
-      fetchShops: jest.fn(),
-      addShop: jest.fn(),
-      updateShop: jest.fn(),
-      deleteShop: jest.fn(),
-      setCurrentShop: jest.fn(),
+      fetchShops: vi.fn(),
+      addShop: vi.fn(),
+      updateShop: vi.fn(),
+      deleteShop: vi.fn(),
+      setCurrentShop: vi.fn(),
     })
   })
 
@@ -92,7 +92,7 @@ describe('Given the EditGroceryItemRoute component', () => {
   it('should render the ItemForm component with prefilled values', async () => {
     await renderComponent()
     
-    const [firstCall] = jest.mocked(ItemForm).mock.calls
+    const [firstCall] = vi.mocked(ItemForm).mock.calls
     const props = firstCall[0]
     
     expect(props.fields).toHaveLength(4)
@@ -119,7 +119,7 @@ describe('Given the EditGroceryItemRoute component', () => {
             it('should call updateGroceryItemFields with the updated values', async () => {
           let onSubmitCallback: any;
 
-          jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
+          vi.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
             onSubmitCallback = onSubmit;
             return <div>ItemForm</div>
           })
@@ -168,10 +168,10 @@ describe('Given the EditGroceryItemRoute component', () => {
 
     describe('And validation fails', () => {
       it('should log the error', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+        const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
         let onSubmitCallback: any;
 
-        jest.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
+        vi.mocked(ItemForm).mockImplementation(({ onSubmit }) => {
           onSubmitCallback = onSubmit;
           return <div>ItemForm</div>
         })

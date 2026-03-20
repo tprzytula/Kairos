@@ -1,10 +1,11 @@
+import { Mock } from 'vitest'
 import { render, screen, waitFor } from "@testing-library/react";
 import ToDoItem from ".";
 import { useAppState } from "../../providers/AppStateProvider";
 import { ActionName } from "../../providers/AppStateProvider/enums";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-jest.mock("../../providers/AppStateProvider");
+vi.mock("../../providers/AppStateProvider");
 
 describe("Given the ToDoItem component", () => {
   it("should render the component with correct props", () => {
@@ -66,9 +67,9 @@ const renderToDoItem = () => {
 };
 
 const mockAppState = (selectedTodoItems: Set<string> = new Set()) => {
-  const dispatch = jest.fn();
+  const dispatch = vi.fn();
 
-  (useAppState as jest.Mock).mockReturnValue({
+  (useAppState as Mock).mockReturnValue({
     state: { selectedTodoItems },
     dispatch,
   });

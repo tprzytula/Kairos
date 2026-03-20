@@ -3,10 +3,10 @@ import { ThemeProvider } from '@mui/material/styles'
 import theme from '../../theme'
 import StandardLayout from "."
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
-  useLocation: jest.fn().mockReturnValue({
+vi.mock('react-router', async () => ({
+  ...(await vi.importActual('react-router')),
+  useNavigate: vi.fn(),
+  useLocation: vi.fn().mockReturnValue({
     pathname: '/',
   }),
 }))

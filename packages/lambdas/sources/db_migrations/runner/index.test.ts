@@ -1,8 +1,9 @@
+import { Mock } from 'vitest';
 import * as runner from './index';
 import * as tracker from '../tracker';
 import { Migration, MigrationResult } from './types';
 
-jest.mock('../tracker');
+vi.mock('../tracker');
 
 describe('Migration Runner Functions', () => {
   let mockMigrations: Migration[];
@@ -12,22 +13,22 @@ describe('Migration Runner Functions', () => {
       {
         id: '001',
         name: 'First Migration',
-        execute: jest.fn().mockResolvedValue(undefined),
+        execute: vi.fn().mockResolvedValue(undefined),
       },
       {
         id: '002',
         name: 'Second Migration',
-        execute: jest.fn().mockResolvedValue(undefined),
+        execute: vi.fn().mockResolvedValue(undefined),
       },
     ];
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('runMigrations', () => {
     it('should execute all pending migrations in order', async () => {
-      jest.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
-      jest.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
+      vi.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
+      vi.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
 
       const results = await runner.runMigrations(mockMigrations);
 
@@ -39,10 +40,10 @@ describe('Migration Runner Functions', () => {
     });
 
     it('should skip already executed migrations', async () => {
-      jest.mocked(tracker.isMigrationExecuted)
+      vi.mocked(tracker.isMigrationExecuted)
         .mockResolvedValueOnce(true)  // First migration already executed
         .mockResolvedValueOnce(false); // Second migration not executed
-      jest.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
+      vi.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
 
       const results = await runner.runMigrations(mockMigrations);
 
@@ -53,11 +54,11 @@ describe('Migration Runner Functions', () => {
     });
 
     it('should stop execution on first failure', async () => {
-      jest.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
-      jest.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
+      vi.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
+      vi.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
       
       const error = new Error('Migration failed');
-      (mockMigrations[0].execute as jest.Mock).mockRejectedValue(error);
+      (mockMigrations[0].execute as Mock).mockRejectedValue(error);
 
       const results = await runner.runMigrations(mockMigrations);
 
@@ -69,8 +70,8 @@ describe('Migration Runner Functions', () => {
     });
 
     it('should fail migration when checksum validation fails', async () => {
-      jest.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
-      jest.mocked(tracker.validateMigrationChecksum).mockResolvedValue(false);
+      vi.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
+      vi.mocked(tracker.validateMigrationChecksum).mockResolvedValue(false);
 
       const results = await runner.runMigrations(mockMigrations);
 
@@ -80,8 +81,8 @@ describe('Migration Runner Functions', () => {
     });
 
     it('should record successful migrations', async () => {
-      jest.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
-      jest.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
+      vi.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
+      vi.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
 
       await runner.runMigrations(mockMigrations);
 
@@ -100,7 +101,7 @@ describe('Migration Runner Functions', () => {
     });
 
     it('should handle unexpected errors gracefully', async () => {
-      jest.mocked(tracker.isMigrationExecuted).mockRejectedValue(new Error('Database connection lost'));
+      vi.mocked(tracker.isMigrationExecuted).mockRejectedValue(new Error('Database connection lost'));
 
       const results = await runner.runMigrations(mockMigrations);
 
@@ -110,9 +111,9 @@ describe('Migration Runner Functions', () => {
     });
 
     it('should log migration progress', async () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-      jest.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
-      jest.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation();
+      vi.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
+      vi.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
 
       await runner.runMigrations(mockMigrations);
 
@@ -128,13 +129,13 @@ describe('Migration Runner Functions', () => {
       // Since the loader function is actually tested in a separate module,
       // we can test the integration by mocking the loader module directly
       const mockMigrations = [
-        { id: '001', name: 'Test Migration 1', execute: jest.fn() },
-        { id: '002', name: 'Test Migration 2', execute: jest.fn() },
+        { id: '001', name: 'Test Migration 1', execute: vi.fn() },
+        { id: '002', name: 'Test Migration 2', execute: vi.fn() },
       ];
 
       // Mock the loader module
-      jest.doMock('./loader', () => ({
-        loadMigrationsFromDirectory: jest.fn().mockResolvedValue(mockMigrations),
+      vi.doMock('./loader', () => ({
+        loadMigrationsFromDirectory: vi.fn().mockResolvedValue(mockMigrations),
       }));
 
       // Re-import to get the mocked version
@@ -146,7 +147,7 @@ describe('Migration Runner Functions', () => {
       expect(migrations[0].id).toBe('001');
       expect(migrations[1].id).toBe('002');
       
-      jest.dontMock('./loader');
+      vi.doUnmock('./loader');
     });
   });
 });

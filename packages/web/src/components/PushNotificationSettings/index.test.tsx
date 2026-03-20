@@ -1,12 +1,13 @@
+import { Mock, MockedFunction } from 'vitest'
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import PushNotificationSettings from './index';
 import { usePushNotifications } from '../../hooks/usePushNotifications';
 
-jest.mock('../../hooks/usePushNotifications');
+vi.mock('../../hooks/usePushNotifications');
 
-const mockUsePushNotifications = usePushNotifications as jest.MockedFunction<typeof usePushNotifications>;
+const mockUsePushNotifications = usePushNotifications as MockedFunction<typeof usePushNotifications>;
 
 const theme = createTheme();
 
@@ -25,13 +26,13 @@ describe('PushNotificationSettings component', () => {
     isSubscribed: false,
     isLoading: false,
     error: null,
-    requestPermission: jest.fn(),
-    subscribe: jest.fn(),
-    unsubscribe: jest.fn(),
+    requestPermission: vi.fn(),
+    subscribe: vi.fn(),
+    unsubscribe: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockUsePushNotifications.mockReturnValue(defaultMockReturn);
   });
 
@@ -119,7 +120,7 @@ describe('PushNotificationSettings component', () => {
 
   describe('when toggle switch is clicked', () => {
     it('should call subscribe when not subscribed', async () => {
-      const mockSubscribe = jest.fn();
+      const mockSubscribe = vi.fn();
       mockUsePushNotifications.mockReturnValue({
         ...defaultMockReturn,
         permission: 'granted',
@@ -138,7 +139,7 @@ describe('PushNotificationSettings component', () => {
     });
 
     it('should call unsubscribe when subscribed', async () => {
-      const mockUnsubscribe = jest.fn();
+      const mockUnsubscribe = vi.fn();
       mockUsePushNotifications.mockReturnValue({
         ...defaultMockReturn,
         permission: 'granted',
@@ -157,8 +158,8 @@ describe('PushNotificationSettings component', () => {
     });
 
     it('should request permission before subscribing when permission not granted', async () => {
-      const mockRequestPermission = jest.fn().mockResolvedValue(undefined);
-      const mockSubscribe = jest.fn().mockResolvedValue(undefined);
+      const mockRequestPermission = vi.fn().mockResolvedValue(undefined);
+      const mockSubscribe = vi.fn().mockResolvedValue(undefined);
       mockUsePushNotifications.mockReturnValue({
         ...defaultMockReturn,
         permission: 'default',
@@ -179,7 +180,7 @@ describe('PushNotificationSettings component', () => {
     });
 
     it('should handle errors gracefully', async () => {
-      const mockSubscribe = jest.fn().mockRejectedValue(new Error('Test error'));
+      const mockSubscribe = vi.fn().mockRejectedValue(new Error('Test error'));
       mockUsePushNotifications.mockReturnValue({
         ...defaultMockReturn,
         permission: 'granted',
@@ -187,7 +188,7 @@ describe('PushNotificationSettings component', () => {
         subscribe: mockSubscribe,
       });
 
-      console.error = jest.fn();
+      console.error = vi.fn();
       renderWithTheme(<PushNotificationSettings />);
       const toggle = screen.getByRole('switch');
 

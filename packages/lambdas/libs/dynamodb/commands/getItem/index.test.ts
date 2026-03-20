@@ -3,8 +3,8 @@ import { DynamoDBTable } from "../../enums";
 import * as Client from '../../client';
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
-jest.mock("../../client");
-jest.mock("@aws-sdk/lib-dynamodb");
+vi.mock("../../client");
+vi.mock("@aws-sdk/lib-dynamodb");
 
 describe("Given the getItem function", () => {
   it("should pass the right table name and id to the getItem command", async () => {
@@ -47,7 +47,7 @@ describe("Given the getItem function", () => {
 
 const mockDocumentClient = () => {
   const mockDocumentClient = {
-    send: jest.fn().mockResolvedValue({
+    send: vi.fn().mockResolvedValue({
       Item: {
         id: "1",
         name: "test",
@@ -58,7 +58,7 @@ const mockDocumentClient = () => {
     }),
   } as unknown as DynamoDBDocumentClient;
 
-  jest.spyOn(Client, "getDocumentClient").mockReturnValue(mockDocumentClient);
+  vi.spyOn(Client, "getDocumentClient").mockReturnValue(mockDocumentClient);
 
   return mockDocumentClient;
 };

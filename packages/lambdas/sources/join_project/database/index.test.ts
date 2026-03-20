@@ -8,7 +8,7 @@ import {
   createProjectMembership,
 } from "./index";
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
   DynamoDBTable: {
     PROJECTS: "Projects",
     PROJECT_MEMBERS: "ProjectMembers",
@@ -17,20 +17,20 @@ jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
     PROJECTS_INVITE_CODE: "InviteCodeIndex",
     PROJECT_MEMBERS_USER_PROJECTS: "UserProjectsIndex",
   },
-  query: jest.fn(),
-  getItem: jest.fn(),
-  putItem: jest.fn(),
+  query: vi.fn(),
+  getItem: vi.fn(),
+  putItem: vi.fn(),
 }));
 
 describe("database functions", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("findProjectByInviteCode", () => {
     it("should return project when found", async () => {
       const mockProject = { id: "project-1", name: "Test Project" };
-      jest.mocked(query).mockResolvedValue([mockProject]);
+      vi.mocked(query).mockResolvedValue([mockProject]);
 
       const result = await findProjectByInviteCode("ABC123");
 
@@ -43,7 +43,7 @@ describe("database functions", () => {
     });
 
     it("should return null when no project found", async () => {
-      jest.mocked(query).mockResolvedValue([]);
+      vi.mocked(query).mockResolvedValue([]);
 
       const result = await findProjectByInviteCode("INVALID");
 
@@ -54,7 +54,7 @@ describe("database functions", () => {
   describe("findExistingMembership", () => {
     it("should return membership when found", async () => {
       const mockMembership = { projectId: "project-1", userId: "user-123" };
-      jest.mocked(getItem).mockResolvedValue(mockMembership);
+      vi.mocked(getItem).mockResolvedValue(mockMembership);
 
       const result = await findExistingMembership("project-1", "user-123");
 
@@ -69,7 +69,7 @@ describe("database functions", () => {
   describe("getUserProjects", () => {
     it("should return user projects", async () => {
       const mockProjects = [{ projectId: "project-1", userId: "user-123" }];
-      jest.mocked(query).mockResolvedValue(mockProjects);
+      vi.mocked(query).mockResolvedValue(mockProjects);
 
       const result = await getUserProjects("user-123");
 
@@ -84,7 +84,7 @@ describe("database functions", () => {
 
   describe("createProjectMembership", () => {
     it("should create membership with correct data", async () => {
-      jest.mocked(putItem).mockResolvedValue(undefined);
+      vi.mocked(putItem).mockResolvedValue(undefined);
 
       await createProjectMembership("project-1", "user-123", "owner-456");
 

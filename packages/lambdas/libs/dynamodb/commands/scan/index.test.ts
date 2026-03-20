@@ -2,14 +2,14 @@ import { scan } from ".";
 import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBTable } from "../../enums";
 
-jest.mock("@aws-sdk/lib-dynamodb", () => ({
-  ...jest.requireActual("@aws-sdk/lib-dynamodb"),
-  ScanCommand: jest.fn(),
+vi.mock("@aws-sdk/lib-dynamodb", async () => ({
+  ...(await vi.importActual("@aws-sdk/lib-dynamodb")),
+  ScanCommand: vi.fn(),
 }));
 
 describe("Given the scan function", () => {
   it("should pass the right table name to the scan command", async () => {
-    jest
+    vi
       .spyOn(DynamoDBDocumentClient.prototype, "send")
       .mockImplementation(async () => ({
         Items: [],
@@ -24,7 +24,7 @@ describe("Given the scan function", () => {
   });
 
   it("should return the items", async () => {
-    jest
+    vi
       .spyOn(DynamoDBDocumentClient.prototype, "send")
       .mockImplementation(async () => ({
         Items: [
@@ -49,7 +49,7 @@ describe("Given the scan function", () => {
   });
 
   it("should return an empty array if no items are found", async () => {
-    jest
+    vi
       .spyOn(DynamoDBDocumentClient.prototype, "send")
       .mockImplementation(async () => ({
         Items: undefined,

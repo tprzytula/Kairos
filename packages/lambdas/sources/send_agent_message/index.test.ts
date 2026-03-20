@@ -4,7 +4,7 @@ describe("send_agent_message Lambda", () => {
   const mockUserId = "test-user-123";
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("when user is not authenticated", () => {

@@ -7,21 +7,21 @@ import { IState } from "../../providers/GroceryListProvider/types"
 import { GroceryItemUnit } from "../../enums/groceryItem"
 import { GroceryViewMode } from "../../enums/groceryCategory"
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
+vi.mock('react-router', async () => ({
+  ...(await vi.importActual('react-router')),
+  useNavigate: vi.fn(),
 }))
 
 describe('Given the GroceryList component', () => {
-  const mockNavigate = jest.fn()
+  const mockNavigate = vi.fn()
 
   beforeEach(() => {
-    jest.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate)
+    vi.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate)
     mockNavigate.mockClear()
   })
 
   it('should render expand/collapse all toggle in categorized view', () => {
-    jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue(EXAMPLE_GROCERY_LIST_CONTEXT)
+    vi.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue(EXAMPLE_GROCERY_LIST_CONTEXT)
 
     renderComponent()
 
@@ -29,7 +29,7 @@ describe('Given the GroceryList component', () => {
   })
 
   it('should render the grocery list', () => {
-    jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue(EXAMPLE_GROCERY_LIST_CONTEXT)
+    vi.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue(EXAMPLE_GROCERY_LIST_CONTEXT)
 
     renderComponent()
 
@@ -38,7 +38,7 @@ describe('Given the GroceryList component', () => {
   })
 
   it('should pass navigate function correctly', () => {
-    jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue(EXAMPLE_GROCERY_LIST_CONTEXT)
+    vi.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue(EXAMPLE_GROCERY_LIST_CONTEXT)
 
     renderComponent()
 
@@ -47,7 +47,7 @@ describe('Given the GroceryList component', () => {
 
   describe('When the viewMode is UNCATEGORIZED', () => {
     it('should render uncategorized view', () => {
-      jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
+      vi.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
         ...EXAMPLE_GROCERY_LIST_CONTEXT,
         viewMode: GroceryViewMode.UNCATEGORIZED,
       })
@@ -61,16 +61,16 @@ describe('Given the GroceryList component', () => {
 
   describe('When the grocery list is empty', () => {
     it('should render the empty list icon and helpful text', () => {
-      jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
+      vi.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
         groceryList: [],
         isLoading: false,
         isAllItemsView: false,
         viewMode: GroceryViewMode.CATEGORIZED,
-        refetchGroceryList: jest.fn(),
-        removeGroceryItem: jest.fn(),
-        updateGroceryItem: jest.fn(),
-        updateGroceryItemFields: jest.fn(),
-        setViewMode: jest.fn(),
+        refetchGroceryList: vi.fn(),
+        removeGroceryItem: vi.fn(),
+        updateGroceryItem: vi.fn(),
+        updateGroceryItemFields: vi.fn(),
+        setViewMode: vi.fn(),
       })
 
       renderComponent()
@@ -82,16 +82,16 @@ describe('Given the GroceryList component', () => {
 
     describe('Empty state layout behavior', () => {
       it('should center empty state vertically within available space', () => {
-        jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
+        vi.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
           groceryList: [],
           isLoading: false,
           isAllItemsView: false,
           viewMode: GroceryViewMode.CATEGORIZED,
-          refetchGroceryList: jest.fn(),
-          removeGroceryItem: jest.fn(),
-          updateGroceryItem: jest.fn(),
-          updateGroceryItemFields: jest.fn(),
-          setViewMode: jest.fn(),
+          refetchGroceryList: vi.fn(),
+          removeGroceryItem: vi.fn(),
+          updateGroceryItem: vi.fn(),
+          updateGroceryItemFields: vi.fn(),
+          setViewMode: vi.fn(),
         })
 
         renderComponent()
@@ -108,16 +108,16 @@ describe('Given the GroceryList component', () => {
       })
 
       it('should maintain proper spacing and opacity in empty state', () => {
-        jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
+        vi.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
           groceryList: [],
           isLoading: false,
           isAllItemsView: false,
           viewMode: GroceryViewMode.CATEGORIZED,
-          refetchGroceryList: jest.fn(),
-          removeGroceryItem: jest.fn(),
-          updateGroceryItem: jest.fn(),
-          updateGroceryItemFields: jest.fn(),
-          setViewMode: jest.fn(),
+          refetchGroceryList: vi.fn(),
+          removeGroceryItem: vi.fn(),
+          updateGroceryItem: vi.fn(),
+          updateGroceryItemFields: vi.fn(),
+          setViewMode: vi.fn(),
         })
 
         renderComponent()
@@ -134,16 +134,16 @@ describe('Given the GroceryList component', () => {
 
   describe('When the grocery list is loading', () => {
     it('should render the loading placeholder', () => {
-      jest.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
+      vi.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
         groceryList: [],
         isLoading: true,
         isAllItemsView: false,
         viewMode: GroceryViewMode.CATEGORIZED,
-        refetchGroceryList: jest.fn(),
-        removeGroceryItem: jest.fn(),
-        updateGroceryItem: jest.fn(),
-        updateGroceryItemFields: jest.fn(),
-        setViewMode: jest.fn(),
+        refetchGroceryList: vi.fn(),
+        removeGroceryItem: vi.fn(),
+        updateGroceryItem: vi.fn(),
+        updateGroceryItemFields: vi.fn(),
+        setViewMode: vi.fn(),
       })
 
       renderComponent()
@@ -186,9 +186,9 @@ const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
   isLoading: false,
   isAllItemsView: false,
   viewMode: GroceryViewMode.CATEGORIZED,
-  refetchGroceryList: jest.fn(),
-  removeGroceryItem: jest.fn(),
-  updateGroceryItem: jest.fn(),
-  updateGroceryItemFields: jest.fn(),
-  setViewMode: jest.fn(),
+  refetchGroceryList: vi.fn(),
+  removeGroceryItem: vi.fn(),
+  updateGroceryItem: vi.fn(),
+  updateGroceryItemFields: vi.fn(),
+  setViewMode: vi.fn(),
 }

@@ -3,7 +3,7 @@ import { query, getItem } from "@kairos-lambdas-libs/dynamodb";
 import { DynamoDBTable, DynamoDBIndex } from "@kairos-lambdas-libs/dynamodb/enums";
 import { IProject, IProjectMember, ProjectRole } from "@kairos-lambdas-libs/dynamodb/types/projects";
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
   DynamoDBTable: {
     PROJECT_MEMBERS: "ProjectMembers",
     PROJECTS: "Projects",
@@ -11,13 +11,13 @@ jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
   DynamoDBIndex: {
     PROJECT_MEMBERS_USER_PROJECTS: "UserProjectsIndex",
   },
-  query: jest.fn(),
-  getItem: jest.fn(),
+  query: vi.fn(),
+  getItem: vi.fn(),
 }));
 
 describe("Given the get_user_projects lambda handler", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("When user is not authenticated", () => {
@@ -32,7 +32,7 @@ describe("Given the get_user_projects lambda handler", () => {
   describe("When user is authenticated", () => {
     describe("And user has no projects", () => {
       it("should return empty array", async () => {
-        jest.mocked(query).mockResolvedValue([]);
+        vi.mocked(query).mockResolvedValue([]);
 
         const result = await runHandler({ userId: "user-123" });
 
@@ -83,8 +83,8 @@ describe("Given the get_user_projects lambda handler", () => {
           },
         ];
 
-        jest.mocked(query).mockResolvedValue(mockMemberships);
-        jest.mocked(getItem)
+        vi.mocked(query).mockResolvedValue(mockMemberships);
+        vi.mocked(getItem)
           .mockResolvedValueOnce(mockProjects[0])
           .mockResolvedValueOnce(mockProjects[1]);
 
@@ -114,7 +114,7 @@ describe("Given the get_user_projects lambda handler", () => {
 
     describe("And database query fails", () => {
       it("should return status 500", async () => {
-        jest.mocked(query).mockRejectedValue(new Error("Database error"));
+        vi.mocked(query).mockRejectedValue(new Error("Database error"));
 
         const result = await runHandler({ userId: "user-123" });
 
@@ -148,8 +148,8 @@ describe("Given the get_user_projects lambda handler", () => {
           isPersonal: true,
         };
 
-        jest.mocked(query).mockResolvedValue(mockMemberships);
-        jest.mocked(getItem)
+        vi.mocked(query).mockResolvedValue(mockMemberships);
+        vi.mocked(getItem)
           .mockResolvedValueOnce(mockProject)
           .mockResolvedValueOnce(null); // Second project not found
 

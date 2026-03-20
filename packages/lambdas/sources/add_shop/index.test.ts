@@ -1,11 +1,11 @@
 import { handler } from "./index";
 import * as database from "./database";
 
-jest.mock("./database");
+vi.mock("./database");
 
 describe('Given the add_shop lambda handler', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('should require project ID', async () => {
@@ -39,7 +39,7 @@ describe('Given the add_shop lambda handler', () => {
 
     describe('When creating a new shop', () => {
         it('should call upsertItem with correct parameters', async () => {
-            const mockUpsertItem = jest.spyOn(database, 'upsertItem').mockResolvedValue({
+            const mockUpsertItem = vi.spyOn(database, 'upsertItem').mockResolvedValue({
                 id: "new-shop-id",
                 statusCode: 201,
             });
@@ -62,7 +62,7 @@ describe('Given the add_shop lambda handler', () => {
         });
 
         it('should return status 201 with shop id', async () => {
-            jest.spyOn(database, 'upsertItem').mockResolvedValue({
+            vi.spyOn(database, 'upsertItem').mockResolvedValue({
                 id: "new-shop-id",
                 statusCode: 201,
             });
@@ -83,7 +83,7 @@ describe('Given the add_shop lambda handler', () => {
 
     describe('When shop name already exists', () => {
         it('should return status 409', async () => {
-            jest.spyOn(database, 'upsertItem').mockResolvedValue({
+            vi.spyOn(database, 'upsertItem').mockResolvedValue({
                 id: "existing-shop-id",
                 statusCode: 409,
             });
@@ -104,7 +104,7 @@ describe('Given the add_shop lambda handler', () => {
 
     describe('When database operation fails', () => {
         it('should return status 500', async () => {
-            jest.spyOn(database, 'upsertItem').mockRejectedValue(new Error('Database error'));
+            vi.spyOn(database, 'upsertItem').mockRejectedValue(new Error('Database error'));
 
             const event = {
                 headers: { "X-Project-ID": "test-project" },

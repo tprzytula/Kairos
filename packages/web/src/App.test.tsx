@@ -10,7 +10,7 @@ const createTestQueryClient = () =>
   new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
 // Mock the auth context
-jest.mock('react-oidc-context', () => ({
+vi.mock('react-oidc-context', () => ({
   useAuth: () => ({
     isAuthenticated: true,
     isLoading: false,

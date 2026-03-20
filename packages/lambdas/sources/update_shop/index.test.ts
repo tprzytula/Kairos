@@ -2,12 +2,12 @@ import { handler } from "./index";
 import * as DynamoDB from "@kairos-lambdas-libs/dynamodb";
 import * as body from "./body";
 
-jest.mock("@kairos-lambdas-libs/dynamodb", () => ({
-    ...jest.requireActual("@kairos-lambdas-libs/dynamodb"),
-    updateItem: jest.fn(),
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
+    ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
+    updateItem: vi.fn(),
 }));
 
-jest.mock("./body");
+vi.mock("./body");
 
 const { DynamoDBTable } = DynamoDB;
 
@@ -20,7 +20,7 @@ describe("Given the update_shop lambda handler", () => {
     );
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("When the project ID is missing", () => {
@@ -34,7 +34,7 @@ describe("Given the update_shop lambda handler", () => {
 
   describe("When the body is invalid", () => {
     it("should return status code 400", async () => {
-      jest.mocked(body.getBody).mockReturnValue(null);
+      vi.mocked(body.getBody).mockReturnValue(null);
 
       const result = await runHandler({ body: null }, true);
 
@@ -45,11 +45,11 @@ describe("Given the update_shop lambda handler", () => {
   describe("When the body is valid", () => {
     it("should update the shop in the shops table with name only", async () => {
       const updateBody = { id: "test-id", name: "Updated Shop" };
-      jest.mocked(body.getBody).mockReturnValue(updateBody);
+      vi.mocked(body.getBody).mockReturnValue(updateBody);
 
       await runHandler({ body: JSON.stringify(updateBody) }, true);
 
-      expect(jest.mocked(DynamoDB.updateItem)).toHaveBeenCalledWith({
+      expect(vi.mocked(DynamoDB.updateItem)).toHaveBeenCalledWith({
         tableName: DynamoDBTable.SHOPS,
         key: { id: "test-id" },
         updatedFields: {
@@ -66,11 +66,11 @@ describe("Given the update_shop lambda handler", () => {
         icon: "/assets/icons/updated.png",
       };
       
-      jest.mocked(body.getBody).mockReturnValue(updateBody);
+      vi.mocked(body.getBody).mockReturnValue(updateBody);
 
       await runHandler({ body: JSON.stringify(updateBody) }, true);
 
-      expect(jest.mocked(DynamoDB.updateItem)).toHaveBeenCalledWith({
+      expect(vi.mocked(DynamoDB.updateItem)).toHaveBeenCalledWith({
         tableName: DynamoDBTable.SHOPS,
         key: { id: "test-id" },
         updatedFields: {
@@ -84,7 +84,7 @@ describe("Given the update_shop lambda handler", () => {
     describe("And the update succeeds", () => {
       it("should return status code 200 with the updated fields", async () => {
         const updateBody = { id: "test-id", name: "Updated Shop" };
-        jest.mocked(body.getBody).mockReturnValue(updateBody);
+        vi.mocked(body.getBody).mockReturnValue(updateBody);
 
         const result = await runHandler({ body: JSON.stringify(updateBody) }, true);
 
@@ -96,8 +96,8 @@ describe("Given the update_shop lambda handler", () => {
     describe("And the update fails", () => {
       it("should return status code 500", async () => {
         const updateBody = { id: "test-id", name: "Updated Shop" };
-        jest.mocked(body.getBody).mockReturnValue(updateBody);
-        jest.mocked(DynamoDB.updateItem).mockRejectedValue(new Error("Update failed"));
+        vi.mocked(body.getBody).mockReturnValue(updateBody);
+        vi.mocked(DynamoDB.updateItem).mockRejectedValue(new Error("Update failed"));
 
         const result = await runHandler({ body: JSON.stringify(updateBody) }, true);
 
