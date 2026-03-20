@@ -22,7 +22,7 @@ import {
   DrawerIconBox,
   DrawerTitle,
   ContentContainer,
-} from '../RecipeDrawer/index.styled'
+} from '../DrawerHeader/index.styled'
 import {
   HeroImage,
   HeroPlaceholder,

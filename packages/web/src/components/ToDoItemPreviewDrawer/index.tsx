@@ -19,6 +19,7 @@ import {
   ItemName,
   MetaRow,
   NoDescriptionText,
+  TODO_GRADIENT,
 } from './index.styled'
 
 interface ToDoItemPreviewDrawerProps {
@@ -59,10 +60,10 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle
       dragHandleContent={
         <DrawerHeader>
           <DrawerHeaderLeft>
-            <DrawerIconBox>
+            <DrawerIconBox gradient={TODO_GRADIENT}>
               <AssignmentIcon />
             </DrawerIconBox>
-            <DrawerTitle>Task Preview</DrawerTitle>
+            <DrawerTitle gradient={TODO_GRADIENT}>Task Preview</DrawerTitle>
           </DrawerHeaderLeft>
           <Chip
             label={item?.isDone ? 'Done' : 'Pending'}

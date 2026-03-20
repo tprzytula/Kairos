@@ -19,7 +19,7 @@ import {
   DrawerIconBox,
   DrawerTitle,
   ContentContainer,
-} from '../../components/RecipeDrawer/index.styled'
+} from '../../components/DrawerHeader/index.styled'
 import { Container, ScrollableContainer } from './index.styled'
 import { useSearchParams, useNavigate } from 'react-router'
 

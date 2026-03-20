@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
+import { DrawerHeader, DrawerHeaderLeft, DrawerIconBox, DrawerTitle, ContentContainer } from '../DrawerHeader/index.styled'
 import SegmentedControl, { SegmentedControlTab } from '../SegmentedControl'
 import RecipeList from '../RecipeList'
 import ItemForm from '../ItemForm'
@@ -68,50 +69,6 @@ const ITEM_FIELDS: Array<IFormField> = [
     })),
   },
 ]
-
-const DrawerHeader = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  padding: '1rem 1.25rem',
-  borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
-  flexShrink: 0,
-  gap: '0.75rem',
-})
-
-const DrawerIconBox = styled(Box)({
-  width: '2.25rem',
-  height: '2.25rem',
-  borderRadius: '10px',
-  background: SECTION_GRADIENTS.grocery,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexShrink: 0,
-  '& .MuiSvgIcon-root': {
-    fontSize: '1.2rem',
-    color: 'white',
-  },
-})
-
-const DrawerTitle = styled('span')({
-  fontSize: '1.1rem',
-  fontWeight: '700',
-  background: SECTION_GRADIENTS.grocery,
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  backgroundClip: 'text',
-  letterSpacing: '0.3px',
-})
-
-const ContentContainer = styled(Box)({
-  flex: 1,
-  minHeight: 0,
-  overflowY: 'auto',
-  WebkitOverflowScrolling: 'touch',
-  overscrollBehavior: 'contain',
-  display: 'flex',
-  flexDirection: 'column',
-})
 
 const TabContainer = styled(Box)({
   padding: '0.75rem 1.25rem 0',
@@ -180,10 +137,12 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
       contentSx={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       dragHandleContent={
         <DrawerHeader>
-          <DrawerIconBox>
-            <ShoppingCartIcon />
-          </DrawerIconBox>
-          <DrawerTitle>Add to List</DrawerTitle>
+          <DrawerHeaderLeft>
+            <DrawerIconBox gradient={SECTION_GRADIENTS.grocery}>
+              <ShoppingCartIcon />
+            </DrawerIconBox>
+            <DrawerTitle gradient={SECTION_GRADIENTS.grocery}>Add to List</DrawerTitle>
+          </DrawerHeaderLeft>
         </DrawerHeader>
       }
     >
