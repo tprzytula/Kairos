@@ -3,6 +3,7 @@ import { Box, Typography, Skeleton, Chip } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import SearchIconMui from '@mui/icons-material/Search'
 import TuneIcon from '@mui/icons-material/Tune'
+import { COLORS, filterChipSx } from '../../constants/colors'
 import { IRecipe } from '../../types/recipe'
 import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
 import { RecipeDishType } from '../../enums/recipeDishType'
@@ -127,11 +128,8 @@ const RecipeList = ({ onViewRecipe }: RecipeListProps) => {
               variant={selectedMealTypes.includes(type) ? 'filled' : 'outlined'}
               onClick={() => toggleMealType(type)}
               sx={{
-                borderRadius: '8px',
+                ...filterChipSx(selectedMealTypes.includes(type)),
                 flexShrink: 0,
-                ...(selectedMealTypes.includes(type)
-                  ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
-                  : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
               }}
             />
           ))}
@@ -151,7 +149,7 @@ const RecipeList = ({ onViewRecipe }: RecipeListProps) => {
         </RecipeGrid>
       ) : recipes.length === 0 ? (
         <EmptyStateContainer>
-          <MenuBookIcon sx={{ fontSize: '3rem', color: 'rgba(102, 126, 234, 0.4)' }} />
+          <MenuBookIcon sx={{ fontSize: '3rem', color: COLORS.purple.muted }} />
           <Typography variant="body1" fontWeight={600} color="text.secondary">
             No recipes yet
           </Typography>

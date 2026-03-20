@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Box, Button } from '@mui/material'
+import { COLORS } from '../../constants/colors'
 
 export const FilterSheetContent = styled(Box)({
   padding: '0 1.25rem 1.25rem',
@@ -13,7 +14,7 @@ export const FilterSectionTitle = styled('span')({
   fontSize: '0.75rem',
   letterSpacing: '0.5px',
   textTransform: 'uppercase' as const,
-  color: '#f97316',
+  color: COLORS.orange.primary,
 })
 
 export const FilterChipGrid = styled(Box)({
@@ -26,12 +27,12 @@ export const FilterChipGrid = styled(Box)({
 export const ClearButton = styled(Button)({
   alignSelf: 'center',
   borderRadius: '8px',
-  borderColor: 'rgba(249, 115, 22, 0.4)',
-  color: '#f97316',
+  borderColor: COLORS.orange.muted,
+  color: COLORS.orange.primary,
   textTransform: 'none',
   fontWeight: 500,
   '&:hover': {
-    borderColor: '#f97316',
-    background: 'rgba(249, 115, 22, 0.05)',
+    borderColor: COLORS.orange.primary,
+    background: COLORS.orange.bgHover,
   },
 })

@@ -3,6 +3,7 @@ import TuneIcon from '@mui/icons-material/Tune'
 import CloseIcon from '@mui/icons-material/Close'
 import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
 import { RecipeDishType, RecipeDishTypeLabelMap, RecipeDishTypeOrder } from '../../enums/recipeDishType'
+import { filterChipSx } from '../../constants/colors'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import {
   DrawerHeader,
@@ -26,13 +27,6 @@ interface RecipeFilterSheetProps {
   onToggleDishType: (type: RecipeDishType) => void
   onClearAll: () => void
 }
-
-const filterChipSx = (isSelected: boolean) => ({
-  borderRadius: '8px',
-  ...(isSelected
-    ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
-    : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
-})
 
 const RecipeFilterSheet = ({
   open,

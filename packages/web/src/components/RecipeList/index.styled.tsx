@@ -1,4 +1,5 @@
 import { styled } from '@mui/material/styles'
+import { COLORS, GRADIENTS } from '../../constants/colors'
 
 export const RecipeListContainer = styled('div')({
   display: 'flex',
@@ -32,9 +33,9 @@ export const SearchContainer = styled('div')(({ theme }) => ({
   border: '1px solid rgba(0, 0, 0, 0.06)',
   transition: 'all 0.2s ease',
   '&:focus-within': {
-    background: 'rgba(249, 115, 22, 0.04)',
-    borderColor: 'rgba(249, 115, 22, 0.25)',
-    boxShadow: '0 0 0 3px rgba(249, 115, 22, 0.08)',
+    background: COLORS.orange.bgSubtle,
+    borderColor: COLORS.orange.borderSubtle,
+    boxShadow: `0 0 0 3px ${COLORS.orange.focus}`,
   },
 }))
 
@@ -110,8 +111,8 @@ export const FilterButton = styled('button')({
   color: 'rgba(0,0,0,0.54)',
   transition: 'all 0.15s ease',
   '&:hover': {
-    borderColor: 'rgba(249,115,22,0.3)',
-    background: 'rgba(249,115,22,0.04)',
+    borderColor: COLORS.orange.border,
+    background: COLORS.orange.bgSubtle,
   },
   '& .MuiSvgIcon-root': {
     fontSize: '1.1rem',
@@ -125,7 +126,7 @@ export const FilterBadge = styled('span')({
   width: '16px',
   height: '16px',
   borderRadius: '50%',
-  background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
+  background: GRADIENTS.orange,
   color: 'white',
   fontSize: '0.6rem',
   fontWeight: 700,

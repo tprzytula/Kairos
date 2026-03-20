@@ -43,6 +43,7 @@ import { showAlert } from '../../utils/alert'
 import { getRecipeUploadUrl } from '../../api/recipes'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { FormContainer, IngredientRow, IngredientsSection, FormActions, ImageUploadBox, ImagePreview } from './index.styled'
+import { COLORS, filterChipSx } from '../../constants/colors'
 import { SECTION_GRADIENTS } from '../../constants/sectionColors'
 import ImageCropModal from './ImageCropModal'
 import { getCroppedBlob } from './cropUtils'
@@ -381,12 +382,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
               size="small"
               variant={selectedMealTypes.includes(type) ? 'filled' : 'outlined'}
               onClick={() => toggleMealType(type)}
-              sx={{
-                borderRadius: '8px',
-                ...(selectedMealTypes.includes(type)
-                  ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
-                  : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
-              }}
+              sx={filterChipSx(selectedMealTypes.includes(type))}
             />
           ))}
         </Box>
@@ -404,12 +400,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
               size="small"
               variant={selectedDishTypes.includes(type) ? 'filled' : 'outlined'}
               onClick={() => toggleDishType(type)}
-              sx={{
-                borderRadius: '8px',
-                ...(selectedDishTypes.includes(type)
-                  ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
-                  : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
-              }}
+              sx={filterChipSx(selectedDishTypes.includes(type))}
             />
           ))}
         </Box>
@@ -471,7 +462,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           size="small"
           startIcon={<AddIcon />}
           onClick={handleAddIngredient}
-          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: '#f97316', color: '#f97316', '&:hover': { borderColor: '#f43f5e', color: '#f43f5e', background: 'rgba(249,115,22,0.05)' } }}
+          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: COLORS.orange.primary, color: COLORS.orange.primary, '&:hover': { borderColor: COLORS.rose.primary, color: COLORS.rose.primary, background: COLORS.orange.bgHover } }}
         >
           Add Ingredient
         </Button>
@@ -512,7 +503,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           size="small"
           startIcon={<AddIcon />}
           onClick={handleAddInstruction}
-          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: '#f97316', color: '#f97316', '&:hover': { borderColor: '#f43f5e', color: '#f43f5e', background: 'rgba(249,115,22,0.05)' } }}
+          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: COLORS.orange.primary, color: COLORS.orange.primary, '&:hover': { borderColor: COLORS.rose.primary, color: COLORS.rose.primary, background: COLORS.orange.bgHover } }}
         >
           Add Step
         </Button>
@@ -547,7 +538,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
             borderRadius: '8px',
             background: SECTION_GRADIENTS.recipe,
             boxShadow: 'none',
-            '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
+            '&:hover': { boxShadow: `0 4px 12px ${COLORS.orange.muted}` },
           }}
         >
           {isSaving ? 'Saving...' : (initialRecipe ? 'Update' : 'Save Recipe')}

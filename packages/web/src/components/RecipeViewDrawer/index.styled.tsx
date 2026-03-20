@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
+import { COLORS, GRADIENTS, PLACEHOLDER_GRADIENTS } from '../../constants/colors'
 
 export const HeroImage = styled('img')({
   width: '100%',
@@ -8,15 +9,6 @@ export const HeroImage = styled('img')({
   borderRadius: '12px',
   display: 'block',
 })
-
-const PLACEHOLDER_GRADIENTS = [
-  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-  'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-  'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-  'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-  'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-]
 
 export const HeroPlaceholder = styled(Box)<{ seed?: number }>(({ seed = 0 }) => ({
   width: '100%',
@@ -40,7 +32,7 @@ export const ExternalLinkRow = styled('a')({
   display: 'inline-flex',
   alignItems: 'center',
   gap: '0.35rem',
-  color: '#f97316',
+  color: COLORS.orange.primary,
   fontSize: '0.85rem',
   fontWeight: 500,
   textDecoration: 'none',
@@ -61,14 +53,14 @@ export const SectionLabel = styled('span')({
   fontSize: '0.75rem',
   letterSpacing: '0.5px',
   textTransform: 'uppercase' as const,
-  color: '#f97316',
+  color: COLORS.orange.primary,
 })
 
 export const SectionBadge = styled('span')({
   fontSize: '0.7rem',
   fontWeight: 600,
-  color: '#f97316',
-  background: 'rgba(249, 115, 22, 0.1)',
+  color: COLORS.orange.primary,
+  background: COLORS.orange.bg,
   borderRadius: '999px',
   padding: '1px 8px',
   lineHeight: 1.6,
@@ -81,7 +73,7 @@ export const IngredientRow = styled(Box)({
   borderRadius: '8px',
   padding: '4px 4px 4px 0',
   '&:hover': {
-    background: 'rgba(249, 115, 22, 0.04)',
+    background: COLORS.orange.bgSubtle,
   },
 })
 
@@ -95,7 +87,7 @@ export const IngredientIcon = styled('img')({
 export const IngredientQuantity = styled('span')({
   fontSize: '0.85rem',
   fontWeight: 600,
-  color: '#f97316',
+  color: COLORS.orange.primary,
   minWidth: '60px',
   textAlign: 'right' as const,
   flexShrink: 0,
@@ -115,7 +107,7 @@ export const StepRow = styled(Box)({
   padding: '6px 4px 6px 0',
   alignItems: 'flex-start',
   '&:hover': {
-    background: 'rgba(249, 115, 22, 0.04)',
+    background: COLORS.orange.bgSubtle,
   },
 })
 
@@ -123,7 +115,7 @@ export const StepNumber = styled(Box)({
   width: '26px',
   height: '26px',
   borderRadius: '50%',
-  background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
+  background: GRADIENTS.orange,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

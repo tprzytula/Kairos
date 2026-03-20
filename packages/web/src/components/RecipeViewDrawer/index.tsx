@@ -5,6 +5,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import { COLORS, GRADIENTS } from '../../constants/colors'
 import { IRecipe } from '../../types/recipe'
 import { IItemDefault } from '../../hooks/useItemDefaults/types'
 import { GroceryItemUnitLabelMap } from '../../enums/groceryItem'
@@ -192,8 +193,8 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
                 label={type}
                 size="small"
                 sx={{
-                  background: 'rgba(102, 126, 234, 0.1)',
-                  color: '#667ee2',
+                  background: COLORS.purple.bg,
+                  color: COLORS.purple.primary,
                   fontWeight: 500,
                   fontSize: '0.75rem',
                   height: '24px',
@@ -206,8 +207,8 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
                 label={RecipeDishTypeLabelMap[type as RecipeDishType] ?? type}
                 size="small"
                 sx={{
-                  background: 'rgba(16, 185, 129, 0.1)',
-                  color: '#059669',
+                  background: COLORS.green.bg,
+                  color: COLORS.green.primary,
                   fontWeight: 500,
                   fontSize: '0.75rem',
                   height: '24px',
@@ -234,8 +235,8 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
                       size="small"
                       sx={{
                         padding: '4px',
-                        color: 'rgba(249, 115, 22, 0.4)',
-                        '&.Mui-checked': { color: '#f97316' },
+                        color: COLORS.orange.muted,
+                        '&.Mui-checked': { color: COLORS.orange.primary },
                       }}
                       onClick={(e) => e.stopPropagation()}
                       onChange={() => toggleIngredient(index)}
@@ -270,8 +271,8 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
                       size="small"
                       sx={{
                         padding: '4px',
-                        color: 'rgba(249, 115, 22, 0.4)',
-                        '&.Mui-checked': { color: '#f97316' },
+                        color: COLORS.orange.muted,
+                        '&.Mui-checked': { color: COLORS.orange.primary },
                         marginTop: '-2px',
                       }}
                       onClick={(e) => e.stopPropagation()}
@@ -316,7 +317,7 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
           onClick={handleAddToList}
           disabled={!canAdd}
           sx={{
-            background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
+            background: GRADIENTS.orange,
             borderRadius: '10px',
             textTransform: 'none',
             fontWeight: 600,
@@ -334,7 +335,7 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
           startIcon={<EditIcon />}
           onClick={handleEdit}
           sx={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: GRADIENTS.purple,
             borderRadius: '10px',
             textTransform: 'none',
             fontWeight: 600,

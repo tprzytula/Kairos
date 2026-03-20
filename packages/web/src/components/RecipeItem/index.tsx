@@ -1,4 +1,5 @@
 import { Typography } from '@mui/material'
+import { COLORS } from '../../constants/colors'
 import { IRecipe } from '../../types/recipe'
 import {
   RecipeCard,
@@ -46,8 +47,8 @@ const RecipeItem = ({ recipe, onView }: RecipeItemProps) => {
               label={`${recipe.ingredients.length} ingredient${recipe.ingredients.length !== 1 ? 's' : ''}`}
               size="small"
               sx={{
-                background: 'rgba(249, 115, 22, 0.1)',
-                color: '#f97316',
+                background: COLORS.orange.bg,
+                color: COLORS.orange.primary,
               }}
             />
             {recipe.instructions && recipe.instructions.length > 0 && (
@@ -55,8 +56,8 @@ const RecipeItem = ({ recipe, onView }: RecipeItemProps) => {
                 label={`${recipe.instructions.length} step${recipe.instructions.length !== 1 ? 's' : ''}`}
                 size="small"
                 sx={{
-                  background: 'rgba(244, 63, 94, 0.1)',
-                  color: '#f43f5e',
+                  background: COLORS.rose.bg,
+                  color: COLORS.rose.primary,
                 }}
               />
             )}
