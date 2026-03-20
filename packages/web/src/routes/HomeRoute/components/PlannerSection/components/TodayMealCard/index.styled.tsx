@@ -1,14 +1,6 @@
-import { styled, keyframes } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
-
-const shimmer = keyframes`
-  0% {
-    background-position: -200px 0;
-  }
-  100% {
-    background-position: calc(200px + 100%) 0;
-  }
-`
+import { shimmerKeyframes as shimmer } from '../../../../../../utils/styles/shimmer'
 
 const GRADIENTS = [
   'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
