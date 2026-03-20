@@ -9,7 +9,6 @@ import {
   FormControl,
   Typography,
   CircularProgress,
-  Chip,
   Box,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -42,6 +41,7 @@ import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
 import { getRecipeUploadUrl } from '../../api/recipes'
 import { useProjectContext } from '../../providers/ProjectProvider'
+import FilterChip from '../FilterChip'
 import { FormContainer, IngredientRow, IngredientsSection, FormActions, ImageUploadBox, ImagePreview } from './index.styled'
 import { SECTION_GRADIENTS } from '../../constants/sectionColors'
 import ImageCropModal from './ImageCropModal'
@@ -375,18 +375,11 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
         </Typography>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
           {MEAL_TYPE_ORDER.filter((t) => t !== MealType.Other).map((type) => (
-            <Chip
+            <FilterChip
               key={type}
               label={type}
-              size="small"
-              variant={selectedMealTypes.includes(type) ? 'filled' : 'outlined'}
+              isSelected={selectedMealTypes.includes(type)}
               onClick={() => toggleMealType(type)}
-              sx={{
-                borderRadius: '8px',
-                ...(selectedMealTypes.includes(type)
-                  ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
-                  : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
-              }}
             />
           ))}
         </Box>
@@ -398,18 +391,11 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
         </Typography>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
           {RecipeDishTypeOrder.map((type) => (
-            <Chip
+            <FilterChip
               key={type}
               label={RecipeDishTypeLabelMap[type]}
-              size="small"
-              variant={selectedDishTypes.includes(type) ? 'filled' : 'outlined'}
+              isSelected={selectedDishTypes.includes(type)}
               onClick={() => toggleDishType(type)}
-              sx={{
-                borderRadius: '8px',
-                ...(selectedDishTypes.includes(type)
-                  ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
-                  : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
-              }}
             />
           ))}
         </Box>

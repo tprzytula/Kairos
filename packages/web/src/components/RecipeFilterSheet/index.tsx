@@ -1,8 +1,9 @@
-import { Box, Chip, IconButton } from '@mui/material'
+import { Box, IconButton } from '@mui/material'
 import TuneIcon from '@mui/icons-material/Tune'
 import CloseIcon from '@mui/icons-material/Close'
 import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
 import { RecipeDishType, RecipeDishTypeLabelMap, RecipeDishTypeOrder } from '../../enums/recipeDishType'
+import FilterChip from '../FilterChip'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import {
   DrawerHeader,
@@ -26,13 +27,6 @@ interface RecipeFilterSheetProps {
   onToggleDishType: (type: RecipeDishType) => void
   onClearAll: () => void
 }
-
-const filterChipSx = (isSelected: boolean) => ({
-  borderRadius: '8px',
-  ...(isSelected
-    ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
-    : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
-})
 
 const RecipeFilterSheet = ({
   open,
@@ -68,13 +62,11 @@ const RecipeFilterSheet = ({
           <FilterSectionTitle>Meal Type</FilterSectionTitle>
           <FilterChipGrid>
             {MEAL_TYPE_ORDER.filter((t) => t !== MealType.Other).map((type) => (
-              <Chip
+              <FilterChip
                 key={type}
                 label={type}
-                size="small"
-                variant={selectedMealTypes.includes(type) ? 'filled' : 'outlined'}
+                isSelected={selectedMealTypes.includes(type)}
                 onClick={() => onToggleMealType(type)}
-                sx={filterChipSx(selectedMealTypes.includes(type))}
               />
             ))}
           </FilterChipGrid>
@@ -84,13 +76,11 @@ const RecipeFilterSheet = ({
           <FilterSectionTitle>Dish Type</FilterSectionTitle>
           <FilterChipGrid>
             {RecipeDishTypeOrder.map((type) => (
-              <Chip
+              <FilterChip
                 key={type}
                 label={RecipeDishTypeLabelMap[type]}
-                size="small"
-                variant={selectedDishTypes.includes(type) ? 'filled' : 'outlined'}
+                isSelected={selectedDishTypes.includes(type)}
                 onClick={() => onToggleDishType(type)}
-                sx={filterChipSx(selectedDishTypes.includes(type))}
               />
             ))}
           </FilterChipGrid>

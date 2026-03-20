@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
-import { Box, Typography, Skeleton, Chip } from '@mui/material'
+import { Box, Typography, Skeleton } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import SearchIconMui from '@mui/icons-material/Search'
 import TuneIcon from '@mui/icons-material/Tune'
@@ -8,6 +8,7 @@ import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
 import { RecipeDishType } from '../../enums/recipeDishType'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import RecipeItem from '../RecipeItem'
+import FilterChip from '../FilterChip'
 import RecipeFilterSheet from '../RecipeFilterSheet'
 import {
   RecipeListContainer,
@@ -120,19 +121,11 @@ const RecipeList = ({ onViewRecipe }: RecipeListProps) => {
 
         <FilterChipsContainer>
           {MEAL_TYPE_ORDER.filter((t) => t !== MealType.Other).map((type) => (
-            <Chip
+            <FilterChip
               key={type}
               label={type}
-              size="small"
-              variant={selectedMealTypes.includes(type) ? 'filled' : 'outlined'}
+              isSelected={selectedMealTypes.includes(type)}
               onClick={() => toggleMealType(type)}
-              sx={{
-                borderRadius: '8px',
-                flexShrink: 0,
-                ...(selectedMealTypes.includes(type)
-                  ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
-                  : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
-              }}
             />
           ))}
           <FilterButton onClick={() => setIsFilterSheetOpen(true)} aria-label="More filters">
