@@ -18,6 +18,7 @@ import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { showAlert } from '../../utils/alert'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import { SECTION_GRADIENTS } from '../../constants/sectionColors'
+import { gradientTextStyles } from '../../utils/styles/gradientText'
 
 type TabId = 'item' | 'recipe'
 
@@ -96,10 +97,7 @@ const DrawerIconBox = styled(Box)({
 const DrawerTitle = styled('span')({
   fontSize: '1.1rem',
   fontWeight: '700',
-  background: SECTION_GRADIENTS.grocery,
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  backgroundClip: 'text',
+  ...gradientTextStyles(SECTION_GRADIENTS.grocery),
   letterSpacing: '0.3px',
 })
 

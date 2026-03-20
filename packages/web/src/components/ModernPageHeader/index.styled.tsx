@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Card } from '@mui/material'
+import { gradientTextStyles } from '../../utils/styles/gradientText'
 
 export const HeaderWrapper = styled('div')({
   width: '100%',
@@ -50,10 +51,7 @@ export const HeaderTitle = styled('h1')<{ accentgradient?: string }>(({ theme, a
   color: theme.palette.text.primary,
   margin: 0,
   lineHeight: 1.1,
-  background: accentgradient ?? 'linear-gradient(135deg, #6366f1 0%, #7c3aed 100%)',
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  backgroundClip: 'text',
+  ...gradientTextStyles(accentgradient ?? 'linear-gradient(135deg, #6366f1 0%, #7c3aed 100%)'),
 }))
 
 export const HeaderIcon = styled('div')<{ accentgradient?: string; accentrgb?: string }>(({ accentgradient, accentrgb }) => ({
@@ -96,10 +94,7 @@ export const StatValue = styled('div')<{ accentgradient?: string }>(({ theme, ac
   fontWeight: '700',
   color: theme.palette.text.primary,
   lineHeight: 1,
-  background: accentgradient ?? 'linear-gradient(135deg, #6366f1 0%, #7c3aed 100%)',
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  backgroundClip: 'text',
+  ...gradientTextStyles(accentgradient ?? 'linear-gradient(135deg, #6366f1 0%, #7c3aed 100%)'),
 }))
 
 export const StatLabel = styled('div')(({ theme }) => ({
