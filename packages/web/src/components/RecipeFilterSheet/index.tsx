@@ -10,7 +10,7 @@ import {
   DrawerHeaderLeft,
   DrawerIconBox,
   DrawerTitle,
-} from '../RecipeDrawer/index.styled'
+} from '../DrawerHeader/index.styled'
 import {
   FilterSheetContent,
   FilterSectionTitle,

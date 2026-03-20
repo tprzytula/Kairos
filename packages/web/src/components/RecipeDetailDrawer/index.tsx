@@ -11,7 +11,7 @@ import {
   DrawerIconBox,
   DrawerTitle,
   ContentContainer,
-} from '../RecipeDrawer/index.styled'
+} from '../DrawerHeader/index.styled'
 
 interface RecipeDetailDrawerProps {
   open: boolean

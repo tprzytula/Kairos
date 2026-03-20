@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import {
+  BIRTHDAY_GRADIENT,
   ContentContainer,
   DrawerHeader,
   DrawerHeaderLeft,
@@ -68,10 +69,10 @@ const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPrev
       dragHandleContent={
         <DrawerHeader>
           <DrawerHeaderLeft>
-            <DrawerIconBox>
+            <DrawerIconBox gradient={BIRTHDAY_GRADIENT}>
               <CakeIcon />
             </DrawerIconBox>
-            <DrawerTitle>Birthday</DrawerTitle>
+            <DrawerTitle gradient={BIRTHDAY_GRADIENT}>Birthday</DrawerTitle>
           </DrawerHeaderLeft>
         </DrawerHeader>
       }

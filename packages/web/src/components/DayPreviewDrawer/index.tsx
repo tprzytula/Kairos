@@ -18,6 +18,7 @@ import {
   TasksAddButton,
 } from '../Planner/CalendarView/index.styled'
 import {
+  DAY_PREVIEW_GRADIENT,
   DrawerContent,
   DrawerHeader,
   DrawerHeaderLeft,
@@ -68,11 +69,11 @@ const DayPreviewDrawer = ({
       dragHandleContent={
         <DrawerHeader>
           <DrawerHeaderLeft>
-            <DrawerIconBox>
+            <DrawerIconBox gradient={DAY_PREVIEW_GRADIENT}>
               <CalendarTodayIcon />
             </DrawerIconBox>
             <DrawerTitleGroup>
-              <DrawerTitle>
+              <DrawerTitle gradient={DAY_PREVIEW_GRADIENT}>
                 {selectedDay ? dayjs(selectedDay).format('dddd') : ''}
               </DrawerTitle>
               <DrawerSubtitle>
