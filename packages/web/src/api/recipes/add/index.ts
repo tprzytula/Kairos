@@ -3,7 +3,7 @@ import { API_BASE_URL } from '../../index'
 import { createFetchOptions } from '../../../utils/api'
 
 export const addRecipe = async (
-  recipe: { name: string; ingredients: IRecipeIngredient[]; instructions?: string[]; imagePath?: string; externalLink?: string },
+  recipe: { name: string; ingredients: IRecipeIngredient[]; instructions?: string[]; imagePath?: string; externalLink?: string; mealTypes?: string[]; dishTypes?: string[] },
   projectId?: string
 ): Promise<IRecipe> => {
   const response = await fetch(`${API_BASE_URL}/recipes`, createFetchOptions({

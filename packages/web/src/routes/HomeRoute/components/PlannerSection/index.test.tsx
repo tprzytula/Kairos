@@ -3,8 +3,10 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import theme from '../../../../theme'
 import { PlannerSection } from './index'
+import { UpcomingBirthdaysCard } from './components/UpcomingBirthdaysCard'
 import { ITodoItem } from '../../../../api/toDoList/retrieve/types'
 import { IToDoStats } from '../../../../hooks/useHomeData/types'
+import { IBirthdayItem } from '../../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../../types/mealPlan'
 import { MealType } from '../../../../enums/mealType'
 
@@ -47,18 +49,18 @@ const defaultProps = {
   toDoStats: createMockToDoStats(),
   todayMeals: [],
   isLoading: false,
-  onStepToggle: jest.fn(),
-  onCardClick: jest.fn(),
+  onStepToggle: vi.fn(),
+  onCardClick: vi.fn(),
 }
 
 describe('PlannerSection component', () => {
   beforeEach(() => {
-    jest.useFakeTimers()
-    jest.setSystemTime(new Date('2024-01-15T12:00:00Z'))
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2024-01-15T12:00:00Z'))
   })
 
   afterEach(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   describe('section layout', () => {
@@ -111,7 +113,7 @@ describe('PlannerSection component', () => {
     })
 
     it('should call onStepToggle when a step is clicked', () => {
-      const onStepToggle = jest.fn()
+      const onStepToggle = vi.fn()
       const item = createMockTodoItem({
         id: '1',
         name: 'Trip',
@@ -131,7 +133,7 @@ describe('PlannerSection component', () => {
     })
 
     it('should call onCardClick when a task header is clicked', () => {
-      const onCardClick = jest.fn()
+      const onCardClick = vi.fn()
       const item = createMockTodoItem({ id: '1', name: 'My Task' })
       const toDoStats = createMockToDoStats({ sortedItems: [item], pendingItems: [item] })
 
@@ -214,5 +216,105 @@ describe('PlannerSection component', () => {
       expect(screen.getByText('Dinner Dish')).toBeInTheDocument()
     })
   })
+})
 
+const createMockBirthday = (overrides: Partial<IBirthdayItem> = {}): IBirthdayItem => ({
+  id: 'birthday-1',
+  name: 'Alice',
+  month: 6,
+  day: 15,
+  ...overrides
+})
+
+describe('UpcomingBirthdaysCard component', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2024-01-15T12:00:00Z'))
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  const renderBirthdays = (birthdays: IBirthdayItem[], isExpanded = false) =>
+    render(
+      <ThemeProvider theme={theme}>
+        <UpcomingBirthdaysCard birthdays={birthdays} isExpanded={isExpanded} />
+      </ThemeProvider>
+    )
+
+  it('should show the date parts for a birthday', () => {
+    // System time is 2024-01-15; birthday on Jan 16
+    const birthday = createMockBirthday({ id: '1', name: 'Frank', month: 1, day: 16 })
+
+    renderBirthdays([birthday])
+
+    expect(screen.getByText('Jan')).toBeInTheDocument()
+    expect(screen.getByText('16')).toBeInTheDocument()
+  })
+
+  it('should show the day of week for a birthday', () => {
+    // 2024-01-16 is a Tuesday
+    const birthday = createMockBirthday({ id: '1', name: 'Grace', month: 1, day: 16 })
+
+    renderBirthdays([birthday])
+
+    expect(screen.getByText('Tue')).toBeInTheDocument()
+  })
+
+  it('should show upcoming birthday names', () => {
+    const birthday = createMockBirthday({ id: '1', name: 'Bob', month: 2, day: 1 })
+
+    renderBirthdays([birthday])
+
+    expect(screen.getByText('Bob')).toBeInTheDocument()
+  })
+
+  it('should show "Today!" for a birthday today', () => {
+    const birthday = createMockBirthday({ id: '1', name: 'Charlie', month: 1, day: 15 })
+
+    renderBirthdays([birthday])
+
+    expect(screen.getByText('Today!')).toBeInTheDocument()
+  })
+
+  it('should show "Tomorrow" for a birthday tomorrow', () => {
+    const birthday = createMockBirthday({ id: '1', name: 'Diana', month: 1, day: 16 })
+
+    renderBirthdays([birthday])
+
+    expect(screen.getByText('Tomorrow')).toBeInTheDocument()
+  })
+
+  it('should show days until for a birthday in the future', () => {
+    const birthday = createMockBirthday({ id: '1', name: 'Eve', month: 1, day: 25 })
+
+    renderBirthdays([birthday])
+
+    expect(screen.getByText('in 10d')).toBeInTheDocument()
+  })
+
+  it('should show only the next 4 upcoming birthdays', () => {
+    const birthdays = [
+      createMockBirthday({ id: '1', name: 'Person 1', month: 1, day: 16 }),
+      createMockBirthday({ id: '2', name: 'Person 2', month: 1, day: 17 }),
+      createMockBirthday({ id: '3', name: 'Person 3', month: 1, day: 18 }),
+      createMockBirthday({ id: '4', name: 'Person 4', month: 1, day: 19 }),
+      createMockBirthday({ id: '5', name: 'Person 5', month: 1, day: 20 }),
+    ]
+
+    renderBirthdays(birthdays)
+
+    expect(screen.getByText('Person 1')).toBeInTheDocument()
+    expect(screen.getByText('Person 2')).toBeInTheDocument()
+    expect(screen.getByText('Person 3')).toBeInTheDocument()
+    expect(screen.getByText('Person 4')).toBeInTheDocument()
+    expect(screen.queryByText('Person 5')).not.toBeInTheDocument()
+  })
+
+  it('should show empty state when no birthdays saved', () => {
+    renderBirthdays([])
+
+    expect(screen.getByText('No birthdays saved')).toBeInTheDocument()
+  })
 })

@@ -1,50 +1,18 @@
 import { styled } from '@mui/material/styles'
 import { Box, Typography } from '@mui/material'
+export {
+  DrawerHeader,
+  DrawerHeaderLeft,
+  DrawerIconBox,
+  DrawerTitle,
+} from '../DrawerHeader/index.styled'
 
-export const DrawerHeader = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '0.75rem 1.25rem 1rem',
-  borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
-  flexShrink: 0,
-})
-
-export const DrawerHeaderLeft = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.75rem',
-})
-
-export const DrawerIconBox = styled(Box)({
-  width: '2.25rem',
-  height: '2.25rem',
-  borderRadius: '10px',
-  background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexShrink: 0,
-  '& .MuiSvgIcon-root': {
-    fontSize: '1.2rem',
-    color: 'white',
-  },
-})
+export const DAY_PREVIEW_GRADIENT = 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
 
 export const DrawerTitleGroup = styled(Box)({
   display: 'flex',
   flexDirection: 'column',
   gap: '1px',
-})
-
-export const DrawerTitle = styled('span')({
-  fontSize: '1.1rem',
-  fontWeight: 700,
-  background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  backgroundClip: 'text',
-  letterSpacing: '0.3px',
 })
 
 export const DrawerSubtitle = styled(Typography)({

@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Box, Typography, TextField, Button, ToggleButtonGroup } from '@mui/material'
+import { PLACEHOLDER_GRADIENTS } from '../../constants/placeholderGradients'
 
 export const RecipeItemRow = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
   display: 'flex',
@@ -25,21 +26,12 @@ export const RecipeThumbnail = styled('img')({
   flexShrink: 0,
 })
 
-const GRADIENTS = [
-  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-  'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-  'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-  'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-  'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-]
-
 export const RecipeThumbnailPlaceholder = styled(Box)<{ seed: number }>(({ seed }) => ({
   width: '40px',
   height: '40px',
   borderRadius: '6px',
   flexShrink: 0,
-  background: GRADIENTS[seed % GRADIENTS.length],
+  background: PLACEHOLDER_GRADIENTS[seed % PLACEHOLDER_GRADIENTS.length],
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

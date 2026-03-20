@@ -9,6 +9,7 @@ import {
   FormControl,
   Typography,
   CircularProgress,
+  Box,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
@@ -33,12 +34,16 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { IRecipe, IRecipeIngredient } from '../../types/recipe'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
+import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
+import { RecipeDishType, RecipeDishTypeLabelMap, RecipeDishTypeOrder } from '../../enums/recipeDishType'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
 import { getRecipeUploadUrl } from '../../api/recipes'
 import { useProjectContext } from '../../providers/ProjectProvider'
+import FilterChip from '../FilterChip'
 import { FormContainer, IngredientRow, IngredientsSection, FormActions, ImageUploadBox, ImagePreview } from './index.styled'
+import { COLORS } from '../../constants/colors'
 import { SECTION_GRADIENTS } from '../../constants/sectionColors'
 import ImageCropModal from './ImageCropModal'
 import { getCroppedBlob } from './cropUtils'
@@ -119,6 +124,8 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   const { dispatch } = useAppState()
   const [name, setName] = useState(initialRecipe?.name ?? '')
   const [externalLink, setExternalLink] = useState(initialRecipe?.externalLink ?? '')
+  const [selectedMealTypes, setSelectedMealTypes] = useState<MealType[]>(initialRecipe?.mealTypes ?? [])
+  const [selectedDishTypes, setSelectedDishTypes] = useState<RecipeDishType[]>(initialRecipe?.dishTypes ?? [])
   const [ingredients, setIngredients] = useState<IngredientWithId[]>(
     (initialRecipe?.ingredients ?? [{ ...DEFAULT_INGREDIENT }]).map((ing) => ({ ...ing, _id: makeId() }))
   )
@@ -199,6 +206,18 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
       setInstructions((prevSteps) => arrayMove(prevSteps, from, to))
       return arrayMove(prev, from, to)
     })
+  }, [])
+
+  const toggleMealType = useCallback((type: MealType) => {
+    setSelectedMealTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    )
+  }, [])
+
+  const toggleDishType = useCallback((type: RecipeDishType) => {
+    setSelectedDishTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    )
   }, [])
 
   const handleImageClick = useCallback(() => {
@@ -282,11 +301,13 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
       const externalLinkValue = externalLink.trim() || undefined
       const validInstructions = instructions.map((s) => s.trim()).filter((s) => s.length > 0)
       const instructionsValue = validInstructions.length > 0 ? validInstructions : undefined
+      const mealTypesValue = selectedMealTypes.length > 0 ? selectedMealTypes : undefined
+      const dishTypesValue = selectedDishTypes.length > 0 ? selectedDishTypes : undefined
       if (initialRecipe) {
-        await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients, instructions: instructionsValue, imagePath: imagePathValue, externalLink: externalLinkValue })
+        await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients, instructions: instructionsValue, imagePath: imagePathValue, externalLink: externalLinkValue, mealTypes: mealTypesValue, dishTypes: dishTypesValue })
         showAlert({ description: 'Recipe updated', severity: 'success' }, dispatch)
       } else {
-        await addRecipe(trimmedName, validIngredients, imagePathValue, instructionsValue, externalLinkValue)
+        await addRecipe(trimmedName, validIngredients, imagePathValue, instructionsValue, externalLinkValue, mealTypesValue, dishTypesValue)
         showAlert({ description: 'Recipe added', severity: 'success' }, dispatch)
       }
       onDone()
@@ -295,7 +316,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
     } finally {
       setIsSaving(false)
     }
-  }, [name, externalLink, ingredients, instructions, imagePath, initialRecipe, addRecipe, updateRecipe, dispatch, onDone])
+  }, [name, externalLink, ingredients, instructions, imagePath, selectedMealTypes, selectedDishTypes, initialRecipe, addRecipe, updateRecipe, dispatch, onDone])
 
   return (
     <FormContainer>
@@ -348,6 +369,38 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
         placeholder="https://..."
         type="url"
       />
+
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <Typography variant="body2" fontWeight={600} color="text.secondary">
+          Meal Type
+        </Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
+          {MEAL_TYPE_ORDER.filter((t) => t !== MealType.Other).map((type) => (
+            <FilterChip
+              key={type}
+              label={type}
+              isSelected={selectedMealTypes.includes(type)}
+              onClick={() => toggleMealType(type)}
+            />
+          ))}
+        </Box>
+      </Box>
+
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <Typography variant="body2" fontWeight={600} color="text.secondary">
+          Dish Type
+        </Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
+          {RecipeDishTypeOrder.map((type) => (
+            <FilterChip
+              key={type}
+              label={RecipeDishTypeLabelMap[type]}
+              isSelected={selectedDishTypes.includes(type)}
+              onClick={() => toggleDishType(type)}
+            />
+          ))}
+        </Box>
+      </Box>
 
       <IngredientsSection>
         <Typography variant="body2" fontWeight={600} color="text.secondary">
@@ -405,7 +458,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           size="small"
           startIcon={<AddIcon />}
           onClick={handleAddIngredient}
-          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: '#f97316', color: '#f97316', '&:hover': { borderColor: '#f43f5e', color: '#f43f5e', background: 'rgba(249,115,22,0.05)' } }}
+          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: COLORS.orange.primary, color: COLORS.orange.primary, '&:hover': { borderColor: COLORS.rose.primary, color: COLORS.rose.primary, background: COLORS.orange.bgHover } }}
         >
           Add Ingredient
         </Button>
@@ -446,7 +499,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           size="small"
           startIcon={<AddIcon />}
           onClick={handleAddInstruction}
-          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: '#f97316', color: '#f97316', '&:hover': { borderColor: '#f43f5e', color: '#f43f5e', background: 'rgba(249,115,22,0.05)' } }}
+          sx={{ alignSelf: 'flex-start', borderRadius: '8px', borderColor: COLORS.orange.primary, color: COLORS.orange.primary, '&:hover': { borderColor: COLORS.rose.primary, color: COLORS.rose.primary, background: COLORS.orange.bgHover } }}
         >
           Add Step
         </Button>
@@ -481,7 +534,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
             borderRadius: '8px',
             background: SECTION_GRADIENTS.recipe,
             boxShadow: 'none',
-            '&:hover': { boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)' },
+            '&:hover': { boxShadow: `0 4px 12px ${COLORS.orange.muted}` },
           }}
         >
           {isSaving ? 'Saving...' : (initialRecipe ? 'Update' : 'Save Recipe')}

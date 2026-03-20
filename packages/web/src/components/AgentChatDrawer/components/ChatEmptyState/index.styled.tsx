@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
+import { gradientTextStyles } from '../../../../utils/styles/gradientText'
 
 export const EmptyStateContainer = styled(Box)({
   flex: 1,
@@ -23,10 +24,7 @@ export const EmptyIconBox = styled(Box)({
   marginBottom: '0.25rem',
   '& .MuiSvgIcon-root': {
     fontSize: '1.75rem',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    backgroundClip: 'text',
+    ...gradientTextStyles(),
   },
 })
 
