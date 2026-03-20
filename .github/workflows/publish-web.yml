@@ -53,7 +53,11 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE }}
           aws-region: eu-west-2
       - name: Copy files to the production website with the AWS CLI
-        run: aws s3 sync dist s3://${{ secrets.AWS_S3_WEB_BUCKET }} --delete --exclude "user-uploads/*" --acl public-read
+        run: |
+          # Sync assets/ without --delete to preserve icons already on S3
+          aws s3 sync dist/assets s3://${{ secrets.AWS_S3_WEB_BUCKET }}/assets --acl public-read
+          # Sync everything else with --delete, excluding assets/ and user-uploads/
+          aws s3 sync dist s3://${{ secrets.AWS_S3_WEB_BUCKET }} --delete --exclude "assets/*" --exclude "user-uploads/*" --acl public-read
       - name: Invalidate CloudFront cache for immediate PWA updates
         run: |
           echo "🔍 Debugging CloudFront distribution lookup..."
