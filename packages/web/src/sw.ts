@@ -174,6 +174,11 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
+  // Only cache GET requests — Cache API doesn't support POST/PUT/DELETE
+  if (request.method !== 'GET') {
+    return
+  }
+
   // Handle app files - cache first with network fallback
   event.respondWith(
     caches.match(request)
