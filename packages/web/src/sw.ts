@@ -186,7 +186,7 @@ self.addEventListener('fetch', (event) => {
         if (cachedResponse) {
           // Return cached version and update in background
           fetch(request).then(response => {
-            if (response.status === 200) {
+            if (response.status === 200 && !isMismatchedContentType(request, response)) {
               caches.open(CACHE_NAME).then(cache => {
                 cache.put(request, response.clone())
               })
@@ -199,7 +199,9 @@ self.addEventListener('fetch', (event) => {
 
         // Not in cache, fetch from network
         return fetch(request).then(response => {
-          if (response.status === 200) {
+          // Don't cache HTML fallback responses for JS/CSS assets
+          // (CloudFront returns index.html with 200 for missing files)
+          if (response.status === 200 && !isMismatchedContentType(request, response)) {
             const responseClone = response.clone()
             caches.open(CACHE_NAME).then(cache => {
               cache.put(request, responseClone)
@@ -210,6 +212,21 @@ self.addEventListener('fetch', (event) => {
       })
   )
 })
+
+// Helper function to detect CloudFront SPA fallback serving HTML for non-HTML assets
+function isMismatchedContentType(request: Request, response: Response): boolean {
+  const contentType = response.headers.get('content-type') || ''
+  const url = new URL(request.url)
+  const path = url.pathname
+
+  // If the server returned HTML for a JS/CSS/image request, it's a SPA fallback
+  if (contentType.includes('text/html')) {
+    const isAssetRequest = /\.(js|mjs|css|woff2?|ttf|eot|svg|png|jpe?g|gif|webp|ico|json|wasm)(\?|$)/.test(path)
+    return isAssetRequest
+  }
+
+  return false
+}
 
 // Helper function to check if URL is a data retrieval endpoint
 function isDataRetrievalEndpoint(pathname: string): boolean {
