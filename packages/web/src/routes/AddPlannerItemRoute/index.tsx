@@ -1,6 +1,5 @@
 import { useState, useCallback, useMemo } from 'react'
 import { Box } from '@mui/material'
-import { styled } from '@mui/material/styles'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import CakeIcon from '@mui/icons-material/Cake'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
@@ -27,62 +26,36 @@ import BirthdayForm from './BirthdayForm'
 import MealForm from './MealForm'
 import StepsEditor from '../../components/StepsEditor'
 import { IStep } from '../../api/toDoList/retrieve/types'
+import SegmentedControl, { SegmentedControlTab } from '../../components/SegmentedControl'
 
 type ItemType = 'task' | 'birthday' | 'meal'
 
-
-const SegmentedControl = styled(Box)({
-  display: 'flex',
-  background: 'rgba(0, 0, 0, 0.06)',
-  borderRadius: '14px',
-  padding: '4px',
-  gap: '4px',
-  width: '100%',
-})
-
-interface ISegmentProps {
-  active: boolean
-  variant: 'task' | 'birthday' | 'meal'
-}
-
-const Segment = styled(Box, {
-  shouldForwardProp: p => p !== 'active' && p !== 'variant',
-})<ISegmentProps>(({ active, variant }) => ({
-  flex: 1,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '6px',
-  padding: '10px 16px',
-  borderRadius: '10px',
-  cursor: 'pointer',
-  fontWeight: 600,
-  fontSize: '0.9rem',
-  userSelect: 'none',
-  transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-  ...(active
-    ? {
-        background: variant === 'birthday'
-          ? 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)'
-          : variant === 'meal'
-          ? 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)'
-          : '#ffffff',
-        color: variant === 'birthday' ? '#db2777' : variant === 'meal' ? '#92400e' : '#667eea',
-        boxShadow: variant === 'birthday'
-          ? '0 2px 8px rgba(219, 39, 119, 0.2), 0 1px 3px rgba(0,0,0,0.08)'
-          : variant === 'meal'
-          ? '0 2px 8px rgba(217, 119, 6, 0.2), 0 1px 3px rgba(0,0,0,0.08)'
-          : '0 2px 8px rgba(102, 126, 234, 0.15), 0 1px 3px rgba(0,0,0,0.08)',
-      }
-    : {
-        background: 'transparent',
-        color: 'rgba(0, 0, 0, 0.45)',
-        '&:hover': {
-          background: 'rgba(255,255,255,0.5)',
-          color: 'rgba(0, 0, 0, 0.7)',
-        },
-      }),
-}))
+const PLANNER_TABS: Array<SegmentedControlTab<ItemType>> = [
+  {
+    id: 'task',
+    label: 'Task',
+    icon: <ChecklistIcon sx={{ fontSize: '1.1rem' }} />,
+    activeColor: '#667eea',
+    activeBg: '#ffffff',
+    activeShadow: 'rgba(102, 126, 234, 0.15)',
+  },
+  {
+    id: 'meal',
+    label: 'Meal',
+    icon: <RestaurantIcon sx={{ fontSize: '1.1rem' }} />,
+    activeColor: '#92400e',
+    activeBg: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+    activeShadow: 'rgba(217, 119, 6, 0.2)',
+  },
+  {
+    id: 'birthday',
+    label: 'Birthday',
+    icon: <CakeIcon sx={{ fontSize: '1.1rem' }} />,
+    activeColor: '#db2777',
+    activeBg: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)',
+    activeShadow: 'rgba(219, 39, 119, 0.2)',
+  },
+]
 
 export const AddPlannerItemContent = () => {
   const { state: { selectedCalendarDate }, dispatch } = useAppState()
@@ -174,32 +147,11 @@ export const AddPlannerItemContent = () => {
         stats={stats}
       />
       <Box sx={{ px: 2, pt: 1, width: '100%', boxSizing: 'border-box' }}>
-        <SegmentedControl>
-          <Segment
-            active={itemType === 'task'}
-            variant="task"
-            onClick={() => setItemType('task')}
-          >
-            <ChecklistIcon sx={{ fontSize: '1.1rem' }} />
-            Task
-          </Segment>
-          <Segment
-            active={itemType === 'meal'}
-            variant="meal"
-            onClick={() => setItemType('meal')}
-          >
-            <RestaurantIcon sx={{ fontSize: '1.1rem' }} />
-            Meal
-          </Segment>
-          <Segment
-            active={itemType === 'birthday'}
-            variant="birthday"
-            onClick={() => setItemType('birthday')}
-          >
-            <CakeIcon sx={{ fontSize: '1.1rem' }} />
-            Birthday
-          </Segment>
-        </SegmentedControl>
+        <SegmentedControl
+          tabs={PLANNER_TABS}
+          activeTab={itemType}
+          onChange={setItemType}
+        />
       </Box>
       {itemType === 'task' ? (
         <ItemForm
