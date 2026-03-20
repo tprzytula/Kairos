@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react-swc'
 
 export default defineConfig({
   root: 'src',
@@ -32,6 +32,25 @@ export default defineConfig({
       optimizer: {
         web: {
           enabled: true,
+          include: [
+            'react',
+            'react-dom',
+            'react-dom/client',
+            '@emotion/react',
+            '@emotion/styled',
+            '@mui/material',
+            '@mui/icons-material',
+            '@mui/x-date-pickers',
+            '@testing-library/react',
+            '@testing-library/dom',
+            '@testing-library/user-event',
+            '@testing-library/jest-dom',
+            '@tanstack/react-query',
+            'react-router',
+            'react-oidc-context',
+            'oidc-client-ts',
+            'date-fns',
+          ],
         },
       },
     },
