@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Button } from '@mui/material'
+import DrawerActionButton from '../DrawerActionButton'
 import CakeIcon from '@mui/icons-material/Cake'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -98,38 +98,19 @@ const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPrev
       </ContentContainer>
 
       <Footer>
-        <Button
-          variant="contained"
-          fullWidth
-          startIcon={<EditIcon />}
+        <DrawerActionButton
+          gradient="linear-gradient(135deg, #ec4899 0%, #db2777 100%)"
+          icon={<EditIcon />}
+          label="Edit"
           onClick={handleEdit}
-          sx={{
-            background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
-            borderRadius: '10px',
-            textTransform: 'none',
-            fontWeight: 600,
-            py: 1.25,
-            boxShadow: 'none',
-            '&:hover': { boxShadow: 'none', opacity: 0.9 },
-          }}
-        >
-          Edit
-        </Button>
-        <Button
+        />
+        <DrawerActionButton
           variant="outlined"
-          fullWidth
-          startIcon={<DeleteIcon />}
+          icon={<DeleteIcon />}
+          label="Delete"
           onClick={handleDelete}
           color="error"
-          sx={{
-            borderRadius: '10px',
-            textTransform: 'none',
-            fontWeight: 600,
-            py: 1.25,
-          }}
-        >
-          Delete
-        </Button>
+        />
       </Footer>
     </DraggableBottomDrawer>
   )

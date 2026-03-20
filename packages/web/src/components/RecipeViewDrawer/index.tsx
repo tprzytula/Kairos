@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { Box, Button, Checkbox, Chip, IconButton, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
+import { Box, Checkbox, Chip, IconButton, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit'
@@ -16,6 +16,7 @@ import { useShopContext } from '../../providers/ShopProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
+import DrawerActionButton from '../DrawerActionButton'
 import {
   DrawerHeader,
   DrawerHeaderLeft,
@@ -309,42 +310,19 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
             </FormControl>
           </ShopSelector>
         )}
-        <Button
-          variant="contained"
-          fullWidth
-          startIcon={<AddShoppingCartIcon />}
+        <DrawerActionButton
+          gradient="linear-gradient(135deg, #f97316 0%, #f43f5e 100%)"
+          icon={<AddShoppingCartIcon />}
+          label={isAdding ? 'Adding...' : 'Add to Shopping List'}
           onClick={handleAddToList}
           disabled={!canAdd}
-          sx={{
-            background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
-            borderRadius: '10px',
-            textTransform: 'none',
-            fontWeight: 600,
-            py: 1.25,
-            boxShadow: 'none',
-            '&:hover': { boxShadow: 'none', opacity: 0.9 },
-            '&:disabled': { background: 'rgba(0,0,0,0.12)' },
-          }}
-        >
-          {isAdding ? 'Adding...' : 'Add to Shopping List'}
-        </Button>
-        <Button
-          variant="contained"
-          fullWidth
-          startIcon={<EditIcon />}
+        />
+        <DrawerActionButton
+          gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+          icon={<EditIcon />}
+          label="Edit Recipe"
           onClick={handleEdit}
-          sx={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            borderRadius: '10px',
-            textTransform: 'none',
-            fontWeight: 600,
-            py: 1.25,
-            boxShadow: 'none',
-            '&:hover': { boxShadow: 'none', opacity: 0.9 },
-          }}
-        >
-          Edit Recipe
-        </Button>
+        />
       </Footer>
     </DraggableBottomDrawer>
   )
