@@ -15,6 +15,7 @@ import { useProjectContext } from '../../providers/ProjectProvider'
 import { useShopContext } from '../../providers/ShopProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
+import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import {
   DrawerHeader,
@@ -91,10 +92,12 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
     })
   }, [])
 
-  const handleEdit = useCallback(() => {
-    if (!recipe) return
-    onEdit(recipe)
-  }, [recipe, onEdit])
+  const { handleEdit } = usePreviewDrawerActions({
+    item: recipe,
+    onEdit,
+    onClose,
+    closeOnEdit: false,
+  })
 
   const handleAddToList = useCallback(async () => {
     if (!recipe || !currentProject || !selectedShopId) return
