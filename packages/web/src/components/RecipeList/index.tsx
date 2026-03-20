@@ -5,8 +5,8 @@ import SearchIconMui from '@mui/icons-material/Search'
 import TuneIcon from '@mui/icons-material/Tune'
 import { COLORS } from '../../constants/colors'
 import { IRecipe } from '../../types/recipe'
-import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
-import { RecipeDishType } from '../../enums/recipeDishType'
+import { MealType } from '../../enums/mealType'
+import { RecipeDishType, RecipeDishTypeLabelMap, RecipeDishTypeOrder } from '../../enums/recipeDishType'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import RecipeItem from '../RecipeItem'
 import FilterChip from '../FilterChip'
@@ -31,7 +31,7 @@ interface RecipeListProps {
 
 const RecipeSkeletonCard = () => (
   <Box sx={{ borderRadius: '14px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
-    <Skeleton variant="rectangular" sx={{ width: '100%', aspectRatio: '4 / 5' }} />
+    <Skeleton variant="rectangular" sx={{ width: '100%', aspectRatio: '4 / 3' }} />
     <Box sx={{ padding: '0.625rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
       <Skeleton variant="text" width="80%" height={20} />
       <Box sx={{ display: 'flex', gap: '0.3rem' }}>
@@ -103,7 +103,7 @@ const RecipeList = ({ onViewRecipe }: RecipeListProps) => {
   }, [recipes, search, selectedMealTypes, selectedDishTypes])
 
   const hasActiveFilters = selectedMealTypes.length > 0 || selectedDishTypes.length > 0
-  const dishTypeFilterCount = selectedDishTypes.length
+  const mealTypeFilterCount = selectedMealTypes.length
 
   return (
     <RecipeListContainer>
@@ -121,17 +121,17 @@ const RecipeList = ({ onViewRecipe }: RecipeListProps) => {
         </SearchContainer>
 
         <FilterChipsContainer>
-          {MEAL_TYPE_ORDER.filter((t) => t !== MealType.Other).map((type) => (
+          {RecipeDishTypeOrder.map((type) => (
             <FilterChip
               key={type}
-              label={type}
-              isSelected={selectedMealTypes.includes(type)}
-              onClick={() => toggleMealType(type)}
+              label={RecipeDishTypeLabelMap[type]}
+              isSelected={selectedDishTypes.includes(type)}
+              onClick={() => toggleDishType(type)}
             />
           ))}
           <FilterButton onClick={() => setIsFilterSheetOpen(true)} aria-label="More filters">
             <TuneIcon />
-            {dishTypeFilterCount > 0 && <FilterBadge>{dishTypeFilterCount}</FilterBadge>}
+            {mealTypeFilterCount > 0 && <FilterBadge>{mealTypeFilterCount}</FilterBadge>}
           </FilterButton>
         </FilterChipsContainer>
       </StickyHeader>
@@ -177,9 +177,7 @@ const RecipeList = ({ onViewRecipe }: RecipeListProps) => {
         open={isFilterSheetOpen}
         onClose={() => setIsFilterSheetOpen(false)}
         selectedMealTypes={selectedMealTypes}
-        selectedDishTypes={selectedDishTypes}
         onToggleMealType={toggleMealType}
-        onToggleDishType={toggleDishType}
         onClearAll={clearAllFilters}
       />
     </RecipeListContainer>

@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import RecipeItem from './index'
 import { IRecipe } from '../../types/recipe'
 import { GroceryItemUnit } from '../../enums/groceryItem'
+import { RecipeDishType } from '../../enums/recipeDishType'
 
 const mockOnView = vi.fn()
 
@@ -28,14 +29,20 @@ describe('Given the RecipeItem component', () => {
     expect(screen.getByText('Pasta')).toBeVisible()
   })
 
-  it('should render ingredient count chip', () => {
+  it('should render ingredient count chip when no dish type', () => {
     render(<RecipeItem recipe={exampleRecipe} onView={mockOnView} />)
     expect(screen.getByText(/2 ingredients/i)).toBeVisible()
   })
 
-  it('should render instructions count chip', () => {
-    render(<RecipeItem recipe={exampleRecipe} onView={mockOnView} />)
-    expect(screen.getByText(/2 steps/i)).toBeVisible()
+  it('should render dish type chip when available', () => {
+    const withDishType: IRecipe = {
+      ...exampleRecipe,
+      name: 'Carbonara',
+      dishTypes: [RecipeDishType.PASTA, RecipeDishType.STIR_FRY],
+    }
+    render(<RecipeItem recipe={withDishType} onView={mockOnView} />)
+    expect(screen.getByText('Pasta')).toBeVisible()
+    expect(screen.queryByText(/ingredient/i)).not.toBeInTheDocument()
   })
 
   it('should call onView when card is tapped', () => {
@@ -59,14 +66,6 @@ describe('Given the RecipeItem component', () => {
       }
       render(<RecipeItem recipe={singleIngredient} onView={mockOnView} />)
       expect(screen.getByText(/1 ingredient$/i)).toBeVisible()
-    })
-  })
-
-  describe('When recipe has no instructions', () => {
-    it('should not render steps chip', () => {
-      const noSteps: IRecipe = { ...exampleRecipe, instructions: [] }
-      render(<RecipeItem recipe={noSteps} onView={mockOnView} />)
-      expect(screen.queryByText(/step/i)).not.toBeInTheDocument()
     })
   })
 })

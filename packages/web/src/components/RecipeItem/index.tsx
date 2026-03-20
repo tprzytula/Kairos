@@ -1,6 +1,7 @@
 import { Typography } from '@mui/material'
 import { COLORS } from '../../constants/colors'
 import { IRecipe } from '../../types/recipe'
+import { RecipeDishTypeLabelMap } from '../../enums/recipeDishType'
 import {
   RecipeCard,
   RecipeCardTapArea,
@@ -10,6 +11,7 @@ import {
   RecipeName,
   RecipeMetaRow,
   MetaChip,
+  DishTypeMetaChip,
 } from './index.styled'
 
 interface RecipeItemProps {
@@ -43,21 +45,18 @@ const RecipeItem = ({ recipe, onView }: RecipeItemProps) => {
         <RecipeCardBody>
           <RecipeName>{recipe.name}</RecipeName>
           <RecipeMetaRow>
-            <MetaChip
-              label={`${recipe.ingredients.length} ingredient${recipe.ingredients.length !== 1 ? 's' : ''}`}
-              size="small"
-              sx={{
-                background: COLORS.orange.bg,
-                color: COLORS.orange.primary,
-              }}
-            />
-            {recipe.instructions && recipe.instructions.length > 0 && (
+            {recipe.dishTypes && recipe.dishTypes.length > 0 ? (
+              <DishTypeMetaChip
+                label={RecipeDishTypeLabelMap[recipe.dishTypes[0]]}
+                size="small"
+              />
+            ) : (
               <MetaChip
-                label={`${recipe.instructions.length} step${recipe.instructions.length !== 1 ? 's' : ''}`}
+                label={`${recipe.ingredients.length} ingredient${recipe.ingredients.length !== 1 ? 's' : ''}`}
                 size="small"
                 sx={{
-                  background: COLORS.rose.bg,
-                  color: COLORS.rose.primary,
+                  background: COLORS.orange.bg,
+                  color: COLORS.orange.primary,
                 }}
               />
             )}

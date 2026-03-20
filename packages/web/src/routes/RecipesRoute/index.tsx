@@ -69,8 +69,13 @@ const RecipesContent = () => {
     setIsFormOpen(false)
   }, [])
 
+  const withPhotos = recipes.filter((r) => r.imagePath).length
+  const categorised = recipes.filter((r) => r.dishTypes && r.dishTypes.length > 0).length
+
   const stats = [
     { value: recipes.length, label: 'Total' },
+    { value: withPhotos, label: 'With Photos' },
+    { value: categorised, label: 'Categorised' },
   ]
 
   return (

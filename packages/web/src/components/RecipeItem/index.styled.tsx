@@ -1,6 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { Box, Paper, Typography, Chip } from '@mui/material'
 import { PLACEHOLDER_GRADIENTS } from '../../constants/placeholderGradients'
+import { COLORS } from '../../constants/colors'
 
 export const RecipeCard = styled(Paper)({
   borderRadius: '14px',
@@ -22,14 +23,14 @@ export const RecipeCardTapArea = styled(Box)({
 
 export const RecipeThumbnail = styled('img')({
   width: '100%',
-  aspectRatio: '4 / 5',
+  aspectRatio: '4 / 3',
   objectFit: 'cover',
   display: 'block',
 })
 
 export const RecipePlaceholder = styled(Box)<{ seed?: number }>(({ seed = 0 }) => ({
   width: '100%',
-  aspectRatio: '4 / 5',
+  aspectRatio: '4 / 3',
   background: PLACEHOLDER_GRADIENTS[seed % PLACEHOLDER_GRADIENTS.length],
   display: 'flex',
   alignItems: 'center',
@@ -67,4 +68,9 @@ export const MetaChip = styled(Chip)({
   '& .MuiChip-label': {
     padding: '0 6px',
   },
+})
+
+export const DishTypeMetaChip = styled(MetaChip)({
+  background: COLORS.green.bg,
+  color: COLORS.green.primary,
 })

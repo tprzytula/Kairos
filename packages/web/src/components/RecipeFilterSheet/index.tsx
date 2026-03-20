@@ -2,7 +2,6 @@ import { Box, IconButton } from '@mui/material'
 import TuneIcon from '@mui/icons-material/Tune'
 import CloseIcon from '@mui/icons-material/Close'
 import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
-import { RecipeDishType, RecipeDishTypeLabelMap, RecipeDishTypeOrder } from '../../enums/recipeDishType'
 import FilterChip from '../FilterChip'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import {
@@ -22,9 +21,7 @@ interface RecipeFilterSheetProps {
   open: boolean
   onClose: () => void
   selectedMealTypes: MealType[]
-  selectedDishTypes: RecipeDishType[]
   onToggleMealType: (type: MealType) => void
-  onToggleDishType: (type: RecipeDishType) => void
   onClearAll: () => void
 }
 
@@ -32,12 +29,10 @@ const RecipeFilterSheet = ({
   open,
   onClose,
   selectedMealTypes,
-  selectedDishTypes,
   onToggleMealType,
-  onToggleDishType,
   onClearAll,
 }: RecipeFilterSheetProps) => {
-  const totalFilters = selectedMealTypes.length + selectedDishTypes.length
+  const totalFilters = selectedMealTypes.length
 
   return (
     <DraggableBottomDrawer
@@ -67,20 +62,6 @@ const RecipeFilterSheet = ({
                 label={type}
                 isSelected={selectedMealTypes.includes(type)}
                 onClick={() => onToggleMealType(type)}
-              />
-            ))}
-          </FilterChipGrid>
-        </Box>
-
-        <Box>
-          <FilterSectionTitle>Dish Type</FilterSectionTitle>
-          <FilterChipGrid>
-            {RecipeDishTypeOrder.map((type) => (
-              <FilterChip
-                key={type}
-                label={RecipeDishTypeLabelMap[type]}
-                isSelected={selectedDishTypes.includes(type)}
-                onClick={() => onToggleDishType(type)}
               />
             ))}
           </FilterChipGrid>
