@@ -1,13 +1,14 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { Box, Typography, Skeleton, Chip } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import SearchIconMui from '@mui/icons-material/Search'
+import TuneIcon from '@mui/icons-material/Tune'
 import { IRecipe } from '../../types/recipe'
-import { IItemDefault } from '../../hooks/useItemDefaults/types'
 import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
-import { RecipeDishType, RecipeDishTypeLabelMap, RecipeDishTypeOrder } from '../../enums/recipeDishType'
+import { RecipeDishType } from '../../enums/recipeDishType'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import RecipeItem from '../RecipeItem'
+import RecipeFilterSheet from '../RecipeFilterSheet'
 import {
   RecipeListContainer,
   SearchContainer,
@@ -16,34 +17,48 @@ import {
   EmptyStateContainer,
   NoMatchContainer,
   FilterChipsContainer,
+  RecipeGrid,
+  FilterButton,
+  FilterBadge,
+  StickyHeader,
 } from './index.styled'
 
 interface RecipeListProps {
-  onEditRecipe: (recipe: IRecipe) => void
-  onUseRecipe: () => void
-  shopId?: string
-  defaults?: IItemDefault[]
+  onViewRecipe: (recipe: IRecipe) => void
 }
 
 const RecipeSkeletonCard = () => (
-  <Box sx={{ borderRadius: '12px', border: '1px solid rgba(249,115,22,0.1)', overflow: 'hidden', display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.625rem' }}>
-    <Skeleton variant="rounded" width={90} height={90} sx={{ flexShrink: 0, borderRadius: '10px' }} />
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-      <Skeleton variant="text" width="70%" height={22} />
-      <Box sx={{ display: 'flex', gap: '0.4rem' }}>
-        <Skeleton variant="rounded" width={85} height={22} />
-        <Skeleton variant="rounded" width={55} height={22} />
+  <Box sx={{ borderRadius: '14px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
+    <Skeleton variant="rectangular" sx={{ width: '100%', aspectRatio: '4 / 5' }} />
+    <Box sx={{ padding: '0.625rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+      <Skeleton variant="text" width="80%" height={20} />
+      <Box sx={{ display: 'flex', gap: '0.3rem' }}>
+        <Skeleton variant="rounded" width={75} height={20} />
+        <Skeleton variant="rounded" width={50} height={20} />
       </Box>
-      <Skeleton variant="rounded" width={90} height={26} sx={{ mt: '0.1rem' }} />
     </Box>
   </Box>
 )
 
-const RecipeList = ({ onEditRecipe, onUseRecipe, shopId, defaults }: RecipeListProps) => {
+const RecipeList = ({ onViewRecipe }: RecipeListProps) => {
   const { recipes, isLoading } = useRecipeContext()
   const [search, setSearch] = useState('')
   const [selectedMealTypes, setSelectedMealTypes] = useState<MealType[]>([])
   const [selectedDishTypes, setSelectedDishTypes] = useState<RecipeDishType[]>([])
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false)
+  const [isStuck, setIsStuck] = useState(false)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsStuck(!entry.isIntersecting),
+      { threshold: 0 }
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [])
 
   const toggleMealType = useCallback((type: MealType) => {
     setSelectedMealTypes((prev) =>
@@ -55,6 +70,11 @@ const RecipeList = ({ onEditRecipe, onUseRecipe, shopId, defaults }: RecipeListP
     setSelectedDishTypes((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     )
+  }, [])
+
+  const clearAllFilters = useCallback(() => {
+    setSelectedMealTypes([])
+    setSelectedDishTypes([])
   }, [])
 
   const filtered = useMemo(() => {
@@ -81,63 +101,54 @@ const RecipeList = ({ onEditRecipe, onUseRecipe, shopId, defaults }: RecipeListP
   }, [recipes, search, selectedMealTypes, selectedDishTypes])
 
   const hasActiveFilters = selectedMealTypes.length > 0 || selectedDishTypes.length > 0
+  const dishTypeFilterCount = selectedDishTypes.length
 
   return (
     <RecipeListContainer>
-      <SearchContainer>
-        <SearchIcon>
-          <SearchIconMui />
-        </SearchIcon>
-        <SearchInput
-          placeholder="Search recipes..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </SearchContainer>
+      <div ref={sentinelRef} />
+      <StickyHeader className={isStuck ? 'stuck' : ''}>
+        <SearchContainer>
+          <SearchIcon>
+            <SearchIconMui />
+          </SearchIcon>
+          <SearchInput
+            placeholder="Search recipes..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </SearchContainer>
 
-      <FilterChipsContainer>
-        {MEAL_TYPE_ORDER.filter((t) => t !== MealType.Other).map((type) => (
-          <Chip
-            key={type}
-            label={type}
-            size="small"
-            variant={selectedMealTypes.includes(type) ? 'filled' : 'outlined'}
-            onClick={() => toggleMealType(type)}
-            sx={{
-              borderRadius: '8px',
-              flexShrink: 0,
-              ...(selectedMealTypes.includes(type)
-                ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
-                : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
-            }}
-          />
-        ))}
-      </FilterChipsContainer>
-      <FilterChipsContainer>
-        {RecipeDishTypeOrder.map((type) => (
-          <Chip
-            key={type}
-            label={RecipeDishTypeLabelMap[type]}
-            size="small"
-            variant={selectedDishTypes.includes(type) ? 'filled' : 'outlined'}
-            onClick={() => toggleDishType(type)}
-            sx={{
-              borderRadius: '8px',
-              flexShrink: 0,
-              ...(selectedDishTypes.includes(type)
-                ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
-                : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
-            }}
-          />
-        ))}
-      </FilterChipsContainer>
+        <FilterChipsContainer>
+          {MEAL_TYPE_ORDER.filter((t) => t !== MealType.Other).map((type) => (
+            <Chip
+              key={type}
+              label={type}
+              size="small"
+              variant={selectedMealTypes.includes(type) ? 'filled' : 'outlined'}
+              onClick={() => toggleMealType(type)}
+              sx={{
+                borderRadius: '8px',
+                flexShrink: 0,
+                ...(selectedMealTypes.includes(type)
+                  ? { background: 'rgba(249,115,22,0.15)', color: '#ea580c', borderColor: 'rgba(249,115,22,0.3)', fontWeight: 600 }
+                  : { borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }),
+              }}
+            />
+          ))}
+          <FilterButton onClick={() => setIsFilterSheetOpen(true)} aria-label="More filters">
+            <TuneIcon />
+            {dishTypeFilterCount > 0 && <FilterBadge>{dishTypeFilterCount}</FilterBadge>}
+          </FilterButton>
+        </FilterChipsContainer>
+      </StickyHeader>
 
       {isLoading ? (
-        <>
+        <RecipeGrid>
           <RecipeSkeletonCard />
           <RecipeSkeletonCard />
           <RecipeSkeletonCard />
-        </>
+          <RecipeSkeletonCard />
+        </RecipeGrid>
       ) : recipes.length === 0 ? (
         <EmptyStateContainer>
           <MenuBookIcon sx={{ fontSize: '3rem', color: 'rgba(102, 126, 234, 0.4)' }} />
@@ -157,17 +168,26 @@ const RecipeList = ({ onEditRecipe, onUseRecipe, shopId, defaults }: RecipeListP
           </Typography>
         </NoMatchContainer>
       ) : (
-        filtered.map((recipe) => (
-          <RecipeItem
-            key={recipe.id}
-            recipe={recipe}
-            onEdit={onEditRecipe}
-            onUseRecipe={onUseRecipe}
-            shopId={shopId}
-            defaults={defaults}
-          />
-        ))
+        <RecipeGrid>
+          {filtered.map((recipe) => (
+            <RecipeItem
+              key={recipe.id}
+              recipe={recipe}
+              onView={onViewRecipe}
+            />
+          ))}
+        </RecipeGrid>
       )}
+
+      <RecipeFilterSheet
+        open={isFilterSheetOpen}
+        onClose={() => setIsFilterSheetOpen(false)}
+        selectedMealTypes={selectedMealTypes}
+        selectedDishTypes={selectedDishTypes}
+        onToggleMealType={toggleMealType}
+        onToggleDishType={toggleDishType}
+        onClearAll={clearAllFilters}
+      />
     </RecipeListContainer>
   )
 }

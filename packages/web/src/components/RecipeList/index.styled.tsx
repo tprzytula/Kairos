@@ -7,6 +7,21 @@ export const RecipeListContainer = styled('div')({
   paddingTop: '0.875rem',
 })
 
+export const StickyHeader = styled('div')({
+  position: 'sticky',
+  top: 0,
+  zIndex: 10,
+  background: '#fff',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.75rem',
+  paddingBottom: '0.25rem',
+  transition: 'box-shadow 0.2s ease',
+  '&.stuck': {
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+  },
+})
+
 export const SearchContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -72,4 +87,49 @@ export const FilterChipsContainer = styled('div')({
   '&::-webkit-scrollbar': {
     display: 'none',
   },
+})
+
+export const RecipeGrid = styled('div')({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  gap: '0.75rem',
+})
+
+export const FilterButton = styled('button')({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  position: 'relative',
+  width: '32px',
+  height: '32px',
+  borderRadius: '8px',
+  border: '1px solid rgba(0,0,0,0.12)',
+  background: 'transparent',
+  cursor: 'pointer',
+  flexShrink: 0,
+  color: 'rgba(0,0,0,0.54)',
+  transition: 'all 0.15s ease',
+  '&:hover': {
+    borderColor: 'rgba(249,115,22,0.3)',
+    background: 'rgba(249,115,22,0.04)',
+  },
+  '& .MuiSvgIcon-root': {
+    fontSize: '1.1rem',
+  },
+})
+
+export const FilterBadge = styled('span')({
+  position: 'absolute',
+  top: '-4px',
+  right: '-4px',
+  width: '16px',
+  height: '16px',
+  borderRadius: '50%',
+  background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
+  color: 'white',
+  fontSize: '0.6rem',
+  fontWeight: 700,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 })

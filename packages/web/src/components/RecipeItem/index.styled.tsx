@@ -1,43 +1,28 @@
 import { styled } from '@mui/material/styles'
-import { Box, Paper } from '@mui/material'
+import { Box, Paper, Typography, Chip } from '@mui/material'
 
 export const RecipeCard = styled(Paper)({
-  borderRadius: '12px',
-  border: '1px solid rgba(249, 115, 22, 0.1)',
-  background: 'rgba(249, 115, 22, 0.03)',
-  boxShadow: 'none',
+  borderRadius: '14px',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+  overflow: 'hidden',
   display: 'flex',
   flexDirection: 'column',
-  overflow: 'hidden',
-  transition: 'box-shadow 0.2s ease, transform 0.2s ease',
-  '&:hover': {
-    boxShadow: '0 4px 16px rgba(249, 115, 22, 0.15)',
-    transform: 'translateY(-1px)',
-  },
 })
 
 export const RecipeCardTapArea = styled(Box)({
   cursor: 'pointer',
   display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: '0.75rem',
-  padding: '0.625rem',
-  transition: 'background 0.15s ease',
-  '&:hover': {
-    background: 'rgba(249, 115, 22, 0.04)',
-  },
+  flexDirection: 'column',
+  transition: 'transform 0.15s ease',
   '&:active': {
-    background: 'rgba(249, 115, 22, 0.09)',
+    transform: 'scale(0.97)',
   },
 })
 
 export const RecipeThumbnail = styled('img')({
-  width: '90px',
-  height: '90px',
+  width: '100%',
+  aspectRatio: '4 / 5',
   objectFit: 'cover',
-  borderRadius: '10px',
-  flexShrink: 0,
   display: 'block',
 })
 
@@ -51,10 +36,8 @@ const PLACEHOLDER_GRADIENTS = [
 ]
 
 export const RecipePlaceholder = styled(Box)<{ seed?: number }>(({ seed = 0 }) => ({
-  width: '90px',
-  height: '90px',
-  borderRadius: '10px',
-  flexShrink: 0,
+  width: '100%',
+  aspectRatio: '4 / 5',
   background: PLACEHOLDER_GRADIENTS[seed % PLACEHOLDER_GRADIENTS.length],
   display: 'flex',
   alignItems: 'center',
@@ -62,53 +45,34 @@ export const RecipePlaceholder = styled(Box)<{ seed?: number }>(({ seed = 0 }) =
 }))
 
 export const RecipeCardBody = styled(Box)({
-  flex: 1,
-  minWidth: 0,
+  padding: '0.625rem',
   display: 'flex',
   flexDirection: 'column',
+  gap: '0.375rem',
+})
+
+export const RecipeName = styled(Typography)({
+  fontWeight: 600,
+  fontSize: '0.875rem',
+  lineHeight: 1.3,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+})
+
+export const RecipeMetaRow = styled(Box)({
+  display: 'flex',
   gap: '0.3rem',
+  flexWrap: 'wrap',
 })
 
-export const RecipeCardHeader = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-})
-
-export const RecipeInteractiveArea = styled(Box)({
-  padding: '0 0.625rem 0.625rem',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.5rem',
-})
-
-export const IngredientList = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.25rem',
-  paddingTop: '0.25rem',
-})
-
-export const IngredientItemRow = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.5rem',
-})
-
-export const IngredientIcon = styled('img')({
-  width: '24px',
-  height: '24px',
-  objectFit: 'contain',
-  flexShrink: 0,
-})
-
-export const SelectableIngredientRow = styled(IngredientItemRow)<{ isDeselected?: boolean }>(({ isDeselected }) => ({
-  cursor: 'pointer',
-  opacity: isDeselected ? 0.4 : 1,
-  transition: 'opacity 0.15s ease',
-  borderRadius: '6px',
-  padding: '2px 4px',
-  '&:hover': {
-    background: 'rgba(249, 115, 22, 0.08)',
+export const MetaChip = styled(Chip)({
+  fontWeight: 500,
+  fontSize: '0.65rem',
+  height: '20px',
+  '& .MuiChip-label': {
+    padding: '0 6px',
   },
-}))
+})

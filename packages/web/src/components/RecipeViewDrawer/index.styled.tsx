@@ -152,3 +152,10 @@ export const Footer = styled(Box)({
   flexDirection: 'column',
   gap: '0.5rem',
 })
+
+export const ShopSelector = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+  padding: '0.5rem 0',
+})

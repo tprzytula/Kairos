@@ -59,10 +59,6 @@ const RecipesContent = () => {
     await removeRecipe(recipe.id)
   }, [removeRecipe])
 
-  const handleUseFromView = useCallback((recipe: IRecipe) => {
-    setViewingRecipe(null)
-  }, [])
-
   const handleFormDone = useCallback(() => {
     setEditingRecipe(null)
     setIsFormOpen(false)
@@ -89,9 +85,7 @@ const RecipesContent = () => {
       <Container>
         <ScrollableContainer>
           <RecipeList
-            onEditRecipe={handleViewRecipe}
-            onUseRecipe={handleDrawerClose}
-            defaults={defaults}
+            onViewRecipe={handleViewRecipe}
           />
         </ScrollableContainer>
       </Container>
@@ -99,7 +93,6 @@ const RecipesContent = () => {
         recipe={viewingRecipe}
         onClose={handleCloseView}
         onEdit={handleViewToEdit}
-        onUseRecipe={handleUseFromView}
         defaults={defaults}
       />
       <DraggableBottomDrawer

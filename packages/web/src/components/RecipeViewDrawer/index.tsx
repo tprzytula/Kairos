@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { Box, Button, Checkbox, Chip, IconButton, Typography } from '@mui/material'
+import { Box, Button, Checkbox, Chip, IconButton, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit'
@@ -10,6 +10,11 @@ import { IItemDefault } from '../../hooks/useItemDefaults/types'
 import { GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import { RecipeDishTypeLabelMap, RecipeDishType } from '../../enums/recipeDishType'
 import { findItemIcon } from '../ItemForm/components/ItemImage/utils'
+import { addGroceryItems } from '../../api/groceryList'
+import { useProjectContext } from '../../providers/ProjectProvider'
+import { useShopContext } from '../../providers/ShopProvider'
+import { useAppState } from '../../providers/AppStateProvider'
+import { showAlert } from '../../utils/alert'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import {
   DrawerHeader,
@@ -34,6 +39,7 @@ import {
   StepNumber,
   StepText,
   Footer,
+  ShopSelector,
 } from './index.styled'
 
 const GENERIC_ITEM_NAME = 'generic'
@@ -42,18 +48,30 @@ interface RecipeViewDrawerProps {
   recipe: IRecipe | null
   onClose: () => void
   onEdit: (recipe: IRecipe) => void
-  onUseRecipe: (recipe: IRecipe) => void
   defaults?: IItemDefault[]
 }
 
-const RecipeViewDrawer = ({ recipe, onClose, onEdit, onUseRecipe, defaults }: RecipeViewDrawerProps) => {
+const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawerProps) => {
+  const { currentProject } = useProjectContext()
+  const { shops } = useShopContext()
+  const { dispatch } = useAppState()
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set())
   const [checkedSteps, setCheckedSteps] = useState<Set<number>>(new Set())
+  const [isAdding, setIsAdding] = useState(false)
+  const [selectedShopId, setSelectedShopId] = useState<string>('')
 
   useEffect(() => {
     setCheckedIngredients(new Set())
     setCheckedSteps(new Set())
+    setIsAdding(false)
+    setSelectedShopId('')
   }, [recipe?.id])
+
+  useEffect(() => {
+    if (shops.length === 1) {
+      setSelectedShopId(shops[0].id)
+    }
+  }, [shops])
 
   const toggleIngredient = useCallback((index: number) => {
     setCheckedIngredients((prev) => {
@@ -78,13 +96,41 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, onUseRecipe, defaults }: Re
     onEdit(recipe)
   }, [recipe, onEdit])
 
-  const handleUseRecipe = useCallback(() => {
-    if (!recipe) return
-    onUseRecipe(recipe)
-  }, [recipe, onUseRecipe])
+  const handleAddToList = useCallback(async () => {
+    if (!recipe || !currentProject || !selectedShopId) return
+
+    const ingredientsToAdd = recipe.ingredients.filter((_, i) => !checkedIngredients.has(i))
+
+    if (ingredientsToAdd.length === 0) {
+      showAlert({ description: 'No ingredients selected', severity: 'warning' }, dispatch)
+      return
+    }
+
+    setIsAdding(true)
+    try {
+      await addGroceryItems(
+        ingredientsToAdd.map((ingredient) => ({
+          name: ingredient.name,
+          quantity: ingredient.quantity,
+          unit: ingredient.unit,
+          shopId: selectedShopId,
+          imagePath: findItemIcon(ingredient.name, defaults) || findItemIcon(GENERIC_ITEM_NAME, defaults) || '',
+        })),
+        currentProject.id
+      )
+      showAlert({ description: `${recipe.name} ingredients added to your list!`, severity: 'success' }, dispatch)
+      onClose()
+    } catch {
+      showAlert({ description: 'Failed to add ingredients', severity: 'error' }, dispatch)
+    } finally {
+      setIsAdding(false)
+    }
+  }, [recipe, currentProject, selectedShopId, checkedIngredients, dispatch, defaults, onClose])
 
   const placeholderSeed = recipe?.name.charCodeAt(0) ?? 0
   const instructions = recipe?.instructions ?? []
+  const needsShopSelector = shops.length > 1
+  const canAdd = selectedShopId && !isAdding
 
   return (
     <DraggableBottomDrawer
@@ -242,11 +288,33 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, onUseRecipe, defaults }: Re
       </ContentContainer>
 
       <Footer>
+        {needsShopSelector && (
+          <ShopSelector>
+            <FormControl size="small" fullWidth>
+              <InputLabel>Select shop</InputLabel>
+              <Select
+                value={selectedShopId}
+                label="Select shop"
+                onChange={(e) => setSelectedShopId(e.target.value as string)}
+              >
+                {shops.map((shop) => (
+                  <MenuItem key={shop.id} value={shop.id}>
+                    {shop.icon && (
+                      <Box component="img" src={shop.icon} alt="" sx={{ width: 20, height: 20, objectFit: 'contain', mr: 1 }} />
+                    )}
+                    {shop.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </ShopSelector>
+        )}
         <Button
           variant="contained"
           fullWidth
           startIcon={<AddShoppingCartIcon />}
-          onClick={handleUseRecipe}
+          onClick={handleAddToList}
+          disabled={!canAdd}
           sx={{
             background: 'linear-gradient(135deg, #f97316 0%, #f43f5e 100%)',
             borderRadius: '10px',
@@ -255,9 +323,10 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, onUseRecipe, defaults }: Re
             py: 1.25,
             boxShadow: 'none',
             '&:hover': { boxShadow: 'none', opacity: 0.9 },
+            '&:disabled': { background: 'rgba(0,0,0,0.12)' },
           }}
         >
-          Add to Shopping List
+          {isAdding ? 'Adding...' : 'Add to Shopping List'}
         </Button>
         <Button
           variant="contained"
