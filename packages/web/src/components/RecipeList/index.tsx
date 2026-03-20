@@ -112,7 +112,8 @@ const RecipeList = ({ onEditRecipe, onUseRecipe, shopId, defaults }: RecipeListP
             }}
           />
         ))}
-        <Box sx={{ width: '1px', background: 'rgba(0,0,0,0.08)', flexShrink: 0, my: '0.25rem' }} />
+      </FilterChipsContainer>
+      <FilterChipsContainer>
         {RecipeDishTypeOrder.map((type) => (
           <Chip
             key={type}
