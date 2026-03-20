@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Box, Checkbox, Chip, FormControlLabel, Typography } from '@mui/material'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import dayjs from 'dayjs'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
+import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import DrawerActionButton from '../DrawerActionButton'
 import {
@@ -33,23 +34,20 @@ interface ToDoItemPreviewDrawerProps {
 }
 
 const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle, onDelete }: ToDoItemPreviewDrawerProps) => {
-  const handleEdit = useCallback(() => {
-    if (!item) return
-    onEdit(item.id)
-    onClose()
-  }, [item, onEdit, onClose])
+  const onEditItem = useMemo(() => (todoItem: ITodoItem) => onEdit(todoItem.id), [onEdit])
+
+  const { handleEdit, handleDelete } = usePreviewDrawerActions({
+    item,
+    onEdit: onEditItem,
+    onDelete,
+    onClose,
+  })
 
   const handleMarkDone = useCallback(() => {
     if (!item) return
     onMarkDone?.(item.id)
     onClose()
   }, [item, onMarkDone, onClose])
-
-  const handleDelete = useCallback(() => {
-    if (!item) return
-    onDelete?.(item.id)
-    onClose()
-  }, [item, onDelete, onClose])
 
   const steps = item?.steps ?? []
 

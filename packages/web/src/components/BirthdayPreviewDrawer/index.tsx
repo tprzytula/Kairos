@@ -1,4 +1,3 @@
-import { useCallback } from 'react'
 import DrawerActionButton from '../DrawerActionButton'
 import CakeIcon from '@mui/icons-material/Cake'
 import EditIcon from '@mui/icons-material/Edit'
@@ -6,6 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import dayjs from 'dayjs'
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types'
+import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import {
   BIRTHDAY_GRADIENT,
@@ -32,17 +32,12 @@ interface BirthdayPreviewDrawerProps {
 }
 
 const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPreviewDrawerProps) => {
-  const handleEdit = useCallback(() => {
-    if (!item) return
-    onEdit(item)
-    onClose()
-  }, [item, onEdit, onClose])
-
-  const handleDelete = useCallback(() => {
-    if (!item) return
-    onDelete(item.id)
-    onClose()
-  }, [item, onDelete, onClose])
+  const { handleEdit, handleDelete } = usePreviewDrawerActions({
+    item,
+    onEdit,
+    onDelete,
+    onClose,
+  })
 
   const birthdayDate = item
     ? `${item.day} ${MONTH_NAMES[item.month - 1]}`
