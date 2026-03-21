@@ -17,11 +17,13 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
 }) => {
   return (
     <>
-      <MiniCardsGrid>
-        <MiniCard sx={{ gridColumn: '1 / 3', gridRow: 1, minHeight: 'unset' }}>
-          <TodayMealCard todayMeals={todayMeals} isLoading={isLoading} onMealClick={onMealClick} />
-        </MiniCard>
-      </MiniCardsGrid>
+      {(isLoading || todayMeals.length > 0) && (
+        <MiniCardsGrid>
+          <MiniCard sx={{ gridColumn: '1 / 3', gridRow: 1, minHeight: 'unset' }}>
+            <TodayMealCard todayMeals={todayMeals} isLoading={isLoading} onMealClick={onMealClick} />
+          </MiniCard>
+        </MiniCardsGrid>
+      )}
 
       <SectionCard
         icon={ChecklistIcon}
