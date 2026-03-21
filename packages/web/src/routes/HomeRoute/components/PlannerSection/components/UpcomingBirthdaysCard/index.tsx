@@ -83,7 +83,7 @@ export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ b
     .map(b => ({ ...b, nextDate: getNextBirthdayDate(b) }))
     .sort((a, b) => a.nextDate.getTime() - b.nextDate.getTime())
 
-  const INITIAL_COUNT = 4
+  const INITIAL_COUNT = 2
   const topN = sorted.slice(0, INITIAL_COUNT)
   const rest = sorted.slice(INITIAL_COUNT)
 
