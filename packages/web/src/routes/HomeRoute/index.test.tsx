@@ -107,7 +107,6 @@ describe('Given the HomeRoute component', () => {
     await waitFor(() => {
       expect(screen.getByText('Grocery List')).toBeVisible()
       expect(screen.getByText('Tasks')).toBeVisible()
-      expect(screen.getByText('No meal planned')).toBeVisible()
       expect(screen.getByText('Birthdays')).toBeVisible()
       expect(screen.getByText('Noise Recordings')).toBeVisible()
     })
@@ -121,7 +120,7 @@ describe('Given the HomeRoute component', () => {
     await waitFor(() => {
       expect(screen.getByText('No grocery items found')).toBeVisible()
       expect(screen.getByText('No tasks planned — enjoy the day!')).toBeVisible()
-      expect(screen.getAllByText('No meal planned')[0]).toBeVisible()
+      expect(screen.queryByText('No meal planned')).not.toBeInTheDocument()
       expect(screen.getByText('No birthdays saved')).toBeVisible()
       expect(screen.getByText('No noise recordings found')).toBeVisible()
     })
@@ -781,7 +780,7 @@ describe('Given the HomeRoute component', () => {
 
       await waitFor(() => {
         expect(screen.queryByText('Old Meal')).not.toBeInTheDocument()
-        expect(screen.getAllByText('No meal planned')[0]).toBeInTheDocument()
+        expect(screen.queryByText('No meal planned')).not.toBeInTheDocument()
       })
     })
   })
