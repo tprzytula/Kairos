@@ -131,7 +131,7 @@ export const TodayMealCard: React.FC<ITodayMealCardProps> = ({ todayMeals, isLoa
   }
 
   if (meals.length === 0) {
-    return <EmptyState>No meal planned</EmptyState>
+    return null
   }
 
   return (

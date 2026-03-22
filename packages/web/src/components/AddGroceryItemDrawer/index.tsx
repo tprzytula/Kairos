@@ -8,6 +8,7 @@ import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import { DrawerHeader, DrawerHeaderLeft, DrawerIconBox, DrawerTitle, ContentContainer } from '../DrawerHeader/index.styled'
 import SegmentedControl, { SegmentedControlTab } from '../SegmentedControl'
 import RecipeList from '../RecipeList'
+import RecipeDetailDrawer from '../RecipeDetailDrawer'
 import ItemForm from '../ItemForm'
 import { FormFieldType } from '../ItemForm/enums'
 import { IFormField } from '../ItemForm/types'
@@ -19,6 +20,7 @@ import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { showAlert } from '../../utils/alert'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import { SECTION_GRADIENTS } from '../../constants/sectionColors'
+import { IRecipe } from '../../types/recipe'
 
 type TabId = 'item' | 'recipe'
 
@@ -90,6 +92,7 @@ interface AddGroceryItemDrawerProps {
 
 const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGroceryItemDrawerProps) => {
   const [activeTab, setActiveTab] = useState<TabId>('item')
+  const [selectedRecipe, setSelectedRecipe] = useState<IRecipe | null>(null)
   const { currentProject } = useProjectContext()
   const { dispatch } = useAppState()
   const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
@@ -99,7 +102,7 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
     onClose()
   }, [onClose])
 
-  const handleItemSubmit = useCallback(async (fields: Array<IFormField>) => {
+  const handleItemSubmit = useCallback(async (fields: Array<IFormField>, imagePath?: string) => {
     if (!currentProject) {
       showAlert({ description: 'No project selected', severity: 'error' }, dispatch)
       return
@@ -116,7 +119,7 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
       quantity: quantity.value,
       unit: unit.value as GroceryItemUnit,
       shopId,
-      imagePath: '',
+      imagePath: imagePath ?? '',
     }, currentProject.id)
 
     showAlert({ description: `${name.value} has been added to your grocery list`, severity: 'success' }, dispatch)
@@ -124,12 +127,8 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
     handleClose()
   }, [currentProject, shopId, dispatch, onItemAdded, handleClose])
 
-  const handleUseRecipe = useCallback(() => {
-    onItemAdded()
-    handleClose()
-  }, [onItemAdded, handleClose])
-
   return (
+    <>
     <DraggableBottomDrawer
       open={open}
       onClose={handleClose}
@@ -160,20 +159,21 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
             defaults={defaults}
             fields={ITEM_FIELDS}
             onSubmit={handleItemSubmit}
-            hideImage={true}
           />
         ) : (
           <RecipeContainer>
-            <RecipeList
-              onEditRecipe={() => {}}
-              onUseRecipe={handleUseRecipe}
-              shopId={shopId}
-              defaults={defaults}
-            />
+            <RecipeList onViewRecipe={setSelectedRecipe} />
           </RecipeContainer>
         )}
       </ContentContainer>
     </DraggableBottomDrawer>
+
+    <RecipeDetailDrawer
+      open={selectedRecipe !== null}
+      onClose={() => setSelectedRecipe(null)}
+      recipe={selectedRecipe}
+    />
+    </>
   )
 }
 
