@@ -128,6 +128,7 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
   }, [currentProject, shopId, dispatch, onItemAdded, handleClose])
 
   return (
+    <>
     <DraggableBottomDrawer
       open={open}
       onClose={handleClose}
@@ -172,6 +173,7 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
       onClose={() => setSelectedRecipe(null)}
       recipe={selectedRecipe}
     />
+    </>
   )
 }
 

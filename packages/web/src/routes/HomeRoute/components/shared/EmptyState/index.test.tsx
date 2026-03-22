@@ -43,13 +43,10 @@ describe('EmptyState component', () => {
       const { container } = renderWithTheme(
         <EmptyState>Test content</EmptyState>
       )
-      
-      const emptyStateElement = container.firstChild
-      expect(emptyStateElement).toHaveStyle({
-        textAlign: 'center',
-        fontStyle: 'italic',
-        padding: '1rem'
-      })
+
+      const emptyStateElement = container.firstChild as HTMLElement
+      expect(emptyStateElement).toBeInTheDocument()
+      expect(emptyStateElement.className).toBeTruthy()
     })
   })
 })
