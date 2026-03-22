@@ -99,7 +99,7 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
     onClose()
   }, [onClose])
 
-  const handleItemSubmit = useCallback(async (fields: Array<IFormField>) => {
+  const handleItemSubmit = useCallback(async (fields: Array<IFormField>, imagePath?: string) => {
     if (!currentProject) {
       showAlert({ description: 'No project selected', severity: 'error' }, dispatch)
       return
@@ -116,7 +116,7 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
       quantity: quantity.value,
       unit: unit.value as GroceryItemUnit,
       shopId,
-      imagePath: '',
+      imagePath: imagePath ?? '',
     }, currentProject.id)
 
     showAlert({ description: `${name.value} has been added to your grocery list`, severity: 'success' }, dispatch)
@@ -160,7 +160,6 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
             defaults={defaults}
             fields={ITEM_FIELDS}
             onSubmit={handleItemSubmit}
-            hideImage={true}
           />
         ) : (
           <RecipeContainer>
