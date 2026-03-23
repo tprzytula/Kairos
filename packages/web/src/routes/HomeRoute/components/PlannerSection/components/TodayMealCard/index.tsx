@@ -24,7 +24,7 @@ import {
   SkeletonTitle,
 } from './index.styled'
 
-const AUTO_SCROLL_MS = 4000
+const AUTO_SCROLL_MS = 6000
 
 interface ITodayMealCardProps {
   todayMeals: ITodayMealItem[]
