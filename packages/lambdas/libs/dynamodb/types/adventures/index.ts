@@ -6,6 +6,7 @@ export interface IAdventure {
   time?: string       // HH:MM
   location?: string
   notes?: string
+  imagePath?: string
   createdAt: string
   updatedAt: string
 }

@@ -82,7 +82,11 @@ const HomeDataContent = () => {
 
   const upcomingDates = new Set(getUpcomingDateStrings())
 
-  const upcomingAdventures = adventures.filter(a => upcomingDates.has(a.date))
+  const today = toDateString(new Date())
+  const upcomingAdventures = adventures
+    .filter(a => a.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date) || (a.time ?? '').localeCompare(b.time ?? ''))
+    .slice(0, 5)
 
   const todayMeals = mealPlans
     .filter(plan => upcomingDates.has(plan.date))

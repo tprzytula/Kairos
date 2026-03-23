@@ -36,7 +36,8 @@ variable "lambda_functions" {
         recipe_uploads          = optional(string, "none")
         shop_uploads            = optional(string, "none")
         grocery_default_uploads = optional(string, "none")
-      }), { recipe_uploads = "none", shop_uploads = "none", grocery_default_uploads = "none" })
+        adventure_uploads       = optional(string, "none")
+      }), { recipe_uploads = "none", shop_uploads = "none", grocery_default_uploads = "none", adventure_uploads = "none" })
     })
   }))
 }

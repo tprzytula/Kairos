@@ -4,4 +4,5 @@ export interface IRequestBody {
   time?: string
   location?: string
   notes?: string
+  imagePath?: string
 }

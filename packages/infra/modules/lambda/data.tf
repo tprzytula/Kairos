@@ -31,6 +31,11 @@ data "aws_s3_object" "get_shop_upload_url_zip" {
   key    = "get_shop_upload_url/get_shop_upload_url.zip"
 }
 
+data "aws_s3_object" "get_adventure_upload_url_zip" {
+  bucket = local.s3_bucket_name
+  key    = "get_adventure_upload_url/get_adventure_upload_url.zip"
+}
+
 data "aws_s3_object" "get_grocery_default_upload_url_zip" {
   bucket = local.s3_bucket_name
   key    = "get_grocery_default_upload_url/get_grocery_default_upload_url.zip"
