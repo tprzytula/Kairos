@@ -84,7 +84,7 @@ const HomeDataContent = () => {
 
   const today = toDateString(new Date())
   const upcomingAdventures = adventures
-    .filter(a => a.date >= today)
+    .filter(a => (a.endDate ?? a.date) >= today)
     .sort((a, b) => a.date.localeCompare(b.date) || (a.time ?? '').localeCompare(b.time ?? ''))
     .slice(0, 5)
 

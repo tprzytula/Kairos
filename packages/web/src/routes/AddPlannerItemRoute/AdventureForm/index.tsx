@@ -112,6 +112,7 @@ const AdventureForm = () => {
   const [date, setDate] = useState<Dayjs | null>(
     dayjs(selectedCalendarDate ?? dayjs().format('YYYY-MM-DD'))
   )
+  const [endDate, setEndDate] = useState<Dayjs | null>(null)
   const [time, setTime] = useState('')
   const [location, setLocation] = useState('')
   const [notes, setNotes] = useState('')
@@ -177,6 +178,7 @@ const AdventureForm = () => {
       await addAdventure({
         name: name.trim(),
         date: date!.format('YYYY-MM-DD'),
+        endDate: endDate?.isValid() ? endDate.format('YYYY-MM-DD') : undefined,
         time: time.trim() || undefined,
         location: location.trim() || undefined,
         notes: notes.trim() || undefined,
@@ -188,7 +190,7 @@ const AdventureForm = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [canSave, name, date, time, location, notes, imagePath, addAdventure, navigate])
+  }, [canSave, name, date, endDate, time, location, notes, imagePath, addAdventure, navigate])
 
   return (
     <FormContainer>
@@ -250,6 +252,53 @@ const AdventureForm = () => {
                     textField: {
                       fullWidth: true,
                       required: true,
+                      sx: {
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '12px',
+                          background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(240,253,255,0.95) 100%)',
+                          backdropFilter: 'blur(10px)',
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          '& fieldset': {
+                            borderColor: 'rgba(6, 182, 212, 0.2)',
+                            borderWidth: '1px',
+                            transition: 'all 0.3s ease',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: 'rgba(6, 182, 212, 0.4)',
+                            boxShadow: '0 2px 8px rgba(6, 182, 212, 0.1)',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#0891b2',
+                            borderWidth: '2px',
+                            boxShadow: '0 4px 16px rgba(6, 182, 212, 0.2)',
+                          },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#0891b2',
+                          fontWeight: '600',
+                        },
+                        '& .MuiOutlinedInput-input': {
+                          padding: '14px 16px',
+                          fontSize: '0.95rem',
+                          fontWeight: '500',
+                        },
+                      },
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+                <DatePicker
+                  label="End date (optional)"
+                  value={endDate}
+                  onChange={(newValue) => setEndDate(newValue)}
+                  disabled={isLoading}
+                  format="DD/MM/YYYY"
+                  minDate={date ?? undefined}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
                       sx: {
                         '& .MuiOutlinedInput-root': {
                           borderRadius: '12px',

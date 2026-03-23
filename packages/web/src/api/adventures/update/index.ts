@@ -1,9 +1,10 @@
 import { API_BASE_URL } from '../../index'
 import { createFetchOptions } from '../../../utils/api'
+import { IUpdateAdventureRequest } from '../types'
 
 export const updateAdventure = async (
   id: string,
-  fields: { name?: string; date?: string; time?: string | null; location?: string | null; notes?: string | null; imagePath?: string | null },
+  fields: IUpdateAdventureRequest,
   projectId?: string
 ): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/adventures/${id}`, createFetchOptions({

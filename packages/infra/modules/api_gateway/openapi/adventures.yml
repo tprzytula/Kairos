@@ -263,6 +263,9 @@ components:
         date:
           type: string
           example: "2025-08-21"
+        endDate:
+          type: string
+          example: "2025-08-25"
         time:
           type: string
           example: "09:15"
@@ -296,6 +299,9 @@ components:
         date:
           type: string
           example: "2025-08-21"
+        endDate:
+          type: string
+          example: "2025-08-25"
         time:
           type: string
           example: "09:15"
@@ -323,6 +329,10 @@ components:
         date:
           type: string
           example: "2025-08-22"
+        endDate:
+          type: string
+          nullable: true
+          example: "2025-08-26"
         time:
           type: string
           nullable: true

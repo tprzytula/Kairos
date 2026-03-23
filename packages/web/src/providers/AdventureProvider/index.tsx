@@ -2,7 +2,7 @@ import { createContext, useContext, useCallback, useMemo, useEffect } from 'reac
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { IAdventure } from '../../types/adventure'
 import { getAdventures, addAdventure as addAdventureApi, updateAdventure as updateAdventureApi, deleteAdventure } from '../../api/adventures'
-import { IState, IAdventureProviderProps } from './types'
+import { IState, IAdventureProviderProps, IAddAdventureRequest, IUpdateAdventureRequest } from './types'
 import { useProjectContext } from '../ProjectProvider'
 
 const initialState: IState = {
@@ -41,7 +41,7 @@ export const AdventureProvider = ({ children }: IAdventureProviderProps) => {
     await query.refetch()
   }, [query.refetch])
 
-  const addAdventure = useCallback(async (adventure: { name: string; date: string; time?: string; location?: string; notes?: string; imagePath?: string }) => {
+  const addAdventure = useCallback(async (adventure: IAddAdventureRequest) => {
     if (!currentProject) return
 
     const result = await addAdventureApi(adventure, currentProject.id)
@@ -53,7 +53,7 @@ export const AdventureProvider = ({ children }: IAdventureProviderProps) => {
     queryClient.setQueryData<IAdventure[]>(queryKey, (prev = []) => [...prev, newAdventure])
   }, [currentProject, queryClient])
 
-  const updateAdventure = useCallback(async (id: string, fields: { name?: string; date?: string; time?: string | null; location?: string | null; notes?: string | null; imagePath?: string | null }) => {
+  const updateAdventure = useCallback(async (id: string, fields: IUpdateAdventureRequest) => {
     if (!currentProject) return
 
     await updateAdventureApi(id, fields, currentProject.id)

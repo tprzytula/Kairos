@@ -5,6 +5,7 @@ export const createAdventure = async (adventure: {
   projectId: string;
   name: string;
   date: string;
+  endDate?: string;
   time?: string;
   location?: string;
   notes?: string;
@@ -21,6 +22,10 @@ export const createAdventure = async (adventure: {
     createdAt: now,
     updatedAt: now,
   };
+
+  if (adventure.endDate) {
+    item.endDate = adventure.endDate.trim();
+  }
 
   if (adventure.time) {
     item.time = adventure.time.trim();
