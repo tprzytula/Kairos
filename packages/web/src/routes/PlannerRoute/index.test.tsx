@@ -224,7 +224,7 @@ describe('Given the PlannerRoute component', () => {
     })
   })
 
-  it('should render the expand/collapse button (disabled in calendar view)', async () => {
+  it('should render the expand/collapse button (disabled in weekly view)', async () => {
     const mockTodoItems = [
       { id: '1', name: 'Task 1', isDone: false, description: '', dueDate: undefined },
       { id: '2', name: 'Task 2', isDone: false, description: '', dueDate: undefined },

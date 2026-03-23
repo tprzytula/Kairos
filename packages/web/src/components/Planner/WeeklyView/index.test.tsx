@@ -43,7 +43,9 @@ const makeMeal = (overrides: Partial<IMealPlan> = {}): IMealPlan => ({
 describe('Given the WeeklyView component', () => {
   it('should render the week range label', () => {
     render(<WeeklyView visibleToDoItems={[]} onItemClick={vi.fn()} />)
-    const start = dayjs().startOf('week').format('MMM D')
+    const day = dayjs().day()
+    const diff = day === 0 ? -6 : 1 - day
+    const start = dayjs().startOf('day').add(diff, 'day').format('MMM D')
     expect(screen.getByText(new RegExp(start))).toBeVisible()
   })
 
