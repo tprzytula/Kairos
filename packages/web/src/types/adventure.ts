@@ -3,6 +3,7 @@ export interface IAdventure {
   projectId: string
   name: string
   date: string        // YYYY-MM-DD
+  endDate?: string    // YYYY-MM-DD (optional, for multi-day events)
   time?: string       // HH:MM
   location?: string
   notes?: string

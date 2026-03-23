@@ -14,6 +14,7 @@ import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { useShopContext } from '../../providers/ShopProvider'
 import { IRecipe } from '../../types/recipe'
+import { IAdventure } from '../../types/adventure'
 import { updateToDoItems } from '../../api/toDoList'
 import { showAlert } from '../../utils/alert'
 import { Route } from '../../enums/route'
@@ -22,6 +23,7 @@ import HomeHeader from '../../components/HomeHeader'
 import GroceryItemPreviewPopup from '../../components/GroceryItemPreviewPopup'
 import ToDoItemPreviewDrawer from '../../components/ToDoItemPreviewDrawer'
 import RecipeViewDrawer from '../../components/RecipeViewDrawer'
+import AdventurePreviewDrawer from '../../components/AdventurePreviewDrawer'
 import GrocerySection from './components/GrocerySection'
 import NoiseSection from './components/NoiseSection'
 import PlannerSection from './components/PlannerSection'
@@ -61,7 +63,7 @@ const HomeDataContent = () => {
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
   const { birthdays } = useBirthdayContext()
   const { mealPlans, isLoading: isMealLoading } = useMealPlanContext()
-  const { adventures, isLoading: isAdventureLoading } = useAdventureContext()
+  const { adventures, isLoading: isAdventureLoading, removeAdventure } = useAdventureContext()
   const { recipes } = useRecipeContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
@@ -70,6 +72,7 @@ const HomeDataContent = () => {
 
   const interactions = useHomeInteractions()
   const [selectedRecipe, setSelectedRecipe] = useState<IRecipe | null>(null)
+  const [selectedAdventure, setSelectedAdventure] = useState<IAdventure | null>(null)
   const [isBirthdaysExpanded, setIsBirthdaysExpanded] = useState(false)
 
   const homeData = useHomeData({
@@ -84,7 +87,7 @@ const HomeDataContent = () => {
 
   const today = toDateString(new Date())
   const upcomingAdventures = adventures
-    .filter(a => a.date >= today)
+    .filter(a => (a.endDate ?? a.date) >= today)
     .sort((a, b) => a.date.localeCompare(b.date) || (a.time ?? '').localeCompare(b.time ?? ''))
     .slice(0, 5)
 
@@ -105,6 +108,15 @@ const HomeDataContent = () => {
       showAlert({ description: 'Failed to mark task as done', severity: 'error' }, dispatch)
     }
   }, [currentProject, removeFromToDoList, interactions.handleToDoItemDeselect, dispatch])
+
+  const handleAdventureClick = useCallback((adventure: IAdventure) => {
+    setSelectedAdventure(adventure)
+  }, [])
+
+  const handleAdventureDelete = useCallback(async (id: string) => {
+    await removeAdventure(id)
+    setSelectedAdventure(null)
+  }, [removeAdventure])
 
   const handleMealClick = useCallback((meal: { recipeId?: string }) => {
     if (!meal.recipeId) return
@@ -152,6 +164,7 @@ const HomeDataContent = () => {
           onStepToggle={handleStepToggle}
           onCardClick={interactions.handleToDoItemSelect}
           onMealClick={handleMealClick}
+          onAdventureClick={handleAdventureClick}
         />
 
         <GrocerySection
@@ -218,6 +231,13 @@ const HomeDataContent = () => {
         recipe={selectedRecipe}
         onClose={() => setSelectedRecipe(null)}
         onEdit={() => {}}
+      />
+
+      <AdventurePreviewDrawer
+        item={selectedAdventure}
+        onClose={() => setSelectedAdventure(null)}
+        onEdit={(adventure) => navigate(Route.EditPlannerItem.replace(':id', adventure.id))}
+        onDelete={handleAdventureDelete}
       />
     </>
   )

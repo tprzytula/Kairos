@@ -32,15 +32,31 @@ const getTodayString = (): string => {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
 }
 
-const getDayLabel = (dateStr: string): string => {
+const getDayLabel = (dateStr: string, endDateStr?: string): string => {
   const todayStr = getTodayString()
-  if (dateStr === todayStr) return 'Today'
   const diff = Math.round(
     (new Date(`${dateStr}T00:00:00`).getTime() - new Date(`${todayStr}T00:00:00`).getTime()) /
     86400000
   )
-  if (diff === 1) return 'Tomorrow'
-  return new Intl.DateTimeFormat(undefined, { weekday: 'long' }).format(new Date(`${dateStr}T00:00:00`))
+
+  const formatDateLabel = (dStr: string, dDiff: number): string => {
+    if (dStr === todayStr) return 'Today'
+    if (dDiff === 1) return 'Tomorrow'
+    if (dDiff <= 6) return new Intl.DateTimeFormat(undefined, { weekday: 'long' }).format(new Date(`${dStr}T00:00:00`))
+    return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(new Date(`${dStr}T00:00:00`))
+  }
+
+  const startLabel = formatDateLabel(dateStr, diff)
+
+  if (!endDateStr || endDateStr === dateStr) return startLabel
+
+  const endDiff = Math.round(
+    (new Date(`${endDateStr}T00:00:00`).getTime() - new Date(`${todayStr}T00:00:00`).getTime()) /
+    86400000
+  )
+  const endLabel = formatDateLabel(endDateStr, endDiff)
+
+  return `${startLabel} – ${endLabel}`
 }
 
 const sortedAdventures = (adventures: IAdventure[]): IAdventure[] =>
@@ -147,7 +163,7 @@ export const UpcomingAdventureCard: React.FC<IUpcomingAdventureCardProps> = ({ a
       <CarouselTrack offset={activeIndex}>
         {items.map((adventure) => {
           const seed = adventure.name.charCodeAt(0)
-          const dayLabel = getDayLabel(adventure.date)
+          const dayLabel = getDayLabel(adventure.date, adventure.endDate)
           return (
             <CarouselSlide key={adventure.id}>
               <HeroWrapper

@@ -1,9 +1,10 @@
 import { IAdventure } from '../../../types/adventure'
 import { API_BASE_URL } from '../../index'
 import { createFetchOptions } from '../../../utils/api'
+import { IAddAdventureRequest } from '../types'
 
 export const addAdventure = async (
-  adventure: { name: string; date: string; time?: string; location?: string; notes?: string; imagePath?: string },
+  adventure: IAddAdventureRequest,
   projectId?: string
 ): Promise<IAdventure> => {
   const response = await fetch(`${API_BASE_URL}/adventures`, createFetchOptions({

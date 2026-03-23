@@ -2,7 +2,7 @@ import { DynamoDBTable, updateItem } from "@kairos-lambdas-libs/dynamodb";
 
 export const updateAdventure = async (
   id: string,
-  fields: { name?: string; date?: string; time?: string | null; location?: string | null; notes?: string | null; imagePath?: string | null }
+  fields: { name?: string; date?: string; endDate?: string | null; time?: string | null; location?: string | null; notes?: string | null; imagePath?: string | null }
 ): Promise<void> => {
   const updatedFields: Record<string, any> = {
     updatedAt: new Date().toISOString(),
@@ -14,6 +14,10 @@ export const updateAdventure = async (
 
   if (fields.date !== undefined) {
     updatedFields.date = fields.date.trim();
+  }
+
+  if (fields.endDate !== undefined) {
+    updatedFields.endDate = fields.endDate || null;
   }
 
   if (fields.time !== undefined) {
