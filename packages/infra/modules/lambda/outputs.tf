@@ -52,6 +52,3 @@ output "lambda_functions" {
   )
 }
 
-output "stream_agent_message_url" {
-  value = aws_lambda_function_url.stream_agent_message.function_url
-}

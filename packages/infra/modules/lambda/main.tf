@@ -27,38 +27,8 @@ resource "aws_lambda_function" "lambda_functions" {
   }
 }
 
-resource "aws_lambda_function_url" "stream_agent_message" {
-  function_name      = aws_lambda_function.lambda_functions["stream_agent_message"].function_name
-  authorization_type = "NONE"
-  invoke_mode        = "RESPONSE_STREAM"
-
-  cors {
-    allow_credentials = false
-    allow_origins     = ["*"]
-    allow_methods     = ["POST"]
-    allow_headers     = ["Content-Type", "Authorization"]
-    max_age           = 300
-  }
-}
-
-resource "aws_lambda_permission" "stream_agent_message_public" {
-  statement_id           = "FunctionURLAllowPublicAccess"
-  action                 = "lambda:InvokeFunctionUrl"
-  function_name          = aws_lambda_function.lambda_functions["stream_agent_message"].function_name
-  principal              = "*"
-  function_url_auth_type = "NONE"
-}
-
-resource "aws_lambda_permission" "stream_agent_message_invoke" {
-  statement_id  = "FunctionURLAllowInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda_functions["stream_agent_message"].function_name
-  principal     = "*"
-}
-
-# Standalone resource — kept outside the for_each loop so that its dependency
-# on var.s3_cloudfront_domain (which comes from the CloudFront distribution
-# that itself needs stream_agent_message_url) does not form a cycle.
+# Standalone resource — kept outside the for_each loop to avoid dependency cycles
+# with var.s3_cloudfront_domain (which comes from the CloudFront distribution).
 resource "aws_iam_role" "get_recipe_upload_url_role" {
   name               = format("get_recipe_upload_url_lambda_role_%s", var.random_name)
   assume_role_policy = data.aws_iam_policy_document.basic_lambda_role.json

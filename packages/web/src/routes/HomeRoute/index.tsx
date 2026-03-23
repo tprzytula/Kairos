@@ -12,15 +12,12 @@ import { useRecipeContext, RecipeProvider } from '../../providers/RecipeProvider
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { useShopContext } from '../../providers/ShopProvider'
-import { AgentChatProvider } from '../../providers/AgentChatProvider'
 import { IRecipe } from '../../types/recipe'
 import { updateToDoItems } from '../../api/toDoList'
 import { showAlert } from '../../utils/alert'
 import { Route } from '../../enums/route'
 import StandardLayout from '../../layout/standardLayout'
 import HomeHeader from '../../components/HomeHeader'
-import AgentChatDrawer from '../../components/AgentChatDrawer'
-import AgentMessageButton from '../../components/AgentMessageButton'
 import GroceryItemPreviewPopup from '../../components/GroceryItemPreviewPopup'
 import ToDoItemPreviewDrawer from '../../components/ToDoItemPreviewDrawer'
 import RecipeViewDrawer from '../../components/RecipeViewDrawer'
@@ -190,7 +187,6 @@ const HomeDataContent = () => {
           onNavigate={handleNoiseNavigate}
         />
 
-        <AgentMessageButton />
       </Container>
 
       <GroceryItemPreviewPopup
@@ -221,25 +217,22 @@ const HomeContent = () => {
   const { currentProject } = useProjectContext()
 
   return (
-    <AgentChatProvider>
-      <StandardLayout>
-        <HomeHeader />
-        <GroceryListProvider key={`grocery-${currentProject?.id || 'no-project'}`}>
-          <PlannerProvider key={`planner-${currentProject?.id || 'no-project'}`}>
-            <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>
-              <BirthdayProvider key={`birthday-${currentProject?.id || 'no-project'}`}>
-                <MealPlanProvider key={`meal-${currentProject?.id || 'no-project'}`}>
-                  <RecipeProvider>
-                    <HomeDataContent />
-                  </RecipeProvider>
-                </MealPlanProvider>
-              </BirthdayProvider>
-            </NoiseTrackingProvider>
-          </PlannerProvider>
-        </GroceryListProvider>
-      </StandardLayout>
-      <AgentChatDrawer />
-    </AgentChatProvider>
+    <StandardLayout>
+      <HomeHeader />
+      <GroceryListProvider key={`grocery-${currentProject?.id || 'no-project'}`}>
+        <PlannerProvider key={`planner-${currentProject?.id || 'no-project'}`}>
+          <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>
+            <BirthdayProvider key={`birthday-${currentProject?.id || 'no-project'}`}>
+              <MealPlanProvider key={`meal-${currentProject?.id || 'no-project'}`}>
+                <RecipeProvider>
+                  <HomeDataContent />
+                </RecipeProvider>
+              </MealPlanProvider>
+            </BirthdayProvider>
+          </NoiseTrackingProvider>
+        </PlannerProvider>
+      </GroceryListProvider>
+    </StandardLayout>
   )
 }
 

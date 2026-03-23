@@ -19,19 +19,6 @@ variable "vapid_private_key" {
   sensitive   = true
 }
 
-variable "agent_ec2_ip" {
-  description = "Public IP of the agent EC2 instance"
-  type        = string
-  default     = ""
-}
-
-variable "agent_secret" {
-  description = "Shared secret for authenticating Lambda to EC2 agent requests"
-  type        = string
-  default     = ""
-  sensitive   = true
-}
-
 variable "s3_kairos_web_bucket_name" {
   description = "Name of the S3 bucket for web assets (used for recipe image uploads)"
   type        = string

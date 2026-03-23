@@ -1,9 +1,0 @@
-{
-  "name": "@kairos-lambdas/send_agent_message",
-  "version": "1.0.0",
-  "main": "index.ts",
-  "dependencies": {
-    "@kairos-lambdas-libs/middleware": "^1.0.0",
-    "@kairos-lambdas-libs/response": "^1.0.0"
-  }
-}
