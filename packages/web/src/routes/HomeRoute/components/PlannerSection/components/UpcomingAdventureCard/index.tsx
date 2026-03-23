@@ -39,11 +39,14 @@ const getDayLabel = (dateStr: string, endDateStr?: string): string => {
     86400000
   )
 
-  const startLabel = dateStr === todayStr
-    ? 'Today'
-    : diff === 1
-      ? 'Tomorrow'
-      : new Intl.DateTimeFormat(undefined, { weekday: 'long' }).format(new Date(`${dateStr}T00:00:00`))
+  const formatDateLabel = (dStr: string, dDiff: number): string => {
+    if (dStr === todayStr) return 'Today'
+    if (dDiff === 1) return 'Tomorrow'
+    if (dDiff <= 6) return new Intl.DateTimeFormat(undefined, { weekday: 'long' }).format(new Date(`${dStr}T00:00:00`))
+    return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(new Date(`${dStr}T00:00:00`))
+  }
+
+  const startLabel = formatDateLabel(dateStr, diff)
 
   if (!endDateStr || endDateStr === dateStr) return startLabel
 
@@ -51,11 +54,7 @@ const getDayLabel = (dateStr: string, endDateStr?: string): string => {
     (new Date(`${endDateStr}T00:00:00`).getTime() - new Date(`${todayStr}T00:00:00`).getTime()) /
     86400000
   )
-  const endLabel = endDateStr === todayStr
-    ? 'Today'
-    : endDiff === 1
-      ? 'Tomorrow'
-      : new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(new Date(`${endDateStr}T00:00:00`))
+  const endLabel = formatDateLabel(endDateStr, endDiff)
 
   return `${startLabel} – ${endLabel}`
 }
