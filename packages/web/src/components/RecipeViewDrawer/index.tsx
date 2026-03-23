@@ -151,7 +151,6 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
       open={recipe !== null}
       onClose={onClose}
       paperSx={{ height: 'calc(100% - env(safe-area-inset-top) - 16px)' }}
-      contentSx={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       dragHandleContent={
         <DrawerHeader>
           <DrawerHeaderLeft>
