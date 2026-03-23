@@ -62,7 +62,7 @@ export const AddPlannerItemContent = () => {
   const { currentProject } = useProjectContext()
   const navigate = useNavigate()
   const location = useLocation()
-  const { toDoList } = usePlannerContext()
+  const { toDoList: _toDoList } = usePlannerContext()
   const { user } = useAuth()
   const [itemType, setItemType] = useState<ItemType>((location.state as { itemType?: ItemType } | null)?.itemType ?? 'task')
   const [steps, setSteps] = useState<IStep[]>([])

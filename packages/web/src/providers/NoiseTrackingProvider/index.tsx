@@ -1,6 +1,5 @@
 import { createContext, useContext, useCallback, useMemo, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { INoiseTrackingItem } from '../../api/noiseTracking'
 import { retrieveNoiseTrackingItems } from '../../api/noiseTracking'
 import { IState, INoiseTrackingProviderProps } from './types'
 import { useProjectContext } from '../ProjectProvider'

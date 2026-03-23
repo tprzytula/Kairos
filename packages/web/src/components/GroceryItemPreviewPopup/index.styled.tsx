@@ -42,7 +42,7 @@ export const BubbleContainer = styled('div')<{ $arrowOffset?: number }>(({ theme
   }
 }))
 
-export const ItemDetails = styled('div')(({ theme }) => ({
+export const ItemDetails = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',

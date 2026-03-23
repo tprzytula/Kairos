@@ -37,7 +37,7 @@ class MockMessageChannel {
 global.MessageChannel = MockMessageChannel as any
 
 // Store original location
-const originalLocation = window.location
+const _originalLocation = window.location
 let originalConsoleError: any
 
 describe('usePWAUpdate', () => {
@@ -163,7 +163,7 @@ describe('usePWAUpdate', () => {
   })
 
   it('should handle visibility change messages', () => {
-    const { result } = renderHook(() => usePWAUpdate())
+    const { result: _result } = renderHook(() => usePWAUpdate())
 
     // Simulate visibility change
     Object.defineProperty(document, 'hidden', {

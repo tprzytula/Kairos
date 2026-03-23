@@ -1,9 +1,9 @@
 import { styled } from '@mui/material/styles'
 import { Card, CardActionArea, CardContent, CardMedia, CardProps } from '@mui/material'
 
-export const Container = styled(({ isPurchased, ...props }: { isPurchased: boolean } & CardProps) => (
+export const Container = styled(({ isPurchased: _isPurchased, ...props }: { isPurchased: boolean } & CardProps) => (
   <Card {...props} />
-))(({ isPurchased, theme }: { isPurchased: boolean } & { theme: any }) => ({
+))(({ isPurchased, theme }: { isPurchased: boolean; theme: any }) => ({
   display: 'flex',
   width: '100%',
   borderRadius: '14px',

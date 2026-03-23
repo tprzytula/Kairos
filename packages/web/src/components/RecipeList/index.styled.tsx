@@ -23,7 +23,7 @@ export const StickyHeader = styled('div')({
   },
 })
 
-export const SearchContainer = styled('div')(({ theme }) => ({
+export const SearchContainer = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
   gap: '0.5rem',

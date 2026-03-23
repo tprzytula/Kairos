@@ -4,7 +4,7 @@ import SwipeableList from './index';
 
 // Mock the hooks used in SwipeableListItem
 const mockSetTranslateX = vi.fn();
-const mockClose = vi.fn();
+const _mockClose = vi.fn();
 
 vi.mock('./SwipeableListItem/hooks/useSwipeGesture', () => ({
   useSwipeGesture: ({ onSwipeUpdate }: any) => ({
@@ -12,13 +12,13 @@ vi.mock('./SwipeableListItem/hooks/useSwipeGesture', () => ({
     translateX: 0,
     isDragging: false,
     handlers: {
-      onTouchStart: (e: any) => {},
-      onTouchMove: (e: any) => {
+      onTouchStart: (_e: any) => {},
+      onTouchMove: (_e: any) => {
         // Simulate swipe update to trigger onSwipeStart
         onSwipeUpdate?.(10, true);
       },
-      onTouchEnd: (e: any) => {},
-      onMouseDown: (e: any) => {},
+      onTouchEnd: (_e: any) => {},
+      onMouseDown: (_e: any) => {},
     },
     setTranslateX: mockSetTranslateX,
   }),

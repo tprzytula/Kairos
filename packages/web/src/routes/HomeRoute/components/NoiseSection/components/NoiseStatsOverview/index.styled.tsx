@@ -7,7 +7,7 @@ export const NoiseStats = styled('div')({
   padding: '0.5rem 0',
 })
 
-export const NoiseStatBlock = styled('div')(({ theme }) => ({
+export const NoiseStatBlock = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',

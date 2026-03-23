@@ -1,4 +1,4 @@
-import { Mock, MockedFunction } from 'vitest'
+import { MockedFunction } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { VersionInfo } from '../../types/version'
 

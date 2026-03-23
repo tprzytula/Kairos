@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, { useEffect, useImperativeHandle, forwardRef } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Container, ItemContent, RightActionsContainer, LeftActionsContainer, RightActionButton, LeftActionButton } from './index.styled';

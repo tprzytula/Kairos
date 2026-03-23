@@ -48,7 +48,7 @@ const WeeklyView = ({
   birthdayItems = [],
   onBirthdayClick,
   mealPlans = [],
-  onAddMealPlan,
+  onAddMealPlan: _onAddMealPlan,
   onMealPlanClick,
 }: IWeeklyViewProps) => {
   const [currentWeek, setCurrentWeek] = useState<Dayjs>(() => getWeekStart(dayjs()))

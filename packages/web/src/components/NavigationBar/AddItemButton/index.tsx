@@ -99,7 +99,7 @@ const AddItemButton = () => {
         const path = location.pathname;
 
         // Check for grocery list pattern /groceries/:shopId
-        if (path.match(/^\/groceries\/[^\/]+$/)) {
+        if (path.match(/^\/groceries\/[^/]+$/)) {
             return RouteToAddItemMapping[Route.GroceryList];
         }
 
@@ -119,7 +119,7 @@ const AddItemButton = () => {
             } else if (location.pathname === Route.Shops) {
                 // Special case: navigate to shops with add mode parameter
                 navigate(`${Route.Shops}?mode=add`);
-            } else if (location.pathname.match(/^\/groceries\/[^\/]+$/)) {
+            } else if (location.pathname.match(/^\/groceries\/[^/]+$/)) {
                 // Special case: grocery list - open add drawer via query param
                 const shopId = location.pathname.split('/')[2];
                 navigate(`/groceries/${shopId}?openAdd=true`);

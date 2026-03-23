@@ -57,7 +57,7 @@ const RecipesContent = () => {
     setIsFormOpen(true)
   }, [])
 
-  const handleDeleteFromView = useCallback(async (recipe: IRecipe) => {
+  const _handleDeleteFromView = useCallback(async (recipe: IRecipe) => {
     setViewingRecipe(null)
     await removeRecipe(recipe.id)
   }, [removeRecipe])

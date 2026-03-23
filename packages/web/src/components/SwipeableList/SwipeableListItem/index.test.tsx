@@ -10,7 +10,7 @@ vi.mock('./hooks/useSwipeGesture', () => ({
     isDragging: false,
     handlers: {
       onTouchStart: vi.fn(),
-      onTouchMove: vi.fn((e) => {
+      onTouchMove: vi.fn((_e) => {
         // Simulate swipe update to test onSwipeStart callback
         onSwipeUpdate?.(10, true);
       }),

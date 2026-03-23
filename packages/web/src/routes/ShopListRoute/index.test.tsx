@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from 'react-router'
 import ShopListRoute from '.'
 import { useShopContext } from '../../providers/ShopProvider'
 import { useAppState } from '../../providers/AppStateProvider'
-import { Route } from '../../enums/route'
 
 vi.mock('react-router', () => ({
   useNavigate: vi.fn(),

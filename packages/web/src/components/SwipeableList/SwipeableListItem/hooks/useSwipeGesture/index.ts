@@ -1,7 +1,7 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import { UseSwipeGestureProps } from '../../types';
 
-const MIN_SWIPE_DETECTION = 5;
+const _MIN_SWIPE_DETECTION = 5;
 const SCROLL_PREVENTION_THRESHOLD = 10;
 const MAX_SWIPE_DISTANCE = 100; // 80 + 20 buffer
 const MIN_SWIPE_DISTANCE = -100; // Allow negative for left swipe
@@ -72,7 +72,7 @@ export const useSwipeGesture = ({
     }
   }, [isDragging, startX, startY, isVerticalGesture, disabled, updateTranslateX]);
 
-  const handleTouchEnd = useCallback((e?: React.TouchEvent) => {
+  const handleTouchEnd = useCallback((_e?: React.TouchEvent) => {
     if (!isDragging || disabled) return;
     
     setIsDragging(false);

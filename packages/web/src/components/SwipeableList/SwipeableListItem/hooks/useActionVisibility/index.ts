@@ -13,7 +13,7 @@ export const useActionVisibility = ({
   const [isRightActionsVisible, setIsRightActionsVisible] = useState(false);
   const [isLeftActionsVisible, setIsLeftActionsVisible] = useState(false);
 
-  const updateVisibility = useCallback((translateX: number, isDragging: boolean) => {
+  const updateVisibility = useCallback((translateX: number, _isDragging: boolean) => {
     // Show right actions when swiping left (positive translateX)
     setIsRightActionsVisible(translateX > MIN_SWIPE_DETECTION);
     // Show left actions when swiping right (negative translateX)

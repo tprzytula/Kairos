@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles'
-import { Button, Card, CardContent, IconButton } from '@mui/material'
+import { Card, CardContent, IconButton } from '@mui/material'
 
-export const Container = styled(Card)(({ theme }) => ({
+export const Container = styled(Card)(() => ({
   display: 'flex',
   borderRadius: '16px',
   minHeight: '70px',

@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles'
 import { Card, CardContent } from '@mui/material'
 import { shimmerKeyframes } from '../../../utils/styles/shimmer'
 
-export const Container = styled(Card)(({ theme }) => ({
+export const Container = styled(Card)(() => ({
   display: 'flex',
   borderRadius: '16px',
   minHeight: '81px',

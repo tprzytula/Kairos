@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useAuth } from 'react-oidc-context'
 import { IProjectProviderProps } from './types'
 import { IProject, IProjectContext, ICreateProjectRequest, IJoinProjectRequest } from '../../types/project'
@@ -23,8 +23,7 @@ export const useProjectContext = () => useContext(ProjectContext)
 
 export const ProjectProvider = ({ children }: IProjectProviderProps) => {
   const auth = useAuth()
-  const queryClient = useQueryClient()
-  const [projects, setProjects] = useState<IProject[]>([])
+const [projects, setProjects] = useState<IProject[]>([])
   const [currentProject, setCurrentProject] = useState<IProject | null>(null)
 
   const queryKey = ['projects', auth.user?.access_token]

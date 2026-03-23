@@ -1,4 +1,4 @@
-import { Mock, MockedFunction } from 'vitest'
+import { MockedFunction } from 'vitest'
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';

@@ -1,4 +1,4 @@
-import { Mock, MockedFunction } from 'vitest'
+import { MockedFunction } from 'vitest'
 import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -14,7 +14,7 @@ import { GroceryItemUnit } from '../../enums/groceryItem'
 import { useAppState } from '../../providers/AppStateProvider'
 import { ProjectProvider, useProjectContext } from '../../providers/ProjectProvider'
 import { useShopContext } from '../../providers/ShopProvider'
-import { IProject, ProjectRole } from '../../types/project'
+import { IProject } from '../../types/project'
 
 vi.mock('../../providers/AppStateProvider', async () => ({
   ...(await vi.importActual('../../providers/AppStateProvider')),

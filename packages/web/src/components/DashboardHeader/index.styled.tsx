@@ -9,7 +9,7 @@ export const DashboardHeaderContainer = styled(Box)({
   boxSizing: 'border-box'
 })
 
-export const DashboardHeaderCard = styled(Card)(({ theme }) => ({
+export const DashboardHeaderCard = styled(Card)(() => ({
   borderRadius: '16px',
   boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
   border: 'none',

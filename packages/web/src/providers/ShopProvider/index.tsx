@@ -14,10 +14,10 @@ export const initialState: IShopProviderState = {
   isLoading: false,
   currentShop: null,
   fetchShops: async () => {},
-  addShop: async (shop: ICreateShopRequestBody) => '',
-  updateShop: async (shop: IUpdateShopRequestBody) => {},
-  deleteShop: async (shopId: string) => {},
-  setCurrentShop: (shop: IShop | null) => {},
+  addShop: async (_shop: ICreateShopRequestBody) => '',
+  updateShop: async (_shop: IUpdateShopRequestBody) => {},
+  deleteShop: async (_shopId: string) => {},
+  setCurrentShop: (_shop: IShop | null) => {},
 }
 
 export const ShopContext = createContext<IShopProviderState>(initialState)

@@ -164,7 +164,7 @@ describe('usePushNotifications', () => {
       const { result } = renderHook(() => usePushNotifications())
 
       await act(async () => {
-        try { await result.current.requestPermission() } catch (_) {}
+        try { await result.current.requestPermission() } catch {}
       })
 
       expect(result.current.error).toBe('Permission denied for notifications')
@@ -243,7 +243,7 @@ describe('usePushNotifications', () => {
       const { result } = renderHook(() => usePushNotifications())
 
       await act(async () => {
-        try { await result.current.subscribe() } catch (_) {}
+        try { await result.current.subscribe() } catch {}
       })
 
       expect(result.current.error).toBe('Subscribe failed')
@@ -313,7 +313,7 @@ describe('usePushNotifications', () => {
       const { result } = renderHook(() => usePushNotifications())
 
       await act(async () => {
-        try { await result.current.unsubscribe() } catch (_) {}
+        try { await result.current.unsubscribe() } catch {}
       })
 
       expect(result.current.error).toBe('Unsubscribe failed')

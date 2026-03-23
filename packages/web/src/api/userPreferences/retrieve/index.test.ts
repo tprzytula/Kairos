@@ -1,4 +1,4 @@
-import { Mock, MockedFunction } from 'vitest'
+import { MockedFunction } from 'vitest'
 import { getUserPreferences } from './index'
 import { API_BASE_URL } from '../../index'
 import { createFetchOptions } from '../../../utils/api'

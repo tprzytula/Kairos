@@ -13,10 +13,10 @@ export const initialState: IState = {
   isAllItemsView: false,
   viewMode: GroceryViewMode.CATEGORIZED,
   refetchGroceryList: async () => {},
-  removeGroceryItem: async (id: string) => {},
-  updateGroceryItem: async (id: string, quantity: number) => {},
-  updateGroceryItemFields: async (id: string, fields: GroceryItemUpdateFields) => {},
-  setViewMode: (mode: GroceryViewMode) => {},
+  removeGroceryItem: async (_id: string) => {},
+  updateGroceryItem: async (_id: string, _quantity: number) => {},
+  updateGroceryItemFields: async (_id: string, _fields: GroceryItemUpdateFields) => {},
+  setViewMode: (_mode: GroceryViewMode) => {},
 }
 
 export const GroceryListContext = createContext<IState>(initialState)
