@@ -26,6 +26,8 @@ import dayjs from 'dayjs'
 import { useNavigate } from 'react-router'
 import { Route } from '../../enums/route'
 
+const VIEW_MODE_CYCLE = [PlannerViewMode.WEEKLY, PlannerViewMode.CALENDAR, PlannerViewMode.GROUPED] as const
+
 const PlannerContent = () => {
   const { toDoList, refetchToDoList } = usePlannerContext()
   const { state: { selectedTodoItems }, dispatch } = useAppState()
@@ -119,9 +121,8 @@ const PlannerContent = () => {
 
   const toggleViewMode = useCallback(() => {
     setViewMode(prev => {
-      if (prev === PlannerViewMode.WEEKLY) return PlannerViewMode.CALENDAR
-      if (prev === PlannerViewMode.CALENDAR) return PlannerViewMode.GROUPED
-      return PlannerViewMode.WEEKLY
+      const idx = VIEW_MODE_CYCLE.indexOf(prev)
+      return VIEW_MODE_CYCLE[(idx + 1) % VIEW_MODE_CYCLE.length]
     })
   }, [])
 
