@@ -3,6 +3,7 @@ import { Box } from '@mui/material'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import CakeIcon from '@mui/icons-material/Cake'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
+import ExploreIcon from '@mui/icons-material/Explore'
 import ItemForm from '../../components/ItemForm'
 import { FormFieldType } from '../../components/ItemForm/enums'
 import { IFormField } from '../../components/ItemForm/types'
@@ -21,14 +22,16 @@ import { PlannerProvider, usePlannerContext } from '../../providers/PlannerProvi
 import { BirthdayProvider } from '../../providers/BirthdayProvider'
 import { MealPlanProvider } from '../../providers/MealPlanProvider'
 import { RecipeProvider } from '../../providers/RecipeProvider'
+import { AdventureProvider } from '../../providers/AdventureProvider'
 import dayjs from 'dayjs'
 import BirthdayForm from './BirthdayForm'
 import MealForm from './MealForm'
+import AdventureForm from './AdventureForm'
 import StepsEditor from '../../components/StepsEditor'
 import { IStep } from '../../api/toDoList/retrieve/types'
 import SegmentedControl, { SegmentedControlTab } from '../../components/SegmentedControl'
 
-type ItemType = 'task' | 'birthday' | 'meal'
+type ItemType = 'task' | 'birthday' | 'meal' | 'adventure'
 
 const PLANNER_TABS: Array<SegmentedControlTab<ItemType>> = [
   {
@@ -54,6 +57,14 @@ const PLANNER_TABS: Array<SegmentedControlTab<ItemType>> = [
     activeColor: '#db2777',
     activeBg: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)',
     activeShadow: 'rgba(219, 39, 119, 0.2)',
+  },
+  {
+    id: 'adventure',
+    label: 'Adventure',
+    icon: <ExploreIcon sx={{ fontSize: '1.1rem' }} />,
+    activeColor: '#0891b2',
+    activeBg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)',
+    activeShadow: 'rgba(6, 182, 212, 0.2)',
   },
 ]
 
@@ -136,8 +147,8 @@ export const AddPlannerItemContent = () => {
     { value: yearNumber, label: 'Year' }
   ]
 
-  const headerIcon = itemType === 'birthday' ? <CakeIcon /> : itemType === 'meal' ? <RestaurantIcon /> : <ChecklistIcon />
-  const headerTitle = itemType === 'birthday' ? 'Add Birthday' : itemType === 'meal' ? 'Add Meal' : 'Add Task'
+  const headerIcon = itemType === 'birthday' ? <CakeIcon /> : itemType === 'meal' ? <RestaurantIcon /> : itemType === 'adventure' ? <ExploreIcon /> : <ChecklistIcon />
+  const headerTitle = itemType === 'birthday' ? 'Add Birthday' : itemType === 'meal' ? 'Add Meal' : itemType === 'adventure' ? 'Add Adventure' : 'Add Task'
 
   return (
     <StandardLayout>
@@ -163,8 +174,10 @@ export const AddPlannerItemContent = () => {
         </ItemForm>
       ) : itemType === 'birthday' ? (
         <BirthdayForm />
-      ) : (
+      ) : itemType === 'meal' ? (
         <MealForm />
+      ) : (
+        <AdventureForm />
       )}
     </StandardLayout>
   )
@@ -176,7 +189,9 @@ export const AddPlannerItemRoute = () => {
       <BirthdayProvider>
         <RecipeProvider>
           <MealPlanProvider>
-            <AddPlannerItemContent />
+            <AdventureProvider>
+              <AddPlannerItemContent />
+            </AdventureProvider>
           </MealPlanProvider>
         </RecipeProvider>
       </BirthdayProvider>

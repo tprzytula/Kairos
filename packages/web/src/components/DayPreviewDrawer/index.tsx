@@ -1,10 +1,12 @@
 import CakeIcon from '@mui/icons-material/Cake'
 import LinkIcon from '@mui/icons-material/Link'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import ExploreIcon from '@mui/icons-material/Explore'
 import dayjs from 'dayjs'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../types/mealPlan'
+import { IAdventure } from '../../types/adventure'
 import {
   DayDetailItem,
   OverdueDayDetailItem,
@@ -15,6 +17,8 @@ import {
   MealPlanIcon,
   MealsSectionHeader,
   MealsAddButton,
+  AdventureDayDetailItem,
+  AdventuresSectionHeader,
   TasksAddButton,
 } from '../Planner/CalendarView/index.styled'
 import {
@@ -38,11 +42,13 @@ interface IDayPreviewDrawerProps {
   isOverdue: boolean
   birthdays: IBirthdayItem[]
   mealPlans: IMealPlan[]
+  adventures?: IAdventure[]
   onClose: () => void
   onTodoClick: (id: string) => void
   onBirthdayClick?: (id: string) => void
   onAddMealPlan?: (date: string) => void
   onMealPlanClick?: (mealPlan: IMealPlan) => void
+  onAdventureClick?: (id: string) => void
   onAddTask?: (date: string) => void
 }
 
@@ -54,11 +60,13 @@ const DayPreviewDrawer = ({
   isOverdue,
   birthdays,
   mealPlans,
+  adventures = [],
   onClose,
   onTodoClick,
   onBirthdayClick,
   onAddMealPlan,
   onMealPlanClick,
+  onAdventureClick,
   onAddTask,
 }: IDayPreviewDrawerProps) => {
   return (
@@ -145,6 +153,21 @@ const DayPreviewDrawer = ({
               {plan.recipeId && <LinkIcon sx={{ fontSize: '0.75rem', color: '#d97706', marginLeft: 'auto', flexShrink: 0 }} />}
             </MealDayDetailItem>
           ))
+        )}
+
+        {adventures.length > 0 && (
+          <>
+            <AdventuresSectionHeader>Adventures</AdventuresSectionHeader>
+            {adventures.map(adventure => (
+              <AdventureDayDetailItem key={adventure.id} onClick={() => onAdventureClick?.(adventure.id)}>
+                <ExploreIcon sx={{ fontSize: '0.9rem', color: '#06b6d4', flexShrink: 0 }} />
+                <span style={{ flex: 1 }}>{adventure.name}</span>
+                {adventure.time && (
+                  <span style={{ fontSize: '0.75rem', color: '#0891b2', flexShrink: 0 }}>{adventure.time}</span>
+                )}
+              </AdventureDayDetailItem>
+            ))}
+          </>
         )}
       </DrawerContent>
     </DraggableBottomDrawer>

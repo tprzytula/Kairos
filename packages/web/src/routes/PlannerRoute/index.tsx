@@ -3,6 +3,7 @@ import { PlannerProvider, usePlannerContext } from '../../providers/PlannerProvi
 import { BirthdayProvider } from '../../providers/BirthdayProvider'
 import { RecipeProvider } from '../../providers/RecipeProvider'
 import { MealPlanProvider, useMealPlanContext } from '../../providers/MealPlanProvider'
+import { AdventureProvider } from '../../providers/AdventureProvider'
 import Planner from '../../components/Planner'
 import ActionButtonsBar from '../../components/ActionButtonsBar'
 import ModernPageHeader from '../../components/ModernPageHeader'
@@ -219,7 +220,9 @@ export const PlannerRoute = () => {
       <BirthdayProvider>
         <RecipeProvider>
           <MealPlanProvider>
-            <PlannerContent />
+            <AdventureProvider>
+              <PlannerContent />
+            </AdventureProvider>
           </MealPlanProvider>
         </RecipeProvider>
       </BirthdayProvider>

@@ -6,6 +6,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../types/mealPlan'
+import { IAdventure } from '../../../types/adventure'
 import {
   WeeklyContainer,
   WeekHeader,
@@ -24,6 +25,8 @@ import {
   BirthdayIconStyled,
   MealItem,
   MealIconStyled,
+  AdventureItem,
+  AdventureIconStyled,
 } from './index.styled'
 
 interface IWeeklyViewProps {
@@ -34,6 +37,8 @@ interface IWeeklyViewProps {
   mealPlans?: IMealPlan[]
   onAddMealPlan?: (date: string) => void
   onMealPlanClick?: (mealPlan: IMealPlan) => void
+  adventures?: IAdventure[]
+  onAdventureClick?: (id: string) => void
 }
 
 const getWeekStart = (d: Dayjs): Dayjs => {
@@ -50,6 +55,8 @@ const WeeklyView = ({
   mealPlans = [],
   onAddMealPlan: _onAddMealPlan,
   onMealPlanClick,
+  adventures = [],
+  onAdventureClick,
 }: IWeeklyViewProps) => {
   const [currentWeek, setCurrentWeek] = useState<Dayjs>(() => getWeekStart(dayjs()))
   const today = dayjs()
@@ -135,6 +142,19 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
     return map
   }, [mealPlans])
 
+  const adventuresByDay = useMemo(() => {
+    const map = new Map<string, IAdventure[]>()
+    for (const adventure of adventures) {
+      const existing = map.get(adventure.date)
+      if (existing) {
+        existing.push(adventure)
+      } else {
+        map.set(adventure.date, [adventure])
+      }
+    }
+    return map
+  }, [adventures])
+
   const isCurrentWeek = getWeekStart(today).isSame(currentWeek, 'day')
 
   return (
@@ -164,6 +184,7 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
           const birthdayKey = `${day.month() + 1}-${day.date()}`
           const dayBirthdays = birthdaysByDay.get(birthdayKey) ?? []
           const dayMeals = mealPlansByDay.get(key) ?? []
+          const dayAdventures = adventuresByDay.get(key) ?? []
 
           return (
             <DayRow key={key} isToday={isToday}>
@@ -200,6 +221,12 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
                     <MealIconStyled />
                     {plan.recipeName}
                   </MealItem>
+                ))}
+                {dayAdventures.map(adventure => (
+                  <AdventureItem key={adventure.id} onClick={() => onAdventureClick?.(adventure.id)}>
+                    <AdventureIconStyled />
+                    {adventure.name}
+                  </AdventureItem>
                 ))}
               </DayRowItems>
             </DayRow>

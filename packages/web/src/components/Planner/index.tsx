@@ -12,8 +12,11 @@ import { groupTodosByTime } from './utils/timeGrouping';
 import { PlannerViewMode } from '../../enums/plannerViewMode';
 import { ITodoItem } from '../../api/toDoList/retrieve/types';
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types';
+import { IAdventure } from '../../types/adventure';
 import { useBirthdayContext } from '../../providers/BirthdayProvider';
+import { useAdventureContext } from '../../providers/AdventureProvider';
 import BirthdayPreviewDrawer from '../BirthdayPreviewDrawer';
+import AdventurePreviewDrawer from '../AdventurePreviewDrawer';
 import BirthdayFormDialog from '../BirthdayFormDialog';
 import GroupedView from './GroupedView';
 import CalendarView from './CalendarView';
@@ -39,9 +42,11 @@ export const Planner = ({
   const navigate = useNavigate();
   const [previewItem, setPreviewItem] = useState<ITodoItem | null>(null);
   const [previewBirthday, setPreviewBirthday] = useState<IBirthdayItem | null>(null);
+  const [previewAdventure, setPreviewAdventure] = useState<IAdventure | null>(null);
   const [birthdayDialogOpen, setBirthdayDialogOpen] = useState(false);
   const [editingBirthday, setEditingBirthday] = useState<IBirthdayItem | null>(null);
   const { birthdays, removeBirthdayItem } = useBirthdayContext();
+  const { adventures, removeAdventure } = useAdventureContext();
   const visibleToDoItems = useMemo(() => toDoList.filter(({ isDone }) => !isDone), [toDoList]);
 
   const groupedToDoItems = useMemo(() => {
@@ -101,6 +106,14 @@ export const Planner = ({
     await removeBirthdayItem(id);
   }, [removeBirthdayItem]);
 
+  const handleAdventurePreview = useCallback((id: string) => {
+    setPreviewAdventure(adventures.find(a => a.id === id) ?? null)
+  }, [adventures]);
+
+  const handleAdventureDelete = useCallback(async (id: string) => {
+    await removeAdventure(id);
+  }, [removeAdventure]);
+
   const handleAddTask = useCallback((date: string) => {
     dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: date })
     navigate(Route.AddPlannerItem)
@@ -139,6 +152,12 @@ export const Planner = ({
         onClose={() => { setBirthdayDialogOpen(false); setEditingBirthday(null); }}
         initialBirthday={editingBirthday}
       />
+      <AdventurePreviewDrawer
+        item={previewAdventure}
+        onClose={() => setPreviewAdventure(null)}
+        onEdit={() => {}}
+        onDelete={handleAdventureDelete}
+      />
     </>
   );
 
@@ -155,6 +174,8 @@ export const Planner = ({
             onAddMealPlan={onAddMealPlan}
             onMealPlanClick={onMealPlanClick}
             onAddTask={handleAddTask}
+            adventures={adventures}
+            onAdventureClick={handleAdventurePreview}
           />
         )}
         {drawers}
@@ -174,6 +195,8 @@ export const Planner = ({
             mealPlans={mealPlans}
             onAddMealPlan={onAddMealPlan}
             onMealPlanClick={onMealPlanClick}
+            adventures={adventures}
+            onAdventureClick={handleAdventurePreview}
           />
         )}
         {drawers}

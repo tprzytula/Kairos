@@ -2,6 +2,7 @@ import React from 'react'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import { IToDoSectionProps } from './types'
 import TodayMealCard from './components/TodayMealCard'
+import UpcomingAdventureCard from './components/UpcomingAdventureCard'
 import TaskList from './components/TaskList'
 import SectionCard from '../../../../components/SectionCard'
 import { SECTION_GRADIENTS } from '../../../../constants/sectionColors'
@@ -10,14 +11,27 @@ import { MiniCardsGrid, MiniCard } from './index.styled'
 export const PlannerSection: React.FC<IToDoSectionProps> = ({
   toDoStats,
   todayMeals,
+  upcomingAdventures,
   isLoading,
   onStepToggle,
   onCardClick,
   onMealClick,
+  onAdventureClick,
 }) => {
+  const showMealCard = isLoading || todayMeals.length > 0
+  const showAdventureCard = isLoading || upcomingAdventures.length > 0
+
   return (
     <>
-      {(isLoading || todayMeals.length > 0) && (
+      {showAdventureCard && (
+        <MiniCardsGrid>
+          <MiniCard sx={{ gridColumn: '1 / 3', gridRow: 1, minHeight: 'unset' }}>
+            <UpcomingAdventureCard adventures={upcomingAdventures} isLoading={isLoading} onAdventureClick={onAdventureClick} />
+          </MiniCard>
+        </MiniCardsGrid>
+      )}
+
+      {showMealCard && (
         <MiniCardsGrid>
           <MiniCard sx={{ gridColumn: '1 / 3', gridRow: 1, minHeight: 'unset' }}>
             <TodayMealCard todayMeals={todayMeals} isLoading={isLoading} onMealClick={onMealClick} />
