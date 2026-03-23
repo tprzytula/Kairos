@@ -133,7 +133,7 @@ export const ExpandedDescription = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(102, 126, 234, 0.05)'}`,
 }))
 
-export const ExpandedMetadata = styled('div')(({ theme }) => ({
+export const ExpandedMetadata = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
   gap: '0.75rem',

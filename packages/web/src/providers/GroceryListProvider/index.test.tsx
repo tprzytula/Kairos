@@ -1,4 +1,4 @@
-import { Mock, MockedFunction } from 'vitest'
+import { MockedFunction } from 'vitest'
 import { render, screen, renderHook, waitFor, act } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useGroceryListContext } from './index'
@@ -6,8 +6,8 @@ import { GroceryListProvider } from './index'
 import * as API from '../../api/groceryList'
 import { IGroceryItem } from '../AppStateProvider/types'
 import { GroceryItemUnit } from '../../enums/groceryItem'
-import { ProjectProvider, useProjectContext } from '../ProjectProvider'
-import { IProject, ProjectRole } from '../../types/project'
+import { useProjectContext } from '../ProjectProvider'
+import { IProject } from '../../types/project'
 
 vi.mock('../../api/groceryList')
 vi.mock('../ProjectProvider', async () => ({

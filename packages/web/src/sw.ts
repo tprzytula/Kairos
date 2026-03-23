@@ -162,7 +162,7 @@ self.addEventListener('fetch', (event) => {
             }
             return response
           })
-          .catch(error => {
+          .catch(_error => {
             // For mutations, we can't use cache - return error
             return new Response(JSON.stringify({ error: 'Offline - changes cannot be saved' }), {
               status: 503,
@@ -392,7 +392,7 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close()
   
   const notificationData = event.notification.data || {}
-  const action = event.action
+  const _action = event.action
   
   let urlToOpen = '/'
   

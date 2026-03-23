@@ -13,7 +13,7 @@ export const Container = styled(Paper)(({ theme }) => ({
   boxShadow: 'none',
 }))
 
-export const Divider = styled('div')(({ theme }) => ({
+export const Divider = styled('div')(() => ({
   width: '85%',
   height: '1px',
   backgroundColor: 'rgba(0, 0, 0, 0.06)',

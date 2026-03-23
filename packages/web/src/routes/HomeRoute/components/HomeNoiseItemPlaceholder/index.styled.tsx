@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { shimmerKeyframes as shimmer } from '../../../../utils/styles/shimmer'
 
-export const PlaceholderBlock = styled('div')(({ theme }) => ({
+export const PlaceholderBlock = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',

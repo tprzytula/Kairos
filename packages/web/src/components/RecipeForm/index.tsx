@@ -252,7 +252,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
         headers: { 'Content-Type': 'image/jpeg' },
       })
       setImagePath(path)
-    } catch (error) {
+    } catch {
       showAlert({ description: 'Failed to upload image', severity: 'error' }, dispatch)
       setPreviewUrl(previousPreview)
       setImagePath(previousPath)
@@ -274,7 +274,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
     try {
       await removeRecipe(initialRecipe!.id)
       onDone()
-    } catch (error) {
+    } catch {
       showAlert({ description: 'Failed to delete recipe', severity: 'error' }, dispatch)
       setDeleteConfirm(false)
     }
@@ -311,7 +311,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
         showAlert({ description: 'Recipe added', severity: 'success' }, dispatch)
       }
       onDone()
-    } catch (error) {
+    } catch {
       showAlert({ description: 'Failed to save recipe', severity: 'error' }, dispatch)
     } finally {
       setIsSaving(false)

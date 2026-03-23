@@ -131,7 +131,7 @@ export const groupTodosByTime = (todos: ITodoItem[]): IGroupedTodoItem[] => {
   })
   
   // Sort items within each group by due date
-  groups.forEach((items, group) => {
+  groups.forEach((items, _group) => {
     items.sort((a, b) => {
       if (!a.dueDate && !b.dueDate) return 0
       if (!a.dueDate) return 1

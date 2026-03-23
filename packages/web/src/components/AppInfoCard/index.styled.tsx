@@ -54,7 +54,7 @@ export const BrandingSection = styled('div')({
   },
 })
 
-export const AppBranding = styled('div')(({ theme }) => ({
+export const AppBranding = styled('div')(() => ({
   fontSize: '1.2rem',
   fontWeight: '700',
   ...gradientTextStyles('linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'),

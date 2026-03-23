@@ -1,7 +1,7 @@
 import { styled } from "@mui/system";
 import { Card, CardActionArea, CardContent, CardProps } from '@mui/material'
 
-export const Container = styled(({ isSelected, ...props }: { isSelected: boolean } & CardProps) => (
+export const Container = styled(({ isSelected: _isSelected, ...props }: { isSelected: boolean } & CardProps) => (
   <Card {...props} />
 ))(({ isSelected, theme }: { isSelected: boolean } & any) => ({
   display: 'flex',
@@ -63,7 +63,7 @@ export const ActionArea = styled(CardActionArea)({
   },
 })
 
-export const Content = styled(CardContent)(({ theme }) => ({
+export const Content = styled(CardContent)(() => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',

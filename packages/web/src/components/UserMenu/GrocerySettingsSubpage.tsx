@@ -266,7 +266,7 @@ const GrocerySettingsSubpage: React.FC<GrocerySettingsSubpageProps> = ({ onBack 
   }
 
   // Delete handlers
-  const handleDeleteClick = (itemName: string) => {
+  const _handleDeleteClick = (itemName: string) => {
     setDeletingItemName(itemName)
   }
 

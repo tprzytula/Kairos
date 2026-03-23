@@ -1,6 +1,6 @@
-import { Mock, MockedFunction } from 'vitest'
+import { MockedFunction } from 'vitest'
 import React from 'react'
-import { render, screen, waitFor, act } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ProjectProvider, useProjectContext } from './ProjectProvider'
 import { retrieveUserProjects, createProject, joinProject, getProjectInviteInfo } from '../../api/projects'
@@ -25,9 +25,9 @@ vi.mock('../../api/userPreferences', () => ({
 }))
 
 const mockRetrieveUserProjects = retrieveUserProjects as MockedFunction<typeof retrieveUserProjects>
-const mockCreateProject = createProject as MockedFunction<typeof createProject>
-const mockJoinProject = joinProject as MockedFunction<typeof joinProject>
-const mockGetProjectInviteInfo = getProjectInviteInfo as MockedFunction<typeof getProjectInviteInfo>
+const _mockCreateProject = createProject as MockedFunction<typeof createProject>
+const _mockJoinProject = joinProject as MockedFunction<typeof joinProject>
+const _mockGetProjectInviteInfo = getProjectInviteInfo as MockedFunction<typeof getProjectInviteInfo>
 const mockGetUserPreferences = getUserPreferences as MockedFunction<typeof getUserPreferences>
 const mockUpdateUserPreferences = updateUserPreferences as MockedFunction<typeof updateUserPreferences>
 

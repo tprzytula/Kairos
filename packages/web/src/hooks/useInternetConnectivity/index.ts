@@ -19,7 +19,7 @@ export const useInternetConnectivity = () => {
   }, [])
 
   const handleOffline = useCallback(() => {
-    setState(prev => ({
+    setState(_prev => ({
       isOnline: false,
       wasOffline: true
     }))

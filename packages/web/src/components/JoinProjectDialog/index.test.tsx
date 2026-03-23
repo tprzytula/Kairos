@@ -1,6 +1,6 @@
-import { Mock, MockedFunction } from 'vitest'
+import { MockedFunction } from 'vitest'
 import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import JoinProjectDialog from './index'
@@ -122,7 +122,7 @@ describe('JoinProjectDialog component', () => {
     })
 
     it('should handle arrow key navigation', async () => {
-      const user = userEvent.setup()
+      const _user = userEvent.setup()
       renderDialog()
       
       const inputs = screen.getAllByRole('textbox')

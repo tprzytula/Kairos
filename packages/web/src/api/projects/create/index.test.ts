@@ -1,4 +1,4 @@
-import { Mock, MockedFunction } from 'vitest'
+import { MockedFunction } from 'vitest'
 import { createProject } from './index'
 import { createFetchOptions } from '../../../utils/api'
 

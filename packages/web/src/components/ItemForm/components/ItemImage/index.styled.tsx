@@ -7,7 +7,7 @@ export const Media = styled(CardMedia)({
     position: 'relative',
 })
 
-export const StyledItemImage = styled(Media)(({ theme }) => ({
+export const StyledItemImage = styled(Media)(() => ({
     alignSelf: 'center',
     border: '2px solid rgba(102, 126, 234, 0.2)',
     borderRadius: '16px',
