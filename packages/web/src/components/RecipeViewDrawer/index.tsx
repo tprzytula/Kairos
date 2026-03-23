@@ -62,12 +62,14 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
   const [checkedSteps, setCheckedSteps] = useState<Set<number>>(new Set())
   const [isAdding, setIsAdding] = useState(false)
   const [selectedShopId, setSelectedShopId] = useState<string>('')
+  const [showShopSelector, setShowShopSelector] = useState(false)
 
   useEffect(() => {
     setCheckedIngredients(new Set())
     setCheckedSteps(new Set())
     setIsAdding(false)
     setSelectedShopId('')
+    setShowShopSelector(false)
   }, [recipe?.id])
 
   useEffect(() => {
@@ -102,7 +104,14 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
   })
 
   const handleAddToList = useCallback(async () => {
-    if (!recipe || !currentProject || !selectedShopId) return
+    if (!recipe || !currentProject) return
+
+    if (shops.length > 1 && !selectedShopId) {
+      setShowShopSelector(true)
+      return
+    }
+
+    if (!selectedShopId) return
 
     const ingredientsToAdd = recipe.ingredients.filter((_, i) => !checkedIngredients.has(i))
 
@@ -130,12 +139,12 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
     } finally {
       setIsAdding(false)
     }
-  }, [recipe, currentProject, selectedShopId, checkedIngredients, dispatch, defaults, onClose])
+  }, [recipe, currentProject, selectedShopId, shops, checkedIngredients, dispatch, defaults, onClose])
 
   const placeholderSeed = recipe?.name.charCodeAt(0) ?? 0
   const instructions = recipe?.instructions ?? []
-  const needsShopSelector = shops.length > 1
-  const canAdd = selectedShopId && !isAdding
+  const needsShopSelector = shops.length > 1 && showShopSelector
+  const canAdd = (!needsShopSelector || selectedShopId) && !isAdding
 
   return (
     <DraggableBottomDrawer
