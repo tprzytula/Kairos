@@ -6,8 +6,8 @@ export interface IState {
   mealPlans: IMealPlan[]
   isLoading: boolean
   fetchMealPlans: () => Promise<void>
-  addMealPlan: (date: string, recipeName: string, recipeId?: string, mealType?: MealType) => Promise<void>
-  updateMealPlan: (id: string, fields: { date?: string; recipeName?: string; recipeId?: string | null; mealType?: MealType | null }) => Promise<void>
+  addMealPlan: (date: string, recipeName: string, recipeId?: string, mealType?: MealType, imagePath?: string) => Promise<void>
+  updateMealPlan: (id: string, fields: { date?: string; recipeName?: string; recipeId?: string | null; mealType?: MealType | null; imagePath?: string | null }) => Promise<void>
   removeMealPlan: (id: string) => Promise<void>
 }
 

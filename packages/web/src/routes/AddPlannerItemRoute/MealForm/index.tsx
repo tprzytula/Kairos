@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useRef } from 'react'
 import { useAppState } from '../../../providers/AppStateProvider'
 import {
   Alert,
@@ -10,15 +10,23 @@ import {
   ToggleButtonGroup,
   InputAdornment,
   MenuItem,
+  Typography,
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import SearchIcon from '@mui/icons-material/Search'
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import { type Area } from 'react-easy-crop'
 import { useNavigate } from 'react-router'
 import { Route } from '../../../enums/route'
 import { MealType, MEAL_TYPE_ORDER } from '../../../enums/mealType'
 import { useMealPlanContext } from '../../../providers/MealPlanProvider'
 import { useRecipeContext } from '../../../providers/RecipeProvider'
+import { useProjectContext } from '../../../providers/ProjectProvider'
+import { showAlert } from '../../../utils/alert'
+import { getMealPlanUploadUrl } from '../../../api/mealPlans'
+import ImageCropModal from '../../../components/RecipeForm/ImageCropModal'
+import { getCroppedBlob } from '../../../components/RecipeForm/cropUtils'
 import {
   FormContainer,
   FormCard,
@@ -242,6 +250,32 @@ const SubmitButton = styled(Button)({
   },
 })
 
+const MealImageUploadBox = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '160px',
+  border: '2px dashed rgba(217, 119, 6, 0.3)',
+  borderRadius: '14px',
+  cursor: 'pointer',
+  overflow: 'hidden',
+  position: 'relative',
+  transition: 'all 0.2s ease',
+  '&:hover': {
+    borderColor: 'rgba(217, 119, 6, 0.5)',
+    background: 'rgba(254, 243, 199, 0.3)',
+  },
+})
+
+const MealImagePreview = styled('img')({
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+})
+
 const MealFormCard = styled(FormCard)({
   '&:before': {
     background: 'linear-gradient(90deg, #f59e0b 0%, #d97706 50%, #fbbf24 100%)',
@@ -251,7 +285,8 @@ const MealFormCard = styled(FormCard)({
 const MealForm = () => {
   const { addMealPlan } = useMealPlanContext()
   const { recipes } = useRecipeContext()
-  const { state: { selectedCalendarDate } } = useAppState()
+  const { currentProject } = useProjectContext()
+  const { state: { selectedCalendarDate }, dispatch } = useAppState()
   const navigate = useNavigate()
 
   const [date, setDate] = useState(selectedCalendarDate ?? dayjs().format('YYYY-MM-DD'))
@@ -263,6 +298,12 @@ const MealForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [imagePath, setImagePath] = useState('')
+  const [isUploading, setIsUploading] = useState(false)
+  const [pendingImageSrc, setPendingImageSrc] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const filteredRecipes = useMemo(
     () => recipes.filter(r => r.name.toLowerCase().includes(search.toLowerCase())),
     [recipes, search]
@@ -272,6 +313,51 @@ const MealForm = () => {
     () => recipes.find(r => r.id === selectedRecipeId),
     [recipes, selectedRecipeId]
   )
+
+  const handleImageClick = useCallback(() => {
+    fileInputRef.current?.click()
+  }, [])
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setPendingImageSrc(URL.createObjectURL(file))
+    e.target.value = ''
+  }, [])
+
+  const handleCropConfirm = useCallback(async (croppedAreaPixels: Area) => {
+    if (!pendingImageSrc) return
+
+    const previousPreview = previewUrl
+    const previousPath = imagePath
+
+    try {
+      const croppedBlob = await getCroppedBlob(pendingImageSrc, croppedAreaPixels)
+      const objectUrl = URL.createObjectURL(croppedBlob)
+      setPreviewUrl(objectUrl)
+      setPendingImageSrc(null)
+      setIsUploading(true)
+
+      const { uploadUrl, imagePath: path } = await getMealPlanUploadUrl('jpg', currentProject?.id)
+      await fetch(uploadUrl, {
+        method: 'PUT',
+        body: croppedBlob,
+        headers: { 'Content-Type': 'image/jpeg' },
+      })
+      setImagePath(path)
+    } catch {
+      showAlert({ description: 'Failed to upload image', severity: 'error' }, dispatch)
+      setPreviewUrl(previousPreview)
+      setImagePath(previousPath)
+      setPendingImageSrc(null)
+    } finally {
+      setIsUploading(false)
+    }
+  }, [pendingImageSrc, previewUrl, imagePath, currentProject, dispatch])
+
+  const handleCropCancel = useCallback(() => {
+    setPendingImageSrc(null)
+  }, [])
 
   const canSave = date && (mode === 'recipe' ? selectedRecipeId !== undefined : customName.trim().length > 0)
 
@@ -283,7 +369,7 @@ const MealForm = () => {
       if (mode === 'recipe' && selectedRecipe) {
         await addMealPlan(date, selectedRecipe.name, selectedRecipe.id, mealType)
       } else if (mode === 'custom' && customName.trim()) {
-        await addMealPlan(date, customName.trim(), undefined, mealType)
+        await addMealPlan(date, customName.trim(), undefined, mealType, imagePath || undefined)
       }
       navigate(Route.Planner)
     } catch (err) {
@@ -291,10 +377,26 @@ const MealForm = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [canSave, mode, selectedRecipe, customName, date, mealType, addMealPlan, navigate])
+  }, [canSave, mode, selectedRecipe, customName, date, mealType, imagePath, addMealPlan, navigate])
 
   return (
     <FormContainer>
+      {pendingImageSrc && (
+        <ImageCropModal
+          imageSrc={pendingImageSrc}
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
+      )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+
       <MealFormCard>
         <FormContent>
           <Stack spacing={2.5}>
@@ -404,22 +506,38 @@ const MealForm = () => {
                   )}
                 </>
               ) : (
-                <MealTextField
-                  fullWidth
-                  label="Meal name"
-                  value={customName}
-                  onChange={e => setCustomName(e.target.value)}
-                  disabled={isLoading}
-                  autoFocus
-                  placeholder="e.g., Pasta, Chicken Salad"
-                  onKeyDown={e => { if (e.key === 'Enter' && canSave) handleSubmit() }}
-                />
+                <>
+                  <MealImageUploadBox onClick={handleImageClick}>
+                    {previewUrl ? (
+                      <MealImagePreview src={previewUrl} alt="Meal cover" />
+                    ) : null}
+                    {isUploading ? (
+                      <CircularProgress size={24} sx={{ position: 'relative', zIndex: 1 }} />
+                    ) : !previewUrl ? (
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <AddPhotoAlternateIcon fontSize="small" />
+                        Add photo
+                      </Typography>
+                    ) : null}
+                  </MealImageUploadBox>
+
+                  <MealTextField
+                    fullWidth
+                    label="Meal name"
+                    value={customName}
+                    onChange={e => setCustomName(e.target.value)}
+                    disabled={isLoading}
+                    autoFocus
+                    placeholder="e.g., Pasta, Chicken Salad"
+                    onKeyDown={e => { if (e.key === 'Enter' && canSave) handleSubmit() }}
+                  />
+                </>
               )}
             </FormFieldsContainer>
 
             <SubmitButton
               variant="contained"
-              disabled={!canSave || isLoading}
+              disabled={!canSave || isLoading || isUploading}
               onClick={handleSubmit}
               fullWidth
               startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <RestaurantIcon />}

@@ -131,3 +131,29 @@ export const SearchField = styled(TextField)({
     borderRadius: '8px',
   },
 })
+
+export const ImageUploadBox = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '120px',
+  border: '2px dashed #d1d5db',
+  borderRadius: '10px',
+  cursor: 'pointer',
+  overflow: 'hidden',
+  position: 'relative',
+  transition: 'all 0.2s ease',
+  '&:hover': {
+    borderColor: '#9ca3af',
+    background: '#f9fafb',
+  },
+})
+
+export const ImagePreview = styled('img')({
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+})

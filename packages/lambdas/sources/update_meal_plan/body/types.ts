@@ -4,4 +4,5 @@ export interface IRequestBody {
     recipeName?: string;
     recipeId?: string | null;
     mealType?: string | null;
+    imagePath?: string | null;
 }

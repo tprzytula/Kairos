@@ -136,11 +136,11 @@ const PlannerContent = () => {
     setMealDrawerOpen(true)
   }, [])
 
-  const handleMealPlanSave = useCallback(async (date: string, recipeName: string, recipeId?: string, mealType?: MealType) => {
+  const handleMealPlanSave = useCallback(async (date: string, recipeName: string, recipeId?: string, mealType?: MealType, imagePath?: string | null) => {
     if (!editingMealPlan) return
     try {
       const recipeIdUpdate = recipeId !== undefined ? recipeId : (editingMealPlan.recipeId ? null : undefined)
-      await updateMealPlan(editingMealPlan.id, { date, recipeName, recipeId: recipeIdUpdate, mealType: mealType ?? null })
+      await updateMealPlan(editingMealPlan.id, { date, recipeName, recipeId: recipeIdUpdate, mealType: mealType ?? null, imagePath })
       setMealDrawerOpen(false)
     } catch (error) {
       console.error('Failed to save meal plan:', error)

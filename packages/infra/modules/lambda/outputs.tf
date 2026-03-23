@@ -37,6 +37,19 @@ output "lambda_functions" {
       }
     },
     {
+      "get_meal_plan_upload_url" = {
+        invoke_arn    = aws_lambda_function.get_meal_plan_upload_url.invoke_arn
+        function_arn  = aws_lambda_function.get_meal_plan_upload_url.arn
+        function_name = aws_lambda_function.get_meal_plan_upload_url.function_name
+        iam_role_name = aws_iam_role.get_meal_plan_upload_url_role.name
+        permissions = {
+          database = { push_subscriptions = "none" }
+          s3       = { meal_plan_uploads = "put-only" }
+          sns      = { todo_notifications = "none" }
+        }
+      }
+    },
+    {
       "get_grocery_default_upload_url" = {
         invoke_arn    = aws_lambda_function.get_grocery_default_upload_url.invoke_arn
         function_arn  = aws_lambda_function.get_grocery_default_upload_url.arn

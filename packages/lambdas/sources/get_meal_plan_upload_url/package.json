@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "name": "get_meal_plan_upload_url",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.0.0",
+    "@aws-sdk/s3-request-presigner": "^3.0.0",
+    "@kairos-lambdas-libs/middleware": "1.0.0",
+    "@kairos-lambdas-libs/response": "1.0.0",
+    "uuid": "^9.0.0"
+  }
+}

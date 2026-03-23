@@ -17,6 +17,10 @@ const validateBody = (body: any): body is IRequestBody => {
     return false;
   }
 
+  if (body.imagePath !== undefined && typeof body.imagePath !== 'string') {
+    return false;
+  }
+
   return true;
 };
 

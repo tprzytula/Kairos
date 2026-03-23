@@ -1,13 +1,21 @@
-import { useState, useEffect, useMemo } from 'react'
-import { ToggleButton, InputAdornment, IconButton, Box, MenuItem } from '@mui/material'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { ToggleButton, InputAdornment, IconButton, Box, MenuItem, CircularProgress, Typography } from '@mui/material'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import SearchIcon from '@mui/icons-material/Search'
 import VisibilityIcon from '@mui/icons-material/Visibility'
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import { type Area } from 'react-easy-crop'
 import dayjs from 'dayjs'
 import { IMealPlan } from '../../types/mealPlan'
 import { IRecipe } from '../../types/recipe'
 import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
 import { useRecipeContext } from '../../providers/RecipeProvider'
+import { useProjectContext } from '../../providers/ProjectProvider'
+import { useAppState } from '../../providers/AppStateProvider'
+import { showAlert } from '../../utils/alert'
+import { getMealPlanUploadUrl } from '../../api/mealPlans'
+import ImageCropModal from '../RecipeForm/ImageCropModal'
+import { getCroppedBlob } from '../RecipeForm/cropUtils'
 import RecipeViewDrawer from '../RecipeViewDrawer'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 
@@ -26,6 +34,8 @@ import {
   RecipeThumbnail,
   RecipeThumbnailPlaceholder,
   RecipeItemName,
+  ImageUploadBox,
+  ImagePreview,
 } from './index.styled'
 
 type Mode = 'recipe' | 'custom'
@@ -35,18 +45,26 @@ interface IMealPlanDrawerProps {
   date: string | null
   mealPlan?: IMealPlan
   onClose: () => void
-  onSave: (date: string, recipeName: string, recipeId?: string, mealType?: MealType) => void
+  onSave: (date: string, recipeName: string, recipeId?: string, mealType?: MealType, imagePath?: string | null) => void
   onDelete?: (id: string) => void
 }
 
 const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMealPlanDrawerProps) => {
   const { recipes } = useRecipeContext()
+  const { currentProject } = useProjectContext()
+  const { dispatch } = useAppState()
   const [mode, setMode] = useState<Mode>('recipe')
   const [customName, setCustomName] = useState('')
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | undefined>(undefined)
   const [search, setSearch] = useState('')
   const [previewRecipe, setPreviewRecipe] = useState<IRecipe | null>(null)
   const [mealType, setMealType] = useState<MealType>(MealType.Dinner)
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [uploadedImagePath, setUploadedImagePath] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [pendingImageSrc, setPendingImageSrc] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (open && mealPlan) {
@@ -61,8 +79,56 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
       }
       setMealType(mealPlan.mealType ?? MealType.Dinner)
       setSearch('')
+      setPreviewUrl(mealPlan.imagePath ?? null)
+      setUploadedImagePath(mealPlan.imagePath ?? null)
+      setPendingImageSrc(null)
     }
   }, [open, mealPlan])
+
+  const handleImageClick = useCallback(() => {
+    fileInputRef.current?.click()
+  }, [])
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setPendingImageSrc(URL.createObjectURL(file))
+    e.target.value = ''
+  }, [])
+
+  const handleCropConfirm = useCallback(async (croppedAreaPixels: Area) => {
+    if (!pendingImageSrc) return
+
+    const previousPreview = previewUrl
+    const previousPath = uploadedImagePath
+
+    try {
+      const croppedBlob = await getCroppedBlob(pendingImageSrc, croppedAreaPixels)
+      const objectUrl = URL.createObjectURL(croppedBlob)
+      setPreviewUrl(objectUrl)
+      setPendingImageSrc(null)
+      setIsUploading(true)
+
+      const { uploadUrl, imagePath: path } = await getMealPlanUploadUrl('jpg', currentProject?.id)
+      await fetch(uploadUrl, {
+        method: 'PUT',
+        body: croppedBlob,
+        headers: { 'Content-Type': 'image/jpeg' },
+      })
+      setUploadedImagePath(path)
+    } catch {
+      showAlert({ description: 'Failed to upload image', severity: 'error' }, dispatch)
+      setPreviewUrl(previousPreview)
+      setUploadedImagePath(previousPath)
+      setPendingImageSrc(null)
+    } finally {
+      setIsUploading(false)
+    }
+  }, [pendingImageSrc, previewUrl, uploadedImagePath, currentProject, dispatch])
+
+  const handleCropCancel = useCallback(() => {
+    setPendingImageSrc(null)
+  }, [])
 
   const filteredRecipes = useMemo(
     () => recipes.filter(r => r.name.toLowerCase().includes(search.toLowerCase())),
@@ -82,9 +148,9 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
     if (!date) return
 
     if (mode === 'recipe' && selectedRecipe) {
-      onSave(date, selectedRecipe.name, selectedRecipe.id, mealType)
+      onSave(date, selectedRecipe.name, selectedRecipe.id, mealType, null)
     } else if (mode === 'custom' && customName.trim()) {
-      onSave(date, customName.trim(), undefined, mealType)
+      onSave(date, customName.trim(), undefined, mealType, uploadedImagePath)
     }
   }
 
@@ -92,6 +158,22 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
 
   return (
     <>
+      {pendingImageSrc && (
+        <ImageCropModal
+          imageSrc={pendingImageSrc}
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
+      )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+
       <DraggableBottomDrawer
         open={open}
         onClose={onClose}
@@ -178,20 +260,36 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
               </RecipeList>
             </>
           ) : (
-            <StyledTextField
-              size="small"
-              label="Meal name"
-              value={customName}
-              onChange={(e) => setCustomName(e.target.value)}
-              fullWidth
-              onKeyDown={(e) => { if (e.key === 'Enter' && canSave) handleSave() }}
-            />
+            <>
+              <ImageUploadBox onClick={handleImageClick}>
+                {previewUrl ? (
+                  <ImagePreview src={previewUrl} alt="Meal cover" />
+                ) : null}
+                {isUploading ? (
+                  <CircularProgress size={24} sx={{ position: 'relative', zIndex: 1 }} />
+                ) : !previewUrl ? (
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <AddPhotoAlternateIcon fontSize="small" />
+                    Add photo
+                  </Typography>
+                ) : null}
+              </ImageUploadBox>
+
+              <StyledTextField
+                size="small"
+                label="Meal name"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                fullWidth
+                onKeyDown={(e) => { if (e.key === 'Enter' && canSave) handleSave() }}
+              />
+            </>
           )}
 
           <SaveButton
             variant="contained"
             fullWidth
-            disabled={!canSave}
+            disabled={!canSave || isUploading}
             onClick={handleSave}
           >
             Save
