@@ -8,6 +8,9 @@ import {
   Button,
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import ExploreIcon from '@mui/icons-material/Explore'
 import { useNavigate } from 'react-router'
 import { Route } from '../../../enums/route'
@@ -18,7 +21,8 @@ import {
   FormContent,
   FormFieldsContainer,
 } from '../../../components/ItemForm/index.styled'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
+import 'dayjs/locale/en-gb'
 
 const AdventureTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
@@ -95,14 +99,16 @@ const AdventureForm = () => {
   const navigate = useNavigate()
 
   const [name, setName] = useState('')
-  const [date, setDate] = useState(selectedCalendarDate ?? dayjs().format('YYYY-MM-DD'))
+  const [date, setDate] = useState<Dayjs | null>(
+    dayjs(selectedCalendarDate ?? dayjs().format('YYYY-MM-DD'))
+  )
   const [time, setTime] = useState('')
   const [location, setLocation] = useState('')
   const [notes, setNotes] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const canSave = name.trim().length > 0 && date.length > 0
+  const canSave = name.trim().length > 0 && date !== null && date.isValid()
 
   const handleSubmit = useCallback(async () => {
     if (!canSave) return
@@ -111,7 +117,7 @@ const AdventureForm = () => {
     try {
       await addAdventure({
         name: name.trim(),
-        date,
+        date: date!.format('YYYY-MM-DD'),
         time: time.trim() || undefined,
         location: location.trim() || undefined,
         notes: notes.trim() || undefined,
@@ -142,15 +148,52 @@ const AdventureForm = () => {
                 onKeyDown={e => { if (e.key === 'Enter' && canSave) handleSubmit() }}
               />
 
-              <AdventureTextField
-                fullWidth
-                label="Date"
-                type="date"
-                value={date}
-                onChange={e => setDate(e.target.value)}
-                disabled={isLoading}
-                InputLabelProps={{ shrink: true }}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+                <DatePicker
+                  label="Date"
+                  value={date}
+                  onChange={(newValue) => setDate(newValue)}
+                  disabled={isLoading}
+                  format="DD/MM/YYYY"
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      required: true,
+                      sx: {
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '12px',
+                          background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(240,253,255,0.95) 100%)',
+                          backdropFilter: 'blur(10px)',
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          '& fieldset': {
+                            borderColor: 'rgba(6, 182, 212, 0.2)',
+                            borderWidth: '1px',
+                            transition: 'all 0.3s ease',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: 'rgba(6, 182, 212, 0.4)',
+                            boxShadow: '0 2px 8px rgba(6, 182, 212, 0.1)',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#0891b2',
+                            borderWidth: '2px',
+                            boxShadow: '0 4px 16px rgba(6, 182, 212, 0.2)',
+                          },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#0891b2',
+                          fontWeight: '600',
+                        },
+                        '& .MuiOutlinedInput-input': {
+                          padding: '14px 16px',
+                          fontSize: '0.95rem',
+                          fontWeight: '500',
+                        },
+                      },
+                    },
+                  }}
+                />
+              </LocalizationProvider>
 
               <AdventureTextField
                 fullWidth
