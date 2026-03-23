@@ -243,23 +243,14 @@ describe('UpcomingBirthdaysCard component', () => {
       </ThemeProvider>
     )
 
-  it('should show the date parts for a birthday', () => {
+  it('should show the day number in the date badge and date label in subline', () => {
     // System time is 2024-01-15; birthday on Jan 16
     const birthday = createMockBirthday({ id: '1', name: 'Frank', month: 1, day: 16 })
 
     renderBirthdays([birthday])
 
-    expect(screen.getByText('Jan')).toBeInTheDocument()
     expect(screen.getByText('16')).toBeInTheDocument()
-  })
-
-  it('should show the day of week for a birthday', () => {
-    // 2024-01-16 is a Tuesday
-    const birthday = createMockBirthday({ id: '1', name: 'Grace', month: 1, day: 16 })
-
-    renderBirthdays([birthday])
-
-    expect(screen.getByText('Tue')).toBeInTheDocument()
+    expect(screen.getByText('Jan 16')).toBeInTheDocument()
   })
 
   it('should show upcoming birthday names', () => {
@@ -291,7 +282,7 @@ describe('UpcomingBirthdaysCard component', () => {
 
     renderBirthdays([birthday])
 
-    expect(screen.getByText('in 10d')).toBeInTheDocument()
+    expect(screen.getByText('10d')).toBeInTheDocument()
   })
 
   it('should show only the next 2 upcoming birthdays', () => {
