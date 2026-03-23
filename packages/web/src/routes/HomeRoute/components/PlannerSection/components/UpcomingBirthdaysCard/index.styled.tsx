@@ -26,20 +26,29 @@ export const BirthdayEntryContainer = styled('div')<{ $isToday?: boolean }>(({ $
 export const DateBadge = styled('div')<{ $isToday?: boolean }>(({ $isToday }) => ({
   flexShrink: 0,
   display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '2rem',
-  height: '2rem',
+  width: '2.2rem',
+  padding: '0.3rem 0',
   borderRadius: '8px',
   background: $isToday
     ? 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)'
     : 'rgba(0, 0, 0, 0.04)',
 }))
 
+export const DateBadgeMonth = styled('span')<{ $isToday?: boolean }>(({ theme, $isToday }) => ({
+  fontSize: '0.5rem',
+  fontWeight: 700,
+  lineHeight: 1,
+  letterSpacing: '0.05em',
+  color: $isToday ? 'rgba(255,255,255,0.8)' : theme.palette.text.secondary,
+}))
+
 export const DateBadgeDay = styled('span')<{ $isToday?: boolean }>(({ theme, $isToday }) => ({
   fontSize: '0.9rem',
   fontWeight: 700,
-  lineHeight: 1,
+  lineHeight: 1.1,
   color: $isToday ? '#fff' : theme.palette.text.primary,
 }))
 

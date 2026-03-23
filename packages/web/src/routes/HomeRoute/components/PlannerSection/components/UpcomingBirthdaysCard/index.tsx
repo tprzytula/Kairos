@@ -5,6 +5,7 @@ import {
   BirthdayList,
   BirthdayEntryContainer,
   DateBadge,
+  DateBadgeMonth,
   DateBadgeDay,
   BirthdayInfo,
   BirthdayName,
@@ -20,6 +21,8 @@ interface IUpcomingBirthdaysCardProps {
 }
 
 const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'short' })
+
+const formatMonth = (date: Date): string => monthFormatter.format(date).toUpperCase()
 
 const getNextBirthdayDate = (birthday: IBirthdayItem): Date => {
   const today = new Date()
@@ -42,26 +45,21 @@ const getDaysUntilLabel = (nextDate: Date): { label: string; isToday: boolean } 
   return { label: `${diffDays}d`, isToday: false }
 }
 
-const formatDateLabel = (nextDate: Date): string => {
-  const month = monthFormatter.format(nextDate)
-  return `${month} ${nextDate.getDate()}`
-}
-
 type SortedBirthday = IBirthdayItem & { nextDate: Date }
 
 const BirthdayEntry: React.FC<{ b: SortedBirthday; showDetails: boolean }> = ({ b, showDetails }) => {
   const { label, isToday } = getDaysUntilLabel(b.nextDate)
-  const dateLabel = formatDateLabel(b.nextDate)
-  const subLine = showDetails ? (b.notes || dateLabel) : dateLabel
+  const notes = showDetails ? b.notes : undefined
 
   return (
     <BirthdayEntryContainer $isToday={isToday}>
       <DateBadge $isToday={isToday}>
+        <DateBadgeMonth $isToday={isToday}>{formatMonth(b.nextDate)}</DateBadgeMonth>
         <DateBadgeDay $isToday={isToday}>{b.day}</DateBadgeDay>
       </DateBadge>
       <BirthdayInfo>
         <BirthdayName>{b.name}</BirthdayName>
-        <BirthdaySubLine>{subLine}</BirthdaySubLine>
+        {notes && <BirthdaySubLine>{notes}</BirthdaySubLine>}
       </BirthdayInfo>
       <DaysUntilPill $isToday={isToday}>{label}</DaysUntilPill>
     </BirthdayEntryContainer>

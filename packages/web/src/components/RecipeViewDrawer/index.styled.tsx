@@ -136,13 +136,13 @@ export const StepText = styled('span')<{ checked?: boolean }>(({ checked }) => (
 }))
 
 export const Footer = styled(Box)({
-  padding: '0.75rem 1.25rem',
-  paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
+  padding: '0.5rem 1.25rem',
+  paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))',
   borderTop: '1px solid rgba(0, 0, 0, 0.06)',
   flexShrink: 0,
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.5rem',
+  gap: '0.375rem',
 })
 
 export const ShopSelector = styled(Box)({
