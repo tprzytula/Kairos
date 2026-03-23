@@ -27,6 +27,7 @@ variable "lambda_functions" {
         recipes                = optional(string, "none")
         birthdays              = optional(string, "none")
         meal_plans             = optional(string, "none")
+        adventures             = optional(string, "none")
       })
       sns = object({
         todo_notifications = optional(string, "none")
@@ -93,6 +94,10 @@ variable "dynamodb_birthdays_arn" {
 }
 
 variable "dynamodb_meal_plans_arn" {
+  type = string
+}
+
+variable "dynamodb_adventures_arn" {
   type = string
 }
 

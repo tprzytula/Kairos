@@ -536,6 +536,54 @@ locals {
           todo_notifications = "none"
         }
       }
+    },
+    "add_adventure" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          adventures         = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "get_adventures" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          adventures         = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "update_adventure" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          adventures         = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "delete_adventure" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          adventures         = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
     }
   }
 }
