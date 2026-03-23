@@ -5,12 +5,10 @@ import {
   BirthdayList,
   BirthdayEntryContainer,
   DateBadge,
-  DateBadgeMonth,
   DateBadgeDay,
-  DateBadgeWeekday,
   BirthdayInfo,
   BirthdayName,
-  DaysUntil,
+  DaysUntilPill,
   BirthdaySubLine,
   MoreCount,
   CollapseGrid,
@@ -22,7 +20,6 @@ interface IUpcomingBirthdaysCardProps {
 }
 
 const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'short' })
-const weekdayFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'short' })
 
 const getNextBirthdayDate = (birthday: IBirthdayItem): Date => {
   const today = new Date()
@@ -42,34 +39,31 @@ const getDaysUntilLabel = (nextDate: Date): { label: string; isToday: boolean } 
 
   if (diffDays === 0) return { label: 'Today!', isToday: true }
   if (diffDays === 1) return { label: 'Tomorrow', isToday: false }
-  return { label: `in ${diffDays}d`, isToday: false }
+  return { label: `${diffDays}d`, isToday: false }
 }
 
-const getDateParts = (nextDate: Date): { month: string; day: number; weekday: string } => ({
-  month: monthFormatter.format(nextDate),
-  day: nextDate.getDate(),
-  weekday: weekdayFormatter.format(nextDate),
-})
+const formatDateLabel = (nextDate: Date): string => {
+  const month = monthFormatter.format(nextDate)
+  return `${month} ${nextDate.getDate()}`
+}
 
 type SortedBirthday = IBirthdayItem & { nextDate: Date }
 
 const BirthdayEntry: React.FC<{ b: SortedBirthday; showDetails: boolean }> = ({ b, showDetails }) => {
   const { label, isToday } = getDaysUntilLabel(b.nextDate)
-  const { month, day, weekday } = getDateParts(b.nextDate)
-  const subLine = b.notes ?? ''
+  const dateLabel = formatDateLabel(b.nextDate)
+  const subLine = showDetails ? (b.notes || dateLabel) : dateLabel
 
   return (
     <BirthdayEntryContainer $isToday={isToday}>
       <DateBadge $isToday={isToday}>
-        <DateBadgeMonth $isToday={isToday}>{month}</DateBadgeMonth>
-        <DateBadgeDay $isToday={isToday}>{day}</DateBadgeDay>
-        <DateBadgeWeekday $isToday={isToday}>{weekday}</DateBadgeWeekday>
+        <DateBadgeDay $isToday={isToday}>{b.day}</DateBadgeDay>
       </DateBadge>
       <BirthdayInfo>
         <BirthdayName>{b.name}</BirthdayName>
-        {showDetails && subLine && <BirthdaySubLine>{subLine}</BirthdaySubLine>}
+        <BirthdaySubLine>{subLine}</BirthdaySubLine>
       </BirthdayInfo>
-      <DaysUntil $isToday={isToday}>{label}</DaysUntil>
+      <DaysUntilPill $isToday={isToday}>{label}</DaysUntilPill>
     </BirthdayEntryContainer>
   )
 }
@@ -94,7 +88,7 @@ export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ b
       ))}
       {rest.length > 0 && (
         <>
-          <Collapse in={isExpanded} timeout={150} unmountOnExit sx={{ gridColumn: '1 / -1' }}>
+          <Collapse in={isExpanded} timeout={150} unmountOnExit>
             <CollapseGrid>
               {rest.map(b => (
                 <BirthdayEntry key={b.id} b={b} showDetails={isExpanded} />
