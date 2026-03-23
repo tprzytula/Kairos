@@ -2,6 +2,7 @@ import { styled } from '@mui/material/styles'
 import { Box, Typography } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
+import ExploreIcon from '@mui/icons-material/Explore'
 
 export const Container = styled('div')({
   display: 'flex',
@@ -372,6 +373,47 @@ export const MealsAddButton = styled('span')({
     backgroundColor: 'rgba(245, 158, 11, 0.22)',
     borderStyle: 'solid',
   },
+})
+
+export const AdventureCalendarIcon = styled(ExploreIcon)({
+  fontSize: '0.85rem',
+  color: '#06b6d4',
+})
+
+export const AdventureDayDetailItem = styled('div')({
+  fontSize: '0.875rem',
+  color: '#0e7490',
+  padding: '8px 10px 8px 12px',
+  borderRadius: '8px',
+  borderLeft: '3px solid #06b6d4',
+  backgroundColor: '#ecfeff',
+  cursor: 'pointer',
+  marginBottom: '4px',
+  transition: 'all 0.12s ease',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  '&:last-child': {
+    marginBottom: 0,
+  },
+  '&:hover': {
+    backgroundColor: '#cffafe',
+  },
+})
+
+export const AdventuresSectionHeader = styled(Typography)({
+  fontSize: '0.7rem',
+  fontWeight: 700,
+  color: '#0891b2',
+  marginTop: '12px',
+  marginBottom: '6px',
+  paddingTop: '12px',
+  borderTop: '1px solid rgba(226, 232, 240, 0.9)',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
 })
 
 export const TasksAddButton = styled('span')({

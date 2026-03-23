@@ -2,6 +2,7 @@ import { styled } from '@mui/material/styles'
 import { Box, Typography, Button } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
+import ExploreIcon from '@mui/icons-material/Explore'
 
 const TODAY_COLOR = '#6366f1'
 const TODAY_BG = '#eef2ff'
@@ -11,6 +12,8 @@ const MEAL_COLOR = '#f59e0b'
 const MEAL_BG = '#fffbeb'
 const BIRTHDAY_COLOR = '#ec4899'
 const BIRTHDAY_BG = '#fdf2f8'
+const ADVENTURE_COLOR = '#06b6d4'
+const ADVENTURE_BG = '#ecfeff'
 const BORDER_COLOR = '#f1f5f9'
 
 export const WeeklyContainer = styled('div')({
@@ -206,6 +209,26 @@ export const MealItem = styled('div')({
 export const MealIconStyled = styled(RestaurantIcon)({
   fontSize: '0.7rem',
   color: MEAL_COLOR,
+  flexShrink: 0,
+  marginTop: '2px',
+})
+
+export const AdventureItem = styled('div')({
+  ...baseItem,
+  color: '#0e7490',
+  backgroundColor: ADVENTURE_BG,
+  borderLeft: `3px solid ${ADVENTURE_COLOR}`,
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '4px',
+  '&:hover': {
+    backgroundColor: '#cffafe',
+  },
+})
+
+export const AdventureIconStyled = styled(ExploreIcon)({
+  fontSize: '0.7rem',
+  color: ADVENTURE_COLOR,
   flexShrink: 0,
   marginTop: '2px',
 })

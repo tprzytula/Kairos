@@ -8,6 +8,7 @@ import { usePlannerContext, PlannerProvider } from '../../providers/PlannerProvi
 import { useNoiseTrackingContext, NoiseTrackingProvider } from '../../providers/NoiseTrackingProvider'
 import { useBirthdayContext, BirthdayProvider } from '../../providers/BirthdayProvider'
 import { useMealPlanContext, MealPlanProvider } from '../../providers/MealPlanProvider'
+import { useAdventureContext, AdventureProvider } from '../../providers/AdventureProvider'
 import { useRecipeContext, RecipeProvider } from '../../providers/RecipeProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useProjectContext } from '../../providers/ProjectProvider'
@@ -60,6 +61,7 @@ const HomeDataContent = () => {
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
   const { birthdays } = useBirthdayContext()
   const { mealPlans, isLoading: isMealLoading } = useMealPlanContext()
+  const { adventures, isLoading: isAdventureLoading } = useAdventureContext()
   const { recipes } = useRecipeContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
@@ -79,6 +81,9 @@ const HomeDataContent = () => {
   })
 
   const upcomingDates = new Set(getUpcomingDateStrings())
+
+  const upcomingAdventures = adventures.filter(a => upcomingDates.has(a.date))
+
   const todayMeals = mealPlans
     .filter(plan => upcomingDates.has(plan.date))
     .map(plan => {
@@ -138,7 +143,8 @@ const HomeDataContent = () => {
         <PlannerSection
           toDoStats={homeData.toDoStats}
           todayMeals={todayMeals}
-          isLoading={isToDoLoading || isMealLoading}
+          upcomingAdventures={upcomingAdventures}
+          isLoading={isToDoLoading || isMealLoading || isAdventureLoading}
           onStepToggle={handleStepToggle}
           onCardClick={interactions.handleToDoItemSelect}
           onMealClick={handleMealClick}
@@ -224,9 +230,11 @@ const HomeContent = () => {
           <NoiseTrackingProvider key={`noise-${currentProject?.id || 'no-project'}`}>
             <BirthdayProvider key={`birthday-${currentProject?.id || 'no-project'}`}>
               <MealPlanProvider key={`meal-${currentProject?.id || 'no-project'}`}>
-                <RecipeProvider>
-                  <HomeDataContent />
-                </RecipeProvider>
+                <AdventureProvider key={`adventure-${currentProject?.id || 'no-project'}`}>
+                  <RecipeProvider>
+                    <HomeDataContent />
+                  </RecipeProvider>
+                </AdventureProvider>
               </MealPlanProvider>
             </BirthdayProvider>
           </NoiseTrackingProvider>

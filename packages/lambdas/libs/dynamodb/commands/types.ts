@@ -8,6 +8,7 @@ import { IProject, IProjectMember } from "../types/projects";
 import { IPushSubscription } from "../types/pushSubscriptions";
 import { IShop } from "../types/shops";
 import { IRecipe } from "../types/recipes";
+import { IAdventure } from "../types/adventures";
 
 export type TableResponseMap = {
     [DynamoDBTable.GROCERY_LIST]: IGroceryItem;
@@ -20,4 +21,5 @@ export type TableResponseMap = {
     [DynamoDBTable.PUSH_SUBSCRIPTIONS]: IPushSubscription;
     [DynamoDBTable.SHOPS]: IShop;
     [DynamoDBTable.RECIPES]: IRecipe;
+    [DynamoDBTable.ADVENTURES]: IAdventure;
 };

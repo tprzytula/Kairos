@@ -5,3 +5,4 @@ export * from "./projects";
 export * from "./userPreferences";
 export * from "./pushSubscriptions";
 export * from "./recipes";
+export * from "./adventures";

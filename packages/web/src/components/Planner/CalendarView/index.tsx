@@ -8,6 +8,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../types/mealPlan'
+import { IAdventure } from '../../../types/adventure'
 import DayPreviewDrawer from '../../DayPreviewDrawer'
 import {
   Container,
@@ -26,6 +27,7 @@ import {
   CompletedNoDueDateItem,
   BirthdayCakeIcon,
   MealPlanIcon,
+  AdventureCalendarIcon,
 } from './index.styled'
 
 // Jan 4 2021 was a Monday — generate Mon-first weekday labels via browser locale
@@ -42,6 +44,8 @@ interface ICalendarViewProps {
   onAddMealPlan?: (date: string) => void
   onMealPlanClick?: (mealPlan: IMealPlan) => void
   onAddTask?: (date: string) => void
+  adventures?: IAdventure[]
+  onAdventureClick?: (id: string) => void
 }
 
 const CalendarView = ({
@@ -53,6 +57,8 @@ const CalendarView = ({
   onAddMealPlan,
   onMealPlanClick,
   onAddTask,
+  adventures = [],
+  onAdventureClick,
 }: ICalendarViewProps) => {
   const { dispatch } = useAppState()
   const [currentMonth, setCurrentMonth] = useState<Dayjs>(() => dayjs().startOf('month'))
@@ -163,6 +169,25 @@ const CalendarView = ({
     [selectedDay, mealPlansByDay]
   )
 
+  // Map from "YYYY-MM-DD" -> IAdventure[]
+  const adventuresByDay = useMemo(() => {
+    const map = new Map<string, IAdventure[]>()
+    for (const adventure of adventures) {
+      const existing = map.get(adventure.date)
+      if (existing) {
+        existing.push(adventure)
+      } else {
+        map.set(adventure.date, [adventure])
+      }
+    }
+    return map
+  }, [adventures])
+
+  const selectedDayAdventures = useMemo(
+    () => (selectedDay ? (adventuresByDay.get(selectedDay) ?? []) : []),
+    [selectedDay, adventuresByDay]
+  )
+
   // Build the grid: pad the start with days from the previous month
   const calendarDays = useMemo(() => {
     const startOfMonth = currentMonth.startOf('month')
@@ -222,6 +247,7 @@ const CalendarView = ({
           const birthdayKey = `${day.month() + 1}-${day.date()}`
           const hasBirthday = isCurrentMonth && (birthdaysByDay.get(birthdayKey)?.length ?? 0) > 0
           const hasMealPlan = isCurrentMonth && (mealPlansByDay.get(key)?.length ?? 0) > 0
+          const hasAdventure = isCurrentMonth && (adventuresByDay.get(key)?.length ?? 0) > 0
 
           return (
             <DayCell
@@ -236,6 +262,7 @@ const CalendarView = ({
               <CompletedTodoDot count={completedCount}>{completedCount > 0 ? completedCount : ''}</CompletedTodoDot>
               {hasBirthday && <BirthdayCakeIcon />}
               {hasMealPlan && <MealPlanIcon />}
+              {hasAdventure && <AdventureCalendarIcon />}
             </DayCell>
           )
         })}
@@ -249,6 +276,7 @@ const CalendarView = ({
         isOverdue={isSelectedDayOverdue}
         birthdays={selectedDayBirthdays}
         mealPlans={selectedDayMealPlans}
+        adventures={selectedDayAdventures}
         onClose={() => {
           setSelectedDay(null)
           dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: null })
@@ -257,6 +285,7 @@ const CalendarView = ({
         onBirthdayClick={onBirthdayClick}
         onAddMealPlan={onAddMealPlan}
         onMealPlanClick={onMealPlanClick}
+        onAdventureClick={onAdventureClick}
         onAddTask={onAddTask}
       />
 

@@ -48,6 +48,7 @@ const renderWithTheme = (component: React.ReactElement) => {
 const defaultProps = {
   toDoStats: createMockToDoStats(),
   todayMeals: [],
+  upcomingAdventures: [],
   isLoading: false,
   onStepToggle: vi.fn(),
   onCardClick: vi.fn(),
