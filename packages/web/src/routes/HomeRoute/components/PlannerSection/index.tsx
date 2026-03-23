@@ -31,14 +31,6 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
         </MiniCardsGrid>
       )}
 
-      {showMealCard && (
-        <MiniCardsGrid>
-          <MiniCard sx={{ gridColumn: '1 / 3', gridRow: 1, minHeight: 'unset' }}>
-            <TodayMealCard todayMeals={todayMeals} isLoading={isLoading} onMealClick={onMealClick} />
-          </MiniCard>
-        </MiniCardsGrid>
-      )}
-
       <SectionCard
         icon={ChecklistIcon}
         title="Tasks"
@@ -52,6 +44,14 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
           onCardClick={onCardClick}
         />
       </SectionCard>
+
+      {showMealCard && (
+        <MiniCardsGrid>
+          <MiniCard sx={{ gridColumn: '1 / 3', gridRow: 1, minHeight: 'unset' }}>
+            <TodayMealCard todayMeals={todayMeals} isLoading={isLoading} onMealClick={onMealClick} />
+          </MiniCard>
+        </MiniCardsGrid>
+      )}
     </>
   )
 }
