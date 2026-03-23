@@ -22,10 +22,20 @@ export const IngredientsSection = styled(Box)({
 })
 
 export const FormActions = styled(Box)({
+  position: 'sticky',
+  bottom: 0,
   display: 'flex',
   gap: '0.75rem',
   justifyContent: 'flex-end',
-  paddingTop: '0.5rem',
+  paddingTop: '0.75rem',
+  paddingBottom: '0.75rem',
+  marginTop: 'auto',
+  background: 'white',
+  borderTop: '1px solid rgba(0, 0, 0, 0.08)',
+  marginLeft: '-1.25rem',
+  marginRight: '-1.25rem',
+  paddingLeft: '1.25rem',
+  paddingRight: '1.25rem',
 })
 
 export const ImageUploadBox = styled(Box)({
