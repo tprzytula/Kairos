@@ -272,6 +272,9 @@ components:
         notes:
           type: string
           example: "Pack sunscreen"
+        imagePath:
+          type: string
+          example: "user-uploads/adventures/abc123.jpg"
         createdAt:
           type: string
           format: date-time
@@ -302,6 +305,9 @@ components:
         notes:
           type: string
           example: "Pack sunscreen"
+        imagePath:
+          type: string
+          example: "user-uploads/adventures/abc123.jpg"
     updateAdventureRequest:
       title: Update Adventure Request
       type: object
@@ -329,6 +335,10 @@ components:
           type: string
           nullable: true
           example: "Updated notes"
+        imagePath:
+          type: string
+          nullable: true
+          example: "user-uploads/adventures/abc123.jpg"
   securitySchemes:
     CognitoAuthorizer:
       type: apiKey
