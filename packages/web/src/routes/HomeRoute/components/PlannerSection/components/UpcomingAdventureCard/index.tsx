@@ -11,6 +11,7 @@ import {
   CarouselDot,
   HeroWrapper,
   HeroGradient,
+  HeroImage,
   HeroInitial,
   HeroOverlay,
   HeroLabel,
@@ -154,8 +155,11 @@ export const UpcomingAdventureCard: React.FC<IUpcomingAdventureCardProps> = ({ a
                 sx={{ cursor: 'pointer' }}
               >
                 <HeroGradient seed={seed}>
-                  <HeroInitial>{adventure.name.charAt(0).toUpperCase()}</HeroInitial>
+                  {!adventure.imagePath && <HeroInitial>{adventure.name.charAt(0).toUpperCase()}</HeroInitial>}
                 </HeroGradient>
+                {adventure.imagePath && (
+                  <HeroImage src={adventure.imagePath} alt={adventure.name} />
+                )}
                 <HeroOverlay>
                   <HeroLabel>
                     <ExploreIcon />

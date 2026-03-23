@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useAppState } from '../../../providers/AppStateProvider'
 import {
   Alert,
@@ -6,21 +6,29 @@ import {
   Stack,
   TextField,
   Button,
+  Typography,
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import ExploreIcon from '@mui/icons-material/Explore'
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import { type Area } from 'react-easy-crop'
 import { useNavigate } from 'react-router'
 import { Route } from '../../../enums/route'
 import { useAdventureContext } from '../../../providers/AdventureProvider'
+import { useProjectContext } from '../../../providers/ProjectProvider'
 import {
   FormContainer,
   FormCard,
   FormContent,
   FormFieldsContainer,
 } from '../../../components/ItemForm/index.styled'
+import { ImageUploadBox, ImagePreview } from '../../../components/FormCard/index.styled'
+import ImageCropModal from '../../../components/RecipeForm/ImageCropModal'
+import { getCroppedBlob } from '../../../components/RecipeForm/cropUtils'
+import { getAdventureUploadUrl } from '../../../api/adventures'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/en-gb'
 
@@ -95,8 +103,10 @@ const AdventureFormCard = styled(FormCard)({
 
 const AdventureForm = () => {
   const { addAdventure } = useAdventureContext()
+  const { currentProject } = useProjectContext()
   const { state: { selectedCalendarDate } } = useAppState()
   const navigate = useNavigate()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [name, setName] = useState('')
   const [date, setDate] = useState<Dayjs | null>(
@@ -105,10 +115,59 @@ const AdventureForm = () => {
   const [time, setTime] = useState('')
   const [location, setLocation] = useState('')
   const [notes, setNotes] = useState('')
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [imagePath, setImagePath] = useState<string | undefined>(undefined)
+  const [isUploading, setIsUploading] = useState(false)
+  const [pendingImageSrc, setPendingImageSrc] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
   const canSave = name.trim().length > 0 && date !== null && date.isValid()
+
+  const handleImageClick = useCallback(() => {
+    fileInputRef.current?.click()
+  }, [])
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setPendingImageSrc(URL.createObjectURL(file))
+    e.target.value = ''
+  }, [])
+
+  const handleCropConfirm = useCallback(async (croppedAreaPixels: Area) => {
+    if (!pendingImageSrc) return
+
+    const previousPreview = previewUrl
+    const previousPath = imagePath
+
+    try {
+      const croppedBlob = await getCroppedBlob(pendingImageSrc, croppedAreaPixels)
+      const objectUrl = URL.createObjectURL(croppedBlob)
+      setPreviewUrl(objectUrl)
+      setPendingImageSrc(null)
+      setIsUploading(true)
+
+      const { uploadUrl, imagePath: path } = await getAdventureUploadUrl('jpg', currentProject?.id)
+      await fetch(uploadUrl, {
+        method: 'PUT',
+        body: croppedBlob,
+        headers: { 'Content-Type': 'image/jpeg' },
+      })
+      setImagePath(path)
+    } catch {
+      setError('Failed to upload image. Please try again.')
+      setPreviewUrl(previousPreview)
+      setImagePath(previousPath)
+      setPendingImageSrc(null)
+    } finally {
+      setIsUploading(false)
+    }
+  }, [pendingImageSrc, previewUrl, imagePath, currentProject])
+
+  const handleCropCancel = useCallback(() => {
+    setPendingImageSrc(null)
+  }, [])
 
   const handleSubmit = useCallback(async () => {
     if (!canSave) return
@@ -121,6 +180,7 @@ const AdventureForm = () => {
         time: time.trim() || undefined,
         location: location.trim() || undefined,
         notes: notes.trim() || undefined,
+        imagePath,
       })
       navigate(Route.Planner)
     } catch (err) {
@@ -128,13 +188,44 @@ const AdventureForm = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [canSave, name, date, time, location, notes, addAdventure, navigate])
+  }, [canSave, name, date, time, location, notes, imagePath, addAdventure, navigate])
 
   return (
     <FormContainer>
+      {pendingImageSrc && (
+        <ImageCropModal
+          imageSrc={pendingImageSrc}
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+          aspect={16 / 9}
+        />
+      )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+
       <AdventureFormCard>
         <FormContent>
           <Stack spacing={2.5}>
+            <ImageUploadBox onClick={handleImageClick} aria-label="Upload adventure photo">
+              {previewUrl ? (
+                <ImagePreview src={previewUrl} alt="Adventure photo preview" />
+              ) : null}
+              {isUploading ? (
+                <CircularProgress size={24} sx={{ position: 'relative', zIndex: 1 }} />
+              ) : !previewUrl ? (
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <AddPhotoAlternateIcon fontSize="small" />
+                  Add photo (optional)
+                </Typography>
+              ) : null}
+            </ImageUploadBox>
+
             <FormFieldsContainer>
               <AdventureTextField
                 fullWidth
@@ -228,7 +319,7 @@ const AdventureForm = () => {
 
             <SubmitButton
               variant="contained"
-              disabled={!canSave || isLoading}
+              disabled={!canSave || isLoading || isUploading}
               onClick={handleSubmit}
               fullWidth
               startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <ExploreIcon />}

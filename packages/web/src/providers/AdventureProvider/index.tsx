@@ -41,7 +41,7 @@ export const AdventureProvider = ({ children }: IAdventureProviderProps) => {
     await query.refetch()
   }, [query.refetch])
 
-  const addAdventure = useCallback(async (adventure: { name: string; date: string; time?: string; location?: string; notes?: string }) => {
+  const addAdventure = useCallback(async (adventure: { name: string; date: string; time?: string; location?: string; notes?: string; imagePath?: string }) => {
     if (!currentProject) return
 
     const result = await addAdventureApi(adventure, currentProject.id)
@@ -53,7 +53,7 @@ export const AdventureProvider = ({ children }: IAdventureProviderProps) => {
     queryClient.setQueryData<IAdventure[]>(queryKey, (prev = []) => [...prev, newAdventure])
   }, [currentProject, queryClient])
 
-  const updateAdventure = useCallback(async (id: string, fields: { name?: string; date?: string; time?: string | null; location?: string | null; notes?: string | null }) => {
+  const updateAdventure = useCallback(async (id: string, fields: { name?: string; date?: string; time?: string | null; location?: string | null; notes?: string | null; imagePath?: string | null }) => {
     if (!currentProject) return
 
     await updateAdventureApi(id, fields, currentProject.id)

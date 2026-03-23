@@ -8,6 +8,7 @@ export const createAdventure = async (adventure: {
   time?: string;
   location?: string;
   notes?: string;
+  imagePath?: string;
 }): Promise<string> => {
   const id = randomUUID();
   const now = new Date().toISOString();
@@ -31,6 +32,10 @@ export const createAdventure = async (adventure: {
 
   if (adventure.notes) {
     item.notes = adventure.notes.trim();
+  }
+
+  if (adventure.imagePath) {
+    item.imagePath = adventure.imagePath;
   }
 
   await putItem({
