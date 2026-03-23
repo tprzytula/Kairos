@@ -1,9 +1,17 @@
 name: Test Website
 
 on:
-  push:
+  pull_request:
     paths:
       - "packages/web/**"
+      - ".github/workflows/test-web.yml"
+    paths-ignore:
+      - "packages/web/**/*.md"
+      - "packages/web/LICENSE"
+
+concurrency:
+  group: test-web-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:

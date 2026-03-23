@@ -7,6 +7,10 @@ on:
       - "packages/web/**"
       - ".github/workflows/publish-web.yml"
 
+concurrency:
+  group: publish-web
+  cancel-in-progress: false
+
 jobs:
   upload:
     runs-on: ubuntu-latest

@@ -6,6 +6,10 @@ on:
     paths:
       - "packages/lambdas/**"
 
+concurrency:
+  group: publish-lambdas
+  cancel-in-progress: false
+
 jobs:
   upload:
     runs-on: ubuntu-latest
