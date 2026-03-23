@@ -1,4 +1,6 @@
 import { useState, useCallback } from 'react'
+import RecipeViewDrawer from '../RecipeViewDrawer'
+import { IRecipe } from '../../types/recipe'
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
@@ -8,7 +10,6 @@ import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import { DrawerHeader, DrawerHeaderLeft, DrawerIconBox, DrawerTitle, ContentContainer } from '../DrawerHeader/index.styled'
 import SegmentedControl, { SegmentedControlTab } from '../SegmentedControl'
 import RecipeList from '../RecipeList'
-import RecipeDetailDrawer from '../RecipeDetailDrawer'
 import ItemForm from '../ItemForm'
 import { FormFieldType } from '../ItemForm/enums'
 import { IFormField } from '../ItemForm/types'
@@ -20,7 +21,6 @@ import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { showAlert } from '../../utils/alert'
 import { GroceryItemUnit, GroceryItemUnitLabelMap } from '../../enums/groceryItem'
 import { SECTION_GRADIENTS } from '../../constants/sectionColors'
-import { IRecipe } from '../../types/recipe'
 
 type TabId = 'item' | 'recipe'
 
@@ -92,7 +92,7 @@ interface AddGroceryItemDrawerProps {
 
 const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGroceryItemDrawerProps) => {
   const [activeTab, setActiveTab] = useState<TabId>('item')
-  const [selectedRecipe, setSelectedRecipe] = useState<IRecipe | null>(null)
+  const [viewingRecipe, setViewingRecipe] = useState<IRecipe | null>(null)
   const { currentProject } = useProjectContext()
   const { dispatch } = useAppState()
   const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
@@ -126,6 +126,10 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
     onItemAdded()
     handleClose()
   }, [currentProject, shopId, dispatch, onItemAdded, handleClose])
+
+  const handleViewRecipe = useCallback((recipe: IRecipe) => {
+    setViewingRecipe(recipe)
+  }, [])
 
   return (
     <>
@@ -162,16 +166,18 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
           />
         ) : (
           <RecipeContainer>
-            <RecipeList onViewRecipe={setSelectedRecipe} />
+            <RecipeList
+              onViewRecipe={handleViewRecipe}
+            />
           </RecipeContainer>
         )}
       </ContentContainer>
     </DraggableBottomDrawer>
-
-    <RecipeDetailDrawer
-      open={selectedRecipe !== null}
-      onClose={() => setSelectedRecipe(null)}
-      recipe={selectedRecipe}
+    <RecipeViewDrawer
+      recipe={viewingRecipe}
+      onClose={() => setViewingRecipe(null)}
+      onEdit={() => {}}
+      defaults={defaults}
     />
     </>
   )

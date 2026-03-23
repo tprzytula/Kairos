@@ -23,7 +23,7 @@ import AgentChatDrawer from '../../components/AgentChatDrawer'
 import AgentMessageButton from '../../components/AgentMessageButton'
 import GroceryItemPreviewPopup from '../../components/GroceryItemPreviewPopup'
 import ToDoItemPreviewDrawer from '../../components/ToDoItemPreviewDrawer'
-import RecipeDetailDrawer from '../../components/RecipeDetailDrawer'
+import RecipeViewDrawer from '../../components/RecipeViewDrawer'
 import GrocerySection from './components/GrocerySection'
 import NoiseSection from './components/NoiseSection'
 import PlannerSection from './components/PlannerSection'
@@ -208,10 +208,10 @@ const HomeDataContent = () => {
         onStepToggle={handleStepToggle}
       />
 
-      <RecipeDetailDrawer
-        open={selectedRecipe !== null}
-        onClose={() => setSelectedRecipe(null)}
+      <RecipeViewDrawer
         recipe={selectedRecipe}
+        onClose={() => setSelectedRecipe(null)}
+        onEdit={() => {}}
       />
     </>
   )

@@ -8,7 +8,7 @@ import { IMealPlan } from '../../types/mealPlan'
 import { IRecipe } from '../../types/recipe'
 import { MealType, MEAL_TYPE_ORDER } from '../../enums/mealType'
 import { useRecipeContext } from '../../providers/RecipeProvider'
-import RecipeDetailDrawer from '../RecipeDetailDrawer'
+import RecipeViewDrawer from '../RecipeViewDrawer'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 
 import {
@@ -209,10 +209,10 @@ const MealPlanDrawer = ({ open, date, mealPlan, onClose, onSave, onDelete }: IMe
         </DrawerContent>
       </DraggableBottomDrawer>
 
-      <RecipeDetailDrawer
-        open={previewRecipe !== null}
-        onClose={() => setPreviewRecipe(null)}
+      <RecipeViewDrawer
         recipe={previewRecipe}
+        onClose={() => setPreviewRecipe(null)}
+        onEdit={() => {}}
       />
     </>
   )
