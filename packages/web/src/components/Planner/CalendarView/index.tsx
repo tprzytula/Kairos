@@ -28,7 +28,7 @@ import {
   MealPlanIcon,
 } from './index.styled'
 
-const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 interface ICalendarViewProps {
   visibleToDoItems: ITodoItem[]
@@ -164,8 +164,8 @@ const CalendarView = ({
   const calendarDays = useMemo(() => {
     const startOfMonth = currentMonth.startOf('month')
     const endOfMonth = currentMonth.endOf('month')
-    const startPad = startOfMonth.day()
-    const endPad = 6 - endOfMonth.day()
+    const startPad = (startOfMonth.day() + 6) % 7
+    const endPad = 6 - (endOfMonth.day() + 6) % 7
 
     const days: Dayjs[] = []
     for (let i = startPad - 1; i >= 0; i--) {

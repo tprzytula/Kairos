@@ -36,6 +36,12 @@ interface IWeeklyViewProps {
   onMealPlanClick?: (mealPlan: IMealPlan) => void
 }
 
+const getWeekStart = (d: Dayjs): Dayjs => {
+  const day = d.day()
+  const diff = day === 0 ? -6 : 1 - day
+  return d.startOf('day').add(diff, 'day')
+}
+
 const WeeklyView = ({
   visibleToDoItems,
   onItemClick,
@@ -45,7 +51,7 @@ const WeeklyView = ({
   onAddMealPlan,
   onMealPlanClick,
 }: IWeeklyViewProps) => {
-  const [currentWeek, setCurrentWeek] = useState<Dayjs>(() => dayjs().startOf('week'))
+  const [currentWeek, setCurrentWeek] = useState<Dayjs>(() => getWeekStart(dayjs()))
   const today = dayjs()
 
   const weekDays = useMemo(
@@ -55,7 +61,7 @@ const WeeklyView = ({
 
 const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
   const goToNextWeek = () => setCurrentWeek(prev => prev.add(1, 'week'))
-  const goToToday = () => setCurrentWeek(dayjs().startOf('week'))
+  const goToToday = () => setCurrentWeek(getWeekStart(dayjs()))
 
   const weekRangeLabel = useMemo(() => {
     const start = weekDays[0]
@@ -129,7 +135,7 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
     return map
   }, [mealPlans])
 
-  const isCurrentWeek = today.isSame(currentWeek, 'week')
+  const isCurrentWeek = getWeekStart(today).isSame(currentWeek, 'day')
 
   return (
     <WeeklyContainer>

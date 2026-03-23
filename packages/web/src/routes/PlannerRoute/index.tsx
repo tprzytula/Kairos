@@ -33,7 +33,7 @@ const PlannerContent = () => {
   const navigate = useNavigate()
   const [allExpanded, setAllExpanded] = useState(true)
   const [expandKey, setExpandKey] = useState(0)
-  const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.CALENDAR)
+  const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.WEEKLY)
   const { mealPlans, updateMealPlan, removeMealPlan } = useMealPlanContext()
 
   const [mealDrawerOpen, setMealDrawerOpen] = useState(false)
@@ -119,9 +119,9 @@ const PlannerContent = () => {
 
   const toggleViewMode = useCallback(() => {
     setViewMode(prev => {
-      if (prev === PlannerViewMode.CALENDAR) return PlannerViewMode.WEEKLY
-      if (prev === PlannerViewMode.WEEKLY) return PlannerViewMode.GROUPED
-      return PlannerViewMode.CALENDAR
+      if (prev === PlannerViewMode.WEEKLY) return PlannerViewMode.CALENDAR
+      if (prev === PlannerViewMode.CALENDAR) return PlannerViewMode.GROUPED
+      return PlannerViewMode.WEEKLY
     })
   }, [])
 
