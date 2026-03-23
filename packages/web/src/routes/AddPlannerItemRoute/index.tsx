@@ -162,6 +162,7 @@ export const AddPlannerItemContent = () => {
           tabs={PLANNER_TABS}
           activeTab={itemType}
           onChange={setItemType}
+          collapseInactive
         />
       </Box>
       {itemType === 'task' ? (
