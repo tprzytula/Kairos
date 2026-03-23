@@ -96,7 +96,7 @@ const AdventurePreviewDrawer = ({ item, onClose, onEdit, onDelete }: AdventurePr
 
         <MetaRow>
           <CalendarTodayIcon sx={{ fontSize: '1rem' }} />
-          {item?.date}
+          {item?.date}{item?.endDate && item.endDate !== item.date ? ` – ${item.endDate}` : ''}
           {item?.time && (
             <>
               <AccessTimeIcon sx={{ fontSize: '1rem', ml: 0.5 }} />
