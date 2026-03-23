@@ -1,9 +1,17 @@
-name: Test Website
+name: Test Lambdas
 
 on:
-  push:
+  pull_request:
     paths:
       - "packages/lambdas/**"
+      - ".github/workflows/test-lambdas.yml"
+    paths-ignore:
+      - "packages/lambdas/**/*.md"
+      - "packages/lambdas/LICENSE"
+
+concurrency:
+  group: test-lambdas-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
