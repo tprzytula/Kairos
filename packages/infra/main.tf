@@ -8,15 +8,6 @@ module "dynamodb" {
   random_name = module.random.random_name
 }
 
-module "ec2_agent" {
-  source = "./modules/ec2_agent"
-  count  = var.enable_agent ? 1 : 0
-
-  random_name       = module.random.random_name
-  agent_secret      = var.agent_secret
-  ssh_allowed_cidrs = var.ssh_allowed_cidrs
-}
-
 module "lambda" {
   source = "./modules/lambda"
 
@@ -24,8 +15,6 @@ module "lambda" {
   todo_notifications_topic_arn = module.sns.todo_notifications_topic_arn
   vapid_public_key             = var.vapid_public_key
   vapid_private_key            = var.vapid_private_key
-  agent_ec2_ip                 = var.enable_agent ? module.ec2_agent[0].public_ip : ""
-  agent_secret                 = var.agent_secret
   s3_kairos_web_bucket_name    = module.s3.kairos_web_bucket_name
   s3_cloudfront_domain         = module.s3.cloudfront_domain
 }
@@ -41,8 +30,7 @@ module "api_gateway" {
 module "s3" {
   source = "./modules/s3"
 
-  random_name              = module.random.random_name
-  stream_agent_message_url = module.lambda.stream_agent_message_url
+  random_name = module.random.random_name
 }
 
 module "sns" {

@@ -393,37 +393,6 @@ locals {
         }
       }
     },
-    "send_agent_message" = {
-      environment_variables = {}
-      permissions = {
-        database = {
-          push_subscriptions = "none"
-        }
-        sns = {
-          todo_notifications = "none"
-        }
-      }
-    },
-    "stream_agent_message" = {
-      environment_variables = {
-        AGENT_EC2_URL = "http://${var.agent_ec2_ip}:3001"
-        AGENT_SECRET  = var.agent_secret
-      }
-      timeout = 120
-      permissions = {
-        database = {
-          todo_list          = "read-only"
-          grocery_list       = "read-only"
-          noise_tracking     = "read-only"
-          shops              = "read-only"
-          user_preferences   = "read-only"
-          push_subscriptions = "none"
-        }
-        sns = {
-          todo_notifications = "none"
-        }
-      }
-    },
     "add_recipe" = {
       environment_variables = {}
       permissions = {

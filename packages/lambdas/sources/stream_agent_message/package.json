@@ -1,6 +1,0 @@
-{
-  "name": "@kairos-lambdas/stream_agent_message",
-  "version": "1.0.0",
-  "main": "index.ts",
-  "dependencies": {}
-}
