@@ -25,7 +25,7 @@ import {
   SkeletonTitle,
 } from './index.styled'
 
-const AUTO_SCROLL_MS = 4000
+const AUTO_SCROLL_MS = 5000
 
 const getTodayString = (): string => {
   const now = new Date()
