@@ -9,6 +9,7 @@ export interface IGroceryListProviderProps {
 export interface IState {
     toDoList: Array<ITodoItem>
     isLoading: boolean
+    isError: boolean
     refetchToDoList: () => Promise<void>
     removeFromToDoList: (id: string) => void
     updateToDoItemFields: (id: string, fields: ToDoItemUpdateFields) => Promise<void>

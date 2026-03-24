@@ -18,6 +18,7 @@ import {
 interface IUpcomingBirthdaysCardProps {
   birthdays: IBirthdayItem[]
   isExpanded?: boolean
+  isError?: boolean
 }
 
 const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'short' })
@@ -66,9 +67,9 @@ const BirthdayEntry: React.FC<{ b: SortedBirthday; showDetails: boolean }> = ({ 
   )
 }
 
-export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ birthdays, isExpanded = false }) => {
+export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ birthdays, isExpanded = false, isError = false }) => {
   if (birthdays.length === 0) {
-    return <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #888)' }}>No birthdays saved</span>
+    return <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #888)' }}>{isError ? 'Unable to load birthdays' : 'No birthdays saved'}</span>
   }
 
   const sorted = [...birthdays]

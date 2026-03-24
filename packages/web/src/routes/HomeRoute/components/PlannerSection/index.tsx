@@ -13,6 +13,7 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
   todayMeals,
   upcomingAdventures,
   isLoading,
+  isError,
   onStepToggle,
   onCardClick,
   onMealClick,
@@ -40,6 +41,7 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
       >
         <TaskList
           items={toDoStats.sortedItems}
+          isError={isError}
           onStepToggle={onStepToggle}
           onCardClick={onCardClick}
         />

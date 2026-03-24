@@ -11,6 +11,7 @@ import { useProjectContext } from '../ProjectProvider'
 interface IBirthdayContext {
   birthdays: IBirthdayItem[]
   isLoading: boolean
+  isError: boolean
   addBirthdayItem: (item: Omit<IBirthdayItem, 'id'>) => Promise<void>
   updateBirthdayItem: (id: string, fields: BirthdayUpdateFields) => Promise<void>
   removeBirthdayItem: (id: string) => Promise<void>
@@ -20,6 +21,7 @@ interface IBirthdayContext {
 const initialState: IBirthdayContext = {
   birthdays: [],
   isLoading: false,
+  isError: false,
   addBirthdayItem: async () => {},
   updateBirthdayItem: async () => {},
   removeBirthdayItem: async () => {},
@@ -81,11 +83,12 @@ export const BirthdayProvider = ({ children }: StateComponentProps) => {
   const value = useMemo(() => ({
     birthdays,
     isLoading: query.isLoading,
+    isError: query.isError,
     addBirthdayItem,
     updateBirthdayItem,
     removeBirthdayItem,
     refetchBirthdays,
-  }), [birthdays, query.isLoading, addBirthdayItem, updateBirthdayItem, removeBirthdayItem, refetchBirthdays])
+  }), [birthdays, query.isLoading, query.isError, addBirthdayItem, updateBirthdayItem, removeBirthdayItem, refetchBirthdays])
 
   return (
     <BirthdayContext.Provider value={value}>

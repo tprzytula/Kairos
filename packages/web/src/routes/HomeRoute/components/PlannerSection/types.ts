@@ -12,6 +12,7 @@ export interface IToDoSectionProps {
   todayMeals: ITodayMealItem[]
   upcomingAdventures: IAdventure[]
   isLoading: boolean
+  isError: boolean
   onStepToggle: (todoId: string, stepId: string, isDone: boolean) => void
   onCardClick: (item: ITodoItem) => void
   onMealClick?: (meal: ITodayMealItem) => void

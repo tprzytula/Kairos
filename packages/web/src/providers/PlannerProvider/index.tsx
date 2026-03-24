@@ -9,6 +9,7 @@ import { useProjectContext } from '../ProjectProvider'
 export const initialState: IState = {
   toDoList: [],
   isLoading: false,
+  isError: false,
   refetchToDoList: async () => {},
   removeFromToDoList: () => {},
   updateToDoItemFields: async () => {},
@@ -65,11 +66,12 @@ export const PlannerProvider = ({ children }: StateComponentProps) => {
     () => ({
       toDoList,
       isLoading: query.isLoading,
+      isError: query.isError,
       refetchToDoList,
       removeFromToDoList,
       updateToDoItemFields: updateToDoItemFieldsHandler,
     }),
-    [toDoList, query.isLoading, refetchToDoList, removeFromToDoList, updateToDoItemFieldsHandler]
+    [toDoList, query.isLoading, query.isError, refetchToDoList, removeFromToDoList, updateToDoItemFieldsHandler]
   )
 
   return (
