@@ -4,6 +4,8 @@ import { BirthdayProvider } from '../../providers/BirthdayProvider'
 import { RecipeProvider } from '../../providers/RecipeProvider'
 import { MealPlanProvider, useMealPlanContext } from '../../providers/MealPlanProvider'
 import { AdventureProvider } from '../../providers/AdventureProvider'
+import { useItemDefaults } from '../../hooks/useItemDefaults'
+import { retrieveGroceryListDefaults } from '../../api/groceryList'
 import Planner from '../../components/Planner'
 import ActionButtonsBar from '../../components/ActionButtonsBar'
 import ModernPageHeader from '../../components/ModernPageHeader'
@@ -37,6 +39,7 @@ const PlannerContent = () => {
   const [expandKey, setExpandKey] = useState(0)
   const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.WEEKLY)
   const { mealPlans, removeMealPlan } = useMealPlanContext()
+  const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
 
   const [previewMealPlan, setPreviewMealPlan] = useState<IMealPlan | null>(null)
 
@@ -190,6 +193,7 @@ const PlannerContent = () => {
         item={previewMealPlan}
         onClose={() => setPreviewMealPlan(null)}
         onDelete={handleMealPlanDelete}
+        defaults={defaults}
       />
     </StandardLayout>
   )
