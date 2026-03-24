@@ -11,6 +11,7 @@ export const GrocerySection: React.FC<IGrocerySectionProps> = ({
   groceryStats,
   shops,
   isLoading,
+  isError,
   onGroceryItemClick,
   onNavigate
 }) => {
@@ -34,7 +35,7 @@ export const GrocerySection: React.FC<IGrocerySectionProps> = ({
               onGroceryItemClick={onGroceryItemClick}
             />
           ) : (
-            <EmptyState>No grocery items found</EmptyState>
+            <EmptyState>{isError ? 'Unable to load grocery items' : 'No grocery items found'}</EmptyState>
           )}
         </>
       )}

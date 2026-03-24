@@ -58,10 +58,10 @@ const getUpcomingDateStrings = (days = 7): string[] => {
 }
 
 const HomeDataContent = () => {
-  const { groceryList, isLoading: isGroceryLoading } = useGroceryListContext()
-  const { toDoList, isLoading: isToDoLoading, removeFromToDoList, updateToDoItemFields } = usePlannerContext()
+  const { groceryList, isLoading: isGroceryLoading, isError: isGroceryError } = useGroceryListContext()
+  const { toDoList, isLoading: isToDoLoading, isError: isToDoError, removeFromToDoList, updateToDoItemFields } = usePlannerContext()
   const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
-  const { birthdays } = useBirthdayContext()
+  const { birthdays, isError: isBirthdayError } = useBirthdayContext()
   const { mealPlans, isLoading: isMealLoading } = useMealPlanContext()
   const { adventures, isLoading: isAdventureLoading, removeAdventure } = useAdventureContext()
   const { recipes } = useRecipeContext()
@@ -161,6 +161,7 @@ const HomeDataContent = () => {
           todayMeals={todayMeals}
           upcomingAdventures={upcomingAdventures}
           isLoading={isToDoLoading || isMealLoading || isAdventureLoading}
+          isError={isToDoError}
           onStepToggle={handleStepToggle}
           onCardClick={interactions.handleToDoItemSelect}
           onMealClick={handleMealClick}
@@ -171,6 +172,7 @@ const HomeDataContent = () => {
           groceryStats={homeData.groceryStats}
           shops={shops}
           isLoading={isGroceryLoading}
+          isError={isGroceryError}
           onGroceryItemClick={interactions.handleGroceryItemClick}
           onNavigate={handleGroceryNavigate}
         />
@@ -196,7 +198,7 @@ const HomeDataContent = () => {
               </Box>
             </MiniCardHeader>
             <MiniCardBody>
-              <UpcomingBirthdaysCard birthdays={birthdays} isExpanded={isBirthdaysExpanded} />
+              <UpcomingBirthdaysCard birthdays={birthdays} isExpanded={isBirthdaysExpanded} isError={isBirthdayError} />
             </MiniCardBody>
           </MiniCardContent>
         </BirthdayCard>

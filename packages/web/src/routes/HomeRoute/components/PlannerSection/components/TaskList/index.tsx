@@ -10,15 +10,16 @@ const DEFAULT_VISIBLE = 2
 
 interface TaskListProps {
   items: ITodoItem[]
+  isError?: boolean
   onStepToggle: (todoId: string, stepId: string, isDone: boolean) => void
   onCardClick: (item: ITodoItem) => void
 }
 
-const TaskList: React.FC<TaskListProps> = ({ items, onStepToggle, onCardClick }) => {
+const TaskList: React.FC<TaskListProps> = ({ items, isError, onStepToggle, onCardClick }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   if (items.length === 0) {
-    return <EmptyMessage>No tasks planned — enjoy the day!</EmptyMessage>
+    return <EmptyMessage>{isError ? 'Unable to load tasks' : 'No tasks planned — enjoy the day!'}</EmptyMessage>
   }
 
   const visibleItems = items.slice(0, DEFAULT_VISIBLE)

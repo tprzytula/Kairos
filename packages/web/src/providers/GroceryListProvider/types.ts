@@ -11,6 +11,7 @@ export interface IGroceryListProviderProps {
 export interface IState {
     groceryList: Array<IGroceryItem>
     isLoading: boolean
+    isError: boolean
     isAllItemsView: boolean
     viewMode: GroceryViewMode
     refetchGroceryList: () => Promise<void>

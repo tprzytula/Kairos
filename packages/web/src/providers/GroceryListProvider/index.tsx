@@ -10,6 +10,7 @@ import { useProjectContext } from '../ProjectProvider'
 export const initialState: IState = {
   groceryList: [],
   isLoading: false,
+  isError: false,
   isAllItemsView: false,
   viewMode: GroceryViewMode.CATEGORIZED,
   refetchGroceryList: async () => {},
@@ -117,6 +118,7 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
     () => ({
       groceryList,
       isLoading: query.isLoading,
+      isError: query.isError,
       isAllItemsView,
       viewMode,
       refetchGroceryList,
@@ -125,7 +127,7 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
       updateGroceryItemFields: updateGroceryItemWithFields,
       setViewMode: handleSetViewMode,
     }),
-    [groceryList, query.isLoading, isAllItemsView, viewMode, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields, handleSetViewMode]
+    [groceryList, query.isLoading, query.isError, isAllItemsView, viewMode, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields, handleSetViewMode]
   )
 
   return (

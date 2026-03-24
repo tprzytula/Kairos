@@ -9,5 +9,5 @@ export const retrieveBirthdays = async (projectId?: string): Promise<Array<IBirt
     return await response.json()
   }
 
-  return []
+  throw new Error(`Failed to fetch birthdays: ${response.status}`)
 }
