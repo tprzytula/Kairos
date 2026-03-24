@@ -9,6 +9,24 @@ describe("Given the getUpdateExpression function", () => {
 
     expect(updateExpression).toStrictEqual("set #name = :name, #quantity = :quantity");
   });
+
+  it("should use REMOVE for null fields", () => {
+    const updateExpression = getUpdateExpression({
+      name: "John Doe",
+      time: null
+    });
+
+    expect(updateExpression).toStrictEqual("set #name = :name remove #time");
+  });
+
+  it("should return only REMOVE when all fields are null", () => {
+    const updateExpression = getUpdateExpression({
+      time: null,
+      location: null
+    });
+
+    expect(updateExpression).toStrictEqual("remove #time, #location");
+  });
 });
 
 describe("Given the getExpressionAttributeNames function", () => {
@@ -23,6 +41,18 @@ describe("Given the getExpressionAttributeNames function", () => {
       "#quantity": "quantity"
     });
   });
+
+  it("should include names for both SET and REMOVE fields", () => {
+    const expressionAttributeNames = getExpressionAttributeNames({
+      name: "John Doe",
+      time: null
+    });
+
+    expect(expressionAttributeNames).toStrictEqual({
+      "#name": "name",
+      "#time": "time"
+    });
+  });
 });
 
 describe("Given the getExpressionAttributeValues function", () => {
@@ -35,6 +65,17 @@ describe("Given the getExpressionAttributeValues function", () => {
     expect(expressionAttributeValues).toStrictEqual({
       ":name": "John Doe",
       ":quantity": "1"
+    });
+  });
+
+  it("should exclude null fields from values", () => {
+    const expressionAttributeValues = getExpressionAttributeValues({
+      name: "John Doe",
+      time: null
+    });
+
+    expect(expressionAttributeValues).toStrictEqual({
+      ":name": "John Doe"
     });
   });
 });

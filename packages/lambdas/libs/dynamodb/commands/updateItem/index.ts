@@ -10,11 +10,14 @@ export const updateItem = async ({
 }: IUpdateItemOptions): Promise<UpdateCommandOutput> => {
   const documentClient = getDocumentClient();
 
+  const expressionAttributeValues = getExpressionAttributeValues(updatedFields);
+  const hasValues = Object.keys(expressionAttributeValues).length > 0;
+
   return await documentClient.send(new UpdateCommand({
     TableName: tableName,
     Key: key,
     UpdateExpression: getUpdateExpression(updatedFields),
     ExpressionAttributeNames: getExpressionAttributeNames(updatedFields),
-    ExpressionAttributeValues: getExpressionAttributeValues(updatedFields),
+    ...(hasValues && { ExpressionAttributeValues: expressionAttributeValues }),
   }));
 };

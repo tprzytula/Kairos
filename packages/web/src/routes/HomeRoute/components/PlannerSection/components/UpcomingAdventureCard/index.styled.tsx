@@ -132,10 +132,12 @@ export const HeroMeta = styled('div')({
   display: 'flex',
   alignItems: 'center',
   gap: '0.4rem',
-  fontSize: '0.72rem',
-  color: 'rgba(255,255,255,0.55)',
+  fontSize: '0.82rem',
+  fontWeight: 500,
+  color: 'rgba(255,255,255,0.85)',
+  textShadow: '0 1px 3px rgba(0,0,0,0.3)',
   '& .MuiSvgIcon-root': {
-    fontSize: '0.75rem',
+    fontSize: '0.85rem',
   },
 })
 

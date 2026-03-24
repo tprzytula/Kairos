@@ -38,6 +38,31 @@ describe("Given the putItem function", () => {
     });
   });
 
+  it("should omit ExpressionAttributeValues when all fields are null", async () => {
+    mockDocumentClient();
+
+    await updateItem({
+      tableName: DynamoDBTable.GROCERY_LIST,
+      key: {
+        id: "1",
+      },
+      updatedFields: {
+        time: null,
+      },
+    });
+
+    expect(UpdateCommand).toHaveBeenCalledWith({
+      TableName: DynamoDBTable.GROCERY_LIST,
+      Key: {
+        id: "1",
+      },
+      UpdateExpression: "remove #time",
+      ExpressionAttributeNames: {
+        "#time": "time",
+      },
+    });
+  });
+
   it("should return the response from the putItem command", async () => {
     mockDocumentClient();
 
