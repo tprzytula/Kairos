@@ -236,7 +236,7 @@ const HomeDataContent = () => {
       <AdventurePreviewDrawer
         item={selectedAdventure}
         onClose={() => setSelectedAdventure(null)}
-        onEdit={(adventure) => navigate(Route.EditPlannerItem.replace(':id', adventure.id))}
+        onEdit={(adventure) => navigate(Route.EditAdventure.replace(':id', adventure.id))}
         onDelete={handleAdventureDelete}
       />
     </>

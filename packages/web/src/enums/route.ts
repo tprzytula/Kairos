@@ -10,6 +10,7 @@ export enum Route {
     Planner = '/planner',
     AddPlannerItem = '/planner/add',
     EditPlannerItem = '/planner/edit/:id',
+    EditAdventure = '/adventures/edit/:id',
     AuthCallback = '/auth/callback',
     SilentCallback = '/silent-callback',
 }
