@@ -330,24 +330,29 @@ components:
           type: string
           example: "2025-08-22"
         endDate:
-          type: string
-          nullable: true
+          type:
+            - string
+            - "null"
           example: "2025-08-26"
         time:
-          type: string
-          nullable: true
+          type:
+            - string
+            - "null"
           example: "10:00"
         location:
-          type: string
-          nullable: true
+          type:
+            - string
+            - "null"
           example: "Madrid"
         notes:
-          type: string
-          nullable: true
+          type:
+            - string
+            - "null"
           example: "Updated notes"
         imagePath:
-          type: string
-          nullable: true
+          type:
+            - string
+            - "null"
           example: "user-uploads/adventures/abc123.jpg"
   securitySchemes:
     CognitoAuthorizer:
