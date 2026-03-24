@@ -136,7 +136,8 @@ describe('Given the MealForm component', () => {
       '2026-06-15',
       'Tacos',
       undefined,
-      expect.any(String)
+      expect.any(String),
+      undefined
     ))
   })
 

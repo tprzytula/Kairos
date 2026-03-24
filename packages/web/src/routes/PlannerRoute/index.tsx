@@ -7,7 +7,7 @@ import { AdventureProvider } from '../../providers/AdventureProvider'
 import Planner from '../../components/Planner'
 import ActionButtonsBar from '../../components/ActionButtonsBar'
 import ModernPageHeader from '../../components/ModernPageHeader'
-import MealPlanDrawer from '../../components/MealPlanDrawer'
+import MealPlanPreviewDrawer from '../../components/MealPlanPreviewDrawer'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import ViewWeekIcon from '@mui/icons-material/ViewWeek'
@@ -22,7 +22,6 @@ import { useProjectContext } from '../../providers/ProjectProvider'
 import { updateToDoItems } from '../../api/toDoList'
 import { PlannerViewMode } from '../../enums/plannerViewMode'
 import { IMealPlan } from '../../types/mealPlan'
-import { MealType } from '../../enums/mealType'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router'
 import { Route } from '../../enums/route'
@@ -37,10 +36,9 @@ const PlannerContent = () => {
   const [allExpanded, setAllExpanded] = useState(true)
   const [expandKey, setExpandKey] = useState(0)
   const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.WEEKLY)
-  const { mealPlans, updateMealPlan, removeMealPlan } = useMealPlanContext()
+  const { mealPlans, removeMealPlan } = useMealPlanContext()
 
-  const [mealDrawerOpen, setMealDrawerOpen] = useState(false)
-  const [editingMealPlan, setEditingMealPlan] = useState<IMealPlan | undefined>(undefined)
+  const [previewMealPlan, setPreviewMealPlan] = useState<IMealPlan | null>(null)
 
   const pendingItems = toDoList.filter(item => !item.isDone)
   const completedItems = toDoList.filter(item => item.isDone)
@@ -133,26 +131,12 @@ const PlannerContent = () => {
   }, [dispatch, navigate])
 
   const handleMealPlanClick = useCallback((mealPlan: IMealPlan) => {
-    setEditingMealPlan(mealPlan)
-    setMealDrawerOpen(true)
+    setPreviewMealPlan(mealPlan)
   }, [])
-
-  const handleMealPlanSave = useCallback(async (date: string, recipeName: string, recipeId?: string, mealType?: MealType, imagePath?: string | null) => {
-    if (!editingMealPlan) return
-    try {
-      const recipeIdUpdate = recipeId !== undefined ? recipeId : (editingMealPlan.recipeId ? null : undefined)
-      await updateMealPlan(editingMealPlan.id, { date, recipeName, recipeId: recipeIdUpdate, mealType: mealType ?? null, imagePath })
-      setMealDrawerOpen(false)
-    } catch (error) {
-      console.error('Failed to save meal plan:', error)
-      showAlert({ description: 'Failed to save meal plan', severity: 'error' }, dispatch)
-    }
-  }, [editingMealPlan, updateMealPlan, dispatch])
 
   const handleMealPlanDelete = useCallback(async (id: string) => {
     try {
       await removeMealPlan(id)
-      setMealDrawerOpen(false)
     } catch (error) {
       console.error('Failed to delete meal plan:', error)
       showAlert({ description: 'Failed to delete meal plan', severity: 'error' }, dispatch)
@@ -202,12 +186,9 @@ const PlannerContent = () => {
           />
         </ScrollableContainer>
       </Container>
-      <MealPlanDrawer
-        open={mealDrawerOpen}
-        date={editingMealPlan?.date ?? null}
-        mealPlan={editingMealPlan}
-        onClose={() => setMealDrawerOpen(false)}
-        onSave={handleMealPlanSave}
+      <MealPlanPreviewDrawer
+        item={previewMealPlan}
+        onClose={() => setPreviewMealPlan(null)}
         onDelete={handleMealPlanDelete}
       />
     </StandardLayout>
