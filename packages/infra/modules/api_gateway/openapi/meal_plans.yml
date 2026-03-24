@@ -312,16 +312,19 @@ components:
           type: string
           example: "Updated Meal Name"
         recipeId:
-          type: string
-          nullable: true
+          type:
+            - string
+            - "null"
           example: "recipe-789"
         mealType:
-          type: string
-          nullable: true
+          type:
+            - string
+            - "null"
           example: "Dinner"
         imagePath:
-          type: string
-          nullable: true
+          type:
+            - string
+            - "null"
           example: "https://cdn.example.com/user-uploads/meal-plans/abc.jpg"
   securitySchemes:
     CognitoAuthorizer:
