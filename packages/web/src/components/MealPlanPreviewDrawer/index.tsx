@@ -6,6 +6,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import LocalDiningIcon from '@mui/icons-material/LocalDining'
 import CloseIcon from '@mui/icons-material/Close'
 import { IMealPlan } from '../../types/mealPlan'
+import { useRecipeContext } from '../../providers/RecipeProvider'
 import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import { SECTION_GRADIENTS } from '../../constants/sectionColors'
@@ -46,12 +47,15 @@ interface MealPlanPreviewDrawerProps {
 }
 
 const MealPlanPreviewDrawer = ({ item, onClose, onDelete }: MealPlanPreviewDrawerProps) => {
+  const { recipes } = useRecipeContext()
   const { handleDelete } = usePreviewDrawerActions({
     item,
     onDelete,
     onClose,
   })
 
+  const recipeImage = item?.recipeId ? recipes.find(r => r.id === item.recipeId)?.imagePath : undefined
+  const heroImage = item?.imagePath ?? recipeImage
   const placeholderSeed = item?.recipeName.charCodeAt(0) ?? 0
 
   return (
@@ -74,8 +78,8 @@ const MealPlanPreviewDrawer = ({ item, onClose, onDelete }: MealPlanPreviewDrawe
       }
     >
       <ContentContainer>
-        {item?.imagePath ? (
-          <HeroImage src={item.imagePath} alt={item.recipeName} />
+        {heroImage ? (
+          <HeroImage src={heroImage} alt={item?.recipeName ?? ''} />
         ) : item ? (
           <HeroPlaceholder seed={placeholderSeed}>
             <Typography
