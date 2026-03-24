@@ -1,3 +1,4 @@
+import { Box, IconButton, Typography } from '@mui/material'
 import DrawerActionButton from '../DrawerActionButton'
 import ExploreIcon from '@mui/icons-material/Explore'
 import EditIcon from '@mui/icons-material/Edit'
@@ -5,11 +6,10 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
+import CloseIcon from '@mui/icons-material/Close'
 import { IAdventure } from '../../types/adventure'
 import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
-import { styled } from '@mui/material/styles'
-import { Box } from '@mui/material'
 import {
   DrawerHeader,
   DrawerHeaderLeft,
@@ -17,48 +17,36 @@ import {
   DrawerTitle,
   ContentContainer,
 } from '../DrawerHeader/index.styled'
+import {
+  HeroImage,
+  HeroPlaceholder,
+  AdventureName,
+  SectionHeader,
+  SectionLabel,
+  DetailRow,
+  NotesText,
+  NoNotesText,
+  Footer,
+} from './index.styled'
 
 const ADVENTURE_GRADIENT = 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)'
 
-const AdventureName = styled('h2')({
-  margin: 0,
-  fontSize: '1.2rem',
-  fontWeight: 700,
-  color: 'rgba(0,0,0,0.87)',
-  lineHeight: 1.3,
-})
+const formatDate = (dateStr: string) => {
+  const [year, month, day] = dateStr.split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+  return new Intl.DateTimeFormat(undefined, {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date)
+}
 
-const MetaRow = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.5rem',
-  color: 'rgba(0,0,0,0.5)',
-  fontSize: '0.875rem',
-})
-
-const NotesText = styled('p')({
-  margin: 0,
-  fontSize: '0.95rem',
-  color: 'rgba(0,0,0,0.75)',
-  lineHeight: 1.6,
-  whiteSpace: 'pre-wrap',
-})
-
-const NoNotesText = styled('p')({
-  margin: 0,
-  fontSize: '0.875rem',
-  color: 'rgba(0,0,0,0.35)',
-  fontStyle: 'italic',
-})
-
-const Footer = styled(Box)({
-  padding: '0.75rem 1.25rem',
-  paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
-  borderTop: '1px solid rgba(0,0,0,0.06)',
-  flexShrink: 0,
-  display: 'flex',
-  gap: '0.75rem',
-})
+const formatDateRange = (start: string, end?: string) => {
+  const startFormatted = formatDate(start)
+  if (!end || end === start) return startFormatted
+  return `${startFormatted} – ${formatDate(end)}`
+}
 
 interface AdventurePreviewDrawerProps {
   item: IAdventure | null
@@ -75,11 +63,13 @@ const AdventurePreviewDrawer = ({ item, onClose, onEdit, onDelete }: AdventurePr
     onClose,
   })
 
+  const placeholderSeed = item?.name.charCodeAt(0) ?? 0
+
   return (
     <DraggableBottomDrawer
       open={item !== null}
       onClose={onClose}
-      paperSx={{ maxHeight: '80vh' }}
+      paperSx={{ height: 'calc(100% - env(safe-area-inset-top) - 16px)' }}
       dragHandleContent={
         <DrawerHeader>
           <DrawerHeaderLeft>
@@ -88,42 +78,78 @@ const AdventurePreviewDrawer = ({ item, onClose, onEdit, onDelete }: AdventurePr
             </DrawerIconBox>
             <DrawerTitle gradient={ADVENTURE_GRADIENT}>Adventure</DrawerTitle>
           </DrawerHeaderLeft>
+          <IconButton size="small" onClick={onClose} aria-label="Close">
+            <CloseIcon />
+          </IconButton>
         </DrawerHeader>
       }
     >
       <ContentContainer>
-        <AdventureName>{item?.name}</AdventureName>
+        {item?.imagePath ? (
+          <HeroImage src={item.imagePath} alt={item.name} />
+        ) : item ? (
+          <HeroPlaceholder seed={placeholderSeed}>
+            <Typography
+              sx={{
+                fontSize: '3rem',
+                fontWeight: 700,
+                color: 'rgba(255, 255, 255, 0.85)',
+                lineHeight: 1,
+                userSelect: 'none',
+              }}
+            >
+              {item.name.charAt(0).toUpperCase()}
+            </Typography>
+          </HeroPlaceholder>
+        ) : null}
 
-        <MetaRow>
-          <CalendarTodayIcon sx={{ fontSize: '1rem' }} />
-          {item?.date}{item?.endDate && item.endDate !== item.date ? ` – ${item.endDate}` : ''}
-          {item?.time && (
-            <>
-              <AccessTimeIcon sx={{ fontSize: '1rem', ml: 0.5 }} />
-              {item.time}
-            </>
-          )}
-        </MetaRow>
+        {item && <AdventureName>{item.name}</AdventureName>}
 
-        {item?.location && (
-          <MetaRow>
-            <LocationOnIcon sx={{ fontSize: '1rem' }} />
-            {item.location}
-          </MetaRow>
-        )}
+        <Box>
+          <SectionHeader>
+            <SectionLabel>Details</SectionLabel>
+          </SectionHeader>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', mt: 0.75 }}>
+            <DetailRow>
+              <CalendarTodayIcon />
+              {item && formatDateRange(item.date, item.endDate)}
+            </DetailRow>
 
-        {item?.notes ? (
-          <NotesText>{item.notes}</NotesText>
-        ) : (
-          <NoNotesText>No notes</NoNotesText>
-        )}
+            {item?.time && (
+              <DetailRow>
+                <AccessTimeIcon />
+                {item.time}
+              </DetailRow>
+            )}
+
+            {item?.location && (
+              <DetailRow>
+                <LocationOnIcon />
+                {item.location}
+              </DetailRow>
+            )}
+          </Box>
+        </Box>
+
+        <Box>
+          <SectionHeader>
+            <SectionLabel>Notes</SectionLabel>
+          </SectionHeader>
+          <Box sx={{ mt: 0.75 }}>
+            {item?.notes ? (
+              <NotesText>{item.notes}</NotesText>
+            ) : (
+              <NoNotesText>No notes added yet</NoNotesText>
+            )}
+          </Box>
+        </Box>
       </ContentContainer>
 
       <Footer>
         <DrawerActionButton
           gradient={ADVENTURE_GRADIENT}
           icon={<EditIcon />}
-          label="Edit"
+          label="Edit Adventure"
           onClick={handleEdit}
         />
         <DrawerActionButton
