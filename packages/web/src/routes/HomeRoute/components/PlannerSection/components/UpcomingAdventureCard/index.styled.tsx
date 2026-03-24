@@ -97,7 +97,7 @@ export const HeroOverlay = styled(Box)({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-end',
-  padding: '1rem 1.1rem 1.75rem',
+  padding: '1rem 1.1rem 1.25rem',
   gap: '0.35rem',
 })
 
