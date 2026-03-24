@@ -27,7 +27,13 @@ locals {
     local.openapi_specs[spec].components.schemas
   ]...)
 
+  merged_parameters = merge([
+    for spec in local.openapi_files :
+    try(local.openapi_specs[spec].components.parameters, {})
+  ]...)
+
   merged_components = {
-    schemas = local.merged_schemas
+    schemas    = local.merged_schemas
+    parameters = local.merged_parameters
   }
 }

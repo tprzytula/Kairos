@@ -1,6 +1,6 @@
 resource "aws_api_gateway_rest_api" "kairos_api" {
   name = "kairos-rest-api"
-  body = yamlencode({
+  body = jsonencode({
     openapi = "3.0.1"
     info = {
       title       = "Kairos API"
@@ -8,9 +8,7 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
       version     = "1.0"
     }
     paths = local.merged_paths
-    components = {
-      schemas = local.merged_schemas
-    }
+    components = local.merged_components
     x-amazon-apigateway-request-validators = {
       "Validate body" = {
         validateRequestParameters = false
