@@ -5,7 +5,6 @@ export const MiniCardsGrid = styled(Box)({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
   gridTemplateRows: 'auto auto',
-  gap: '0.875rem',
   width: '100%',
 })
 
