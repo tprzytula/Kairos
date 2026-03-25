@@ -90,7 +90,7 @@ export const DayRow = styled('div')<IDayRowProps>(({ isToday, adventureContinues
   return {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'stretch',
     borderRadius: getDayRowBorderRadius(adventureContinuesToNext, adventureContinuesFromPrev),
     borderLeft: `1.5px solid ${borderColor}`,
     borderRight: `1.5px solid ${borderColor}`,
@@ -237,24 +237,36 @@ export const MealIconStyled = styled(RestaurantIcon)({
 
 export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ position = AdventurePosition.Single }) => {
   const isMulti = position !== AdventurePosition.Single
+  if (isMulti) {
+    return {
+      fontSize: '0.72rem',
+      padding: '5px 7px 5px 9px',
+      cursor: 'pointer',
+      wordBreak: 'break-word' as const,
+      lineHeight: 1.4,
+      transition: 'all 0.12s ease',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '4px',
+      color: '#ffffff',
+      backgroundColor: ADVENTURE_COLOR,
+      margin: '-7px -8px',
+      borderRadius: 0,
+      '&:hover': {
+        backgroundColor: '#0891b2',
+      },
+    }
+  }
   return {
     ...baseItem,
     display: 'flex',
     alignItems: 'flex-start',
     gap: '4px',
-    color: isMulti ? '#ffffff' : '#0e7490',
-    backgroundColor: isMulti ? ADVENTURE_COLOR : ADVENTURE_BG,
-    borderLeft: isMulti ? 'none' : `3px solid ${ADVENTURE_COLOR}`,
-    width: isMulti ? '100%' : undefined,
-    flexBasis: isMulti ? '100%' : undefined,
-    flexShrink: isMulti ? 1 : 0,
-    borderRadius:
-      position === AdventurePosition.Start ? '8px 8px 0 0' :
-      position === AdventurePosition.Middle ? '0' :
-      position === AdventurePosition.End ? '0 0 8px 8px' :
-      '8px',
+    color: '#0e7490',
+    backgroundColor: ADVENTURE_BG,
+    borderLeft: `3px solid ${ADVENTURE_COLOR}`,
     '&:hover': {
-      backgroundColor: isMulti ? '#0891b2' : '#cffafe',
+      backgroundColor: '#cffafe',
     },
   }
 })
