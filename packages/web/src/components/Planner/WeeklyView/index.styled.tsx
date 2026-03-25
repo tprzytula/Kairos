@@ -72,20 +72,38 @@ export const WeekRowsWrapper = styled('div')({
 
 interface IDayRowProps {
   isToday?: boolean
+  adventureContinuesToNext?: boolean
+  adventureContinuesFromPrev?: boolean
 }
 
-export const DayRow = styled('div')<IDayRowProps>(({ isToday }) => ({
+const getDayRowBorderRadius = (toNext?: boolean, fromPrev?: boolean) => {
+  const topLeft = fromPrev ? '4px' : '12px'
+  const topRight = fromPrev ? '4px' : '12px'
+  const bottomRight = toNext ? '4px' : '12px'
+  const bottomLeft = toNext ? '4px' : '12px'
+  return `${topLeft} ${topRight} ${bottomRight} ${bottomLeft}`
+}
+
+export const DayRow = styled('div')<IDayRowProps>(({ isToday, adventureContinuesToNext, adventureContinuesFromPrev }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'flex-start',
-  borderRadius: '12px',
-  border: `1.5px solid ${isToday ? TODAY_BORDER : BORDER_COLOR}`,
+  borderRadius: getDayRowBorderRadius(adventureContinuesToNext, adventureContinuesFromPrev),
+  border: `1.5px solid ${isToday ? TODAY_BORDER : (adventureContinuesToNext || adventureContinuesFromPrev) ? ADVENTURE_COLOR : BORDER_COLOR}`,
   backgroundColor: isToday ? TODAY_BG : '#ffffff',
   boxShadow: isToday ? '0 2px 8px rgba(99,102,241,0.12)' : '0 1px 3px rgba(0,0,0,0.04)',
   overflow: 'hidden',
   minHeight: '40px',
   transition: 'box-shadow 0.15s ease',
 }))
+
+export const AdventureConnector = styled('div')({
+  width: '4px',
+  height: '4px',
+  backgroundColor: ADVENTURE_COLOR,
+  marginLeft: 'auto',
+  marginRight: '24px',
+})
 
 export const DayRowHeader = styled('div')<IDayRowProps>(({ isToday }) => ({
   width: '64px',
@@ -227,6 +245,10 @@ export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ 
     width: isMulti ? '100%' : undefined,
     flexBasis: isMulti ? '100%' : undefined,
     flexShrink: isMulti ? 1 : 0,
+    padding: (position === AdventurePosition.Middle || position === AdventurePosition.End)
+      ? '4px 7px 4px 9px' : '5px 7px 5px 9px',
+    minHeight: (position === AdventurePosition.Middle || position === AdventurePosition.End)
+      ? '10px' : undefined,
     borderRadius:
       position === AdventurePosition.Start ? '8px 8px 0 0' :
       position === AdventurePosition.Middle ? '0' :
@@ -240,7 +262,7 @@ export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ 
 
 export const AdventureIconStyled = styled(ExploreIcon)({
   fontSize: '0.7rem',
-  color: ADVENTURE_COLOR,
+  color: 'inherit',
   flexShrink: 0,
   marginTop: '2px',
 })

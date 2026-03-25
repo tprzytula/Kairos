@@ -7,7 +7,7 @@ import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../types/mealPlan'
 import { IAdventure } from '../../../types/adventure'
-import { buildAdventuresByDay } from '../../../utils/adventure'
+import { buildAdventuresByDay, getAdventurePosition, AdventurePosition } from '../../../utils/adventure'
 import {
   WeeklyContainer,
   WeekHeader,
@@ -26,6 +26,7 @@ import {
   BirthdayIconStyled,
   MealItem,
   MealIconStyled,
+  AdventureConnector,
 } from './index.styled'
 import AdventureWeeklyItem from './AdventureWeeklyItem'
 
@@ -175,52 +176,72 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
           const dayMeals = mealPlansByDay.get(key) ?? []
           const dayAdventures = adventuresByDay.get(key) ?? []
 
-          return (
-            <DayRow key={key} isToday={isToday}>
-              <DayRowHeader isToday={isToday}>
-                <DayName isToday={isToday}>{day.format('ddd')}</DayName>
-                <DayNumber isToday={isToday}>{day.date()}</DayNumber>
-              </DayRowHeader>
+          const hasAdventureContinuingToNext = dayAdventures.some(
+            a => {
+              const pos = getAdventurePosition(a, key)
+              return pos === AdventurePosition.Start || pos === AdventurePosition.Middle
+            }
+          )
+          const hasAdventureContinuingFromPrev = dayAdventures.some(
+            a => {
+              const pos = getAdventurePosition(a, key)
+              return pos === AdventurePosition.Middle || pos === AdventurePosition.End
+            }
+          )
 
-              <DayRowItems>
-                {pendingTodos.map(todo =>
-                  isOverdue ? (
-                    <OverdueDayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+          return (
+            <div key={key}>
+              {hasAdventureContinuingFromPrev && <AdventureConnector />}
+              <DayRow
+                isToday={isToday}
+                adventureContinuesToNext={hasAdventureContinuingToNext}
+                adventureContinuesFromPrev={hasAdventureContinuingFromPrev}
+              >
+                <DayRowHeader isToday={isToday}>
+                  <DayName isToday={isToday}>{day.format('ddd')}</DayName>
+                  <DayNumber isToday={isToday}>{day.date()}</DayNumber>
+                </DayRowHeader>
+
+                <DayRowItems>
+                  {pendingTodos.map(todo =>
+                    isOverdue ? (
+                      <OverdueDayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+                        {todo.name}
+                      </OverdueDayItem>
+                    ) : (
+                      <DayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+                        {todo.name}
+                      </DayItem>
+                    )
+                  )}
+                  {completedTodos.map(todo => (
+                    <CompletedDayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
                       {todo.name}
-                    </OverdueDayItem>
-                  ) : (
-                    <DayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
-                      {todo.name}
-                    </DayItem>
-                  )
-                )}
-                {completedTodos.map(todo => (
-                  <CompletedDayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
-                    {todo.name}
-                  </CompletedDayItem>
-                ))}
-                {dayBirthdays.map(birthday => (
-                  <BirthdayItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
-                    <BirthdayIconStyled />
-                    {birthday.name}
-                  </BirthdayItem>
-                ))}
-                {dayMeals.map(plan => (
-                  <MealItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
-                    <MealIconStyled />
-                    {plan.recipeName}
-                  </MealItem>
-                ))}
-                {dayAdventures.map(adventure => (
-                  <AdventureWeeklyItem
-                    key={adventure.id}
-                    adventure={adventure}
-                    dayKey={key}
-                    onClick={() => onAdventureClick?.(adventure.id)}
-                  />
-                ))}
-              </DayRowItems>
-            </DayRow>
+                    </CompletedDayItem>
+                  ))}
+                  {dayBirthdays.map(birthday => (
+                    <BirthdayItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
+                      <BirthdayIconStyled />
+                      {birthday.name}
+                    </BirthdayItem>
+                  ))}
+                  {dayMeals.map(plan => (
+                    <MealItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
+                      <MealIconStyled />
+                      {plan.recipeName}
+                    </MealItem>
+                  ))}
+                  {dayAdventures.map(adventure => (
+                    <AdventureWeeklyItem
+                      key={adventure.id}
+                      adventure={adventure}
+                      dayKey={key}
+                      onClick={() => onAdventureClick?.(adventure.id)}
+                    />
+                  ))}
+                </DayRowItems>
+              </DayRow>
+            </div>
           )
         })}
       </WeekRowsWrapper>
