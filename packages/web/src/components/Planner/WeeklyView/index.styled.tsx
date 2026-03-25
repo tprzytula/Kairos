@@ -90,7 +90,7 @@ export const DayRow = styled('div')<IDayRowProps>(({ isToday, adventureContinues
   return {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'stretch',
+    alignItems: 'flex-start',
     borderRadius: getDayRowBorderRadius(adventureContinuesToNext, adventureContinuesFromPrev),
     borderLeft: `1.5px solid ${borderColor}`,
     borderRight: `1.5px solid ${borderColor}`,
@@ -122,14 +122,14 @@ export const DayRowHeader = styled('div')<IDayRowProps>(({ isToday }) => ({
   borderRight: `1px solid ${isToday ? TODAY_BORDER : BORDER_COLOR}`,
 }))
 
-export const DayRowItems = styled('div')<{ hasMultiDayAdventure?: boolean }>(({ hasMultiDayAdventure }) => ({
+export const DayRowItems = styled('div')({
   flex: 1,
   display: 'flex',
   flexWrap: 'wrap',
-  gap: hasMultiDayAdventure ? '0px' : '5px',
-  padding: hasMultiDayAdventure ? '0' : '7px 8px',
+  gap: '5px',
+  padding: '7px 8px',
   alignContent: 'flex-start',
-}))
+})
 
 export const DayName = styled('div')<IDayRowProps>(({ isToday }) => ({
   fontSize: '0.65rem',
@@ -237,37 +237,21 @@ export const MealIconStyled = styled(RestaurantIcon)({
 
 export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ position = AdventurePosition.Single }) => {
   const isMulti = position !== AdventurePosition.Single
-  if (isMulti) {
-    return {
-      fontSize: '0.72rem',
-      padding: '5px 7px 5px 9px',
-      cursor: 'pointer',
-      wordBreak: 'break-word' as const,
-      lineHeight: 1.4,
-      transition: 'all 0.12s ease',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '4px',
-      color: '#ffffff',
-      backgroundColor: ADVENTURE_COLOR,
-      height: '100%',
-      width: '100%',
-      borderRadius: 0,
-      '&:hover': {
-        backgroundColor: '#0891b2',
-      },
-    }
-  }
   return {
     ...baseItem,
     display: 'flex',
     alignItems: 'flex-start',
     gap: '4px',
-    color: '#0e7490',
-    backgroundColor: ADVENTURE_BG,
-    borderLeft: `3px solid ${ADVENTURE_COLOR}`,
+    color: isMulti ? '#ffffff' : '#0e7490',
+    backgroundColor: isMulti ? ADVENTURE_COLOR : ADVENTURE_BG,
+    borderLeft: isMulti ? 'none' : `3px solid ${ADVENTURE_COLOR}`,
+    borderRadius:
+      position === AdventurePosition.Start ? '8px 8px 2px 2px' :
+      position === AdventurePosition.Middle ? '2px' :
+      position === AdventurePosition.End ? '2px 2px 8px 8px' :
+      '8px',
     '&:hover': {
-      backgroundColor: '#cffafe',
+      backgroundColor: isMulti ? '#0891b2' : '#cffafe',
     },
   }
 })

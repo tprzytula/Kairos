@@ -203,7 +203,7 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
                   <DayNumber isToday={isToday}>{day.date()}</DayNumber>
                 </DayRowHeader>
 
-                <DayRowItems hasMultiDayAdventure={hasAdventureContinuingToNext || hasAdventureContinuingFromPrev}>
+                <DayRowItems>
                   {pendingTodos.map(todo =>
                     isOverdue ? (
                       <OverdueDayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
