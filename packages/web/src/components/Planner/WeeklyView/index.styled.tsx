@@ -84,24 +84,28 @@ const getDayRowBorderRadius = (toNext?: boolean, fromPrev?: boolean) => {
   return `${topLeft} ${topRight} ${bottomRight} ${bottomLeft}`
 }
 
-export const DayRow = styled('div')<IDayRowProps>(({ isToday, adventureContinuesToNext, adventureContinuesFromPrev }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'flex-start',
-  borderRadius: getDayRowBorderRadius(adventureContinuesToNext, adventureContinuesFromPrev),
-  border: `1.5px solid ${isToday ? TODAY_BORDER : (adventureContinuesToNext || adventureContinuesFromPrev) ? ADVENTURE_COLOR : BORDER_COLOR}`,
-  backgroundColor: isToday ? TODAY_BG : '#ffffff',
-  boxShadow: isToday ? '0 2px 8px rgba(99,102,241,0.12)' : '0 1px 3px rgba(0,0,0,0.04)',
-  overflow: 'hidden',
-  minHeight: '40px',
-  transition: 'box-shadow 0.15s ease',
-}))
+export const DayRow = styled('div')<IDayRowProps>(({ isToday, adventureContinuesToNext, adventureContinuesFromPrev }) => {
+  const isSpanning = adventureContinuesToNext || adventureContinuesFromPrev
+  const borderColor = isToday ? TODAY_BORDER : isSpanning ? ADVENTURE_COLOR : BORDER_COLOR
+  return {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    borderRadius: getDayRowBorderRadius(adventureContinuesToNext, adventureContinuesFromPrev),
+    borderLeft: `1.5px solid ${borderColor}`,
+    borderRight: `1.5px solid ${borderColor}`,
+    borderBottom: `1.5px solid ${borderColor}`,
+    borderTop: adventureContinuesFromPrev ? 'none' : `1.5px solid ${borderColor}`,
+    backgroundColor: isToday ? TODAY_BG : '#ffffff',
+    boxShadow: isToday ? '0 2px 8px rgba(99,102,241,0.12)' : '0 1px 3px rgba(0,0,0,0.04)',
+    overflow: 'hidden',
+    minHeight: '40px',
+    transition: 'box-shadow 0.15s ease',
+  }
+})
 
-export const AdventureConnector = styled('div')({
-  height: '4px',
-  backgroundColor: ADVENTURE_COLOR,
-  marginLeft: '80px',
-  marginRight: '16px',
+export const AdventureConnectedDayWrapper = styled('div')({
+  marginTop: '-4px',
 })
 
 export const DayRowHeader = styled('div')<IDayRowProps>(({ isToday }) => ({

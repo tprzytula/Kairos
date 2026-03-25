@@ -26,7 +26,7 @@ import {
   BirthdayIconStyled,
   MealItem,
   MealIconStyled,
-  AdventureConnector,
+  AdventureConnectedDayWrapper,
 } from './index.styled'
 import AdventureWeeklyItem from './AdventureWeeklyItem'
 
@@ -189,9 +189,10 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
             }
           )
 
+          const Wrapper = hasAdventureContinuingFromPrev ? AdventureConnectedDayWrapper : 'div'
+
           return (
-            <div key={key}>
-              {hasAdventureContinuingFromPrev && <AdventureConnector />}
+            <Wrapper key={key}>
               <DayRow
                 isToday={isToday}
                 adventureContinuesToNext={hasAdventureContinuingToNext}
@@ -241,7 +242,7 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
                   ))}
                 </DayRowItems>
               </DayRow>
-            </div>
+            </Wrapper>
           )
         })}
       </WeekRowsWrapper>
