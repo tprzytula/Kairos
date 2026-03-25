@@ -173,11 +173,17 @@ const CalendarView = ({
   const adventuresByDay = useMemo(() => {
     const map = new Map<string, IAdventure[]>()
     for (const adventure of adventures) {
-      const existing = map.get(adventure.date)
-      if (existing) {
-        existing.push(adventure)
-      } else {
-        map.set(adventure.date, [adventure])
+      let current = dayjs(adventure.date)
+      const end = adventure.endDate ? dayjs(adventure.endDate) : current
+      while (!current.isAfter(end, 'day')) {
+        const key = current.format('YYYY-MM-DD')
+        const existing = map.get(key)
+        if (existing) {
+          existing.push(adventure)
+        } else {
+          map.set(key, [adventure])
+        }
+        current = current.add(1, 'day')
       }
     }
     return map
