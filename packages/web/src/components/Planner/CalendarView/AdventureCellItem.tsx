@@ -1,5 +1,5 @@
 import { IAdventure } from '../../../types/adventure'
-import { getAdventurePosition } from '../../../utils/adventure'
+import { getAdventurePosition, AdventurePosition } from '../../../utils/adventure'
 import { AdventureCalendarIcon, AdventureBar } from './index.styled'
 
 interface IAdventureCellItemProps {
@@ -10,7 +10,7 @@ interface IAdventureCellItemProps {
 
 const AdventureCellItem = ({ adventure, dayKey, onClick }: IAdventureCellItemProps) => {
   const position = getAdventurePosition(adventure, dayKey)
-  if (position === 'single') return <AdventureCalendarIcon />
+  if (position === AdventurePosition.Single) return <AdventureCalendarIcon />
   return <AdventureBar position={position} onClick={onClick} />
 }
 

@@ -393,9 +393,9 @@ export const AdventureBar = styled('div')<{ position: AdventurePosition }>(({ po
   backgroundColor: '#06b6d4',
   cursor: 'pointer',
   borderRadius:
-    position === 'start' ? '3px 0 0 3px' :
-    position === 'end' ? '0 3px 3px 0' :
-    position === 'middle' ? '0' :
+    position === AdventurePosition.Start ? '3px 0 0 3px' :
+    position === AdventurePosition.End ? '0 3px 3px 0' :
+    position === AdventurePosition.Middle ? '0' :
     '3px',
 }))
 

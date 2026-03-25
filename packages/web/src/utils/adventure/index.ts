@@ -1,7 +1,12 @@
 import dayjs from 'dayjs'
 import { IAdventure } from '../../types/adventure'
 
-export type AdventurePosition = 'single' | 'start' | 'middle' | 'end'
+export enum AdventurePosition {
+  Single = 'single',
+  Start = 'start',
+  Middle = 'middle',
+  End = 'end',
+}
 
 export const buildAdventuresByDay = (adventures: IAdventure[]): Map<string, IAdventure[]> => {
   const map = new Map<string, IAdventure[]>()
@@ -25,8 +30,8 @@ export const buildAdventuresByDay = (adventures: IAdventure[]): Map<string, IAdv
 export const getAdventurePosition = (adventure: IAdventure, dayKey: string): AdventurePosition => {
   const isStart = adventure.date === dayKey
   const isEnd = !adventure.endDate || adventure.endDate === dayKey
-  if (isStart && isEnd) return 'single'
-  if (isStart) return 'start'
-  if (isEnd) return 'end'
-  return 'middle'
+  if (isStart && isEnd) return AdventurePosition.Single
+  if (isStart) return AdventurePosition.Start
+  if (isEnd) return AdventurePosition.End
+  return AdventurePosition.Middle
 }

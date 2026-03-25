@@ -214,8 +214,8 @@ export const MealIconStyled = styled(RestaurantIcon)({
   marginTop: '2px',
 })
 
-export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ position = 'single' }) => {
-  const isMulti = position !== 'single'
+export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ position = AdventurePosition.Single }) => {
+  const isMulti = position !== AdventurePosition.Single
   return {
     ...baseItem,
     display: 'flex',
@@ -228,9 +228,9 @@ export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ 
     flexBasis: isMulti ? '100%' : undefined,
     flexShrink: isMulti ? 1 : 0,
     borderRadius:
-      position === 'start' ? '8px 8px 0 0' :
-      position === 'middle' ? '0' :
-      position === 'end' ? '0 0 8px 8px' :
+      position === AdventurePosition.Start ? '8px 8px 0 0' :
+      position === AdventurePosition.Middle ? '0' :
+      position === AdventurePosition.End ? '0 0 8px 8px' :
       '8px',
     '&:hover': {
       backgroundColor: isMulti ? '#0891b2' : '#cffafe',
