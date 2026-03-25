@@ -44,7 +44,7 @@ interface IWeeklyViewProps {
 
 const getWeekStart = (d: Dayjs): Dayjs => {
   const day = d.day()
-  const diff = -((day - 4 + 7) % 7)
+  const diff = -((day - 1 + 7) % 7)
   return d.startOf('day').add(diff, 'day')
 }
 
