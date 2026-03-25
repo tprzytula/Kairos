@@ -122,14 +122,14 @@ export const DayRowHeader = styled('div')<IDayRowProps>(({ isToday }) => ({
   borderRight: `1px solid ${isToday ? TODAY_BORDER : BORDER_COLOR}`,
 }))
 
-export const DayRowItems = styled('div')({
+export const DayRowItems = styled('div')<{ hasMultiDayAdventure?: boolean }>(({ hasMultiDayAdventure }) => ({
   flex: 1,
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '5px',
-  padding: '7px 8px',
+  gap: hasMultiDayAdventure ? '0px' : '5px',
+  padding: hasMultiDayAdventure ? '0' : '7px 8px',
   alignContent: 'flex-start',
-})
+}))
 
 export const DayName = styled('div')<IDayRowProps>(({ isToday }) => ({
   fontSize: '0.65rem',
@@ -250,7 +250,8 @@ export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ 
       gap: '4px',
       color: '#ffffff',
       backgroundColor: ADVENTURE_COLOR,
-      margin: '-7px -8px',
+      height: '100%',
+      width: '100%',
       borderRadius: 0,
       '&:hover': {
         backgroundColor: '#0891b2',
