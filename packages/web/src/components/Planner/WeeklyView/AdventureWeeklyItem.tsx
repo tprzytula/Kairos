@@ -10,15 +10,11 @@ interface IAdventureWeeklyItemProps {
 
 const AdventureWeeklyItem = ({ adventure, dayKey, onClick }: IAdventureWeeklyItemProps) => {
   const position = getAdventurePosition(adventure, dayKey)
-  const showLabel = position === AdventurePosition.Single || position === AdventurePosition.Start
+  const showIcon = position === AdventurePosition.Single || position === AdventurePosition.Start
   return (
     <AdventureItem position={position} onClick={onClick}>
-      {showLabel && (
-        <>
-          <AdventureIconStyled />
-          {adventure.name}
-        </>
-      )}
+      {showIcon && <AdventureIconStyled />}
+      {adventure.name}
     </AdventureItem>
   )
 }
