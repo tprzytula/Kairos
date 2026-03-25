@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { IconButton } from '@mui/material'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
@@ -61,6 +61,16 @@ const WeeklyView = ({
 }: IWeeklyViewProps) => {
   const [currentWeek, setCurrentWeek] = useState<Dayjs>(() => getWeekStart(dayjs()))
   const today = dayjs()
+  const [adventureWidths, setAdventureWidths] = useState<Map<string, number>>(() => new Map())
+
+  const handleAdventureMeasure = useCallback((id: string, width: number) => {
+    setAdventureWidths(prev => {
+      if (prev.get(id) === width) return prev
+      const next = new Map(prev)
+      next.set(id, width)
+      return next
+    })
+  }, [])
 
   const weekDays = useMemo(
     () => Array.from({ length: 7 }, (_, i) => currentWeek.add(i, 'day')),
@@ -211,6 +221,8 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
                       adventure={adventure}
                       dayKey={key}
                       onClick={() => onAdventureClick?.(adventure.id)}
+                      onMeasure={handleAdventureMeasure}
+                      measuredWidth={adventureWidths.get(adventure.id)}
                     />
                   ))}
 
