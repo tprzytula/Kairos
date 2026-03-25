@@ -98,11 +98,10 @@ export const DayRow = styled('div')<IDayRowProps>(({ isToday, adventureContinues
 }))
 
 export const AdventureConnector = styled('div')({
-  width: '4px',
   height: '4px',
   backgroundColor: ADVENTURE_COLOR,
-  marginLeft: 'auto',
-  marginRight: '24px',
+  marginLeft: '80px',
+  marginRight: '16px',
 })
 
 export const DayRowHeader = styled('div')<IDayRowProps>(({ isToday }) => ({
@@ -245,10 +244,6 @@ export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ 
     width: isMulti ? '100%' : undefined,
     flexBasis: isMulti ? '100%' : undefined,
     flexShrink: isMulti ? 1 : 0,
-    padding: (position === AdventurePosition.Middle || position === AdventurePosition.End)
-      ? '4px 7px 4px 9px' : '5px 7px 5px 9px',
-    minHeight: (position === AdventurePosition.Middle || position === AdventurePosition.End)
-      ? '10px' : undefined,
     borderRadius:
       position === AdventurePosition.Start ? '8px 8px 0 0' :
       position === AdventurePosition.Middle ? '0' :
