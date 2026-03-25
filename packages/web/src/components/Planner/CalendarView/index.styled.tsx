@@ -5,8 +5,6 @@ import RestaurantIcon from '@mui/icons-material/Restaurant'
 import ExploreIcon from '@mui/icons-material/Explore'
 import { AdventurePosition } from '../../../utils/adventure'
 
-export type { AdventurePosition }
-
 export const Container = styled('div')({
   display: 'flex',
   flexDirection: 'column',

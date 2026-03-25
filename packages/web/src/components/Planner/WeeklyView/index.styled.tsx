@@ -5,8 +5,6 @@ import RestaurantIcon from '@mui/icons-material/Restaurant'
 import ExploreIcon from '@mui/icons-material/Explore'
 import { AdventurePosition } from '../../../utils/adventure'
 
-export type { AdventurePosition }
-
 const TODAY_COLOR = '#6366f1'
 const TODAY_BG = '#eef2ff'
 const TODAY_BORDER = '#a5b4fc'
