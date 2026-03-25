@@ -7,6 +7,7 @@ import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../types/mealPlan'
 import { IAdventure } from '../../../types/adventure'
+import { buildAdventuresByDay } from '../../../utils/adventure'
 import {
   WeeklyContainer,
   WeekHeader,
@@ -25,9 +26,8 @@ import {
   BirthdayIconStyled,
   MealItem,
   MealIconStyled,
-  AdventureItem,
-  AdventureIconStyled,
 } from './index.styled'
+import AdventureWeeklyItem from './AdventureWeeklyItem'
 
 interface IWeeklyViewProps {
   visibleToDoItems: ITodoItem[]
@@ -142,24 +142,7 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
     return map
   }, [mealPlans])
 
-  const adventuresByDay = useMemo(() => {
-    const map = new Map<string, IAdventure[]>()
-    for (const adventure of adventures) {
-      let current = dayjs(adventure.date)
-      const end = adventure.endDate ? dayjs(adventure.endDate) : current
-      while (!current.isAfter(end, 'day')) {
-        const key = current.format('YYYY-MM-DD')
-        const existing = map.get(key)
-        if (existing) {
-          existing.push(adventure)
-        } else {
-          map.set(key, [adventure])
-        }
-        current = current.add(1, 'day')
-      }
-    }
-    return map
-  }, [adventures])
+  const adventuresByDay = useMemo(() => buildAdventuresByDay(adventures), [adventures])
 
   const isCurrentWeek = getWeekStart(today).isSame(currentWeek, 'day')
 
@@ -229,10 +212,12 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
                   </MealItem>
                 ))}
                 {dayAdventures.map(adventure => (
-                  <AdventureItem key={adventure.id} onClick={() => onAdventureClick?.(adventure.id)}>
-                    <AdventureIconStyled />
-                    {adventure.name}
-                  </AdventureItem>
+                  <AdventureWeeklyItem
+                    key={adventure.id}
+                    adventure={adventure}
+                    dayKey={key}
+                    onClick={() => onAdventureClick?.(adventure.id)}
+                  />
                 ))}
               </DayRowItems>
             </DayRow>

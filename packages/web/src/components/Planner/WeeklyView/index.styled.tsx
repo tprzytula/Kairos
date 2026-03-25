@@ -3,6 +3,7 @@ import { Box, Typography, Button } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import ExploreIcon from '@mui/icons-material/Explore'
+import { AdventurePosition } from '../../../utils/adventure'
 
 const TODAY_COLOR = '#6366f1'
 const TODAY_BG = '#eef2ff'
@@ -213,17 +214,28 @@ export const MealIconStyled = styled(RestaurantIcon)({
   marginTop: '2px',
 })
 
-export const AdventureItem = styled('div')({
-  ...baseItem,
-  color: '#0e7490',
-  backgroundColor: ADVENTURE_BG,
-  borderLeft: `3px solid ${ADVENTURE_COLOR}`,
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: '4px',
-  '&:hover': {
-    backgroundColor: '#cffafe',
-  },
+export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ position = AdventurePosition.Single }) => {
+  const isMulti = position !== AdventurePosition.Single
+  return {
+    ...baseItem,
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '4px',
+    color: isMulti ? '#ffffff' : '#0e7490',
+    backgroundColor: isMulti ? ADVENTURE_COLOR : ADVENTURE_BG,
+    borderLeft: isMulti ? 'none' : `3px solid ${ADVENTURE_COLOR}`,
+    width: isMulti ? '100%' : undefined,
+    flexBasis: isMulti ? '100%' : undefined,
+    flexShrink: isMulti ? 1 : 0,
+    borderRadius:
+      position === AdventurePosition.Start ? '8px 8px 0 0' :
+      position === AdventurePosition.Middle ? '0' :
+      position === AdventurePosition.End ? '0 0 8px 8px' :
+      '8px',
+    '&:hover': {
+      backgroundColor: isMulti ? '#0891b2' : '#cffafe',
+    },
+  }
 })
 
 export const AdventureIconStyled = styled(ExploreIcon)({

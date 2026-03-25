@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import ExploreIcon from '@mui/icons-material/Explore'
+import { AdventurePosition } from '../../../utils/adventure'
 
 export const Container = styled('div')({
   display: 'flex',
@@ -379,6 +380,24 @@ export const AdventureCalendarIcon = styled(ExploreIcon)({
   fontSize: '0.85rem',
   color: '#06b6d4',
 })
+
+export const AdventureBar = styled('div')<{ position: AdventurePosition }>(({ position }) => ({
+  height: '6px',
+  marginTop: 'auto',
+  marginLeft: '-4px',
+  marginRight: '-4px',
+  marginBottom: '-4px',
+  width: 'calc(100% + 8px)',
+  alignSelf: 'stretch',
+  flexShrink: 0,
+  backgroundColor: '#06b6d4',
+  cursor: 'pointer',
+  borderRadius:
+    position === AdventurePosition.Start ? '3px 0 0 3px' :
+    position === AdventurePosition.End ? '0 3px 3px 0' :
+    position === AdventurePosition.Middle ? '0' :
+    '3px',
+}))
 
 export const AdventureDayDetailItem = styled('div')({
   fontSize: '0.875rem',
