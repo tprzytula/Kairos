@@ -38,6 +38,8 @@ import {
 } from './components/PlannerSection/index.styled'
 import { useHomeData } from '../../hooks/useHomeData'
 import { useHomeInteractions } from '../../hooks/useHomeInteractions'
+import { useItemDefaults } from '../../hooks/useItemDefaults'
+import { retrieveGroceryListDefaults } from '../../api/groceryList'
 
 import { Container } from './index.styled'
 
@@ -69,6 +71,7 @@ const HomeDataContent = () => {
   const { currentProject } = useProjectContext()
   const { currentShop, shops } = useShopContext()
   const navigate = useNavigate()
+  const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
 
   const interactions = useHomeInteractions()
   const [selectedRecipe, setSelectedRecipe] = useState<IRecipe | null>(null)
@@ -233,6 +236,7 @@ const HomeDataContent = () => {
         recipe={selectedRecipe}
         onClose={() => setSelectedRecipe(null)}
         onEdit={() => {}}
+        defaults={defaults}
       />
 
       <AdventurePreviewDrawer
