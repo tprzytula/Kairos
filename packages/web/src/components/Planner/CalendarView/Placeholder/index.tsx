@@ -10,7 +10,7 @@ import {
   DayNumberPlaceholder,
 } from './index.styled'
 
-const WEEK_DAYS = ['Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed']
+const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const TOTAL_CELLS = 35
 
 const CalendarViewPlaceholder = () => (

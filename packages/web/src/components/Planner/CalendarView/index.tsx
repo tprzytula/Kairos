@@ -31,9 +31,9 @@ import {
 } from './index.styled'
 import AdventureCellItem from './AdventureCellItem'
 
-// Jan 7 2021 was a Thursday — generate Thu-first weekday labels via browser locale
+// Jan 4 2021 was a Monday — generate Mon-first weekday labels via browser locale
 const WEEK_DAYS = Array.from({ length: 7 }, (_, i) =>
-  new Intl.DateTimeFormat(undefined, { weekday: 'short' }).format(new Date(2021, 0, 7 + i))
+  new Intl.DateTimeFormat(undefined, { weekday: 'short' }).format(new Date(2021, 0, 4 + i))
 )
 
 interface ICalendarViewProps {
@@ -182,8 +182,8 @@ const CalendarView = ({
   const calendarDays = useMemo(() => {
     const startOfMonth = currentMonth.startOf('month')
     const endOfMonth = currentMonth.endOf('month')
-    const startPad = (startOfMonth.day() + 3) % 7
-    const endPad = 6 - (endOfMonth.day() + 3) % 7
+    const startPad = (startOfMonth.day() + 6) % 7
+    const endPad = 6 - (endOfMonth.day() + 6) % 7
 
     const days: Dayjs[] = []
     for (let i = startPad - 1; i >= 0; i--) {

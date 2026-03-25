@@ -46,9 +46,9 @@ const isTomorrow = (date: Date): boolean => {
 const isThisWeek = (date: Date): boolean => {
   const today = new Date()
   const startOfWeek = new Date(today)
-  startOfWeek.setDate(today.getDate() - ((today.getDay() - 4 + 7) % 7)) // Thursday
+  startOfWeek.setDate(today.getDate() - ((today.getDay() - 1 + 7) % 7)) // Monday
   const endOfWeek = new Date(startOfWeek)
-  endOfWeek.setDate(startOfWeek.getDate() + 6) // Wednesday
+  endOfWeek.setDate(startOfWeek.getDate() + 6) // Sunday
 
   return date >= startOfWeek && date <= endOfWeek
 }
@@ -56,9 +56,9 @@ const isThisWeek = (date: Date): boolean => {
 const isNextWeek = (date: Date): boolean => {
   const today = new Date()
   const startOfNextWeek = new Date(today)
-  startOfNextWeek.setDate(today.getDate() - ((today.getDay() - 4 + 7) % 7) + 7) // Next Thursday
+  startOfNextWeek.setDate(today.getDate() - ((today.getDay() - 1 + 7) % 7) + 7) // Next Monday
   const endOfNextWeek = new Date(startOfNextWeek)
-  endOfNextWeek.setDate(startOfNextWeek.getDate() + 6) // Next Wednesday
+  endOfNextWeek.setDate(startOfNextWeek.getDate() + 6) // Next Sunday
 
   return date >= startOfNextWeek && date <= endOfNextWeek
 }
