@@ -203,6 +203,17 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
                   <DayNumber isToday={isToday}>{day.date()}</DayNumber>
                 </DayRowHeader>
 
+                {dayAdventures
+                  .filter(a => getAdventurePosition(a, key) !== AdventurePosition.Single)
+                  .map(adventure => (
+                    <AdventureWeeklyItem
+                      key={adventure.id}
+                      adventure={adventure}
+                      dayKey={key}
+                      onClick={() => onAdventureClick?.(adventure.id)}
+                    />
+                  ))}
+
                 <DayRowItems>
                   {pendingTodos.map(todo =>
                     isOverdue ? (
@@ -232,14 +243,16 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
                       {plan.recipeName}
                     </MealItem>
                   ))}
-                  {dayAdventures.map(adventure => (
-                    <AdventureWeeklyItem
-                      key={adventure.id}
-                      adventure={adventure}
-                      dayKey={key}
-                      onClick={() => onAdventureClick?.(adventure.id)}
-                    />
-                  ))}
+                  {dayAdventures
+                    .filter(a => getAdventurePosition(a, key) === AdventurePosition.Single)
+                    .map(adventure => (
+                      <AdventureWeeklyItem
+                        key={adventure.id}
+                        adventure={adventure}
+                        dayKey={key}
+                        onClick={() => onAdventureClick?.(adventure.id)}
+                      />
+                    ))}
                 </DayRowItems>
               </DayRow>
             </Wrapper>

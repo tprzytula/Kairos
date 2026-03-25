@@ -237,25 +237,34 @@ export const MealIconStyled = styled(RestaurantIcon)({
 
 export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ position = AdventurePosition.Single }) => {
   const isMulti = position !== AdventurePosition.Single
+  if (isMulti) {
+    return {
+      fontSize: '0.72rem',
+      padding: '0 9px',
+      cursor: 'pointer',
+      lineHeight: 1.4,
+      transition: 'all 0.12s ease',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '4px',
+      color: '#ffffff',
+      backgroundColor: ADVENTURE_COLOR,
+      borderRadius: 0,
+      '&:hover': {
+        backgroundColor: '#0891b2',
+      },
+    }
+  }
   return {
     ...baseItem,
     display: 'flex',
-    alignItems: isMulti ? 'center' : 'flex-start',
+    alignItems: 'flex-start',
     gap: '4px',
-    color: isMulti ? '#ffffff' : '#0e7490',
-    backgroundColor: isMulti ? ADVENTURE_COLOR : ADVENTURE_BG,
-    borderLeft: isMulti ? 'none' : `3px solid ${ADVENTURE_COLOR}`,
-    ...(isMulti && {
-      margin: '-7px 0',
-      alignSelf: 'stretch',
-    }),
-    borderRadius:
-      position === AdventurePosition.Start ? '8px 8px 2px 2px' :
-      position === AdventurePosition.Middle ? '2px' :
-      position === AdventurePosition.End ? '2px 2px 8px 8px' :
-      '8px',
+    color: '#0e7490',
+    backgroundColor: ADVENTURE_BG,
+    borderLeft: `3px solid ${ADVENTURE_COLOR}`,
     '&:hover': {
-      backgroundColor: isMulti ? '#0891b2' : '#cffafe',
+      backgroundColor: '#cffafe',
     },
   }
 })
