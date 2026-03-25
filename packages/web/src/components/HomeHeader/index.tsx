@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { useAuth } from 'react-oidc-context'
 import UserMenu from '../UserMenu'
+import Fireworks from './Fireworks'
 import {
   HomeHeaderContainer,
   HomeHeaderCard,
@@ -23,12 +24,29 @@ const formatDate = (): string => {
   })
 }
 
+interface FireworkItem {
+  id: number
+  x: number
+  y: number
+}
+
 const HomeHeader: React.FC = () => {
   const auth = useAuth()
   const userName = auth.user?.profile?.given_name || auth.user?.profile?.name
+  const [fireworks, setFireworks] = useState<FireworkItem[]>([])
+  const counterRef = useRef(0)
+
+  const handleClick = useCallback((event: React.MouseEvent) => {
+    const id = ++counterRef.current
+    setFireworks(prev => [...prev, { id, x: event.clientX, y: event.clientY }])
+  }, [])
+
+  const handleComplete = useCallback((id: number) => {
+    setFireworks(prev => prev.filter(fw => fw.id !== id))
+  }, [])
 
   return (
-    <HomeHeaderContainer>
+    <HomeHeaderContainer onClick={handleClick} sx={{ cursor: 'pointer' }}>
       <HomeHeaderCard>
         <GreetingSection>
           <GreetingText>{getGreeting(userName)}</GreetingText>
@@ -36,6 +54,14 @@ const HomeHeader: React.FC = () => {
         </GreetingSection>
         {auth.user && <UserMenu />}
       </HomeHeaderCard>
+      {fireworks.map(fw => (
+        <Fireworks
+          key={fw.id}
+          x={fw.x}
+          y={fw.y}
+          onComplete={() => handleComplete(fw.id)}
+        />
+      ))}
     </HomeHeaderContainer>
   )
 }
