@@ -1,6 +1,13 @@
 name: Test Lambdas
 
 on:
+  push:
+    paths:
+      - "packages/lambdas/**"
+      - ".github/workflows/test-lambdas.yml"
+    paths-ignore:
+      - "packages/lambdas/**/*.md"
+      - "packages/lambdas/LICENSE"
   pull_request:
     paths:
       - "packages/lambdas/**"

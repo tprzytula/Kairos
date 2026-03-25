@@ -1,6 +1,13 @@
 name: Test Website
 
 on:
+  push:
+    paths:
+      - "packages/web/**"
+      - ".github/workflows/test-web.yml"
+    paths-ignore:
+      - "packages/web/**/*.md"
+      - "packages/web/LICENSE"
   pull_request:
     paths:
       - "packages/web/**"
