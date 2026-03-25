@@ -90,7 +90,7 @@ export const DayRow = styled('div')<IDayRowProps>(({ isToday, adventureContinues
   return {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'stretch',
     borderRadius: getDayRowBorderRadius(adventureContinuesToNext, adventureContinuesFromPrev),
     borderLeft: `1.5px solid ${borderColor}`,
     borderRight: `1.5px solid ${borderColor}`,
@@ -240,11 +240,15 @@ export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ 
   return {
     ...baseItem,
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: isMulti ? 'center' : 'flex-start',
     gap: '4px',
     color: isMulti ? '#ffffff' : '#0e7490',
     backgroundColor: isMulti ? ADVENTURE_COLOR : ADVENTURE_BG,
     borderLeft: isMulti ? 'none' : `3px solid ${ADVENTURE_COLOR}`,
+    ...(isMulti && {
+      margin: '-7px 0',
+      alignSelf: 'stretch',
+    }),
     borderRadius:
       position === AdventurePosition.Start ? '8px 8px 2px 2px' :
       position === AdventurePosition.Middle ? '2px' :
