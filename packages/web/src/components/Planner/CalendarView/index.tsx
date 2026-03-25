@@ -9,6 +9,7 @@ import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../types/mealPlan'
 import { IAdventure } from '../../../types/adventure'
+import { buildAdventuresByDay } from '../../../utils/adventure'
 import DayPreviewDrawer from '../../DayPreviewDrawer'
 import {
   Container,
@@ -27,10 +28,8 @@ import {
   CompletedNoDueDateItem,
   BirthdayCakeIcon,
   MealPlanIcon,
-  AdventureCalendarIcon,
-  AdventureBar,
-  AdventurePosition,
 } from './index.styled'
+import AdventureCellItem from './AdventureCellItem'
 
 // Jan 4 2021 was a Monday — generate Mon-first weekday labels via browser locale
 const WEEK_DAYS = Array.from({ length: 7 }, (_, i) =>
@@ -172,24 +171,7 @@ const CalendarView = ({
   )
 
   // Map from "YYYY-MM-DD" -> IAdventure[]
-  const adventuresByDay = useMemo(() => {
-    const map = new Map<string, IAdventure[]>()
-    for (const adventure of adventures) {
-      let current = dayjs(adventure.date)
-      const end = adventure.endDate ? dayjs(adventure.endDate) : current
-      while (!current.isAfter(end, 'day')) {
-        const key = current.format('YYYY-MM-DD')
-        const existing = map.get(key)
-        if (existing) {
-          existing.push(adventure)
-        } else {
-          map.set(key, [adventure])
-        }
-        current = current.add(1, 'day')
-      }
-    }
-    return map
-  }, [adventures])
+  const adventuresByDay = useMemo(() => buildAdventuresByDay(adventures), [adventures])
 
   const selectedDayAdventures = useMemo(
     () => (selectedDay ? (adventuresByDay.get(selectedDay) ?? []) : []),
@@ -270,14 +252,14 @@ const CalendarView = ({
               <CompletedTodoDot count={completedCount}>{completedCount > 0 ? completedCount : ''}</CompletedTodoDot>
               {hasBirthday && <BirthdayCakeIcon />}
               {hasMealPlan && <MealPlanIcon />}
-              {dayAdventureItems.map(adv => {
-                const isStart = adv.date === key
-                const isEnd = !adv.endDate || adv.endDate === key
-                const position: AdventurePosition =
-                  isStart && isEnd ? 'single' : isStart ? 'start' : isEnd ? 'end' : 'middle'
-                if (position === 'single') return <AdventureCalendarIcon key={adv.id} />
-                return <AdventureBar key={adv.id} position={position} onClick={() => onAdventureClick?.(adv.id)} />
-              })}
+              {dayAdventureItems.map(adv => (
+                <AdventureCellItem
+                  key={adv.id}
+                  adventure={adv}
+                  dayKey={key}
+                  onClick={() => onAdventureClick?.(adv.id)}
+                />
+              ))}
             </DayCell>
           )
         })}

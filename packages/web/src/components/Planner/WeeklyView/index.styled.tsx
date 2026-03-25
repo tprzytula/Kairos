@@ -3,6 +3,9 @@ import { Box, Typography, Button } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import ExploreIcon from '@mui/icons-material/Explore'
+import { AdventurePosition } from '../../../utils/adventure'
+
+export type { AdventurePosition }
 
 const TODAY_COLOR = '#6366f1'
 const TODAY_BG = '#eef2ff'
@@ -212,8 +215,6 @@ export const MealIconStyled = styled(RestaurantIcon)({
   flexShrink: 0,
   marginTop: '2px',
 })
-
-export type AdventurePosition = 'single' | 'start' | 'middle' | 'end'
 
 export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ position = 'single' }) => {
   const isMulti = position !== 'single'

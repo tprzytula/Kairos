@@ -3,6 +3,9 @@ import { Box, Typography } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import ExploreIcon from '@mui/icons-material/Explore'
+import { AdventurePosition } from '../../../utils/adventure'
+
+export type { AdventurePosition }
 
 export const Container = styled('div')({
   display: 'flex',
@@ -379,8 +382,6 @@ export const AdventureCalendarIcon = styled(ExploreIcon)({
   fontSize: '0.85rem',
   color: '#06b6d4',
 })
-
-export type AdventurePosition = 'single' | 'start' | 'middle' | 'end'
 
 export const AdventureBar = styled('div')<{ position: AdventurePosition }>(({ position }) => ({
   height: '6px',
