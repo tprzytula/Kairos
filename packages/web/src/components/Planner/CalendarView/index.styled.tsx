@@ -380,6 +380,26 @@ export const AdventureCalendarIcon = styled(ExploreIcon)({
   color: '#06b6d4',
 })
 
+export type AdventurePosition = 'single' | 'start' | 'middle' | 'end'
+
+export const AdventureBar = styled('div')<{ position: AdventurePosition }>(({ position }) => ({
+  height: '6px',
+  marginTop: 'auto',
+  marginLeft: '-4px',
+  marginRight: '-4px',
+  marginBottom: '-4px',
+  width: 'calc(100% + 8px)',
+  alignSelf: 'stretch',
+  flexShrink: 0,
+  backgroundColor: '#06b6d4',
+  cursor: 'pointer',
+  borderRadius:
+    position === 'start' ? '3px 0 0 3px' :
+    position === 'end' ? '0 3px 3px 0' :
+    position === 'middle' ? '0' :
+    '3px',
+}))
+
 export const AdventureDayDetailItem = styled('div')({
   fontSize: '0.875rem',
   color: '#0e7490',

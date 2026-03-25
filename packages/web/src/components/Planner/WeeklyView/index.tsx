@@ -27,6 +27,7 @@ import {
   MealIconStyled,
   AdventureItem,
   AdventureIconStyled,
+  AdventurePosition,
 } from './index.styled'
 
 interface IWeeklyViewProps {
@@ -228,12 +229,18 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
                     {plan.recipeName}
                   </MealItem>
                 ))}
-                {dayAdventures.map(adventure => (
-                  <AdventureItem key={adventure.id} onClick={() => onAdventureClick?.(adventure.id)}>
-                    <AdventureIconStyled />
-                    {adventure.name}
-                  </AdventureItem>
-                ))}
+                {dayAdventures.map(adventure => {
+                  const isStart = adventure.date === key
+                  const isEnd = !adventure.endDate || adventure.endDate === key
+                  const position: AdventurePosition =
+                    isStart && isEnd ? 'single' : isStart ? 'start' : isEnd ? 'end' : 'middle'
+                  return (
+                    <AdventureItem key={adventure.id} position={position} onClick={() => onAdventureClick?.(adventure.id)}>
+                      {(position === 'single' || position === 'start') && <AdventureIconStyled />}
+                      {adventure.name}
+                    </AdventureItem>
+                  )
+                })}
               </DayRowItems>
             </DayRow>
           )

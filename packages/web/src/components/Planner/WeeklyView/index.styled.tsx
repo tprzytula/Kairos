@@ -213,17 +213,30 @@ export const MealIconStyled = styled(RestaurantIcon)({
   marginTop: '2px',
 })
 
-export const AdventureItem = styled('div')({
-  ...baseItem,
-  color: '#0e7490',
-  backgroundColor: ADVENTURE_BG,
-  borderLeft: `3px solid ${ADVENTURE_COLOR}`,
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: '4px',
-  '&:hover': {
-    backgroundColor: '#cffafe',
-  },
+export type AdventurePosition = 'single' | 'start' | 'middle' | 'end'
+
+export const AdventureItem = styled('div')<{ position?: AdventurePosition }>(({ position = 'single' }) => {
+  const isMulti = position !== 'single'
+  return {
+    ...baseItem,
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '4px',
+    color: isMulti ? '#ffffff' : '#0e7490',
+    backgroundColor: isMulti ? ADVENTURE_COLOR : ADVENTURE_BG,
+    borderLeft: isMulti ? 'none' : `3px solid ${ADVENTURE_COLOR}`,
+    width: isMulti ? '100%' : undefined,
+    flexBasis: isMulti ? '100%' : undefined,
+    flexShrink: isMulti ? 1 : 0,
+    borderRadius:
+      position === 'start' ? '8px 8px 0 0' :
+      position === 'middle' ? '0' :
+      position === 'end' ? '0 0 8px 8px' :
+      '8px',
+    '&:hover': {
+      backgroundColor: isMulti ? '#0891b2' : '#cffafe',
+    },
+  }
 })
 
 export const AdventureIconStyled = styled(ExploreIcon)({
