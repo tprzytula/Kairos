@@ -114,6 +114,10 @@ export const Planner = ({
     await removeAdventure(id);
   }, [removeAdventure]);
 
+  const handleAdventureEdit = useCallback((adventure: IAdventure) => {
+    navigate(Route.EditAdventure.replace(':id', adventure.id));
+  }, [navigate]);
+
   const handleAddTask = useCallback((date: string) => {
     dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: date })
     navigate(Route.AddPlannerItem)
@@ -155,7 +159,7 @@ export const Planner = ({
       <AdventurePreviewDrawer
         item={previewAdventure}
         onClose={() => setPreviewAdventure(null)}
-        onEdit={() => {}}
+        onEdit={handleAdventureEdit}
         onDelete={handleAdventureDelete}
       />
     </>
