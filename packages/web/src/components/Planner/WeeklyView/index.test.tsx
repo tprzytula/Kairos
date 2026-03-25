@@ -44,7 +44,7 @@ describe('Given the WeeklyView component', () => {
   it('should render the week range label', () => {
     render(<WeeklyView visibleToDoItems={[]} onItemClick={vi.fn()} />)
     const day = dayjs().day()
-    const diff = day === 0 ? -6 : 1 - day
+    const diff = -((day - 4 + 7) % 7)
     const start = dayjs().startOf('day').add(diff, 'day').format('MMM D')
     expect(screen.getByText(new RegExp(start))).toBeVisible()
   })
