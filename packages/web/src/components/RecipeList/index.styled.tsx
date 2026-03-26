@@ -79,10 +79,17 @@ export const NoMatchContainer = styled('div')({
   gap: '0.5rem',
 })
 
+export const ChipRow = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+})
+
 export const FilterChipsContainer = styled('div')({
   display: 'flex',
   gap: '0.5rem',
   overflowX: 'auto',
+  flex: 1,
   scrollbarWidth: 'none',
   '&::-webkit-scrollbar': {
     display: 'none',
@@ -102,7 +109,7 @@ export const FilterButton = styled('button')({
   position: 'relative',
   width: '32px',
   height: '32px',
-  borderRadius: '8px',
+  borderRadius: '100px',
   border: '1px solid rgba(0,0,0,0.12)',
   background: 'transparent',
   cursor: 'pointer',

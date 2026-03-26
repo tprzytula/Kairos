@@ -9,6 +9,6 @@ export const retrieveToDoList = async (projectId?: string): Promise<Array<ITodoI
     return await response.json()
   }
 
-  throw new Error(`Failed to fetch to do list: ${response.status}`)
+  return []
 }
 

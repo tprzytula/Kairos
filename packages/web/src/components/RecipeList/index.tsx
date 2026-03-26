@@ -14,6 +14,7 @@ import {
   RecipeListContainer,
   EmptyStateContainer,
   NoMatchContainer,
+  ChipRow,
   FilterChipsContainer,
   RecipeGrid,
   FilterButton,
@@ -105,20 +106,22 @@ const RecipeList = ({ search = '', onViewRecipe }: RecipeListProps) => {
     <RecipeListContainer>
       <div ref={sentinelRef} />
       <StickyHeader className={isStuck ? 'stuck' : ''}>
-        <FilterChipsContainer>
+        <ChipRow>
           <FilterButton onClick={() => setIsFilterSheetOpen(true)} aria-label="More filters">
             <TuneIcon />
             {mealTypeFilterCount > 0 && <FilterBadge>{mealTypeFilterCount}</FilterBadge>}
           </FilterButton>
-          {RecipeDishTypeOrder.map((type) => (
-            <FilterChip
-              key={type}
-              label={RecipeDishTypeLabelMap[type]}
-              isSelected={selectedDishTypes.includes(type)}
-              onClick={() => toggleDishType(type)}
-            />
-          ))}
-        </FilterChipsContainer>
+          <FilterChipsContainer>
+            {RecipeDishTypeOrder.map((type) => (
+              <FilterChip
+                key={type}
+                label={RecipeDishTypeLabelMap[type]}
+                isSelected={selectedDishTypes.includes(type)}
+                onClick={() => toggleDishType(type)}
+              />
+            ))}
+          </FilterChipsContainer>
+        </ChipRow>
       </StickyHeader>
 
       {isLoading ? (

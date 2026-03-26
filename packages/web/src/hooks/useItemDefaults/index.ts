@@ -5,8 +5,12 @@ export const useItemDefaults = ({ fetchMethod }: IUseItemDefaultsProps): IUseIte
   const [defaults, setDefaults] = useState<Array<IItemDefault>>([]);
 
   const fetchDefaults = useCallback(async () => {
-    const defaults = await fetchMethod();
-    setDefaults(defaults);
+    try {
+      const defaults = await fetchMethod();
+      setDefaults(defaults);
+    } catch {
+      // fetch errors are handled silently; component renders with empty defaults
+    }
   }, [fetchMethod]);
 
   useEffect(() => {

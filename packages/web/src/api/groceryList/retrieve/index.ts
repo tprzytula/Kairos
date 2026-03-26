@@ -14,7 +14,7 @@ export const retrieveGroceryList = async (projectId?: string, shopId?: string): 
     return await response.json()
   }
 
-  throw new Error(`Failed to fetch grocery list: ${response.status}`)
+  return []
 }
 
 export const retrieveGroceryListDefaults = async (projectId?: string): Promise<Array<IDBGroceryItemDefault>> => {

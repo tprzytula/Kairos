@@ -11,8 +11,7 @@ const ChipButton = styled('button')<{ selected: boolean }>(({ selected }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   padding: '0.25rem 0.75rem',
-  borderRadius: '8px',
-  border: 'none',
+  borderRadius: '100px',
   cursor: 'pointer',
   flexShrink: 0,
   fontSize: '0.8125rem',
@@ -24,11 +23,13 @@ const ChipButton = styled('button')<{ selected: boolean }>(({ selected }) => ({
         background: 'rgba(249,115,22,0.15)',
         color: '#ea580c',
         fontWeight: 600,
+        border: '1px solid transparent',
       }
     : {
-        background: 'rgba(0, 0, 0, 0.05)',
+        background: 'transparent',
         color: 'rgba(0, 0, 0, 0.6)',
         fontWeight: 400,
+        border: '1px solid rgba(0, 0, 0, 0.12)',
       }),
 }))
 
