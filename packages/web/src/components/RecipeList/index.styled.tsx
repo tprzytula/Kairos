@@ -5,7 +5,6 @@ export const RecipeListContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   gap: '0.75rem',
-  paddingTop: '0.875rem',
 })
 
 export const StickyHeader = styled('div')({
@@ -16,7 +15,7 @@ export const StickyHeader = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   gap: '0.75rem',
-  paddingBottom: '0.25rem',
+  padding: '0.5rem 0',
   transition: 'box-shadow 0.2s ease',
   '&.stuck': {
     boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
