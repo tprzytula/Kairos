@@ -1,30 +1,24 @@
-import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
+import { useMemo } from 'react'
 import { Box, Typography, Skeleton } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
-import TuneIcon from '@mui/icons-material/Tune'
 import { COLORS } from '../../constants/colors'
 import { IRecipe } from '../../types/recipe'
 import { MealType } from '../../enums/mealType'
-import { RecipeDishType, RecipeDishTypeLabelMap, RecipeDishTypeOrder } from '../../enums/recipeDishType'
+import { RecipeDishType } from '../../enums/recipeDishType'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import RecipeItem from '../RecipeItem'
-import FilterChip from '../FilterChip'
-import RecipeFilterSheet from '../RecipeFilterSheet'
 import {
   RecipeListContainer,
   EmptyStateContainer,
   NoMatchContainer,
-  ChipRow,
-  FilterChipsContainer,
   RecipeGrid,
-  FilterButton,
-  FilterBadge,
-  StickyHeader,
 } from './index.styled'
 
 interface RecipeListProps {
   search?: string
   onViewRecipe: (recipe: IRecipe) => void
+  selectedMealTypes: MealType[]
+  selectedDishTypes: RecipeDishType[]
 }
 
 const RecipeSkeletonCard = () => (
@@ -40,41 +34,8 @@ const RecipeSkeletonCard = () => (
   </Box>
 )
 
-const RecipeList = ({ search = '', onViewRecipe }: RecipeListProps) => {
+const RecipeList = ({ search = '', onViewRecipe, selectedMealTypes, selectedDishTypes }: RecipeListProps) => {
   const { recipes, isLoading } = useRecipeContext()
-  const [selectedMealTypes, setSelectedMealTypes] = useState<MealType[]>([])
-  const [selectedDishTypes, setSelectedDishTypes] = useState<RecipeDishType[]>([])
-  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false)
-  const [isStuck, setIsStuck] = useState(false)
-  const sentinelRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current
-    if (!sentinel) return
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsStuck(!entry.isIntersecting),
-      { threshold: 0 }
-    )
-    observer.observe(sentinel)
-    return () => observer.disconnect()
-  }, [])
-
-  const toggleMealType = useCallback((type: MealType) => {
-    setSelectedMealTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-    )
-  }, [])
-
-  const toggleDishType = useCallback((type: RecipeDishType) => {
-    setSelectedDishTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-    )
-  }, [])
-
-  const clearAllFilters = useCallback(() => {
-    setSelectedMealTypes([])
-    setSelectedDishTypes([])
-  }, [])
 
   const filtered = useMemo(() => {
     let result = recipes
@@ -100,30 +61,9 @@ const RecipeList = ({ search = '', onViewRecipe }: RecipeListProps) => {
   }, [recipes, search, selectedMealTypes, selectedDishTypes])
 
   const hasActiveFilters = selectedMealTypes.length > 0 || selectedDishTypes.length > 0
-  const mealTypeFilterCount = selectedMealTypes.length
 
   return (
     <RecipeListContainer>
-      <div ref={sentinelRef} />
-      <StickyHeader className={isStuck ? 'stuck' : ''}>
-        <ChipRow>
-          <FilterButton onClick={() => setIsFilterSheetOpen(true)} aria-label="More filters">
-            <TuneIcon />
-            {mealTypeFilterCount > 0 && <FilterBadge>{mealTypeFilterCount}</FilterBadge>}
-          </FilterButton>
-          <FilterChipsContainer>
-            {RecipeDishTypeOrder.map((type) => (
-              <FilterChip
-                key={type}
-                label={RecipeDishTypeLabelMap[type]}
-                isSelected={selectedDishTypes.includes(type)}
-                onClick={() => toggleDishType(type)}
-              />
-            ))}
-          </FilterChipsContainer>
-        </ChipRow>
-      </StickyHeader>
-
       {isLoading ? (
         <RecipeGrid>
           <RecipeSkeletonCard />
@@ -160,14 +100,6 @@ const RecipeList = ({ search = '', onViewRecipe }: RecipeListProps) => {
           ))}
         </RecipeGrid>
       )}
-
-      <RecipeFilterSheet
-        open={isFilterSheetOpen}
-        onClose={() => setIsFilterSheetOpen(false)}
-        selectedMealTypes={selectedMealTypes}
-        onToggleMealType={toggleMealType}
-        onClearAll={clearAllFilters}
-      />
     </RecipeListContainer>
   )
 }

@@ -3,18 +3,31 @@ import { IconButton } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import SearchIconMui from '@mui/icons-material/Search'
+import TuneIcon from '@mui/icons-material/Tune'
 import StandardLayout from '../../layout/standardLayout'
 import ModernPageHeader from '../../components/ModernPageHeader'
 import RecipeList from '../../components/RecipeList'
 import RecipeForm from '../../components/RecipeForm'
 import RecipeViewDrawer from '../../components/RecipeViewDrawer'
+import RecipeFilterSheet from '../../components/RecipeFilterSheet'
+import FilterChip from '../../components/FilterChip'
 import DraggableBottomDrawer from '../../components/DraggableBottomDrawer'
 import { useRecipeContext } from '../../providers/RecipeProvider'
 import { IRecipe } from '../../types/recipe'
+import { MealType } from '../../enums/mealType'
+import { RecipeDishType, RecipeDishTypeLabelMap, RecipeDishTypeOrder } from '../../enums/recipeDishType'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { retrieveGroceryListDefaults } from '../../api/groceryList'
 import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
-import { SearchContainer, SearchIcon, SearchInput } from '../../components/RecipeList/index.styled'
+import {
+  SearchContainer,
+  SearchIcon,
+  SearchInput,
+  ChipRow,
+  FilterChipsContainer,
+  FilterButton,
+  FilterBadge,
+} from '../../components/RecipeList/index.styled'
 import {
   DrawerHeader,
   DrawerHeaderLeft,
@@ -33,6 +46,9 @@ const RecipesContent = () => {
   const [editingRecipe, setEditingRecipe] = useState<IRecipe | null>(null)
   const [viewingRecipe, setViewingRecipe] = useState<IRecipe | null>(null)
   const [search, setSearch] = useState('')
+  const [selectedMealTypes, setSelectedMealTypes] = useState<MealType[]>([])
+  const [selectedDishTypes, setSelectedDishTypes] = useState<RecipeDishType[]>([])
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
@@ -43,6 +59,23 @@ const RecipesContent = () => {
       navigate('/recipes', { replace: true })
     }
   }, [searchParams, navigate])
+
+  const toggleMealType = useCallback((type: MealType) => {
+    setSelectedMealTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    )
+  }, [])
+
+  const toggleDishType = useCallback((type: RecipeDishType) => {
+    setSelectedDishTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    )
+  }, [])
+
+  const clearAllFilters = useCallback(() => {
+    setSelectedMealTypes([])
+    setSelectedDishTypes([])
+  }, [])
 
   const handleViewRecipe = useCallback((recipe: IRecipe) => {
     setViewingRecipe(recipe)
@@ -73,6 +106,8 @@ const RecipesContent = () => {
     setIsFormOpen(false)
   }, [])
 
+  const mealTypeFilterCount = selectedMealTypes.length
+
   return (
     <StandardLayout>
       <ModernPageHeader
@@ -91,12 +126,30 @@ const RecipesContent = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </SearchContainer>
+        <ChipRow>
+          <FilterButton onClick={() => setIsFilterSheetOpen(true)} aria-label="More filters">
+            <TuneIcon />
+            {mealTypeFilterCount > 0 && <FilterBadge>{mealTypeFilterCount}</FilterBadge>}
+          </FilterButton>
+          <FilterChipsContainer>
+            {RecipeDishTypeOrder.map((type) => (
+              <FilterChip
+                key={type}
+                label={RecipeDishTypeLabelMap[type]}
+                isSelected={selectedDishTypes.includes(type)}
+                onClick={() => toggleDishType(type)}
+              />
+            ))}
+          </FilterChipsContainer>
+        </ChipRow>
       </ModernPageHeader>
       <Container>
         <ScrollableContainer onRefresh={fetchRecipes}>
           <RecipeList
             search={search}
             onViewRecipe={handleViewRecipe}
+            selectedMealTypes={selectedMealTypes}
+            selectedDishTypes={selectedDishTypes}
           />
         </ScrollableContainer>
       </Container>
@@ -105,6 +158,13 @@ const RecipesContent = () => {
         onClose={handleCloseView}
         onEdit={handleViewToEdit}
         defaults={defaults}
+      />
+      <RecipeFilterSheet
+        open={isFilterSheetOpen}
+        onClose={() => setIsFilterSheetOpen(false)}
+        selectedMealTypes={selectedMealTypes}
+        onToggleMealType={toggleMealType}
+        onClearAll={clearAllFilters}
       />
       <DraggableBottomDrawer
         open={isFormOpen}
