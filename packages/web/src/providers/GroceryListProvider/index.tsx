@@ -4,7 +4,7 @@ import { IGroceryItem } from '../AppStateProvider/types'
 import { removeGroceryItems, retrieveGroceryList, updateGroceryItem, updateGroceryItemFields, GroceryItemUpdateFields } from '../../api/groceryList'
 import { IState, IGroceryListProviderProps } from './types'
 import { addPropertyToEachItemInList } from '../../utils/list'
-import { mergeGroceryItem } from '../../utils/grocery/mergeGroceryItem'
+import { upsertGroceryItem } from '../../utils/grocery/upsertGroceryItem'
 import { GroceryViewMode } from '../../enums/groceryCategory'
 import { useProjectContext } from '../ProjectProvider'
 
@@ -118,7 +118,7 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
   }, [queryClient, currentProject?.id, actualShopId])
 
   const addItemToCache = useCallback((item: IGroceryItem) => {
-    queryClient.setQueryData<IGroceryItem[]>(queryKey, (prev = []) => mergeGroceryItem(prev, item))
+    queryClient.setQueryData<IGroceryItem[]>(queryKey, (prev = []) => upsertGroceryItem(prev, item))
   }, [queryClient, currentProject?.id, actualShopId])
 
   const handleSetViewMode = useCallback((mode: GroceryViewMode) => {
