@@ -30,7 +30,7 @@ export const WeekHeader = styled(Box)({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  padding: '14px 16px 10px',
+  padding: '0 16px 10px',
   flexShrink: 0,
   gap: '8px',
 })
