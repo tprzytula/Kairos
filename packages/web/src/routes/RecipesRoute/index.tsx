@@ -22,11 +22,12 @@ import {
   DrawerTitle,
   ContentContainer,
 } from '../../components/DrawerHeader/index.styled'
-import { Container, ScrollableContainer } from './index.styled'
+import { Container } from './index.styled'
+import { ScrollableContainer } from '../../components/ScrollableContainer'
 import { useSearchParams, useNavigate } from 'react-router'
 
 const RecipesContent = () => {
-  const { removeRecipe } = useRecipeContext()
+  const { removeRecipe, fetchRecipes } = useRecipeContext()
   const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<IRecipe | null>(null)
@@ -92,7 +93,7 @@ const RecipesContent = () => {
         </SearchContainer>
       </ModernPageHeader>
       <Container>
-        <ScrollableContainer>
+        <ScrollableContainer onRefresh={fetchRecipes}>
           <RecipeList
             search={search}
             onViewRecipe={handleViewRecipe}

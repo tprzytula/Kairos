@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 export const PULL_THRESHOLD = 80
+const MIN_REFRESH_MS = 1000
 
 export const usePullToRefresh = (
   containerRef: React.RefObject<HTMLElement | null>,
@@ -63,7 +64,8 @@ export const usePullToRefresh = (
       isRefreshingRef.current = true
       setIsRefreshing(true)
 
-      onRefresh().catch(() => {}).finally(() => {
+      const minDelay = new Promise<void>((resolve) => setTimeout(resolve, MIN_REFRESH_MS))
+      Promise.all([onRefresh().catch(() => {}), minDelay]).finally(() => {
         isRefreshingRef.current = false
         setIsRefreshing(false)
         pullDistanceRef.current = 0
