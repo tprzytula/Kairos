@@ -15,7 +15,8 @@ export const StickyHeader = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   gap: '0.75rem',
-  padding: '0.5rem 0',
+  margin: '0 -0.75rem',
+  padding: '0.5rem 0.75rem',
   transition: 'box-shadow 0.2s ease',
   '&.stuck': {
     boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
@@ -82,6 +83,7 @@ export const ChipRow = styled('div')({
   display: 'flex',
   alignItems: 'center',
   gap: '0.5rem',
+  paddingLeft: '0.25rem',
 })
 
 export const FilterChipsContainer = styled('div')({
