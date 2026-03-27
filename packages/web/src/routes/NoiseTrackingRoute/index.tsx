@@ -6,13 +6,14 @@ import ModernPageHeader from '../../components/ModernPageHeader'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import ViewModuleIcon from '@mui/icons-material/ViewModule'
 import ViewListIcon from '@mui/icons-material/ViewList'
-import { Container, ScrollableContainer } from './index.styled'
+import { Container } from './index.styled'
+import { ScrollableContainer } from '../../components/ScrollableContainer'
 import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
 import { useState, useCallback } from 'react'
 import { ViewMode } from '../../components/NoiseTrackingList/types'
 
 const NoiseTrackingContent = () => {
-  const { noiseTrackingItems } = useNoiseTrackingContext()
+  const { noiseTrackingItems, refetchNoiseTrackingItems } = useNoiseTrackingContext()
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.Grouped)
   const [allExpanded, setAllExpanded] = useState<boolean>(true)
   const [expandKey, setExpandKey] = useState<number>(0)
@@ -83,8 +84,8 @@ const NoiseTrackingContent = () => {
             onClick: toggleViewMode,
           }}
         />
-        <ScrollableContainer>
-          <NoiseTrackingList 
+        <ScrollableContainer onRefresh={refetchNoiseTrackingItems}>
+          <NoiseTrackingList
             viewMode={viewMode}
             allExpanded={allExpanded}
             expandKey={expandKey}

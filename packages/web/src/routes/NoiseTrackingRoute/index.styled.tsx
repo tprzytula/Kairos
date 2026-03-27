@@ -8,9 +8,3 @@ export const Container = styled('div')({
   width: '100%'
 })
 
-export const ScrollableContainer = styled('div')({
-  flex: 1,
-  minHeight: 0,
-  overflowY: 'auto',
-  paddingBottom: '1rem',
-})

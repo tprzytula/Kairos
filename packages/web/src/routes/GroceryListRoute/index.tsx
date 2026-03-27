@@ -10,7 +10,8 @@ import SortByAlphaIcon from '@mui/icons-material/SortByAlpha'
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess'
 import StorefrontIcon from '@mui/icons-material/Storefront'
-import { Container, ScrollableContainer } from './index.styled'
+import { Container } from './index.styled'
+import { ScrollableContainer } from '../../components/ScrollableContainer'
 import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import AddGroceryItemDrawer from '../../components/AddGroceryItemDrawer'
@@ -157,7 +158,7 @@ const GroceryListContent = () => {
             },
           }}
         />
-        <ScrollableContainer>
+        <ScrollableContainer onRefresh={refetchGroceryList}>
           <GroceryList allExpanded={allExpanded} expandKey={expandKey} shopId={shopId} />
         </ScrollableContainer>
       </Container>

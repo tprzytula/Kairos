@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
+import { ScrollArea } from '../../components/ScrollableContainer/index.styled'
 
 export const Container = styled(Box)({
   display: 'flex',
@@ -11,13 +12,9 @@ export const Container = styled(Box)({
   minHeight: 0,
 })
 
-export const ScrollableContainer = styled(Box)({
-  flex: 1,
-  overflow: 'auto',
-  WebkitOverflowScrolling: 'touch',
+export const ShopScrollArea = styled(ScrollArea)({
   padding: '0 0.5rem',
   margin: '0 -0.5rem',
-  minHeight: 0,
 })
 
 export const FormContainer = styled(Box)({

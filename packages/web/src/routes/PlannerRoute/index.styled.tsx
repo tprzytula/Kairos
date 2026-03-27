@@ -1,4 +1,5 @@
 import { styled } from '@mui/system'
+import { ScrollArea } from '../../components/ScrollableContainer/index.styled'
 
 export const Container = styled('div')({
   display: 'flex',
@@ -8,9 +9,7 @@ export const Container = styled('div')({
   width: '100%'
 })
 
-export const ScrollableContainer = styled('div')({
-  flex: 1,
-  minHeight: 0,
-  overflowY: 'auto',
+export const PlannerScrollArea = styled(ScrollArea)({
   paddingBottom: '0.5rem',
 })
+

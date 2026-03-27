@@ -12,7 +12,8 @@ import { showAlert } from '../../utils/alert'
 import { Route } from '../../enums/route'
 import StorefrontIcon from '@mui/icons-material/Storefront'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
-import { Container, ScrollableContainer, FormContainer } from './index.styled'
+import { Container, ShopScrollArea, FormContainer } from './index.styled'
+import { ScrollableContainer } from '../../components/ScrollableContainer'
 import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
 
 type FormMode = 'none' | 'add' | 'edit'
@@ -21,11 +22,12 @@ const ShopListContent = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { dispatch } = useAppState()
-  const { 
-    shops, 
-    addShop, 
-    updateShop, 
-    deleteShop 
+  const {
+    shops,
+    fetchShops,
+    addShop,
+    updateShop,
+    deleteShop
   } = useShopContext()
   
   const [formMode, setFormMode] = useState<FormMode>('none')
@@ -144,7 +146,7 @@ const ShopListContent = () => {
       />
       <Container>
         {formMode === 'none' ? (
-          <ScrollableContainer>
+          <ScrollableContainer onRefresh={fetchShops} scrollArea={ShopScrollArea}>
             {totalItems > 0 && (
               <ActionButtonsBar
                 actionButton={{
