@@ -10,4 +10,5 @@ export interface IState {
     isLoading: boolean
     refetchNoiseTrackingItems: () => Promise<void>
     addItemToCache: (item: INoiseTrackingItem) => void
+    removeItemFromCache: (timestamp: number) => void
 }

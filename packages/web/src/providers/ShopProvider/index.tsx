@@ -116,13 +116,26 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
 
     try {
       const response = await addShopAPI(shop, currentProject.id)
-      await query.refetch()
+      const now = new Date().toISOString()
+      const newShop: IShop = {
+        id: response.id,
+        projectId: currentProject.id,
+        name: shop.name,
+        icon: shop.icon,
+        createdAt: now,
+        updatedAt: now,
+        itemCount: 0,
+      }
+      queryClient.setQueryData<{ shops: IShop[]; userPreferences: any }>(queryKey, (prev) => {
+        if (!prev) return prev
+        return { ...prev, shops: [...prev.shops, newShop] }
+      })
       return response.id
     } catch (error) {
       console.error('Failed to add shop:', error)
       throw error
     }
-  }, [currentProject, query.refetch])
+  }, [currentProject, queryClient, currentProject?.id, auth.user?.access_token])
 
   const updateShop = useCallback(async (shop: IUpdateShopRequestBody) => {
     if (!currentProject) throw new Error('No current project')

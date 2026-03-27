@@ -47,11 +47,11 @@ const isFromToday = (timestamp: number) => {
 }
 
 const NoiseTrackingItem = ({ timestamp, _id }: { timestamp: number; _id?: string }) => {
-  const { refetchNoiseTrackingItems } = useNoiseTrackingContext();
+  const { removeItemFromCache } = useNoiseTrackingContext();
 
   const handleDeleteNoiseTrackingItem = () => {
     removeNoiseTrackingItem(timestamp).then(() => {
-      refetchNoiseTrackingItems()
+      removeItemFromCache(timestamp)
     })
   }
 

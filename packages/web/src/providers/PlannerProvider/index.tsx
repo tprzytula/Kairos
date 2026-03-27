@@ -13,6 +13,7 @@ export const initialState: IState = {
   refetchToDoList: async () => {},
   removeFromToDoList: () => {},
   updateToDoItemFields: async () => {},
+  updateToDoItemsBulk: () => {},
 }
 
 export const PlannerContext = createContext<IState>(initialState)
@@ -62,6 +63,13 @@ export const PlannerProvider = ({ children }: StateComponentProps) => {
     }
   }, [currentProject, queryClient])
 
+  const updateToDoItemsBulk = useCallback((ids: string[], fields: Partial<ITodoItem>) => {
+    const idSet = new Set(ids)
+    queryClient.setQueryData<ITodoItem[]>(queryKey, (prev = []) =>
+      prev.map((item) => idSet.has(item.id) ? { ...item, ...fields } : item)
+    )
+  }, [queryClient, currentProject?.id])
+
   const value = useMemo(
     () => ({
       toDoList,
@@ -70,8 +78,9 @@ export const PlannerProvider = ({ children }: StateComponentProps) => {
       refetchToDoList,
       removeFromToDoList,
       updateToDoItemFields: updateToDoItemFieldsHandler,
+      updateToDoItemsBulk,
     }),
-    [toDoList, query.isLoading, query.isError, refetchToDoList, removeFromToDoList, updateToDoItemFieldsHandler]
+    [toDoList, query.isLoading, query.isError, refetchToDoList, removeFromToDoList, updateToDoItemFieldsHandler, updateToDoItemsBulk]
   )
 
   return (

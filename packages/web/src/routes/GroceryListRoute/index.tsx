@@ -26,7 +26,7 @@ import { RecipeProvider } from '../../providers/RecipeProvider'
 const GroceryListContent = () => {
   const { shopId } = useParams<{ shopId: string }>()
   const { shops, setCurrentShop } = useShopContext()
-  const { groceryList, viewMode, setViewMode, refetchGroceryList, removeCachedItems } = useGroceryListContext()
+  const { groceryList, viewMode, setViewMode, refetchGroceryList, removeCachedItems, addItemToCache } = useGroceryListContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -165,7 +165,7 @@ const GroceryListContent = () => {
         open={addDrawerOpen}
         onClose={() => setAddDrawerOpen(false)}
         shopId={shopId}
-        onItemAdded={refetchGroceryList}
+        onItemAdded={addItemToCache}
       />
     </StandardLayout>
   )

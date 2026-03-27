@@ -14,6 +14,7 @@ import ItemForm from '../ItemForm'
 import { FormFieldType } from '../ItemForm/enums'
 import { IFormField } from '../ItemForm/types'
 import { addGroceryItem, retrieveGroceryListDefaults } from '../../api/groceryList'
+import { IGroceryItem } from '../../providers/AppStateProvider/types'
 import { validateFields } from '../../routes/AddGroceryItemRoute/utils'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import { useAppState } from '../../providers/AppStateProvider'
@@ -87,7 +88,7 @@ interface AddGroceryItemDrawerProps {
   open: boolean
   onClose: () => void
   shopId?: string
-  onItemAdded: () => void
+  onItemAdded: (item: IGroceryItem) => void
 }
 
 const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGroceryItemDrawerProps) => {
@@ -114,7 +115,7 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
 
     const [name, quantity, unit] = validateFields(fields)
 
-    await addGroceryItem({
+    const addedItem = await addGroceryItem({
       name: name.value,
       quantity: quantity.value,
       unit: unit.value as GroceryItemUnit,
@@ -123,7 +124,7 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
     }, currentProject.id)
 
     showAlert({ description: `${name.value} has been added to your grocery list`, severity: 'success' }, dispatch)
-    onItemAdded()
+    onItemAdded(addedItem)
     handleClose()
   }, [currentProject, shopId, dispatch, onItemAdded, handleClose])
 

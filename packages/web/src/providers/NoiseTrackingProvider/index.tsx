@@ -9,6 +9,7 @@ export const initialState: IState = {
   isLoading: false,
   refetchNoiseTrackingItems: async () => {},
   addItemToCache: (_item: INoiseTrackingItem) => {},
+  removeItemFromCache: (_timestamp: number) => {},
 }
 
 export const NoiseTrackingContext = createContext<IState>(initialState)
@@ -42,14 +43,21 @@ export const NoiseTrackingProvider = ({ children }: INoiseTrackingProviderProps)
     queryClient.setQueryData<INoiseTrackingItem[]>(queryKey, (prev = []) => [item, ...prev])
   }, [queryClient, currentProject?.id])
 
+  const removeItemFromCache = useCallback((timestamp: number) => {
+    queryClient.setQueryData<INoiseTrackingItem[]>(queryKey, (prev = []) =>
+      prev.filter((item) => item.timestamp !== timestamp)
+    )
+  }, [queryClient, currentProject?.id])
+
   const value = useMemo(
     () => ({
       noiseTrackingItems,
       isLoading: query.isLoading,
       refetchNoiseTrackingItems,
       addItemToCache,
+      removeItemFromCache,
     }),
-    [noiseTrackingItems, query.isLoading, refetchNoiseTrackingItems, addItemToCache]
+    [noiseTrackingItems, query.isLoading, refetchNoiseTrackingItems, addItemToCache, removeItemFromCache]
   )
 
   return (

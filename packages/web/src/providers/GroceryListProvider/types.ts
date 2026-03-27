@@ -20,4 +20,5 @@ export interface IState {
     updateGroceryItemFields: (id: string, fields: GroceryItemUpdateFields) => Promise<void>
     setViewMode: (mode: GroceryViewMode) => void
     removeCachedItems: (ids: string[]) => void
+    addItemToCache: (item: IGroceryItem) => void
 }

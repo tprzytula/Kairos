@@ -19,6 +19,7 @@ export const initialState: IState = {
   updateGroceryItemFields: async (_id: string, _fields: GroceryItemUpdateFields) => {},
   setViewMode: (_mode: GroceryViewMode) => {},
   removeCachedItems: (_ids: string[]) => {},
+  addItemToCache: (_item: IGroceryItem) => {},
 }
 
 export const GroceryListContext = createContext<IState>(initialState)
@@ -115,6 +116,10 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
     )
   }, [queryClient, currentProject?.id, actualShopId])
 
+  const addItemToCache = useCallback((item: IGroceryItem) => {
+    queryClient.setQueryData<IGroceryItem[]>(queryKey, (prev = []) => [...prev, item])
+  }, [queryClient, currentProject?.id, actualShopId])
+
   const handleSetViewMode = useCallback((mode: GroceryViewMode) => {
     setViewMode(mode)
     localStorage.setItem(GROCERY_VIEW_MODE_STORAGE_KEY, mode)
@@ -135,8 +140,9 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
       updateGroceryItemFields: updateGroceryItemWithFields,
       setViewMode: handleSetViewMode,
       removeCachedItems,
+      addItemToCache,
     }),
-    [groceryList, query.isLoading, query.isError, isAllItemsView, viewMode, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields, handleSetViewMode, removeCachedItems]
+    [groceryList, query.isLoading, query.isError, isAllItemsView, viewMode, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields, handleSetViewMode, removeCachedItems, addItemToCache]
   )
 
   return (

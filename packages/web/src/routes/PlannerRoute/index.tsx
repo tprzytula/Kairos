@@ -31,7 +31,7 @@ import { Route } from '../../enums/route'
 const VIEW_MODE_CYCLE = [PlannerViewMode.WEEKLY, PlannerViewMode.CALENDAR, PlannerViewMode.GROUPED] as const
 
 const PlannerContent = () => {
-  const { toDoList, refetchToDoList } = usePlannerContext()
+  const { toDoList, updateToDoItemsBulk } = usePlannerContext()
   const { state: { selectedTodoItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
   const navigate = useNavigate()
@@ -103,10 +103,11 @@ const PlannerContent = () => {
   }, [dispatch])
 
   const markToDoItemsAsDone = useCallback(async () => {
+    const ids = Array.from(selectedTodoItems)
     try {
-      await updateToDoItems(Array.from(selectedTodoItems).map(id => ({ id, isDone: true })), currentProject!.id)
+      await updateToDoItems(ids.map(id => ({ id, isDone: true })), currentProject!.id)
+      updateToDoItemsBulk(ids, { isDone: true })
       clearSelectedTodoItems(selectedTodoItems)
-      refetchToDoList()
     } catch (error) {
       console.error("Failed to mark to do items as done:", error)
       showAlert({
@@ -114,7 +115,7 @@ const PlannerContent = () => {
         severity: "error",
       }, dispatch)
     }
-  }, [selectedTodoItems, currentProject, dispatch, refetchToDoList, clearSelectedTodoItems])
+  }, [selectedTodoItems, currentProject, dispatch, updateToDoItemsBulk, clearSelectedTodoItems])
 
   const toggleAll = useCallback(() => {
     setAllExpanded(!allExpanded)
