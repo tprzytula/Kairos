@@ -5,6 +5,7 @@ export const Container = styled(Box)({
   display: 'grid',
   gridTemplateColumns: '1fr',
   gap: '0.875rem',
+  paddingTop: '0.75rem',
   width: '100%',
   maxWidth: '100%',
   boxSizing: 'border-box',

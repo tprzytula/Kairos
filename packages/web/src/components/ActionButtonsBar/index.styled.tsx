@@ -5,7 +5,7 @@ export const Container = styled('div')({
   display: 'flex',
   alignItems: 'center',
   minHeight: '40px',
-  gap: '8px',
+  gap: '0.5rem',
 })
 
 export const LeftSection = styled('div')({
