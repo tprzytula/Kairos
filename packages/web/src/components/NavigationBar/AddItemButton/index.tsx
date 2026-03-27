@@ -91,7 +91,7 @@ const RouteToAddItemMapping: IRouteToAddItemMapping = {
 }
 
 const AddItemButton = () => {
-    const { refetchNoiseTrackingItems } = useNoiseTrackingContext();
+    const { refetchNoiseTrackingItems, addItemToCache } = useNoiseTrackingContext();
     const { currentProject } = useProjectContext();
     const location = useLocation();
     const navigate = useNavigate();
@@ -131,12 +131,13 @@ const AddItemButton = () => {
         if (location.pathname === Route.NoiseTracking) {
             try {
                 await addNoiseTrackingItem(currentProject?.id);
+                addItemToCache({ timestamp: Date.now() });
                 refetchNoiseTrackingItems();
             } catch (error) {
                 console.error('Failed to add noise tracking item:', error);
             }
         }
-    }, [navigate, addItemRoute, location.pathname, refetchNoiseTrackingItems, currentProject?.id]);
+    }, [navigate, addItemRoute, location.pathname, refetchNoiseTrackingItems, addItemToCache, currentProject?.id]);
 
     const handleClick = useThrottle(onClick, 1000);
 

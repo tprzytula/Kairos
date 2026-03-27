@@ -1,6 +1,6 @@
 import { createContext, useContext, useCallback, useMemo, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { retrieveNoiseTrackingItems } from '../../api/noiseTracking'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { INoiseTrackingItem, retrieveNoiseTrackingItems } from '../../api/noiseTracking'
 import { IState, INoiseTrackingProviderProps } from './types'
 import { useProjectContext } from '../ProjectProvider'
 
@@ -8,6 +8,7 @@ export const initialState: IState = {
   noiseTrackingItems: [],
   isLoading: false,
   refetchNoiseTrackingItems: async () => {},
+  addItemToCache: (_item: INoiseTrackingItem) => {},
 }
 
 export const NoiseTrackingContext = createContext<IState>(initialState)
@@ -16,9 +17,11 @@ export const useNoiseTrackingContext = () => useContext(NoiseTrackingContext)
 
 export const NoiseTrackingProvider = ({ children }: INoiseTrackingProviderProps) => {
   const { currentProject } = useProjectContext()
+  const queryClient = useQueryClient()
+  const queryKey = ['noiseTrackingItems', currentProject?.id]
 
   const query = useQuery({
-    queryKey: ['noiseTrackingItems', currentProject?.id],
+    queryKey,
     queryFn: () => retrieveNoiseTrackingItems(currentProject!.id),
     enabled: !!currentProject,
   })
@@ -35,13 +38,18 @@ export const NoiseTrackingProvider = ({ children }: INoiseTrackingProviderProps)
     await query.refetch()
   }, [query.refetch])
 
+  const addItemToCache = useCallback((item: INoiseTrackingItem) => {
+    queryClient.setQueryData<INoiseTrackingItem[]>(queryKey, (prev = []) => [item, ...prev])
+  }, [queryClient, currentProject?.id])
+
   const value = useMemo(
     () => ({
       noiseTrackingItems,
       isLoading: query.isLoading,
       refetchNoiseTrackingItems,
+      addItemToCache,
     }),
-    [noiseTrackingItems, query.isLoading, refetchNoiseTrackingItems]
+    [noiseTrackingItems, query.isLoading, refetchNoiseTrackingItems, addItemToCache]
   )
 
   return (

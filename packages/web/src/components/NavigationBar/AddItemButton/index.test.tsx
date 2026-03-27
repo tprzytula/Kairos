@@ -11,6 +11,7 @@ import theme from '../../../theme'
 // Mock the external dependencies
 const mockNavigate = vi.fn()
 const mockRefetchNoiseTrackingItems = vi.fn()
+const mockAddItemToCache = vi.fn()
 const mockAddNoiseTrackingItem = vi.fn()
 
 vi.mock('react-router', async () => ({
@@ -40,6 +41,7 @@ describe('Given the AddItemButton component', () => {
       noiseTrackingItems: [],
       isLoading: false,
       refetchNoiseTrackingItems: mockRefetchNoiseTrackingItems,
+      addItemToCache: mockAddItemToCache,
     })
     
     vi.spyOn(NoiseTrackingAPI, 'addNoiseTrackingItem').mockImplementation(mockAddNoiseTrackingItem)
@@ -158,6 +160,7 @@ describe('Given the AddItemButton component', () => {
       expect(mockAddNoiseTrackingItem).toHaveBeenCalled()
       
       await waitFor(() => {
+        expect(mockAddItemToCache).toHaveBeenCalledWith({ timestamp: expect.any(Number) })
         expect(mockRefetchNoiseTrackingItems).toHaveBeenCalled()
       })
       
