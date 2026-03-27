@@ -16,6 +16,7 @@ export const ScrollArea = styled(Box)({
   overflowY: 'auto',
   overscrollBehavior: 'contain',
   WebkitOverflowScrolling: 'touch',
+  paddingTop: '0.75rem',
   paddingBottom: '1rem',
 })
 

@@ -12,7 +12,7 @@ import { showAlert } from '../../utils/alert'
 import { Route } from '../../enums/route'
 import StorefrontIcon from '@mui/icons-material/Storefront'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
-import { Container, ShopScrollArea, FormContainer } from './index.styled'
+import { Container, FormContainer } from './index.styled'
 import { ScrollableContainer } from '../../components/ScrollableContainer'
 import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
 
@@ -146,7 +146,7 @@ const ShopListContent = () => {
       />
       <Container>
         {formMode === 'none' ? (
-          <ScrollableContainer onRefresh={fetchShops} scrollArea={ShopScrollArea}>
+          <ScrollableContainer onRefresh={fetchShops}>
             {totalItems > 0 && (
               <ActionButtonsBar
                 actionButton={{
