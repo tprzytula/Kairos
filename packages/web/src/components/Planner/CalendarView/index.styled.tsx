@@ -27,6 +27,28 @@ export const MonthLabel = styled(Typography)({
   textAlign: 'center',
 })
 
+export const SwipeableCalendarBody = styled('div')<{
+  $animationDirection: 'left' | 'right' | null
+}>(({ $animationDirection }) => ({
+  touchAction: 'pan-y',
+  userSelect: 'none',
+  willChange: $animationDirection ? 'transform, opacity' : 'auto',
+  ...($animationDirection && {
+    animation: `${$animationDirection === 'left' ? 'slideInFromRight' : 'slideInFromLeft'} 0.2s ease-out`,
+  }),
+  '@keyframes slideInFromRight': {
+    from: { transform: 'translateX(30px)', opacity: 0.5 },
+    to: { transform: 'translateX(0)', opacity: 1 },
+  },
+  '@keyframes slideInFromLeft': {
+    from: { transform: 'translateX(-30px)', opacity: 0.5 },
+    to: { transform: 'translateX(0)', opacity: 1 },
+  },
+  '@media (prefers-reduced-motion: reduce)': {
+    animation: 'none !important',
+  },
+}))
+
 export const WeekDayHeader = styled('div')({
   display: 'grid',
   gridTemplateColumns: 'repeat(7, 1fr)',

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useAppState } from '../../../providers/AppStateProvider'
 import { ActionName } from '../../../providers/AppStateProvider/enums'
 import { IconButton } from '@mui/material'
@@ -10,11 +10,13 @@ import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../types/mealPlan'
 import { IAdventure } from '../../../types/adventure'
 import { buildAdventuresByDay } from '../../../utils/adventure'
+import { useSwipeToNavigate } from '../../../hooks/useSwipeToNavigate'
 import DayPreviewDrawer from '../../DayPreviewDrawer'
 import {
   Container,
   CalendarHeader,
   MonthLabel,
+  SwipeableCalendarBody,
   WeekDayHeader,
   WeekDayLabel,
   CalendarGrid,
@@ -64,16 +66,25 @@ const CalendarView = ({
   const { dispatch } = useAppState()
   const [currentMonth, setCurrentMonth] = useState<Dayjs>(() => dayjs().startOf('month'))
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
+  const [animationDirection, setAnimationDirection] = useState<'left' | 'right' | null>(null)
   const today = dayjs()
 
-  const goToPrevMonth = () => {
+  const goToPrevMonth = useCallback(() => {
     setCurrentMonth(prev => prev.subtract(1, 'month'))
     setSelectedDay(null)
-  }
-  const goToNextMonth = () => {
+    setAnimationDirection('right')
+  }, [])
+  const goToNextMonth = useCallback(() => {
     setCurrentMonth(prev => prev.add(1, 'month'))
     setSelectedDay(null)
-  }
+    setAnimationDirection('left')
+  }, [])
+
+  const { handlers: swipeHandlers } = useSwipeToNavigate({
+    onSwipeLeft: goToNextMonth,
+    onSwipeRight: goToPrevMonth,
+    disabled: selectedDay !== null,
+  })
 
   const itemsWithDueDate = useMemo(
     () => visibleToDoItems.filter(item => item.dueDate != null),
@@ -220,50 +231,56 @@ const CalendarView = ({
         </IconButton>
       </CalendarHeader>
 
-      <WeekDayHeader>
-        {WEEK_DAYS.map(day => (
-          <WeekDayLabel key={day}>{day}</WeekDayLabel>
-        ))}
-      </WeekDayHeader>
+      <SwipeableCalendarBody
+        {...swipeHandlers}
+        $animationDirection={animationDirection}
+        onAnimationEnd={() => setAnimationDirection(null)}
+      >
+        <WeekDayHeader>
+          {WEEK_DAYS.map(day => (
+            <WeekDayLabel key={day}>{day}</WeekDayLabel>
+          ))}
+        </WeekDayHeader>
 
-      <CalendarGrid>
-        {calendarDays.map((day, index) => {
-          const key = day.format('YYYY-MM-DD')
-          const isCurrentMonth = day.month() === currentMonth.month()
-          const isToday = day.isSame(today, 'day')
-          const isSelected = selectedDay === key
-          const pendingCount = pendingTodosByDay.get(key)?.length ?? 0
-          const completedCount = completedTodosByDay.get(key)?.length ?? 0
-          const birthdayKey = `${day.month() + 1}-${day.date()}`
-          const hasBirthday = isCurrentMonth && (birthdaysByDay.get(birthdayKey)?.length ?? 0) > 0
-          const hasMealPlan = isCurrentMonth && (mealPlansByDay.get(key)?.length ?? 0) > 0
-          const dayAdventureItems = isCurrentMonth ? (adventuresByDay.get(key) ?? []) : []
+        <CalendarGrid>
+          {calendarDays.map((day, index) => {
+            const key = day.format('YYYY-MM-DD')
+            const isCurrentMonth = day.month() === currentMonth.month()
+            const isToday = day.isSame(today, 'day')
+            const isSelected = selectedDay === key
+            const pendingCount = pendingTodosByDay.get(key)?.length ?? 0
+            const completedCount = completedTodosByDay.get(key)?.length ?? 0
+            const birthdayKey = `${day.month() + 1}-${day.date()}`
+            const hasBirthday = isCurrentMonth && (birthdaysByDay.get(birthdayKey)?.length ?? 0) > 0
+            const hasMealPlan = isCurrentMonth && (mealPlansByDay.get(key)?.length ?? 0) > 0
+            const dayAdventureItems = isCurrentMonth ? (adventuresByDay.get(key) ?? []) : []
 
-          return (
-            <DayCell
-              key={index}
-              isToday={isToday}
-              isCurrentMonth={isCurrentMonth}
-              isSelected={isSelected}
-              onClick={() => handleDayClick(day, isCurrentMonth)}
-            >
-              <DayNumber isToday={isToday} isSelected={isSelected}>{day.date()}</DayNumber>
-              <TodoDot count={pendingCount} isOverdue={isCurrentMonth && day.isBefore(today, 'day')}>{pendingCount > 0 ? pendingCount : ''}</TodoDot>
-              <CompletedTodoDot count={completedCount}>{completedCount > 0 ? completedCount : ''}</CompletedTodoDot>
-              {hasBirthday && <BirthdayCakeIcon />}
-              {hasMealPlan && <MealPlanIcon />}
-              {dayAdventureItems.map(adv => (
-                <AdventureCellItem
-                  key={adv.id}
-                  adventure={adv}
-                  dayKey={key}
-                  onClick={() => onAdventureClick?.(adv.id)}
-                />
-              ))}
-            </DayCell>
-          )
-        })}
-      </CalendarGrid>
+            return (
+              <DayCell
+                key={index}
+                isToday={isToday}
+                isCurrentMonth={isCurrentMonth}
+                isSelected={isSelected}
+                onClick={() => handleDayClick(day, isCurrentMonth)}
+              >
+                <DayNumber isToday={isToday} isSelected={isSelected}>{day.date()}</DayNumber>
+                <TodoDot count={pendingCount} isOverdue={isCurrentMonth && day.isBefore(today, 'day')}>{pendingCount > 0 ? pendingCount : ''}</TodoDot>
+                <CompletedTodoDot count={completedCount}>{completedCount > 0 ? completedCount : ''}</CompletedTodoDot>
+                {hasBirthday && <BirthdayCakeIcon />}
+                {hasMealPlan && <MealPlanIcon />}
+                {dayAdventureItems.map(adv => (
+                  <AdventureCellItem
+                    key={adv.id}
+                    adventure={adv}
+                    dayKey={key}
+                    onClick={() => onAdventureClick?.(adv.id)}
+                  />
+                ))}
+              </DayCell>
+            )
+          })}
+        </CalendarGrid>
+      </SwipeableCalendarBody>
 
       <DayPreviewDrawer
         open={selectedDay !== null}
