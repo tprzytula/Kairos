@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useAppState } from '../../providers/AppStateProvider';
 import { useGroceryListContext } from '../../providers/GroceryListProvider';
@@ -18,9 +18,13 @@ export const GroceryList = ({
   shopId
 }: IGroceryListProps = {}) => {
   const navigate = useNavigate()
-  const { dispatch } = useAppState()
+  const { state: { purchasedItems }, dispatch } = useAppState()
   const { groceryList, isLoading, removeGroceryItem, viewMode } = useGroceryListContext();
-  const { categorizedGroups } = useGroceryCategories(groceryList, viewMode)
+  const visibleList = useMemo(
+    () => groceryList.filter((item) => !purchasedItems.has(item.id)),
+    [groceryList, purchasedItems]
+  )
+  const { categorizedGroups } = useGroceryCategories(visibleList, viewMode)
 
   const handleDelete = useCallback((id: string) => {
     removeGroceryItem(id)
@@ -48,7 +52,7 @@ export const GroceryList = ({
   if (viewMode === GroceryViewMode.UNCATEGORIZED) {
     return (
       <UncategorizedView
-        groceryList={groceryList}
+        groceryList={visibleList}
         onDelete={handleDelete}
         onEdit={handleEdit}
       />

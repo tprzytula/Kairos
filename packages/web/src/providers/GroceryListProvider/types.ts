@@ -19,4 +19,5 @@ export interface IState {
     updateGroceryItem: (id: string, quantity: number) => Promise<void>
     updateGroceryItemFields: (id: string, fields: GroceryItemUpdateFields) => Promise<void>
     setViewMode: (mode: GroceryViewMode) => void
+    removeCachedItems: (ids: string[]) => void
 }

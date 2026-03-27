@@ -26,7 +26,7 @@ import { RecipeProvider } from '../../providers/RecipeProvider'
 const GroceryListContent = () => {
   const { shopId } = useParams<{ shopId: string }>()
   const { shops, setCurrentShop } = useShopContext()
-  const { groceryList, viewMode, setViewMode, refetchGroceryList } = useGroceryListContext()
+  const { groceryList, viewMode, setViewMode, refetchGroceryList, removeCachedItems } = useGroceryListContext()
   const { state: { purchasedItems }, dispatch } = useAppState()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -86,10 +86,11 @@ const GroceryListContent = () => {
   }, [dispatch])
 
   const removePurchasedItems = useCallback(async () => {
+    const ids = Array.from(purchasedItems)
     try {
-      await removeGroceryItems(Array.from(purchasedItems));
+      await removeGroceryItems(ids);
+      removeCachedItems(ids)
       clearPurchasedItems(purchasedItems)
-      refetchGroceryList()
     } catch (error) {
       console.error("Failed to remove purchased items:", error);
       showAlert({
@@ -97,7 +98,7 @@ const GroceryListContent = () => {
         severity: "error",
       }, dispatch)
     }
-  }, [purchasedItems, dispatch, refetchGroceryList, clearPurchasedItems])
+  }, [purchasedItems, dispatch, removeCachedItems, clearPurchasedItems])
 
   const handleViewModeChange = useCallback((newViewMode: GroceryViewMode) => {
     setViewMode(newViewMode)
