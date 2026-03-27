@@ -35,7 +35,7 @@ import {
   DrawerTitle,
   ContentContainer,
 } from '../../components/DrawerHeader/index.styled'
-import { Container } from './index.styled'
+import { Container, RecipeScrollArea } from './index.styled'
 import { ScrollableContainer } from '../../components/ScrollableContainer'
 import { useSearchParams, useNavigate } from 'react-router'
 
@@ -144,7 +144,7 @@ const RecipesContent = () => {
         </ChipRow>
       </ModernPageHeader>
       <Container>
-        <ScrollableContainer onRefresh={fetchRecipes}>
+        <ScrollableContainer onRefresh={fetchRecipes} scrollArea={RecipeScrollArea}>
           <RecipeList
             search={search}
             onViewRecipe={handleViewRecipe}
