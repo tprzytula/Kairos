@@ -2,3 +2,4 @@ export * from "@aws-sdk/client-dynamodb";
 export * from "./enums";
 export * from "./commands";
 export * from "./types";
+export * from "./utils";

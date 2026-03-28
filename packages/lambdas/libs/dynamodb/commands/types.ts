@@ -9,6 +9,8 @@ import { IPushSubscription } from "../types/pushSubscriptions";
 import { IShop } from "../types/shops";
 import { IRecipe } from "../types/recipes";
 import { IAdventure } from "../types/adventures";
+import { IBirthdayItem } from "../types/birthdays";
+import { IMealPlan } from "../types/mealPlans";
 
 export type TableResponseMap = {
     [DynamoDBTable.GROCERY_LIST]: IGroceryItem;
@@ -22,4 +24,6 @@ export type TableResponseMap = {
     [DynamoDBTable.SHOPS]: IShop;
     [DynamoDBTable.RECIPES]: IRecipe;
     [DynamoDBTable.ADVENTURES]: IAdventure;
+    [DynamoDBTable.BIRTHDAYS]: IBirthdayItem;
+    [DynamoDBTable.MEAL_PLANS]: IMealPlan;
 };

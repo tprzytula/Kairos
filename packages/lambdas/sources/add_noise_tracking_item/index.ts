@@ -5,8 +5,8 @@ import { DynamoDBTable, putItem } from "@kairos-lambdas-libs/dynamodb";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
-    const { projectId } = event;
-    
+    const { projectId, userId } = event;
+
     if (!projectId) {
       return createResponse({
         statusCode: 400,
@@ -14,6 +14,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
+    const body = event.body ? JSON.parse(event.body) : {};
     const timestamp = Date.now();
 
     await putItem({
@@ -21,6 +22,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       item: {
         projectId,
         timestamp,
+        ...(body.isPrivate && { visibility: "private" as const, ownerId: userId }),
       },
     });
 

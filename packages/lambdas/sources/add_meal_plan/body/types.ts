@@ -4,4 +4,5 @@ export interface IRequestBody {
     recipeId?: string;
     mealType?: string;
     imagePath?: string;
+    isPrivate?: boolean;
 }

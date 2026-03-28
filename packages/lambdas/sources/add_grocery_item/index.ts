@@ -8,7 +8,7 @@ import { fetchDefaults, getCategoryForItem } from "./utils";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
-    const { projectId } = event;
+    const { projectId, userId } = event;
 
     if (!projectId) {
       return createResponse({
@@ -44,6 +44,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
         unit: item.unit as GroceryItemUnit,
         imagePath: item.imagePath,
         category,
+        ...(body.isPrivate && { visibility: "private" as const, ownerId: userId }),
       }, projectItems);
 
       if (statusCode === 200) {

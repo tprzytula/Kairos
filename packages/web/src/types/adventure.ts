@@ -10,4 +10,6 @@ export interface IAdventure {
   imagePath?: string
   createdAt: string
   updatedAt: string
+  visibility?: "private"
+  ownerId?: string
 }

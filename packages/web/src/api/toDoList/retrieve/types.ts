@@ -12,4 +12,6 @@ export interface ITodoItem {
   isDone: boolean
   dueDate?: number
   steps?: IStep[]
+  visibility?: "private"
+  ownerId?: string
 }

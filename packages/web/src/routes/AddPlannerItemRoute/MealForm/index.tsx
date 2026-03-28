@@ -36,6 +36,7 @@ import {
 import { Box } from '@mui/material'
 import dayjs from 'dayjs'
 import { PLACEHOLDER_GRADIENTS } from '../../../constants/placeholderGradients'
+import PrivateToggle from '../../../components/PrivateToggle'
 
 type Mode = 'recipe' | 'custom'
 
@@ -295,6 +296,7 @@ const MealForm = () => {
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | undefined>(undefined)
   const [search, setSearch] = useState('')
   const [mealType, setMealType] = useState<MealType>(MealType.Dinner)
+  const [isPrivate, setIsPrivate] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -367,9 +369,9 @@ const MealForm = () => {
     setIsLoading(true)
     try {
       if (mode === 'recipe' && selectedRecipe) {
-        await addMealPlan(date, selectedRecipe.name, selectedRecipe.id, mealType)
+        await addMealPlan(date, selectedRecipe.name, selectedRecipe.id, mealType, undefined, isPrivate)
       } else if (mode === 'custom' && customName.trim()) {
-        await addMealPlan(date, customName.trim(), undefined, mealType, imagePath || undefined)
+        await addMealPlan(date, customName.trim(), undefined, mealType, imagePath || undefined, isPrivate)
       }
       navigate(Route.Planner)
     } catch (err) {
@@ -377,7 +379,7 @@ const MealForm = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [canSave, mode, selectedRecipe, customName, date, mealType, imagePath, addMealPlan, navigate])
+  }, [canSave, mode, selectedRecipe, customName, date, mealType, imagePath, isPrivate, addMealPlan, navigate])
 
   return (
     <FormContainer>
@@ -534,6 +536,8 @@ const MealForm = () => {
                 </>
               )}
             </FormFieldsContainer>
+
+            <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} disabled={isLoading} />
 
             <SubmitButton
               variant="contained"

@@ -6,7 +6,7 @@ import { getBody } from "./body";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
-    const { projectId } = event;
+    const { projectId, userId } = event;
     
     if (!projectId) {
       return createResponse({
@@ -23,12 +23,14 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    const { name, icon } = body; 
-    
+    const { name, icon, isPrivate } = body;
+
     const { id, statusCode } = await upsertItem({
       projectId,
       name,
       icon,
+      isPrivate,
+      userId,
     });
 
     return createResponse({

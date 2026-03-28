@@ -2,10 +2,13 @@ import { API_BASE_URL } from '../../index'
 import { ICreateShopRequestBody } from '../types'
 import { createFetchOptions } from '../../../utils/api'
 
-export const addShop = async (shop: ICreateShopRequestBody, projectId?: string): Promise<{ id: string }> => {
+export const addShop = async (shop: ICreateShopRequestBody, projectId?: string, isPrivate?: boolean): Promise<{ id: string }> => {
   const response = await fetch(`${API_BASE_URL}/shops`, createFetchOptions({
     method: 'PUT',
-    body: JSON.stringify(shop),
+    body: JSON.stringify({
+      ...shop,
+      ...(isPrivate && { isPrivate: true }),
+    }),
   }, projectId))
 
   if (response.status === 409) {

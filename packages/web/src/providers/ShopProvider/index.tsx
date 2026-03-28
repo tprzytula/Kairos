@@ -14,7 +14,7 @@ export const initialState: IShopProviderState = {
   isLoading: false,
   currentShop: null,
   fetchShops: async () => {},
-  addShop: async (_shop: ICreateShopRequestBody) => '',
+  addShop: async (_shop: ICreateShopRequestBody, _isPrivate?: boolean) => '',
   updateShop: async (_shop: IUpdateShopRequestBody) => {},
   deleteShop: async (_shopId: string) => {},
   setCurrentShop: (_shop: IShop | null) => {},
@@ -111,11 +111,11 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
     await query.refetch()
   }, [query.refetch])
 
-  const addShop = useCallback(async (shop: ICreateShopRequestBody): Promise<string> => {
+  const addShop = useCallback(async (shop: ICreateShopRequestBody, isPrivate?: boolean): Promise<string> => {
     if (!currentProject) throw new Error('No current project')
 
     try {
-      const response = await addShopAPI(shop, currentProject.id)
+      const response = await addShopAPI(shop, currentProject.id, isPrivate)
       const now = new Date().toISOString()
       const newShop: IShop = {
         id: response.id,

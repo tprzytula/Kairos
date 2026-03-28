@@ -1,5 +1,6 @@
 import { Box, IconButton, Typography } from '@mui/material'
 import DrawerActionButton from '../DrawerActionButton'
+import PrivateItemBadge from '../PrivateItemBadge'
 import ExploreIcon from '@mui/icons-material/Explore'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -103,7 +104,12 @@ const AdventurePreviewDrawer = ({ item, onClose, onEdit, onDelete }: AdventurePr
           </HeroPlaceholder>
         ) : null}
 
-        {item && <AdventureName>{item.name}</AdventureName>}
+        {item && (
+          <AdventureName>
+            {item.name}
+            {item.visibility === 'private' && <PrivateItemBadge />}
+          </AdventureName>
+        )}
 
         <Box>
           <SectionHeader>

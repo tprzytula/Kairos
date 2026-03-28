@@ -4,15 +4,15 @@ import { createFetchOptions } from '../../../utils/api'
 
 type GroceryItemInput = Omit<IGroceryItem, 'id' | 'toBeRemoved'>
 
-export const addGroceryItem = async (item: GroceryItemInput, projectId?: string): Promise<IGroceryItem> => {
-  const result = await addGroceryItems([item], projectId)
+export const addGroceryItem = async (item: GroceryItemInput, projectId?: string, isPrivate?: boolean): Promise<IGroceryItem> => {
+  const result = await addGroceryItems([item], projectId, isPrivate)
   return { ...item, ...result[0] } as IGroceryItem
 }
 
-export const addGroceryItems = async (items: GroceryItemInput[], projectId?: string): Promise<Array<{ id: string }>> => {
+export const addGroceryItems = async (items: GroceryItemInput[], projectId?: string, isPrivate?: boolean): Promise<Array<{ id: string }>> => {
   const response = await fetch(`${API_BASE_URL}/grocery_list/items`, createFetchOptions({
     method: 'PUT',
-    body: JSON.stringify({ items }),
+    body: JSON.stringify({ items, ...(isPrivate && { isPrivate: true }) }),
   }, projectId))
 
   if (response.ok) {

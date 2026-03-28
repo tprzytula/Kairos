@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import PrivateToggle from '../PrivateToggle'
 import RecipeViewDrawer from '../RecipeViewDrawer'
 import { IRecipe } from '../../types/recipe'
 import { styled } from '@mui/material/styles'
@@ -94,6 +95,7 @@ interface AddGroceryItemDrawerProps {
 const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGroceryItemDrawerProps) => {
   const [activeTab, setActiveTab] = useState<TabId>('item')
   const [viewingRecipe, setViewingRecipe] = useState<IRecipe | null>(null)
+  const [isPrivate, setIsPrivate] = useState(false)
   const { currentProject } = useProjectContext()
   const { dispatch } = useAppState()
   const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
@@ -121,7 +123,7 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
       unit: unit.value as GroceryItemUnit,
       shopId,
       imagePath: imagePath ?? '',
-    }, currentProject.id)
+    }, currentProject.id, isPrivate)
 
     showAlert({ description: `${name.value} has been added to your grocery list`, severity: 'success' }, dispatch)
     onItemAdded(addedItem)
@@ -164,7 +166,9 @@ const AddGroceryItemDrawer = ({ open, onClose, shopId, onItemAdded }: AddGrocery
             defaults={defaults}
             fields={ITEM_FIELDS}
             onSubmit={handleItemSubmit}
-          />
+          >
+            <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} />
+          </ItemForm>
         ) : (
           <RecipeContainer>
             <RecipeList

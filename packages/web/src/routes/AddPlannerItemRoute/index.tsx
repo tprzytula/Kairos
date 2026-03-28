@@ -30,6 +30,7 @@ import AdventureForm from './AdventureForm'
 import StepsEditor from '../../components/StepsEditor'
 import { IStep } from '../../api/toDoList/retrieve/types'
 import SegmentedControl, { SegmentedControlTab } from '../../components/SegmentedControl'
+import PrivateToggle from '../../components/PrivateToggle'
 
 type ItemType = 'task' | 'birthday' | 'meal' | 'adventure'
 
@@ -77,6 +78,7 @@ export const AddPlannerItemContent = () => {
   const { user } = useAuth()
   const [itemType, setItemType] = useState<ItemType>((location.state as { itemType?: ItemType } | null)?.itemType ?? 'task')
   const [steps, setSteps] = useState<IStep[]>([])
+  const [isPrivate, setIsPrivate] = useState(false)
 
   const taskFields = useMemo<Array<IFormField>>(() => [
     {
@@ -124,7 +126,7 @@ export const AddPlannerItemContent = () => {
         description: description.value,
         dueDate: utcTimestamp,
         steps: filteredSteps.length > 0 ? filteredSteps : undefined,
-      }, currentProject.id, user?.access_token)
+      }, currentProject.id, user?.access_token, isPrivate)
 
       createAlert(`${name.value} has been added to your planner`, 'success')
       navigate(Route.Planner)
@@ -132,7 +134,7 @@ export const AddPlannerItemContent = () => {
       console.error(error)
       createAlert('Error creating task', 'error')
     }
-  }, [createAlert, navigate, currentProject, steps])
+  }, [createAlert, navigate, currentProject, steps, isPrivate])
 
   const today = new Date()
   const currentDay = today.toLocaleDateString('en-US', { weekday: 'short' })
@@ -172,6 +174,7 @@ export const AddPlannerItemContent = () => {
           hideImage={true}
         >
           <StepsEditor steps={steps} onChange={setSteps} embedded />
+          <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} />
         </ItemForm>
       ) : itemType === 'birthday' ? (
         <BirthdayForm />

@@ -10,6 +10,7 @@ import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import DrawerActionButton from '../DrawerActionButton'
+import PrivateItemBadge from '../PrivateItemBadge'
 import {
   ContentContainer,
   DescriptionText,
@@ -74,7 +75,10 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle
       }
     >
       <ContentContainer>
-        <ItemName>{item?.name}</ItemName>
+        <ItemName>
+          {item?.name}
+          {item?.visibility === 'private' && <PrivateItemBadge />}
+        </ItemName>
 
         {item?.dueDate && (
           <MetaRow>

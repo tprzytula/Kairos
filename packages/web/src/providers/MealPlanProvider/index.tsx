@@ -42,10 +42,10 @@ export const MealPlanProvider = ({ children }: IMealPlanProviderProps) => {
     await query.refetch()
   }, [query.refetch])
 
-  const addMealPlan = useCallback(async (date: string, recipeName: string, recipeId?: string, mealType?: MealType, imagePath?: string) => {
+  const addMealPlan = useCallback(async (date: string, recipeName: string, recipeId?: string, mealType?: MealType, imagePath?: string, isPrivate?: boolean) => {
     if (!currentProject) return
 
-    const result = await addMealPlanApi({ date, recipeName, recipeId, mealType, imagePath }, currentProject.id)
+    const result = await addMealPlanApi({ date, recipeName, recipeId, mealType, imagePath }, currentProject.id, isPrivate)
     const newMealPlan: IMealPlan = {
       ...result,
       date,
@@ -54,6 +54,7 @@ export const MealPlanProvider = ({ children }: IMealPlanProviderProps) => {
       mealType,
       imagePath,
       projectId: currentProject.id,
+      ...(isPrivate && { visibility: "private" as const }),
     }
     queryClient.setQueryData<IMealPlan[]>(queryKey, (prev = []) => [...prev, newMealPlan])
   }, [currentProject, queryClient])

@@ -23,6 +23,9 @@ export const HeroPlaceholder = styled(Box)<{ seed?: number }>(({ seed = 0 }) => 
 }))
 
 export const AdventureName = styled('h2')({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
   margin: 0,
   fontSize: '1.35rem',
   fontWeight: 700,

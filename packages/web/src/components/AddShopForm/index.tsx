@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react'
 import { Alert, CircularProgress, Typography } from '@mui/material'
+import PrivateToggle from '../PrivateToggle'
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
 import { type Area } from 'react-easy-crop'
 import { IAddShopFormProps } from './types'
@@ -28,6 +29,7 @@ const AddShopForm = ({ onSubmit, onCancel, isSubmitting = false }: IAddShopFormP
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [imagePath, setImagePath] = useState('')
   const [isUploading, setIsUploading] = useState(false)
+  const [isPrivate, setIsPrivate] = useState(false)
   const [pendingImageSrc, setPendingImageSrc] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -104,7 +106,7 @@ const AddShopForm = ({ onSubmit, onCancel, isSubmitting = false }: IAddShopFormP
     }
 
     try {
-      await onSubmit(name.trim(), imagePath || undefined)
+      await onSubmit(name.trim(), imagePath || undefined, isPrivate)
     } catch (error) {
       setSubmitError(
         error instanceof Error
@@ -112,7 +114,7 @@ const AddShopForm = ({ onSubmit, onCancel, isSubmitting = false }: IAddShopFormP
           : 'Failed to create shop. Please try again.'
       )
     }
-  }, [name, imagePath, validateForm, onSubmit])
+  }, [name, imagePath, isPrivate, validateForm, onSubmit])
 
   return (
     <FormContainer>
@@ -170,6 +172,8 @@ const AddShopForm = ({ onSubmit, onCancel, isSubmitting = false }: IAddShopFormP
                 {submitError}
               </Alert>
             )}
+
+            <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} disabled={isSubmitting} />
 
             <ButtonContainer>
               <CancelButton

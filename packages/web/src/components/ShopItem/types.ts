@@ -5,4 +5,5 @@ export interface IShopItemProps {
     createdAt: string
     updatedAt: string
     itemCount?: number
+    visibility?: "private"
 }

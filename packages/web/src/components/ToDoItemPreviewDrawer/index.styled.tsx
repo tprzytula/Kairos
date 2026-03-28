@@ -12,6 +12,9 @@ export {
 export const TODO_GRADIENT = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
 
 export const ItemName = styled('h2')({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
   margin: 0,
   fontSize: '1.2rem',
   fontWeight: 700,
