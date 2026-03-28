@@ -59,16 +59,35 @@ export const TodayButton = styled(Button)({
   },
 })
 
-export const WeekRowsWrapper = styled('div')({
+export const WeekRowsWrapper = styled('div')<{
+  $animationDirection: 'left' | 'right' | null
+}>(({ $animationDirection }) => ({
   flex: 1,
   overflowY: 'auto',
   padding: '0 12px 16px',
   display: 'flex',
   flexDirection: 'column',
   gap: '4px',
+  touchAction: 'pan-y',
+  userSelect: 'none',
+  willChange: $animationDirection ? 'transform, opacity' : 'auto',
+  ...($animationDirection && {
+    animation: `${$animationDirection === 'left' ? 'weekSlideInFromRight' : 'weekSlideInFromLeft'} 0.2s ease-out`,
+  }),
+  '@keyframes weekSlideInFromRight': {
+    from: { transform: 'translateX(30px)', opacity: 0.5 },
+    to: { transform: 'translateX(0)', opacity: 1 },
+  },
+  '@keyframes weekSlideInFromLeft': {
+    from: { transform: 'translateX(-30px)', opacity: 0.5 },
+    to: { transform: 'translateX(0)', opacity: 1 },
+  },
+  '@media (prefers-reduced-motion: reduce)': {
+    animation: 'none !important',
+  },
   '&::-webkit-scrollbar': { width: '4px' },
   '&::-webkit-scrollbar-thumb': { background: '#cbd5e1', borderRadius: '4px' },
-})
+}))
 
 interface IDayRowProps {
   isToday?: boolean
