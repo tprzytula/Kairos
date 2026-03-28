@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { IAdventure } from '../../../types/adventure'
 import { getAdventurePosition, AdventurePosition } from '../../../utils/adventure'
 import { AdventureItem, AdventureIconStyled } from './index.styled'
+import PrivateItemBadge from '../../PrivateItemBadge'
 
 interface IAdventureWeeklyItemProps {
   adventure: IAdventure
@@ -38,6 +39,7 @@ const AdventureWeeklyItem = ({ adventure, dayKey, onClick, onMeasure, measuredWi
         <>
           <AdventureIconStyled />
           {adventure.name}
+          {adventure.visibility === 'private' && <PrivateItemBadge />}
         </>
       )}
     </AdventureItem>

@@ -28,6 +28,7 @@ import {
   MealIconStyled,
   AdventureConnectedDayWrapper,
 } from './index.styled'
+import PrivateItemBadge from '../../PrivateItemBadge'
 import AdventureWeeklyItem from './AdventureWeeklyItem'
 
 interface IWeeklyViewProps {
@@ -231,28 +232,33 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
                     isOverdue ? (
                       <OverdueDayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
                         {todo.name}
+                        {todo.visibility === 'private' && <PrivateItemBadge />}
                       </OverdueDayItem>
                     ) : (
                       <DayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
                         {todo.name}
+                        {todo.visibility === 'private' && <PrivateItemBadge />}
                       </DayItem>
                     )
                   )}
                   {completedTodos.map(todo => (
                     <CompletedDayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
                       {todo.name}
+                      {todo.visibility === 'private' && <PrivateItemBadge />}
                     </CompletedDayItem>
                   ))}
                   {dayBirthdays.map(birthday => (
                     <BirthdayItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
                       <BirthdayIconStyled />
                       {birthday.name}
+                      {birthday.visibility === 'private' && <PrivateItemBadge />}
                     </BirthdayItem>
                   ))}
                   {dayMeals.map(plan => (
                     <MealItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
                       <MealIconStyled />
                       {plan.recipeName}
+                      {plan.visibility === 'private' && <PrivateItemBadge />}
                     </MealItem>
                   ))}
                   {dayAdventures

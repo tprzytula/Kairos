@@ -3,10 +3,11 @@ import { Container, ActionArea, Content, Media, Name, MetaInfo, IconContainer } 
 import { IShopItemProps } from './types'
 import { useShopContext } from '../../providers/ShopProvider'
 import StorefrontIcon from '@mui/icons-material/Storefront'
+import PrivateItemBadge from '../PrivateItemBadge'
 import { useNavigate } from 'react-router'
 import { Route } from '../../enums/route'
 
-const ShopItem = memo(({ id, name, icon, createdAt, updatedAt, itemCount }: IShopItemProps) => {
+const ShopItem = memo(({ id, name, icon, createdAt, updatedAt, itemCount, visibility }: IShopItemProps) => {
   const { setCurrentShop } = useShopContext()
   const navigate = useNavigate()
 
@@ -45,7 +46,10 @@ const ShopItem = memo(({ id, name, icon, createdAt, updatedAt, itemCount }: ISho
           )}
         </Media>
         <Content>
-          <Name>{name}</Name>
+          <Name>
+            {name}
+            {visibility === 'private' && <PrivateItemBadge />}
+          </Name>
           <MetaInfo>
             {getItemCountText()}
           </MetaInfo>

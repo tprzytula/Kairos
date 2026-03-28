@@ -19,6 +19,7 @@ import { useProjectContext } from '../../providers/ProjectProvider'
 import { useShopContext } from '../../providers/ShopProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
+import PrivateItemBadge from '../PrivateItemBadge'
 import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import { SECTION_GRADIENTS } from '../../constants/sectionColors'
@@ -203,7 +204,12 @@ const MealPlanPreviewDrawer = ({ item, onClose, onDelete, defaults }: MealPlanPr
           </HeroPlaceholder>
         ) : null}
 
-        {item && <MealName>{item.recipeName}</MealName>}
+        {item && (
+          <MealName>
+            {item.recipeName}
+            {item.visibility === 'private' && <PrivateItemBadge />}
+          </MealName>
+        )}
 
         {item && (
           <DateRow>
