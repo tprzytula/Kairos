@@ -5,6 +5,8 @@ export interface IDBShop {
   icon?: string
   createdAt: string
   updatedAt: string
+  visibility?: "private"
+  ownerId?: string
 }
 
 export interface ICreateShopRequestBody {

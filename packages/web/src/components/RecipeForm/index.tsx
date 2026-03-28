@@ -41,6 +41,7 @@ import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
 import { getRecipeUploadUrl } from '../../api/recipes'
 import { useProjectContext } from '../../providers/ProjectProvider'
+import PrivateToggle from '../PrivateToggle'
 import FilterChip from '../FilterChip'
 import { FormContainer, IngredientRow, IngredientsSection, FormActions, ImageUploadBox, ImagePreview } from './index.styled'
 import { COLORS } from '../../constants/colors'
@@ -135,6 +136,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   const [instructionIds, setInstructionIds] = useState<string[]>(
     (initialRecipe?.instructions ?? ['']).map(() => makeId())
   )
+  const [isPrivate, setIsPrivate] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 
@@ -307,7 +309,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
         await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients, instructions: instructionsValue, imagePath: imagePathValue, externalLink: externalLinkValue, mealTypes: mealTypesValue, dishTypes: dishTypesValue })
         showAlert({ description: 'Recipe updated', severity: 'success' }, dispatch)
       } else {
-        await addRecipe(trimmedName, validIngredients, imagePathValue, instructionsValue, externalLinkValue, mealTypesValue, dishTypesValue)
+        await addRecipe(trimmedName, validIngredients, imagePathValue, instructionsValue, externalLinkValue, mealTypesValue, dishTypesValue, isPrivate)
         showAlert({ description: 'Recipe added', severity: 'success' }, dispatch)
       }
       onDone()
@@ -316,7 +318,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
     } finally {
       setIsSaving(false)
     }
-  }, [name, externalLink, ingredients, instructions, imagePath, selectedMealTypes, selectedDishTypes, initialRecipe, addRecipe, updateRecipe, dispatch, onDone])
+  }, [name, externalLink, ingredients, instructions, imagePath, selectedMealTypes, selectedDishTypes, initialRecipe, isPrivate, addRecipe, updateRecipe, dispatch, onDone])
 
   return (
     <FormContainer>
@@ -504,6 +506,10 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
           Add Step
         </Button>
       </IngredientsSection>
+
+      {!initialRecipe && (
+        <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} disabled={isSaving} />
+      )}
 
       <FormActions>
         {initialRecipe && (

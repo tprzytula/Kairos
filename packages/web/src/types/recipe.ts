@@ -20,4 +20,6 @@ export interface IRecipe {
     dishTypes?: RecipeDishType[]
     createdAt: string
     updatedAt: string
+    visibility?: "private"
+    ownerId?: string
 }

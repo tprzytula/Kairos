@@ -33,8 +33,8 @@ const createNewShop = async (shop: Omit<IShop, "id" | "createdAt" | "updatedAt">
   return id;
 };
 
-export const upsertItem = async (shop: { projectId: string; name: string; icon?: string }): Promise<{ id: string, statusCode: number }> => {
-  const { projectId, name, icon } = shop;
+export const upsertItem = async (shop: { projectId: string; name: string; icon?: string; isPrivate?: boolean; userId?: string }): Promise<{ id: string, statusCode: number }> => {
+  const { projectId, name, icon, isPrivate, userId } = shop;
 
   const existingShop = await findExistingShop(projectId, name);
 
@@ -50,6 +50,7 @@ export const upsertItem = async (shop: { projectId: string; name: string; icon?:
       projectId,
       name: name.trim(),
       icon: icon || "/assets/icons/generic-grocery-item.png",
+      ...(isPrivate && { visibility: "private" as const, ownerId: userId }),
     }),
     statusCode: 201,
   };

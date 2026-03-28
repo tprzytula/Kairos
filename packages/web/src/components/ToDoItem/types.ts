@@ -7,4 +7,5 @@ export interface ITodoItemProps {
     isDone: boolean;
     dueDate?: number;
     steps?: IStep[];
+    visibility?: "private";
 }

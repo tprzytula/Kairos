@@ -6,3 +6,6 @@ export * from "./userPreferences";
 export * from "./pushSubscriptions";
 export * from "./recipes";
 export * from "./adventures";
+export * from "./birthdays";
+export * from "./mealPlans";
+export * from "./visibility";

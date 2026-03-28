@@ -1,4 +1,6 @@
-export interface ITodoItem {
+import { IPrivateItemFields } from "../visibility";
+
+export interface ITodoItem extends IPrivateItemFields {
     id: string
     projectId: string
     name: string

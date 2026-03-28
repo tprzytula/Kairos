@@ -5,4 +5,6 @@ export interface IBirthdayItem {
   day: number
   birthYear?: number
   notes?: string
+  visibility?: "private"
+  ownerId?: string
 }

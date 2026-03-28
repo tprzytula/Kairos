@@ -6,7 +6,7 @@ import { createRecipe } from "./database";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
-    const { projectId } = event;
+    const { projectId, userId } = event;
 
     if (!projectId) {
       return createResponse({
@@ -23,9 +23,9 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    const { name, ingredients, instructions, imagePath, externalLink, mealTypes, dishTypes } = body;
+    const { name, ingredients, instructions, imagePath, externalLink, mealTypes, dishTypes, isPrivate } = body;
 
-    const id = await createRecipe({ projectId, name, ingredients, instructions, imagePath, externalLink, mealTypes, dishTypes });
+    const id = await createRecipe({ projectId, name, ingredients, instructions, imagePath, externalLink, mealTypes, dishTypes, isPrivate, userId });
 
     return createResponse({
       statusCode: 201,

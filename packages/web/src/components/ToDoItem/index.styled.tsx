@@ -81,6 +81,9 @@ export const Content = styled(CardContent)(() => ({
 }))
 
 export const Name = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px',
   fontSize: '17px',
   fontWeight: 600,
   color: theme?.palette?.text?.primary || '#1a1a1a',

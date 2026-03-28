@@ -48,11 +48,10 @@ export const RecipeName = styled(Typography)({
   fontWeight: 600,
   fontSize: '0.875rem',
   lineHeight: 1.3,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  display: '-webkit-box',
-  WebkitLineClamp: 2,
-  WebkitBoxOrient: 'vertical',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px',
+  flexWrap: 'wrap',
 })
 
 export const RecipeMetaRow = styled(Box)({

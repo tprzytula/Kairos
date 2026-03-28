@@ -8,7 +8,7 @@ import { BirthdayItem, CreateBirthdayResponse } from "./types";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
-    const { projectId } = event;
+    const { projectId, userId } = event;
 
     if (!projectId) {
       return createResponse({
@@ -23,7 +23,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       return createResponse({ statusCode: 400 });
     }
 
-    const { name, month, day, birthYear, notes } = body;
+    const { name, month, day, birthYear, notes, isPrivate } = body;
     const id = randomUUID();
 
     const birthdayItem: BirthdayItem = {
@@ -34,6 +34,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       day,
       ...(birthYear !== undefined && { birthYear }),
       ...(notes !== undefined && { notes }),
+      ...(isPrivate && { visibility: "private" as const, ownerId: userId }),
     };
 
     await putItem({

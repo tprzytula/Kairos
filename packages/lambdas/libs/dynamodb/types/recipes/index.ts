@@ -1,4 +1,5 @@
 import { GroceryItemUnit } from '../../enums'
+import { IPrivateItemFields } from '../visibility'
 
 export interface IRecipeIngredient {
     name: string
@@ -6,7 +7,7 @@ export interface IRecipeIngredient {
     unit: GroceryItemUnit
 }
 
-export interface IRecipe {
+export interface IRecipe extends IPrivateItemFields {
     id: string
     projectId: string
     name: string

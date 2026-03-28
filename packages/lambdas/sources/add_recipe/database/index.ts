@@ -11,6 +11,8 @@ export const createRecipe = async (recipe: {
   externalLink?: string;
   mealTypes?: string[];
   dishTypes?: string[];
+  isPrivate?: boolean;
+  userId?: string;
 }): Promise<string> => {
   const id = randomUUID();
   const now = new Date().toISOString();
@@ -42,6 +44,11 @@ export const createRecipe = async (recipe: {
 
   if (recipe.dishTypes && recipe.dishTypes.length > 0) {
     item.dishTypes = JSON.stringify(recipe.dishTypes);
+  }
+
+  if (recipe.isPrivate) {
+    item.visibility = "private";
+    item.ownerId = recipe.userId;
   }
 
   await putItem({

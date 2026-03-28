@@ -11,7 +11,7 @@ const initialState: IState = {
   recipes: [],
   isLoading: false,
   fetchRecipes: async () => {},
-  addRecipe: async (_name, _ingredients, _imagePath?, _instructions?, _externalLink?, _mealTypes?, _dishTypes?) => {},
+  addRecipe: async (_name, _ingredients, _imagePath?, _instructions?, _externalLink?, _mealTypes?, _dishTypes?, _isPrivate?) => {},
   updateRecipe: async (_id, _fields) => {},
   removeRecipe: async () => {},
 }
@@ -43,10 +43,10 @@ export const RecipeProvider = ({ children }: IRecipeProviderProps) => {
     await query.refetch()
   }, [query.refetch])
 
-  const addRecipe = useCallback(async (name: string, ingredients: IRecipeIngredient[], imagePath?: string, instructions?: string[], externalLink?: string, mealTypes?: MealType[], dishTypes?: RecipeDishType[]) => {
+  const addRecipe = useCallback(async (name: string, ingredients: IRecipeIngredient[], imagePath?: string, instructions?: string[], externalLink?: string, mealTypes?: MealType[], dishTypes?: RecipeDishType[], isPrivate?: boolean) => {
     if (!currentProject) return
 
-    const result = await addRecipeApi({ name, ingredients, imagePath, instructions, externalLink, mealTypes, dishTypes }, currentProject.id)
+    const result = await addRecipeApi({ name, ingredients, imagePath, instructions, externalLink, mealTypes, dishTypes }, currentProject.id, isPrivate)
     const newRecipe: IRecipe = {
       ...result,
       name,

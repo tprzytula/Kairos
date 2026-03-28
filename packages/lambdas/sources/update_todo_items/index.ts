@@ -2,11 +2,11 @@ import { APIGatewayProxyEvent, Handler } from "aws-lambda";
 import { middleware, AuthenticatedEvent } from "@kairos-lambdas-libs/middleware";
 import { createResponse } from "@kairos-lambdas-libs/response";
 import { getBody } from "./body";
-import { DynamoDBTable, updateItems } from "@kairos-lambdas-libs/dynamodb";
+import { DynamoDBTable, updateItems, getItem, verifyPrivateItemOwnership } from "@kairos-lambdas-libs/dynamodb";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
-    const { projectId } = event;
+    const { projectId, userId } = event;
     
     if (!projectId) {
       return createResponse({
@@ -21,6 +21,20 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       return createResponse({
         statusCode: 400,
       });
+    }
+
+    for (const item of items) {
+      const existingItem = await getItem({
+        tableName: DynamoDBTable.TODO_LIST,
+        key: { id: item.id },
+      });
+
+      if (existingItem && !verifyPrivateItemOwnership(existingItem, userId ?? '')) {
+        return createResponse({
+          statusCode: 403,
+          message: "You do not have permission to modify this item",
+        });
+      }
     }
 
     await updateItems({

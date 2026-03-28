@@ -4,4 +4,5 @@ export interface IRequestBody {
   day: number;
   birthYear?: number;
   notes?: string;
+  isPrivate?: boolean;
 }

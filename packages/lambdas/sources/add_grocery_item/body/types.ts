@@ -11,4 +11,5 @@ export interface IRequestBodyItem {
 
 export interface IRequestBody {
     items: IRequestBodyItem[];
+    isPrivate?: boolean;
 }

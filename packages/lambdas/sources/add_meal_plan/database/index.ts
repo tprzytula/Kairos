@@ -8,6 +8,8 @@ export const createMealPlan = async (mealPlan: {
   recipeId?: string;
   mealType?: string;
   imagePath?: string;
+  isPrivate?: boolean;
+  userId?: string;
 }): Promise<string> => {
   const id = randomUUID();
   const now = new Date().toISOString();
@@ -31,6 +33,11 @@ export const createMealPlan = async (mealPlan: {
 
   if (mealPlan.imagePath) {
     item.imagePath = mealPlan.imagePath;
+  }
+
+  if (mealPlan.isPrivate) {
+    item.visibility = "private";
+    item.ownerId = mealPlan.userId;
   }
 
   await putItem({

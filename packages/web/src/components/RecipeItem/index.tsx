@@ -2,6 +2,7 @@ import { Typography } from '@mui/material'
 import { COLORS } from '../../constants/colors'
 import { IRecipe } from '../../types/recipe'
 import { RecipeDishTypeLabelMap } from '../../enums/recipeDishType'
+import PrivateItemBadge from '../PrivateItemBadge'
 import {
   RecipeCard,
   RecipeCardTapArea,
@@ -43,7 +44,10 @@ const RecipeItem = ({ recipe, onView }: RecipeItemProps) => {
           </RecipePlaceholder>
         )}
         <RecipeCardBody>
-          <RecipeName>{recipe.name}</RecipeName>
+          <RecipeName>
+            {recipe.name}
+            {recipe.visibility === 'private' && <PrivateItemBadge />}
+          </RecipeName>
           <RecipeMetaRow>
             {recipe.dishTypes && recipe.dishTypes.length > 0 ? (
               <DishTypeMetaChip

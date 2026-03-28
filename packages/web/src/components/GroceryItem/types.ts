@@ -7,5 +7,6 @@ export interface IGroceryItemProps {
     imagePath?: string;
     unit: GroceryItemUnit;
     shopId?: string;
+    visibility?: "private";
 }
   

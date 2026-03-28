@@ -6,7 +6,7 @@ import { createAdventure } from "./database";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
-    const { projectId } = event;
+    const { projectId, userId } = event;
 
     if (!projectId) {
       return createResponse({
@@ -23,9 +23,9 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    const { name, date, endDate, time, location, notes, imagePath } = body;
+    const { name, date, endDate, time, location, notes, imagePath, isPrivate } = body;
 
-    const id = await createAdventure({ projectId, name, date, endDate, time, location, notes, imagePath });
+    const id = await createAdventure({ projectId, name, date, endDate, time, location, notes, imagePath, isPrivate, userId });
 
     return createResponse({
       statusCode: 201,

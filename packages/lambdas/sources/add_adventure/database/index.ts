@@ -10,6 +10,8 @@ export const createAdventure = async (adventure: {
   location?: string;
   notes?: string;
   imagePath?: string;
+  isPrivate?: boolean;
+  userId?: string;
 }): Promise<string> => {
   const id = randomUUID();
   const now = new Date().toISOString();
@@ -41,6 +43,11 @@ export const createAdventure = async (adventure: {
 
   if (adventure.imagePath) {
     item.imagePath = adventure.imagePath;
+  }
+
+  if (adventure.isPrivate) {
+    item.visibility = "private";
+    item.ownerId = adventure.userId;
   }
 
   await putItem({

@@ -9,8 +9,9 @@ import { useGroceryListContext } from '../../providers/GroceryListProvider';
 import { useShopContext } from '../../providers/ShopProvider';
 import { ActionButton } from '../ActionButton';
 import ShopIconBadge from '../ShopIconBadge';
+import PrivateItemBadge from '../PrivateItemBadge';
 
-const GroceryItem = memo(({ id, name, quantity, imagePath, unit, shopId }: IGroceryItemProps) => {
+const GroceryItem = memo(({ id, name, quantity, imagePath, unit, shopId, visibility }: IGroceryItemProps) => {
   const { state: { purchasedItems }, dispatch } = useAppState()
   const isPurchased = useMemo(() => purchasedItems.has(id), [purchasedItems, id])
   const { updateGroceryItem, isAllItemsView } = useGroceryListContext()
@@ -69,7 +70,10 @@ const GroceryItem = memo(({ id, name, quantity, imagePath, unit, shopId }: IGroc
           )}
         </Media>
         <Content>
-          <Name>{name}</Name>
+          <Name>
+            {name}
+            {visibility === 'private' && <PrivateItemBadge />}
+          </Name>
         </Content>
       </ActionArea>
       <ActionContainer> 

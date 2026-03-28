@@ -1,4 +1,6 @@
-export interface IShop {
+import { IPrivateItemFields } from "../visibility";
+
+export interface IShop extends IPrivateItemFields {
     id: string
     projectId: string
     name: string

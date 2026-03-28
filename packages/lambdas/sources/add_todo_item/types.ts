@@ -12,6 +12,8 @@ export interface TodoItem {
   dueDate?: number;
   isDone: boolean;
   steps?: IStep[];
+  visibility?: "private";
+  ownerId?: string;
 }
 
 export interface TodoItemForNotification {

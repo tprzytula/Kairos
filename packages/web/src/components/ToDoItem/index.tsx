@@ -4,8 +4,9 @@ import { useAppState } from '../../providers/AppStateProvider';
 import { ActionName } from '../../providers/AppStateProvider/enums';
 import { useMemo, useCallback, memo } from 'react';
 import { Chip } from '@mui/material';
+import PrivateItemBadge from '../PrivateItemBadge';
 
-const ToDoItem = memo(({ id, name, description, dueDate, steps }: ITodoItemProps) => {
+const ToDoItem = memo(({ id, name, description, dueDate, steps, visibility }: ITodoItemProps) => {
   const { state: { selectedTodoItems }, dispatch } = useAppState()
   const isSelected = useMemo(() => selectedTodoItems.has(id), [selectedTodoItems, id])
 
@@ -60,7 +61,10 @@ const ToDoItem = memo(({ id, name, description, dueDate, steps }: ITodoItemProps
         onClick={handleClick}
       >
         <Content>
-          <Name>{name}</Name>
+          <Name>
+            {name}
+            {visibility === 'private' && <PrivateItemBadge />}
+          </Name>
           { description?.trim() && <Description>{description}</Description> }
           <DueDate>{formattedDueDate}</DueDate>
           {stepProgress && (

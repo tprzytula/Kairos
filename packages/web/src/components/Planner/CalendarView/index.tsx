@@ -11,6 +11,7 @@ import { IMealPlan } from '../../../types/mealPlan'
 import { IAdventure } from '../../../types/adventure'
 import { buildAdventuresByDay } from '../../../utils/adventure'
 import { useSwipeToNavigate } from '../../../hooks/useSwipeToNavigate'
+import PrivateItemBadge from '../../PrivateItemBadge'
 import DayPreviewDrawer from '../../DayPreviewDrawer'
 import {
   Container,
@@ -310,10 +311,12 @@ const CalendarView = ({
             item.isDone ? (
               <CompletedNoDueDateItem key={item.id} onClick={() => onItemClick(item.id)}>
                 {item.name}
+                {item.visibility === 'private' && <PrivateItemBadge />}
               </CompletedNoDueDateItem>
             ) : (
               <NoDueDateItem key={item.id} onClick={() => onItemClick(item.id)}>
                 {item.name}
+                {item.visibility === 'private' && <PrivateItemBadge />}
               </NoDueDateItem>
             )
           ))}

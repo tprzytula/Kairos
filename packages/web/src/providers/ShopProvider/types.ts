@@ -11,7 +11,7 @@ export interface IShopProviderState {
     isLoading: boolean
     currentShop: IShop | null
     fetchShops: () => Promise<void>
-    addShop: (shop: ICreateShopRequestBody) => Promise<string>
+    addShop: (shop: ICreateShopRequestBody, isPrivate?: boolean) => Promise<string>
     updateShop: (shop: IUpdateShopRequestBody) => Promise<void>
     deleteShop: (shopId: string) => Promise<void>
     setCurrentShop: (shop: IShop | null) => void

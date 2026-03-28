@@ -39,7 +39,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    const { name, description, dueDate } = body; 
+    const { name, description, dueDate, isPrivate } = body;
     const id = randomUUID();
 
     const todoItem: TodoItem = {
@@ -49,6 +49,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       description,
       dueDate,
       isDone: false,
+      ...(isPrivate && { visibility: "private" as const, ownerId: userId }),
     };
 
     await putItem({

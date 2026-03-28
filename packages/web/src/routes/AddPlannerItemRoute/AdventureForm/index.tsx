@@ -27,6 +27,7 @@ import {
 } from '../../../components/ItemForm/index.styled'
 import { ImageUploadBox, ImagePreview } from '../../../components/FormCard/index.styled'
 import ImageCropModal from '../../../components/RecipeForm/ImageCropModal'
+import PrivateToggle from '../../../components/PrivateToggle'
 import { getCroppedBlob } from '../../../components/RecipeForm/cropUtils'
 import { getAdventureUploadUrl } from '../../../api/adventures'
 import dayjs, { Dayjs } from 'dayjs'
@@ -120,6 +121,7 @@ const AdventureForm = () => {
   const [imagePath, setImagePath] = useState<string | undefined>(undefined)
   const [isUploading, setIsUploading] = useState(false)
   const [pendingImageSrc, setPendingImageSrc] = useState<string | null>(null)
+  const [isPrivate, setIsPrivate] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -183,6 +185,7 @@ const AdventureForm = () => {
         location: location.trim() || undefined,
         notes: notes.trim() || undefined,
         imagePath,
+        isPrivate,
       })
       navigate(Route.Planner)
     } catch (err) {
@@ -190,7 +193,7 @@ const AdventureForm = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [canSave, name, date, endDate, time, location, notes, imagePath, addAdventure, navigate])
+  }, [canSave, name, date, endDate, time, location, notes, imagePath, isPrivate, addAdventure, navigate])
 
   return (
     <FormContainer>
@@ -365,6 +368,8 @@ const AdventureForm = () => {
                 placeholder="Booking refs, what to pack, things to look forward to..."
               />
             </FormFieldsContainer>
+
+            <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} disabled={isLoading} />
 
             <SubmitButton
               variant="contained"

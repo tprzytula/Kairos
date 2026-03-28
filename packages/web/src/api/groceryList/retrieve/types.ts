@@ -8,6 +8,8 @@ export interface IDBGroceryItem {
   shopId: string
   imagePath?: string
   category?: string
+  visibility?: "private"
+  ownerId?: string
 }
 
 export interface IDBGroceryItemDefault {

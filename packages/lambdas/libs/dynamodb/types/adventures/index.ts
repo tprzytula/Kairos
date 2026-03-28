@@ -1,4 +1,6 @@
-export interface IAdventure {
+import { IPrivateItemFields } from "../visibility";
+
+export interface IAdventure extends IPrivateItemFields {
   id: string
   projectId: string
   name: string

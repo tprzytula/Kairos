@@ -29,6 +29,8 @@ export type IGroceryItem = {
   unit: GroceryItemUnit
   category?: string
   toBeRemoved: boolean
+  visibility?: "private"
+  ownerId?: string
 }
 
 export type IShop = {

@@ -12,7 +12,7 @@ interface IBirthdayContext {
   birthdays: IBirthdayItem[]
   isLoading: boolean
   isError: boolean
-  addBirthdayItem: (item: Omit<IBirthdayItem, 'id'>) => Promise<void>
+  addBirthdayItem: (item: Omit<IBirthdayItem, 'id'>, isPrivate?: boolean) => Promise<void>
   updateBirthdayItem: (id: string, fields: BirthdayUpdateFields) => Promise<void>
   removeBirthdayItem: (id: string) => Promise<void>
   refetchBirthdays: () => Promise<void>
@@ -55,11 +55,11 @@ export const BirthdayProvider = ({ children }: StateComponentProps) => {
     await query.refetch()
   }, [query.refetch])
 
-  const addBirthdayItem = useCallback(async (item: Omit<IBirthdayItem, 'id'>) => {
+  const addBirthdayItem = useCallback(async (item: Omit<IBirthdayItem, 'id'>, isPrivate?: boolean) => {
     if (!currentProject) return
 
-    const { id } = await addBirthday(item, currentProject.id)
-    queryClient.setQueryData<IBirthdayItem[]>(queryKey, (prev = []) => [...prev, { ...item, id }])
+    const { id } = await addBirthday(item, currentProject.id, isPrivate)
+    queryClient.setQueryData<IBirthdayItem[]>(queryKey, (prev = []) => [...prev, { ...item, id, ...(isPrivate && { visibility: "private" as const }) }])
   }, [currentProject, queryClient])
 
   const updateBirthdayItem = useCallback(async (id: string, fields: BirthdayUpdateFields) => {

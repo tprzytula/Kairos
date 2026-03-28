@@ -32,6 +32,7 @@ import {
   DrawerSubtitle,
   SectionLabel,
 } from './index.styled'
+import PrivateItemBadge from '../PrivateItemBadge'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 
 interface IDayPreviewDrawerProps {
@@ -110,16 +111,19 @@ const DayPreviewDrawer = ({
               isOverdue ? (
                 <OverdueDayDetailItem key={todo.id} onClick={() => onTodoClick(todo.id)}>
                   {todo.name}
+                  {todo.visibility === 'private' && <PrivateItemBadge />}
                 </OverdueDayDetailItem>
               ) : (
                 <DayDetailItem key={todo.id} onClick={() => onTodoClick(todo.id)}>
                   {todo.name}
+                  {todo.visibility === 'private' && <PrivateItemBadge />}
                 </DayDetailItem>
               )
             )}
             {completedTodos.map(todo => (
               <CompletedDayDetailItem key={todo.id} onClick={() => onTodoClick(todo.id)}>
                 {todo.name}
+                {todo.visibility === 'private' && <PrivateItemBadge />}
               </CompletedDayDetailItem>
             ))}
           </>
@@ -132,6 +136,7 @@ const DayPreviewDrawer = ({
               <BirthdayDayDetailItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
                 <CakeIcon sx={{ fontSize: '0.9rem', color: '#db2777', flexShrink: 0 }} />
                 {birthday.name}
+                {birthday.visibility === 'private' && <PrivateItemBadge />}
               </BirthdayDayDetailItem>
             ))}
           </>
@@ -150,6 +155,7 @@ const DayPreviewDrawer = ({
             <MealDayDetailItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
               <MealPlanIcon sx={{ fontSize: '0.9rem', flexShrink: 0 }} />
               {plan.recipeName}
+              {plan.visibility === 'private' && <PrivateItemBadge />}
               {plan.recipeId && <LinkIcon sx={{ fontSize: '0.75rem', color: '#d97706', marginLeft: 'auto', flexShrink: 0 }} />}
             </MealDayDetailItem>
           ))
@@ -162,6 +168,7 @@ const DayPreviewDrawer = ({
               <AdventureDayDetailItem key={adventure.id} onClick={() => onAdventureClick?.(adventure.id)}>
                 <ExploreIcon sx={{ fontSize: '0.9rem', color: '#06b6d4', flexShrink: 0 }} />
                 <span style={{ flex: 1 }}>{adventure.name}</span>
+                {adventure.visibility === 'private' && <PrivateItemBadge />}
                 {adventure.time && (
                   <span style={{ fontSize: '0.75rem', color: '#0891b2', flexShrink: 0 }}>{adventure.time}</span>
                 )}

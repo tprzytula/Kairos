@@ -2,10 +2,13 @@ import { IBirthdayItem } from '../retrieve/types'
 import { API_BASE_URL } from '../../index'
 import { createFetchOptions } from '../../../utils/api'
 
-export const addBirthday = async (item: Omit<IBirthdayItem, 'id'>, projectId?: string): Promise<{ id: string }> => {
+export const addBirthday = async (item: Omit<IBirthdayItem, 'id'>, projectId?: string, isPrivate?: boolean): Promise<{ id: string }> => {
   const response = await fetch(`${API_BASE_URL}/birthdays/items`, createFetchOptions({
     method: 'PUT',
-    body: JSON.stringify(item),
+    body: JSON.stringify({
+      ...item,
+      ...(isPrivate && { isPrivate: true }),
+    }),
   }, projectId))
 
   if (response.ok) {

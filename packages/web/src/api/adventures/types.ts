@@ -6,6 +6,7 @@ export interface IAddAdventureRequest {
   location?: string
   notes?: string
   imagePath?: string
+  isPrivate?: boolean
 }
 
 export interface IUpdateAdventureRequest {

@@ -3,10 +3,11 @@ import { middleware, AuthenticatedEvent } from "@kairos-lambdas-libs/middleware"
 import { createResponse } from "@kairos-lambdas-libs/response";
 import { getBody } from "./body";
 import { updateRecipe } from "./database";
+import { DynamoDBTable, getItem, verifyPrivateItemOwnership } from "@kairos-lambdas-libs/dynamodb";
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
-    const { projectId } = event;
+    const { projectId, userId } = event;
 
     if (!projectId) {
       return createResponse({
@@ -24,6 +25,18 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
     }
 
     const { id, name, ingredients, instructions, imagePath, externalLink, mealTypes, dishTypes } = body;
+
+    const existingItem = await getItem({
+      tableName: DynamoDBTable.RECIPES,
+      key: { id },
+    });
+
+    if (existingItem && !verifyPrivateItemOwnership(existingItem, userId ?? '')) {
+      return createResponse({
+        statusCode: 403,
+        message: "You do not have permission to modify this item",
+      });
+    }
 
     await updateRecipe(id, { name, ingredients, instructions, imagePath, externalLink, mealTypes, dishTypes });
 

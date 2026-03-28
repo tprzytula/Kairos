@@ -91,10 +91,10 @@ const ShopListContent = () => {
     setIsSubmitting(false)
   }, [])
 
-  const handleAddSubmit = useCallback(async (name: string, icon?: string) => {
+  const handleAddSubmit = useCallback(async (name: string, icon?: string, isPrivate?: boolean) => {
     setIsSubmitting(true)
     try {
-      await addShop({ name, icon })
+      await addShop({ name, icon }, isPrivate)
       
       showAlert({
         description: `"${name}" shop created successfully`,

@@ -11,6 +11,7 @@ import {
   FormContent,
   FormFieldsContainer,
 } from '../../../components/ItemForm/index.styled'
+import PrivateToggle from '../../../components/PrivateToggle'
 
 const MONTHS = [
   { value: 1, label: 'January' },
@@ -134,6 +135,7 @@ const BirthdayForm = () => {
   const [day, setDay] = useState('')
   const [birthYear, setBirthYear] = useState('')
   const [notes, setNotes] = useState('')
+  const [isPrivate, setIsPrivate] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -169,14 +171,14 @@ const BirthdayForm = () => {
         day: parseInt(day),
         ...(birthYear ? { birthYear: parseInt(birthYear) } : {}),
         ...(notes.trim() ? { notes: notes.trim() } : {}),
-      })
+      }, isPrivate)
       navigate(Route.Planner)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save birthday')
     } finally {
       setIsLoading(false)
     }
-  }, [name, month, day, birthYear, notes, addBirthdayItem, navigate])
+  }, [name, month, day, birthYear, notes, isPrivate, addBirthdayItem, navigate])
 
   return (
     <FormContainer>
@@ -243,6 +245,8 @@ const BirthdayForm = () => {
                   placeholder="Any notes about this person..."
                 />
               </FormFieldsContainer>
+
+              <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} disabled={isLoading} />
 
               <SubmitButton
                 type="submit"

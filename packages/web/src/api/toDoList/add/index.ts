@@ -2,12 +2,13 @@ import { ITodoItem } from '../retrieve/types'
 import { API_BASE_URL } from '../../index'
 import { createFetchOptions } from '../../../utils/api'
 
-export const addTodoItem = async (item: Omit<ITodoItem, 'id' | 'isDone'>, projectId?: string, accessToken?: string): Promise<ITodoItem> => {
+export const addTodoItem = async (item: Omit<ITodoItem, 'id' | 'isDone'>, projectId?: string, accessToken?: string, isPrivate?: boolean): Promise<ITodoItem> => {
   const response = await fetch(`${API_BASE_URL}/todo_list/items`, createFetchOptions({
     method: 'PUT',
     body: JSON.stringify({
       ...item,
       isDone: false,
+      ...(isPrivate && { isPrivate: true }),
     }),
   }, projectId, accessToken))
 

@@ -1,4 +1,5 @@
 import DrawerActionButton from '../DrawerActionButton'
+import PrivateItemBadge from '../PrivateItemBadge'
 import CakeIcon from '@mui/icons-material/Cake'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -73,7 +74,10 @@ const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPrev
       }
     >
       <ContentContainer>
-        <PersonName>{item?.name}</PersonName>
+        <PersonName>
+          {item?.name}
+          {item?.visibility === 'private' && <PrivateItemBadge />}
+        </PersonName>
 
         <MetaRow>
           <CalendarTodayIcon sx={{ fontSize: '1rem' }} />

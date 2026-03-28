@@ -4,11 +4,15 @@ import { createFetchOptions } from '../../../utils/api'
 
 export const addMealPlan = async (
   mealPlan: { date: string; recipeName: string; recipeId?: string; mealType?: string; imagePath?: string },
-  projectId?: string
+  projectId?: string,
+  isPrivate?: boolean
 ): Promise<IMealPlan> => {
   const response = await fetch(`${API_BASE_URL}/meal-plans`, createFetchOptions({
     method: 'PUT',
-    body: JSON.stringify(mealPlan),
+    body: JSON.stringify({
+      ...mealPlan,
+      ...(isPrivate && { isPrivate: true }),
+    }),
   }, projectId))
 
   if (response.ok) {
