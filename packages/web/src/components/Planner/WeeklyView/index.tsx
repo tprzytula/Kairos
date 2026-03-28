@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
+import { useSwipeToNavigate } from '../../../hooks/useSwipeToNavigate'
 import { IconButton } from '@mui/material'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
@@ -61,6 +62,7 @@ const WeeklyView = ({
   onAdventureClick,
 }: IWeeklyViewProps) => {
   const [currentWeek, setCurrentWeek] = useState<Dayjs>(() => getWeekStart(dayjs()))
+  const [animationDirection, setAnimationDirection] = useState<'left' | 'right' | null>(null)
   const today = dayjs()
   const [adventureWidths, setAdventureWidths] = useState<Map<string, number>>(() => new Map())
 
@@ -78,9 +80,20 @@ const WeeklyView = ({
     [currentWeek]
   )
 
-const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
-  const goToNextWeek = () => setCurrentWeek(prev => prev.add(1, 'week'))
+const goToPrevWeek = useCallback(() => {
+    setCurrentWeek(prev => prev.subtract(1, 'week'))
+    setAnimationDirection('right')
+  }, [])
+  const goToNextWeek = useCallback(() => {
+    setCurrentWeek(prev => prev.add(1, 'week'))
+    setAnimationDirection('left')
+  }, [])
   const goToToday = () => setCurrentWeek(getWeekStart(dayjs()))
+
+  const { handlers: swipeHandlers } = useSwipeToNavigate({
+    onSwipeLeft: goToNextWeek,
+    onSwipeRight: goToPrevWeek,
+  })
 
   const weekRangeLabel = useMemo(() => {
     const start = weekDays[0]
@@ -175,7 +188,7 @@ const goToPrevWeek = () => setCurrentWeek(prev => prev.subtract(1, 'week'))
         </IconButton>
       </WeekHeader>
 
-      <WeekRowsWrapper>
+      <WeekRowsWrapper $animationDirection={animationDirection} {...swipeHandlers}>
         {weekDays.map(day => {
           const key = day.format('YYYY-MM-DD')
           const isToday = day.isSame(today, 'day')

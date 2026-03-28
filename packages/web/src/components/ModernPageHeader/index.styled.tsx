@@ -37,7 +37,7 @@ export const HeaderCard = styled(Card)<{ accentgradient?: string }>(({ accentgra
 }))
 
 export const HeaderContent = styled('div')({
-  padding: '1rem 1.25rem',
+  padding: '1rem 0.75rem',
   display: 'flex',
   flexDirection: 'column',
   gap: '0.75rem',
