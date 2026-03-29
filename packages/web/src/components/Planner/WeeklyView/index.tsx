@@ -94,7 +94,22 @@ const WeeklyView = ({
     setExpandedDay(weekContainsToday ? todayKey : null)
   }, [currentWeek])
 
-  // Scroll expanded day into view
+  // Scroll today into view on initial mount
+  const hasScrolledOnMount = useRef(false)
+  useEffect(() => {
+    if (hasScrolledOnMount.current) return
+    const todayKey = getTodayKey()
+    const el = dayRefs.current.get(todayKey)
+    if (el) {
+      hasScrolledOnMount.current = true
+      // Use requestAnimationFrame to wait for expanded content to render
+      requestAnimationFrame(() => {
+        ;(el as any).scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+  })
+
+  // Scroll expanded day into view when toggling
   useEffect(() => {
     if (expandedDay) {
       const el = dayRefs.current.get(expandedDay)
