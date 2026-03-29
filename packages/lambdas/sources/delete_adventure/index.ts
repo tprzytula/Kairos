@@ -24,7 +24,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
 
     const existingItem = await getItem({
       tableName: DynamoDBTable.ADVENTURES,
-      key: { id },
+      item: { id },
     });
 
     if (existingItem && !verifyPrivateItemOwnership(existingItem, userId ?? '')) {

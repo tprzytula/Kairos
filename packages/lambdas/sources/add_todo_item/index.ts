@@ -57,15 +57,17 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       item: todoItem,
     });
 
-    try {
-      await publishTodoNotification({
-        projectId,
-        todoItem: { id, name, description },
-        authorId: userId,
-        authorName: user?.given_name || user?.name || user?.email || "Someone"
-      });
-    } catch (error) {
-      console.error("Failed to send notification:", error);
+    if (!isPrivate) {
+      try {
+        await publishTodoNotification({
+          projectId,
+          todoItem: { id, name, description },
+          authorId: userId,
+          authorName: user?.given_name || user?.name || user?.email || "Someone"
+        });
+      } catch (error) {
+        console.error("Failed to send notification:", error);
+      }
     }
 
     const response: CreateTodoResponse = {
