@@ -3,11 +3,19 @@ import { IRecipeIngredientBody } from "../body/types";
 
 export const updateRecipe = async (
   id: string,
-  fields: { name?: string; ingredients?: IRecipeIngredientBody[]; instructions?: string[]; imagePath?: string; externalLink?: string; mealTypes?: string[]; dishTypes?: string[] }
+  fields: { name?: string; ingredients?: IRecipeIngredientBody[]; instructions?: string[]; imagePath?: string; externalLink?: string; mealTypes?: string[]; dishTypes?: string[]; isPrivate?: boolean; userId?: string }
 ): Promise<void> => {
   const updatedFields: Record<string, any> = {
     updatedAt: new Date().toISOString(),
   };
+
+  if (fields.isPrivate === true) {
+    updatedFields.visibility = "private";
+    updatedFields.ownerId = fields.userId;
+  } else if (fields.isPrivate === false) {
+    updatedFields.visibility = null;
+    updatedFields.ownerId = null;
+  }
 
   if (fields.name !== undefined) {
     updatedFields.name = fields.name.trim();

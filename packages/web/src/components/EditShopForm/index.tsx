@@ -15,6 +15,7 @@ import {
   ImageUploadBox,
   ImagePreview,
 } from './index.styled'
+import PrivateToggle from '../PrivateToggle'
 import ImageCropModal from '../RecipeForm/ImageCropModal'
 import { getCroppedBlob } from '../RecipeForm/cropUtils'
 import { getShopUploadUrl } from '../../api/shops/getUploadUrl'
@@ -24,6 +25,7 @@ const EditShopForm = ({
   shopId,
   initialName,
   initialIcon,
+  initialVisibility,
   onSubmit,
   onCancel,
   isSubmitting = false
@@ -34,6 +36,7 @@ const EditShopForm = ({
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialIcon ?? null)
   const [imagePath, setImagePath] = useState(initialIcon ?? '')
+  const [isPrivate, setIsPrivate] = useState(initialVisibility === 'private')
   const [isUploading, setIsUploading] = useState(false)
   const [pendingImageSrc, setPendingImageSrc] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -43,9 +46,10 @@ const EditShopForm = ({
     setName(initialName)
     setPreviewUrl(initialIcon ?? null)
     setImagePath(initialIcon ?? '')
+    setIsPrivate(initialVisibility === 'private')
     setNameError('')
     setSubmitError(null)
-  }, [initialName, initialIcon])
+  }, [initialName, initialIcon, initialVisibility])
 
   const handleNameChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
@@ -112,8 +116,8 @@ const EditShopForm = ({
   }, [name])
 
   const hasChanges = useCallback(() => {
-    return name.trim() !== initialName || imagePath !== (initialIcon ?? '')
-  }, [name, imagePath, initialName, initialIcon])
+    return name.trim() !== initialName || imagePath !== (initialIcon ?? '') || isPrivate !== (initialVisibility === 'private')
+  }, [name, imagePath, initialName, initialIcon, isPrivate, initialVisibility])
 
   const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -129,7 +133,7 @@ const EditShopForm = ({
     }
 
     try {
-      await onSubmit(shopId, name.trim(), imagePath || undefined)
+      await onSubmit(shopId, name.trim(), imagePath || undefined, isPrivate)
     } catch (error) {
       setSubmitError(
         error instanceof Error
@@ -137,7 +141,7 @@ const EditShopForm = ({
           : 'Failed to update shop. Please try again.'
       )
     }
-  }, [shopId, name, imagePath, validateForm, hasChanges, onSubmit, onCancel])
+  }, [shopId, name, imagePath, isPrivate, validateForm, hasChanges, onSubmit, onCancel])
 
   return (
     <FormContainer>
@@ -194,6 +198,8 @@ const EditShopForm = ({
                 {submitError}
               </Alert>
             )}
+
+            <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} disabled={isSubmitting} />
 
             <ButtonContainer>
               <CancelButton

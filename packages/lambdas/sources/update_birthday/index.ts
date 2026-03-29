@@ -23,6 +23,16 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
 
     const { id, ...updatedFields } = body;
 
+    // Extract isPrivate and convert to visibility fields
+    const { isPrivate, ...fieldsToUpdate } = updatedFields;
+    let visibilityFields: Record<string, any> = {};
+    if (isPrivate === true) {
+      visibilityFields = { visibility: "private", ownerId: userId };
+    } else if (isPrivate === false) {
+      visibilityFields = { visibility: null, ownerId: null };
+    }
+    const finalFields = { ...fieldsToUpdate, ...visibilityFields };
+
     const existingItem = await getItem({
       tableName: DynamoDBTable.BIRTHDAYS,
       item: { id },
@@ -38,12 +48,12 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
     await updateItem({
       tableName: DynamoDBTable.BIRTHDAYS,
       key: { id },
-      updatedFields,
+      updatedFields: finalFields,
     });
 
     return createResponse({
       statusCode: 200,
-      message: { id, ...updatedFields },
+      message: { id, ...finalFields },
     });
   },
 );

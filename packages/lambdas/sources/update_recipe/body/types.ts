@@ -15,4 +15,5 @@ export interface IRequestBody {
     externalLink?: string;
     mealTypes?: string[];
     dishTypes?: string[];
+    isPrivate?: boolean;
 }

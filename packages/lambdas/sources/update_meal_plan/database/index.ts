@@ -2,11 +2,19 @@ import { DynamoDBTable, updateItem } from "@kairos-lambdas-libs/dynamodb";
 
 export const updateMealPlan = async (
   id: string,
-  fields: { date?: string; recipeName?: string; recipeId?: string | null; mealType?: string | null; imagePath?: string | null }
+  fields: { date?: string; recipeName?: string; recipeId?: string | null; mealType?: string | null; imagePath?: string | null; isPrivate?: boolean; userId?: string }
 ): Promise<void> => {
   const updatedFields: Record<string, any> = {
     updatedAt: new Date().toISOString(),
   };
+
+  if (fields.isPrivate === true) {
+    updatedFields.visibility = "private";
+    updatedFields.ownerId = fields.userId;
+  } else if (fields.isPrivate === false) {
+    updatedFields.visibility = null;
+    updatedFields.ownerId = null;
+  }
 
   if (fields.date !== undefined) {
     updatedFields.date = fields.date.trim();

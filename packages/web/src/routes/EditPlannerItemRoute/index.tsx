@@ -15,6 +15,7 @@ import { IStep, ITodoItem } from '../../api/toDoList/retrieve/types'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import dayjs from 'dayjs'
 import StepsEditor from '../../components/StepsEditor'
+import PrivateToggle from '../../components/PrivateToggle'
 
 const EditPlannerItemContent = () => {
   const { dispatch } = useAppState()
@@ -23,6 +24,7 @@ const EditPlannerItemContent = () => {
   const { id } = useParams()
   const [currentItem, setCurrentItem] = useState<ITodoItem | null>(null)
   const [steps, setSteps] = useState<IStep[]>([])
+  const [isPrivate, setIsPrivate] = useState(false)
 
   const todoItem = useMemo(() => {
     return toDoList.find(item => item.id === id) || null
@@ -46,6 +48,7 @@ const EditPlannerItemContent = () => {
     if (todoItem) {
       setCurrentItem(todoItem)
       setSteps(todoItem.steps ?? [])
+      setIsPrivate(todoItem.visibility === 'private')
     } else if (!todoItem && toDoList.length > 0) {
       createAlert('Todo item not found', 'error')
       navigate(Route.Planner)
@@ -93,6 +96,7 @@ const EditPlannerItemContent = () => {
         description: description.value,
         dueDate: utcTimestamp,
         steps: filteredSteps.length > 0 ? filteredSteps : [],
+        isPrivate,
       }
 
       await updateToDoItemFields(id!, updatedFields)
@@ -103,7 +107,7 @@ const EditPlannerItemContent = () => {
       console.error(error)
       createAlert('Error updating todo item', 'error')
     }
-  }, [createAlert, navigate, id, updateToDoItemFields, steps])
+  }, [createAlert, navigate, id, updateToDoItemFields, steps, isPrivate])
 
   if (!currentItem) {
     return (
@@ -128,6 +132,7 @@ const EditPlannerItemContent = () => {
         submittingButtonText="Updating Item..."
       >
         <StepsEditor steps={steps} onChange={setSteps} embedded />
+        <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} />
       </ItemForm>
     </StandardLayout>
   )

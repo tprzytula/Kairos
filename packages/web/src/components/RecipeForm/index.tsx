@@ -136,7 +136,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   const [instructionIds, setInstructionIds] = useState<string[]>(
     (initialRecipe?.instructions ?? ['']).map(() => makeId())
   )
-  const [isPrivate, setIsPrivate] = useState(false)
+  const [isPrivate, setIsPrivate] = useState(initialRecipe?.visibility === 'private' ?? false)
   const [isSaving, setIsSaving] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 
@@ -306,7 +306,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
       const mealTypesValue = selectedMealTypes.length > 0 ? selectedMealTypes : undefined
       const dishTypesValue = selectedDishTypes.length > 0 ? selectedDishTypes : undefined
       if (initialRecipe) {
-        await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients, instructions: instructionsValue, imagePath: imagePathValue, externalLink: externalLinkValue, mealTypes: mealTypesValue, dishTypes: dishTypesValue })
+        await updateRecipe(initialRecipe.id, { name: trimmedName, ingredients: validIngredients, instructions: instructionsValue, imagePath: imagePathValue, externalLink: externalLinkValue, mealTypes: mealTypesValue, dishTypes: dishTypesValue, isPrivate })
         showAlert({ description: 'Recipe updated', severity: 'success' }, dispatch)
       } else {
         await addRecipe(trimmedName, validIngredients, imagePathValue, instructionsValue, externalLinkValue, mealTypesValue, dishTypesValue, isPrivate)
@@ -507,9 +507,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
         </Button>
       </IngredientsSection>
 
-      {!initialRecipe && (
-        <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} disabled={isSaving} />
-      )}
+      <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} disabled={isSaving} />
 
       <FormActions>
         {initialRecipe && (

@@ -7,4 +7,5 @@ export interface IRequestBody {
   location?: string | null
   notes?: string | null
   imagePath?: string | null
+  isPrivate?: boolean
 }

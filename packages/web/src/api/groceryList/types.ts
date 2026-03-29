@@ -6,4 +6,5 @@ export type GroceryItemUpdateFields = {
   unit?: GroceryItemUnit
   imagePath?: string
   shopId?: string
+  isPrivate?: boolean
 }

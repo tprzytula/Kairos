@@ -24,7 +24,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    const { id, date, recipeName, recipeId, mealType, imagePath } = body;
+    const { id, date, recipeName, recipeId, mealType, imagePath, isPrivate } = body;
 
     const existingItem = await getItem({
       tableName: DynamoDBTable.MEAL_PLANS,
@@ -38,7 +38,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    await updateMealPlan(id, { date, recipeName, recipeId, mealType, imagePath });
+    await updateMealPlan(id, { date, recipeName, recipeId, mealType, imagePath, isPrivate, userId });
 
     return createResponse({
       statusCode: 200,

@@ -2,7 +2,8 @@ export interface IEditShopFormProps {
   shopId: string
   initialName: string
   initialIcon?: string
-  onSubmit: (shopId: string, name: string, icon?: string) => Promise<void>
+  initialVisibility?: string
+  onSubmit: (shopId: string, name: string, icon?: string, isPrivate?: boolean) => Promise<void>
   onCancel: () => void
   isSubmitting?: boolean
 }

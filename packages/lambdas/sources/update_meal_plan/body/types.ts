@@ -5,4 +5,5 @@ export interface IRequestBody {
     recipeId?: string | null;
     mealType?: string | null;
     imagePath?: string | null;
+    isPrivate?: boolean;
 }

@@ -17,6 +17,7 @@ import { IGroceryItem } from '../../providers/AppStateProvider/types'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { retrieveGroceryListDefaults } from '../../api/groceryList'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
+import PrivateToggle from '../../components/PrivateToggle'
 
 const EditGroceryItemContent = () => {
   const { dispatch, state } = useAppState()
@@ -25,6 +26,7 @@ const EditGroceryItemContent = () => {
   const { shopId, id } = useParams<{ shopId: string; id: string }>()
   const { shops } = useShopContext()
   const [currentItem, setCurrentItem] = useState<IGroceryItem | null>(null)
+  const [isPrivate, setIsPrivate] = useState(false)
   const { defaults } = useItemDefaults({
     fetchMethod: retrieveGroceryListDefaults
   })
@@ -48,6 +50,7 @@ const EditGroceryItemContent = () => {
   useEffect(() => {
     if (groceryItem) {
       setCurrentItem(groceryItem)
+      setIsPrivate(groceryItem.visibility === 'private')
     } else if (!groceryItem && groceryList.length > 0) {
       createAlert('Grocery item not found', 'error')
       navigate(Route.GroceryList.replace(':shopId', shopId || ''))
@@ -107,6 +110,7 @@ const EditGroceryItemContent = () => {
         unit: unit.value as GroceryItemUnit,
         imagePath: imagePath || currentItem?.imagePath,
         shopId: shopField.value,
+        isPrivate,
       }
 
       await updateGroceryItemFields(id!, updatedFields)
@@ -117,7 +121,7 @@ const EditGroceryItemContent = () => {
       console.error(error)
       createAlert('Error updating grocery item', 'error')
     }
-  }, [createAlert, navigate, id, shopId, currentItem?.imagePath, updateGroceryItemFields])
+  }, [createAlert, navigate, id, shopId, currentItem?.imagePath, updateGroceryItemFields, isPrivate])
 
   if (!currentItem) {
     return (
@@ -141,7 +145,9 @@ const EditGroceryItemContent = () => {
         onSubmit={onSubmit}
         submitButtonText="Update Item"
         submittingButtonText="Updating Item..."
-      />
+      >
+        <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} />
+      </ItemForm>
     </StandardLayout>
   )
 }
