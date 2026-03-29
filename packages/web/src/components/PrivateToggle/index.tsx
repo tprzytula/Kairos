@@ -1,5 +1,5 @@
 import { FormControlLabel, Switch, Typography, Box } from '@mui/material'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
 import { styled } from '@mui/material/styles'
 
 interface PrivateToggleProps {
@@ -33,7 +33,7 @@ const PrivateToggle = ({ isPrivate, onChange, disabled }: PrivateToggleProps) =>
       }
       label={
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <LockOutlinedIcon sx={{ fontSize: '1rem', color: isPrivate ? 'warning.main' : 'text.secondary' }} />
+          <VisibilityOffOutlinedIcon sx={{ fontSize: '1rem', color: isPrivate ? 'warning.main' : 'text.secondary' }} />
           <Typography
             variant="body2"
             sx={{
