@@ -34,6 +34,26 @@ import PrivateToggle from '../../components/PrivateToggle'
 
 type ItemType = 'task' | 'birthday' | 'meal' | 'adventure'
 
+const LAST_PLANNER_ITEM_TYPE_KEY = 'kairos_last_planner_item_type'
+
+const getLastItemType = (): ItemType => {
+  try {
+    const stored = localStorage.getItem(LAST_PLANNER_ITEM_TYPE_KEY)
+    if (stored === 'task' || stored === 'birthday' || stored === 'meal' || stored === 'adventure') {
+      return stored
+    }
+  } catch {}
+  return 'task'
+}
+
+const saveLastItemType = (type: ItemType): void => {
+  try {
+    localStorage.setItem(LAST_PLANNER_ITEM_TYPE_KEY, type)
+  } catch {}
+}
+
+export { getLastItemType }
+
 const PLANNER_TABS: Array<SegmentedControlTab<ItemType>> = [
   {
     id: 'task',
@@ -76,7 +96,12 @@ export const AddPlannerItemContent = () => {
   const location = useLocation()
   const { toDoList: _toDoList } = usePlannerContext()
   const { user } = useAuth()
-  const [itemType, setItemType] = useState<ItemType>((location.state as { itemType?: ItemType } | null)?.itemType ?? 'task')
+  const [itemType, setItemType] = useState<ItemType>((location.state as { itemType?: ItemType } | null)?.itemType ?? getLastItemType())
+
+  const handleItemTypeChange = useCallback((type: ItemType) => {
+    saveLastItemType(type)
+    setItemType(type)
+  }, [])
   const [steps, setSteps] = useState<IStep[]>([])
   const [isPrivate, setIsPrivate] = useState(false)
 
@@ -163,7 +188,7 @@ export const AddPlannerItemContent = () => {
         <SegmentedControl
           tabs={PLANNER_TABS}
           activeTab={itemType}
-          onChange={setItemType}
+          onChange={handleItemTypeChange}
           collapseInactive
         />
       </Box>

@@ -1,6 +1,7 @@
 
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Route } from "../../../enums/route";
+import { getLastItemType } from '../../../routes/AddPlannerItemRoute';
 import { useLocation, useNavigate } from "react-router";
 import { useCallback, useMemo } from "react";
 import { IconButton } from '@mui/material';
@@ -123,6 +124,8 @@ const AddItemButton = () => {
                 // Special case: grocery list - open add drawer via query param
                 const shopId = location.pathname.split('/')[2];
                 navigate(`/groceries/${shopId}?openAdd=true`);
+            } else if (addItemRoute === Route.AddPlannerItem) {
+                navigate(addItemRoute, { state: { itemType: getLastItemType() } });
             } else {
                 navigate(addItemRoute);
             }
