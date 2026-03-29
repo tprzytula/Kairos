@@ -194,7 +194,15 @@ export const UpcomingAdventureCard: React.FC<IUpcomingAdventureCardProps> = ({ a
                         <>
                           {adventure.time && <span>·</span>}
                           <LocationOnIcon />
-                          {adventure.location}
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(adventure.location)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            style={{ color: 'inherit', textDecoration: 'underline' }}
+                          >
+                            {adventure.location}
+                          </a>
                         </>
                       )}
                     </HeroMeta>
