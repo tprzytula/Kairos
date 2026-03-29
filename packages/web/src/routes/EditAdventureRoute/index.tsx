@@ -35,6 +35,7 @@ import { getAdventureUploadUrl } from '../../api/adventures'
 import { useProjectContext } from '../../providers/ProjectProvider'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/en-gb'
+import PrivateToggle from '../../components/PrivateToggle'
 
 const AdventureTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
@@ -136,6 +137,7 @@ const EditAdventureContent = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [initialized, setInitialized] = useState(false)
+  const [isPrivate, setIsPrivate] = useState(false)
 
   useEffect(() => {
     if (adventure && !initialized) {
@@ -146,6 +148,7 @@ const EditAdventureContent = () => {
       setLocation(adventure.location ?? '')
       setNotes(adventure.notes ?? '')
       setImagePath(adventure.imagePath)
+      setIsPrivate(adventure.visibility === 'private')
       setInitialized(true)
     } else if (!isAdventuresLoading && !adventure && adventures.length > 0) {
       showAlert({ description: 'Adventure not found', severity: 'error' }, dispatch)
@@ -213,6 +216,7 @@ const EditAdventureContent = () => {
         location: location.trim() || null,
         notes: notes.trim() || null,
         imagePath: imagePath ?? null,
+        isPrivate,
       })
       showAlert({ description: `${name.trim()} has been updated`, severity: 'success' }, dispatch)
       navigate(Route.Planner)
@@ -221,7 +225,7 @@ const EditAdventureContent = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [canSave, id, name, date, endDate, time, location, notes, imagePath, updateAdventure, dispatch, navigate])
+  }, [canSave, id, name, date, endDate, time, location, notes, imagePath, isPrivate, updateAdventure, dispatch, navigate])
 
   const displayImageUrl = previewUrl ?? (adventure?.imagePath ? adventure.imagePath : null)
 
@@ -373,6 +377,8 @@ const EditAdventureContent = () => {
                   rows={3}
                 />
               </FormFieldsContainer>
+
+              <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} disabled={isLoading} />
 
               <SubmitButton
                 variant="contained"

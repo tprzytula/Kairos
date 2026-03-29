@@ -15,6 +15,7 @@ import {
 import CakeIcon from '@mui/icons-material/Cake'
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types'
 import { useBirthdayContext } from '../../providers/BirthdayProvider'
+import PrivateToggle from '../PrivateToggle'
 
 const MONTHS = [
   { value: 1, label: 'January' },
@@ -46,6 +47,7 @@ const BirthdayFormDialog: React.FC<BirthdayFormDialogProps> = ({ open, onClose, 
   const [notes, setNotes] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isPrivate, setIsPrivate] = useState(false)
 
   const isEditing = initialBirthday != null
 
@@ -57,12 +59,14 @@ const BirthdayFormDialog: React.FC<BirthdayFormDialogProps> = ({ open, onClose, 
         setDay(String(initialBirthday.day))
         setBirthYear(initialBirthday.birthYear != null ? String(initialBirthday.birthYear) : '')
         setNotes(initialBirthday.notes ?? '')
+        setIsPrivate(initialBirthday.visibility === 'private')
       } else {
         setName('')
         setMonth(1)
         setDay('')
         setBirthYear('')
         setNotes('')
+        setIsPrivate(false)
       }
       setError('')
     }
@@ -101,6 +105,7 @@ const BirthdayFormDialog: React.FC<BirthdayFormDialogProps> = ({ open, onClose, 
         day: parseInt(day),
         ...(birthYear ? { birthYear: parseInt(birthYear) } : {}),
         ...(notes.trim() ? { notes: notes.trim() } : {}),
+        isPrivate,
       }
 
       if (isEditing && initialBirthday) {
@@ -193,6 +198,8 @@ const BirthdayFormDialog: React.FC<BirthdayFormDialogProps> = ({ open, onClose, 
             rows={2}
             placeholder="Any notes about this person..."
           />
+
+          <PrivateToggle isPrivate={isPrivate} onChange={setIsPrivate} disabled={isLoading} />
 
           {error && <Alert severity="error">{error}</Alert>}
         </Box>

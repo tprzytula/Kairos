@@ -8,6 +8,7 @@ export type ToDoItemUpdateFields = {
   dueDate?: number
   isDone?: boolean
   steps?: IStep[]
+  isPrivate?: boolean
 }
 
 export const updateToDoItemFields = async (id: string, fields: ToDoItemUpdateFields, projectId?: string): Promise<void> => {

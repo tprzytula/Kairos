@@ -17,4 +17,5 @@ export interface IUpdateAdventureRequest {
   location?: string | null
   notes?: string | null
   imagePath?: string | null
+  isPrivate?: boolean
 }

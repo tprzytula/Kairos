@@ -31,7 +31,7 @@ const ShopListContent = () => {
   } = useShopContext()
   
   const [formMode, setFormMode] = useState<FormMode>('none')
-  const [editingShop, setEditingShop] = useState<{ id: string; name: string; icon?: string } | null>(null)
+  const [editingShop, setEditingShop] = useState<{ id: string; name: string; icon?: string; visibility?: string } | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   
   // Check URL parameters to show add form when triggered from navigation
@@ -60,6 +60,7 @@ const ShopListContent = () => {
         id: shop.id,
         name: shop.name,
         icon: shop.icon,
+        visibility: shop.visibility,
       })
       setFormMode('edit')
     }
@@ -110,10 +111,10 @@ const ShopListContent = () => {
     }
   }, [addShop, dispatch])
 
-  const handleEditSubmit = useCallback(async (shopId: string, name: string, icon?: string) => {
+  const handleEditSubmit = useCallback(async (shopId: string, name: string, icon?: string, isPrivate?: boolean) => {
     setIsSubmitting(true)
     try {
-      await updateShop({ id: shopId, name, icon })
+      await updateShop({ id: shopId, name, icon, isPrivate })
       
       showAlert({
         description: `"${name}" shop updated successfully`,
@@ -181,6 +182,7 @@ const ShopListContent = () => {
                 shopId={editingShop.id}
                 initialName={editingShop.name}
                 initialIcon={editingShop.icon}
+                initialVisibility={editingShop.visibility}
                 onSubmit={handleEditSubmit}
                 onCancel={handleFormCancel}
                 isSubmitting={isSubmitting}

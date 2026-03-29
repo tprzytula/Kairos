@@ -7,4 +7,5 @@ export interface IRequestBody {
     unit?: GroceryItemUnit;
     shopId?: string;
     imagePath?: string;
+    isPrivate?: boolean;
 } 

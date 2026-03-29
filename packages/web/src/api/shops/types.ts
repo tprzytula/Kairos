@@ -18,6 +18,7 @@ export interface IUpdateShopRequestBody {
   id: string
   name?: string
   icon?: string
+  isPrivate?: boolean
 }
 
 export interface IRetrieveShopsResponse extends Array<IDBShop> {}
