@@ -131,7 +131,14 @@ const AdventurePreviewDrawer = ({ item, onClose, onEdit, onDelete }: AdventurePr
             {item?.location && (
               <DetailRow>
                 <LocationOnIcon />
-                {item.location}
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'inherit', textDecoration: 'underline' }}
+                >
+                  {item.location}
+                </a>
               </DetailRow>
             )}
           </Box>
