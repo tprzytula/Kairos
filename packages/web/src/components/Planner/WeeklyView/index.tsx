@@ -1,8 +1,9 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { useSwipeToNavigate } from '../../../hooks/useSwipeToNavigate'
 import { IconButton } from '@mui/material'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import dayjs, { Dayjs } from 'dayjs'
 import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
@@ -29,8 +30,10 @@ import {
   MealIconStyled,
   AdventureConnectedDayWrapper,
 } from './index.styled'
+import { ExpandIndicator } from './ExpandedDayView.styled'
 import PrivateItemBadge from '../../PrivateItemBadge'
 import AdventureWeeklyItem from './AdventureWeeklyItem'
+import ExpandedDayView from './ExpandedDayView'
 
 interface IWeeklyViewProps {
   visibleToDoItems: ITodoItem[]
@@ -50,6 +53,8 @@ const getWeekStart = (d: Dayjs): Dayjs => {
   return d.startOf('day').add(diff, 'day')
 }
 
+const getTodayKey = (): string => dayjs().format('YYYY-MM-DD')
+
 const WeeklyView = ({
   visibleToDoItems,
   onItemClick,
@@ -65,6 +70,8 @@ const WeeklyView = ({
   const [animationDirection, setAnimationDirection] = useState<'left' | 'right' | null>(null)
   const today = dayjs()
   const [adventureWidths, setAdventureWidths] = useState<Map<string, number>>(() => new Map())
+  const [expandedDay, setExpandedDay] = useState<string | null>(() => getTodayKey())
+  const dayRefs = useRef<Map<string, HTMLDivElement>>(new Map())
 
   const handleAdventureMeasure = useCallback((id: string, width: number) => {
     setAdventureWidths(prev => {
@@ -80,7 +87,30 @@ const WeeklyView = ({
     [currentWeek]
   )
 
-const goToPrevWeek = useCallback(() => {
+  // Reset expanded day when week changes
+  useEffect(() => {
+    const todayKey = getTodayKey()
+    const weekContainsToday = weekDays.some(d => d.format('YYYY-MM-DD') === todayKey)
+    setExpandedDay(weekContainsToday ? todayKey : null)
+  }, [currentWeek])
+
+  // Scroll expanded day into view
+  useEffect(() => {
+    if (expandedDay) {
+      const el = dayRefs.current.get(expandedDay)
+      if (el) {
+        setTimeout(() => {
+          ;(el as any).scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+        }, 160)
+      }
+    }
+  }, [expandedDay])
+
+  const handleDayToggle = useCallback((dayKey: string) => {
+    setExpandedDay(prev => prev === dayKey ? null : dayKey)
+  }, [])
+
+  const goToPrevWeek = useCallback(() => {
     setCurrentWeek(prev => prev.subtract(1, 'week'))
     setAnimationDirection('right')
   }, [])
@@ -199,6 +229,7 @@ const goToPrevWeek = useCallback(() => {
           const dayBirthdays = birthdaysByDay.get(birthdayKey) ?? []
           const dayMeals = mealPlansByDay.get(key) ?? []
           const dayAdventures = adventuresByDay.get(key) ?? []
+          const isDayExpanded = expandedDay === key
 
           const hasAdventureContinuingToNext = dayAdventures.some(
             a => {
@@ -215,16 +246,34 @@ const goToPrevWeek = useCallback(() => {
 
           const Wrapper = hasAdventureContinuingFromPrev ? AdventureConnectedDayWrapper : 'div'
 
+          const singleDayAdventures = dayAdventures.filter(
+            a => getAdventurePosition(a, key) === AdventurePosition.Single
+          )
+
           return (
-            <Wrapper key={key}>
+            <Wrapper
+              key={key}
+              ref={(el: HTMLDivElement | null) => {
+                if (el) {
+                  dayRefs.current.set(key, el)
+                } else {
+                  dayRefs.current.delete(key)
+                }
+              }}
+            >
               <DayRow
                 isToday={isToday}
+                isExpanded={isDayExpanded}
                 adventureContinuesToNext={hasAdventureContinuingToNext}
                 adventureContinuesFromPrev={hasAdventureContinuingFromPrev}
+                onClick={() => handleDayToggle(key)}
               >
                 <DayRowHeader isToday={isToday}>
                   <DayName isToday={isToday}>{day.format('ddd')}</DayName>
                   <DayNumber isToday={isToday}>{day.date()}</DayNumber>
+                  <ExpandIndicator expanded={isDayExpanded}>
+                    <ExpandMoreIcon sx={{ fontSize: '0.85rem' }} />
+                  </ExpandIndicator>
                 </DayRowHeader>
 
                 {dayAdventures
@@ -243,49 +292,63 @@ const goToPrevWeek = useCallback(() => {
                 <DayRowItems>
                   {pendingTodos.map(todo =>
                     isOverdue ? (
-                      <OverdueDayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+                      <OverdueDayItem key={todo.id} onClick={(e) => { e.stopPropagation(); onItemClick(todo.id) }}>
                         {todo.name}
                         {todo.visibility === 'private' && <PrivateItemBadge />}
                       </OverdueDayItem>
                     ) : (
-                      <DayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+                      <DayItem key={todo.id} onClick={(e) => { e.stopPropagation(); onItemClick(todo.id) }}>
                         {todo.name}
                         {todo.visibility === 'private' && <PrivateItemBadge />}
                       </DayItem>
                     )
                   )}
                   {completedTodos.map(todo => (
-                    <CompletedDayItem key={todo.id} onClick={() => onItemClick(todo.id)}>
+                    <CompletedDayItem key={todo.id} onClick={(e) => { e.stopPropagation(); onItemClick(todo.id) }}>
                       {todo.name}
                       {todo.visibility === 'private' && <PrivateItemBadge />}
                     </CompletedDayItem>
                   ))}
                   {dayBirthdays.map(birthday => (
-                    <BirthdayItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
+                    <BirthdayItem key={birthday.id} onClick={(e) => { e.stopPropagation(); onBirthdayClick?.(birthday.id) }}>
                       <BirthdayIconStyled />
                       {birthday.name}
                       {birthday.visibility === 'private' && <PrivateItemBadge />}
                     </BirthdayItem>
                   ))}
                   {dayMeals.map(plan => (
-                    <MealItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
+                    <MealItem key={plan.id} onClick={(e) => { e.stopPropagation(); onMealPlanClick?.(plan) }}>
                       <MealIconStyled />
                       {plan.recipeName}
                       {plan.visibility === 'private' && <PrivateItemBadge />}
                     </MealItem>
                   ))}
-                  {dayAdventures
-                    .filter(a => getAdventurePosition(a, key) === AdventurePosition.Single)
-                    .map(adventure => (
-                      <AdventureWeeklyItem
-                        key={adventure.id}
-                        adventure={adventure}
-                        dayKey={key}
-                        onClick={() => onAdventureClick?.(adventure.id)}
-                      />
-                    ))}
+                  {singleDayAdventures.map(adventure => (
+                    <AdventureWeeklyItem
+                      key={adventure.id}
+                      adventure={adventure}
+                      dayKey={key}
+                      onClick={() => onAdventureClick?.(adventure.id)}
+                    />
+                  ))}
                 </DayRowItems>
               </DayRow>
+
+              <ExpandedDayView
+                day={day}
+                isExpanded={isDayExpanded}
+                pendingTodos={pendingTodos}
+                completedTodos={completedTodos}
+                birthdays={dayBirthdays}
+                meals={dayMeals}
+                adventures={singleDayAdventures}
+                isOverdue={isOverdue}
+                isToday={isToday}
+                onItemClick={onItemClick}
+                onBirthdayClick={onBirthdayClick}
+                onMealPlanClick={onMealPlanClick}
+                onAdventureClick={onAdventureClick}
+              />
             </Wrapper>
           )
         })}
