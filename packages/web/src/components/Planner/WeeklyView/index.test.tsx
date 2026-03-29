@@ -77,21 +77,23 @@ describe('Given the WeeklyView component', () => {
   it('should render a pending todo on the correct day', () => {
     const todo = makeTodo({ name: 'Buy groceries' })
     render(<WeeklyView visibleToDoItems={[todo]} onItemClick={vi.fn()} />)
-    expect(screen.getByText('Buy groceries')).toBeVisible()
+    // Today is auto-expanded, so item appears in both collapsed row and expanded view
+    expect(screen.getAllByText('Buy groceries')[0]).toBeVisible()
   })
 
   it('should call onItemClick when a todo item is clicked', () => {
     const onItemClick = vi.fn()
     const todo = makeTodo({ id: 'todo-abc', name: 'Test task' })
     render(<WeeklyView visibleToDoItems={[todo]} onItemClick={onItemClick} />)
-    fireEvent.click(screen.getByText('Test task'))
+    fireEvent.click(screen.getAllByText('Test task')[0])
     expect(onItemClick).toHaveBeenCalledWith('todo-abc')
   })
 
   it('should render a birthday item', () => {
     const birthday = makeBirthday({ name: 'Alice' })
     render(<WeeklyView visibleToDoItems={[]} onItemClick={vi.fn()} birthdayItems={[birthday]} />)
-    expect(screen.getByText('Alice')).toBeVisible()
+    // Today is auto-expanded, so item appears in both collapsed row and expanded view
+    expect(screen.getAllByText('Alice')[0]).toBeVisible()
   })
 
   it('should call onBirthdayClick when a birthday item is clicked', () => {
@@ -105,14 +107,15 @@ describe('Given the WeeklyView component', () => {
         onBirthdayClick={onBirthdayClick}
       />
     )
-    fireEvent.click(screen.getByText('Alice'))
+    fireEvent.click(screen.getAllByText('Alice')[0])
     expect(onBirthdayClick).toHaveBeenCalledWith('bday-xyz')
   })
 
   it('should render a meal plan item', () => {
     const meal = makeMeal({ recipeName: 'Pasta' })
     render(<WeeklyView visibleToDoItems={[]} onItemClick={vi.fn()} mealPlans={[meal]} />)
-    expect(screen.getByText('Pasta')).toBeVisible()
+    // Today is auto-expanded, so item appears in both collapsed row and expanded view
+    expect(screen.getAllByText('Pasta')[0]).toBeVisible()
   })
 
   it('should call onMealPlanClick when a meal is clicked', () => {
@@ -126,7 +129,7 @@ describe('Given the WeeklyView component', () => {
         onMealPlanClick={onMealPlanClick}
       />
     )
-    fireEvent.click(screen.getByText('Pasta'))
+    fireEvent.click(screen.getAllByText('Pasta')[0])
     expect(onMealPlanClick).toHaveBeenCalledWith(meal)
   })
 
