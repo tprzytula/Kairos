@@ -53,8 +53,6 @@ const getWeekStart = (d: Dayjs): Dayjs => {
   return d.startOf('day').add(diff, 'day')
 }
 
-const getTodayKey = (): string => dayjs().format('YYYY-MM-DD')
-
 const WeeklyView = ({
   visibleToDoItems,
   onItemClick,
@@ -70,8 +68,9 @@ const WeeklyView = ({
   const [animationDirection, setAnimationDirection] = useState<'left' | 'right' | null>(null)
   const today = dayjs()
   const [adventureWidths, setAdventureWidths] = useState<Map<string, number>>(() => new Map())
-  const [expandedDay, setExpandedDay] = useState<string | null>(() => getTodayKey())
+  const [expandedDay, setExpandedDay] = useState<string | null>(null)
   const dayRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+  const weekRowsRef = useRef<HTMLDivElement>(null)
 
   const handleAdventureMeasure = useCallback((id: string, width: number) => {
     setAdventureWidths(prev => {
@@ -89,33 +88,26 @@ const WeeklyView = ({
 
   // Reset expanded day when week changes
   useEffect(() => {
-    const todayKey = getTodayKey()
-    const weekContainsToday = weekDays.some(d => d.format('YYYY-MM-DD') === todayKey)
-    setExpandedDay(weekContainsToday ? todayKey : null)
+    setExpandedDay(null)
   }, [currentWeek])
 
-  // Scroll today into view on initial mount
-  const hasScrolledOnMount = useRef(false)
-  useEffect(() => {
-    if (hasScrolledOnMount.current) return
-    const todayKey = getTodayKey()
-    const el = dayRefs.current.get(todayKey)
-    if (el) {
-      hasScrolledOnMount.current = true
-      // Use requestAnimationFrame to wait for expanded content to render
-      requestAnimationFrame(() => {
-        ;(el as any).scrollIntoView({ behavior: 'smooth', block: 'start' })
-      })
-    }
-  })
-
-  // Scroll expanded day into view when toggling
+  // Scroll expanded day into view within the list when toggling
   useEffect(() => {
     if (expandedDay) {
       const el = dayRefs.current.get(expandedDay)
-      if (el) {
+      const container = weekRowsRef.current
+      if (el && container) {
         setTimeout(() => {
-          ;(el as any).scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+          const containerRect = container.getBoundingClientRect()
+          const elRect = el.getBoundingClientRect()
+          const elBottom = elRect.bottom - containerRect.top + container.scrollTop
+          const elTop = elRect.top - containerRect.top + container.scrollTop
+          const visibleBottom = container.scrollTop + container.clientHeight
+          if (elBottom > visibleBottom) {
+            container.scrollTo({ top: elBottom - container.clientHeight + 8, behavior: 'smooth' })
+          } else if (elTop < container.scrollTop) {
+            container.scrollTo({ top: elTop - 8, behavior: 'smooth' })
+          }
         }, 160)
       }
     }
@@ -233,7 +225,7 @@ const WeeklyView = ({
         </IconButton>
       </WeekHeader>
 
-      <WeekRowsWrapper $animationDirection={animationDirection} {...swipeHandlers}>
+      <WeekRowsWrapper ref={weekRowsRef} $animationDirection={animationDirection} {...swipeHandlers}>
         {weekDays.map(day => {
           const key = day.format('YYYY-MM-DD')
           const isToday = day.isSame(today, 'day')
