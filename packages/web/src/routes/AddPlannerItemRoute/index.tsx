@@ -52,20 +52,20 @@ const PLANNER_TABS: Array<SegmentedControlTab<ItemType>> = [
     activeShadow: 'rgba(217, 119, 6, 0.2)',
   },
   {
-    id: 'birthday',
-    label: 'Birthday',
-    icon: <CakeIcon sx={{ fontSize: '1.1rem' }} />,
-    activeColor: '#db2777',
-    activeBg: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)',
-    activeShadow: 'rgba(219, 39, 119, 0.2)',
-  },
-  {
     id: 'adventure',
     label: 'Adventure',
     icon: <ExploreIcon sx={{ fontSize: '1.1rem' }} />,
     activeColor: '#0891b2',
     activeBg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)',
     activeShadow: 'rgba(6, 182, 212, 0.2)',
+  },
+  {
+    id: 'birthday',
+    label: 'Birthday',
+    icon: <CakeIcon sx={{ fontSize: '1.1rem' }} />,
+    activeColor: '#db2777',
+    activeBg: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)',
+    activeShadow: 'rgba(219, 39, 119, 0.2)',
   },
 ]
 
