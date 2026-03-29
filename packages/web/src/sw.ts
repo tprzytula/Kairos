@@ -80,10 +80,18 @@ self.addEventListener('fetch', (event) => {
   const { request } = event
   const url = new URL(request.url)
 
-  // Handle API calls with improved caching strategy
+  // Handle API calls
   if (url.pathname.includes('/api/') || url.hostname.includes('amazonaws.com')) {
     // Check if this is a GET request for retrieving data
     if (request.method === 'GET' && isDataRetrievalEndpoint(url.pathname)) {
+      // Use a user-specific cache key based on the Authorization header to prevent
+      // private items from leaking between users via the service worker cache
+      const authHeader = request.headers.get('Authorization') || ''
+      const cacheKeyUrl = authHeader
+        ? `${request.url}#auth=${hashCode(authHeader)}`
+        : request.url
+      const cacheRequest = new Request(cacheKeyUrl)
+
       // User preferences need fresh data - use Network First
       if (url.pathname.includes('/user/preferences')) {
         event.respondWith(
@@ -92,14 +100,14 @@ self.addEventListener('fetch', (event) => {
               if (response.status === 200) {
                 const responseClone = response.clone()
                 caches.open(RUNTIME_CACHE).then(cache => {
-                  cache.put(request, addCacheTimestamp(responseClone))
+                  cache.put(cacheRequest, addCacheTimestamp(responseClone))
                 })
               }
               return response
             })
             .catch(() => {
               // Network failed, return cached preferences if available
-              return caches.match(request).then(cachedResponse => {
+              return caches.match(cacheRequest).then(cachedResponse => {
                 return cachedResponse || new Response('{"userId":"","lastUpdated":0}', {
                   status: 200,
                   headers: { 'Content-Type': 'application/json' }
@@ -110,7 +118,7 @@ self.addEventListener('fetch', (event) => {
       } else {
         // Cache First strategy for item lists - show cached data immediately, update in background
         event.respondWith(
-          caches.match(request).then(cachedResponse => {
+          caches.match(cacheRequest).then(cachedResponse => {
             // If we have cached data, return it immediately
             if (cachedResponse && !isCacheExpired(cachedResponse)) {
               // Update in background (Stale While Revalidate)
@@ -119,14 +127,14 @@ self.addEventListener('fetch', (event) => {
                   if (response.status === 200) {
                     const responseClone = response.clone()
                     caches.open(RUNTIME_CACHE).then(cache => {
-                      cache.put(request, addCacheTimestamp(responseClone))
+                      cache.put(cacheRequest, addCacheTimestamp(responseClone))
                     })
                   }
                 })
                 .catch(() => {
                   // Background update failed, but we still have cached data
                 })
-              
+
               return cachedResponse
             }
 
@@ -136,16 +144,16 @@ self.addEventListener('fetch', (event) => {
                 if (response.status === 200) {
                   const responseClone = response.clone()
                   caches.open(RUNTIME_CACHE).then(cache => {
-                    cache.put(request, addCacheTimestamp(responseClone))
+                    cache.put(cacheRequest, addCacheTimestamp(responseClone))
                   })
                 }
                 return response
               })
               .catch(() => {
                 // Network failed, return stale cache if available
-                return cachedResponse || new Response('[]', { 
-                  status: 200, 
-                  headers: { 'Content-Type': 'application/json' } 
+                return cachedResponse || new Response('[]', {
+                  status: 200,
+                  headers: { 'Content-Type': 'application/json' }
                 })
               })
           })
@@ -226,6 +234,17 @@ function isMismatchedContentType(request: Request, response: Response): boolean 
   }
 
   return false
+}
+
+// Simple hash function to create a user-specific cache key from the auth header
+function hashCode(str: string): string {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash |= 0
+  }
+  return hash.toString(36)
 }
 
 // Helper function to check if URL is a data retrieval endpoint

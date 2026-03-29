@@ -24,7 +24,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
 
     const existingItem = await getItem({
       tableName: DynamoDBTable.NOISE_TRACKING,
-      key: {
+      item: {
         projectId,
         timestamp: parseInt(timestamp, 10),
       },
