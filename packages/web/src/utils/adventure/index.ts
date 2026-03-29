@@ -8,6 +8,14 @@ export enum AdventurePosition {
   End = 'end',
 }
 
+const sortAdventuresByTime = (adventures: IAdventure[]): IAdventure[] =>
+  adventures.sort((a, b) => {
+    if (a.time && b.time) return a.time.localeCompare(b.time)
+    if (a.time) return -1
+    if (b.time) return 1
+    return 0
+  })
+
 export const buildAdventuresByDay = (adventures: IAdventure[]): Map<string, IAdventure[]> => {
   const map = new Map<string, IAdventure[]>()
   for (const adventure of adventures) {
@@ -23,6 +31,9 @@ export const buildAdventuresByDay = (adventures: IAdventure[]): Map<string, IAdv
       }
       current = current.add(1, 'day')
     }
+  }
+  for (const [, dayAdventures] of map) {
+    sortAdventuresByTime(dayAdventures)
   }
   return map
 }
