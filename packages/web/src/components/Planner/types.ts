@@ -8,4 +8,6 @@ export interface IToDoListProps {
   mealPlans?: IMealPlan[];
   onAddMealPlan?: (date: string) => void;
   onMealPlanClick?: (mealPlan: IMealPlan) => void;
+  onAddAdventure?: (date: string) => void;
+  onAddTask?: (date: string) => void;
 };

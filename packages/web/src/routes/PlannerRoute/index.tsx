@@ -135,6 +135,16 @@ const PlannerContent = () => {
     navigate(Route.AddPlannerItem, { state: { itemType: 'meal' } })
   }, [dispatch, navigate])
 
+  const handleAddAdventure = useCallback((date: string) => {
+    dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: date })
+    navigate(Route.AddPlannerItem, { state: { itemType: 'adventure' } })
+  }, [dispatch, navigate])
+
+  const handleAddTask = useCallback((date: string) => {
+    dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: date })
+    navigate(Route.AddPlannerItem)
+  }, [dispatch, navigate])
+
   const handleMealPlanClick = useCallback((mealPlan: IMealPlan) => {
     setPreviewMealPlan(mealPlan)
   }, [])
@@ -188,6 +198,8 @@ const PlannerContent = () => {
             mealPlans={mealPlans}
             onAddMealPlan={handleAddMealPlan}
             onMealPlanClick={handleMealPlanClick}
+            onAddAdventure={handleAddAdventure}
+            onAddTask={handleAddTask}
           />
         </ScrollableContainer>
       </Container>
