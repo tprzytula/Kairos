@@ -87,4 +87,22 @@ describe('Given the createMealPlan database function', () => {
         expect(call.item).not.toHaveProperty('mealType');
         expect(call.item).not.toHaveProperty('imagePath');
     });
+
+    it('should set visibility to private when isPrivate is true', async () => {
+        await createMealPlan({
+            projectId: "test-project",
+            date: "2026-03-30",
+            recipeName: "Pasta",
+            isPrivate: true,
+            userId: "user-1",
+        });
+
+        expect(DynamoDB.putItem).toHaveBeenCalledWith({
+            tableName: DynamoDBTable.MEAL_PLANS,
+            item: expect.objectContaining({
+                visibility: "private",
+                ownerId: "user-1",
+            }),
+        });
+    });
 });

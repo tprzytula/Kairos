@@ -1,6 +1,6 @@
 import { handler } from ".";
 import { getBody } from "./body";
-import { updateItem } from "@kairos-lambdas-libs/dynamodb";
+import { updateItem, getItem } from "@kairos-lambdas-libs/dynamodb";
 import { DynamoDBTable } from "@kairos-lambdas-libs/dynamodb";
 
 vi.mock("./body");
@@ -18,6 +18,19 @@ describe("Given the update_todo_item lambda handler", () => {
     id: "test-id",
     name: "Updated Todo",
   };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should return 403 when user does not own the item", async () => {
+    vi.mocked(getBody).mockReturnValue(EXAMPLE_BODY);
+    vi.mocked(getItem).mockResolvedValueOnce({ visibility: "private", ownerId: "other-user" });
+
+    const result = await runHandler({ body: JSON.stringify(EXAMPLE_BODY) }, true);
+
+    expect(result.statusCode).toBe(403);
+  });
 
   it("should require project ID", async () => {
     const result = await runHandler({ body: null });
@@ -131,6 +144,37 @@ describe("Given the update_todo_item lambda handler", () => {
           dueDate: 1234567890,
         },
       });
+    });
+
+    it("should set visibility to private when isPrivate is true", async () => {
+      const isPrivateBody = { id: "test-id", name: "Todo", isPrivate: true };
+      vi.mocked(getBody).mockReturnValue(isPrivateBody);
+
+      await runHandler({ body: JSON.stringify(isPrivateBody) }, true);
+
+      expect(vi.mocked(updateItem)).toHaveBeenCalledWith(
+        expect.objectContaining({
+          updatedFields: expect.objectContaining({
+            visibility: "private",
+          }),
+        }),
+      );
+    });
+
+    it("should clear visibility when isPrivate is false", async () => {
+      const isPrivateBody = { id: "test-id", name: "Todo", isPrivate: false };
+      vi.mocked(getBody).mockReturnValue(isPrivateBody);
+
+      await runHandler({ body: JSON.stringify(isPrivateBody) }, true);
+
+      expect(vi.mocked(updateItem)).toHaveBeenCalledWith(
+        expect.objectContaining({
+          updatedFields: expect.objectContaining({
+            visibility: null,
+            ownerId: null,
+          }),
+        }),
+      );
     });
 
     describe("And the update succeeds", () => {

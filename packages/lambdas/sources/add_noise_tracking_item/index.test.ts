@@ -29,6 +29,20 @@ describe('Given the add_noise_tracking_item lambda handler', () => {
         });
     });
 
+    it('should set visibility to private when isPrivate is true in the body', async () => {
+        await runHandler({
+            ...createMockEvent(),
+            body: JSON.stringify({ isPrivate: true }),
+        });
+
+        expect(vi.mocked(DynamoDB.putItem)).toHaveBeenCalledWith({
+            tableName: DynamoDBTable.NOISE_TRACKING,
+            item: expect.objectContaining({
+                visibility: "private",
+            }),
+        });
+    });
+
     describe('And the putItem succeeds', () => {
         it('should return status 201', async () => {
             const result = await runHandler(createMockEvent());

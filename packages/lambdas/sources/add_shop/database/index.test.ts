@@ -81,5 +81,19 @@ describe('Given the upsertItem function for add_shop database', () => {
                 }),
             });
         });
+
+        it('should set visibility to private when isPrivate is true', async () => {
+            vi.mocked(query).mockResolvedValue([]);
+
+            await upsertItem({ projectId: 'project-1', name: 'New Shop', isPrivate: true, userId: 'user-1' });
+
+            expect(vi.mocked(putItem)).toHaveBeenCalledWith({
+                tableName: DynamoDBTable.SHOPS,
+                item: expect.objectContaining({
+                    visibility: 'private',
+                    ownerId: 'user-1',
+                }),
+            });
+        });
     });
 });

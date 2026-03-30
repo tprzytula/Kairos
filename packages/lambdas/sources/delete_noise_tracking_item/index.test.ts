@@ -7,9 +7,14 @@ import { handler } from "./index";
 vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
     ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
     deleteItem: vi.fn(),
+    getItem: vi.fn(),
 }));
 
 describe('Given the delete_noise_tracking_item lambda handler', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
     it('should require project ID', async () => {
         const result = await runHandler({ pathParameters: { timestamp: "1714003200000" } });
 
@@ -27,6 +32,14 @@ describe('Given the delete_noise_tracking_item lambda handler', () => {
         const result = await runHandler({ pathParameters: undefined as any }, true);
 
         expect(result.statusCode).toBe(400);
+    });
+
+    it('should return 403 when user does not own the item', async () => {
+        vi.mocked(DynamoDB.getItem).mockResolvedValueOnce({ visibility: "private", ownerId: "other-user" });
+
+        const result = await runHandler({ pathParameters: { timestamp: "1714003200000" } }, true);
+
+        expect(result.statusCode).toBe(403);
     });
 
     it('should make a delete request to the noise tracking table', async () => {

@@ -6,9 +6,14 @@ const { DynamoDBTable } = DynamoDB;
 vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
     ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
     deleteItem: vi.fn(),
+    getItem: vi.fn(),
 }));
 
 describe('Given the delete_shop lambda handler', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
     it('should require project ID', async () => {
         const result = await runHandler({ pathParameters: { id: "1" } });
 
@@ -33,6 +38,14 @@ describe('Given the delete_shop lambda handler', () => {
         const result = await handler(event, {} as any, {} as any);
 
         expect(result.statusCode).toBe(400);
+    });
+
+    it('should return 403 when user does not own the item', async () => {
+        vi.mocked(DynamoDB.getItem).mockResolvedValueOnce({ visibility: "private", ownerId: "other-user" });
+
+        const result = await runHandler({ pathParameters: { id: "test-shop-id" } }, true);
+
+        expect(result.statusCode).toBe(403);
     });
 
     it('should make a delete request to the shops table', async () => {

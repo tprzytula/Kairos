@@ -93,4 +93,22 @@ describe('Given the createAdventure database function', () => {
         expect(call.item).not.toHaveProperty('notes');
         expect(call.item).not.toHaveProperty('imagePath');
     });
+
+    it('should set visibility to private when isPrivate is true', async () => {
+        await createAdventure({
+            projectId: "test-project",
+            name: "Trip",
+            date: "2026-06-15",
+            isPrivate: true,
+            userId: "user-1",
+        });
+
+        expect(DynamoDB.putItem).toHaveBeenCalledWith({
+            tableName: DynamoDBTable.ADVENTURES,
+            item: expect.objectContaining({
+                visibility: "private",
+                ownerId: "user-1",
+            }),
+        });
+    });
 });

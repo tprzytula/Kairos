@@ -105,6 +105,23 @@ describe('Given the add_grocery_item lambda handler', () => {
         });
     });
 
+    describe('When isPrivate is true', () => {
+        it('should pass visibility fields to upsertItem', async () => {
+            const privateBody = { ...EXAMPLE_BODY, isPrivate: true };
+            vi.mocked(getBody).mockReturnValue(privateBody);
+            vi.mocked(upsertItem).mockResolvedValue({ id: EXAMPLE_ID, statusCode: 201 });
+
+            await runHandler({ body: JSON.stringify(privateBody) }, true);
+
+            expect(vi.mocked(upsertItem)).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    visibility: "private",
+                }),
+                expect.anything(),
+            );
+        });
+    });
+
     describe('When the upsert fails', () => {
         it('should return status 500', async () => {
             vi.mocked(getBody).mockReturnValue(EXAMPLE_BODY);

@@ -38,17 +38,17 @@ describe('Given the get_noise_tracking_items lambda handler', () => {
 
         expect(logSpy).toHaveBeenCalledWith('Returning items', {
             count: 3,
-            items: JSON.stringify(EXAMPLE_DB_NOISE_TRACKING_ITEMS),
+            items: JSON.stringify(SORTED_NOISE_TRACKING_ITEMS),
         });
     });
 
-    it('should return status 200 and a list of noise tracking items', async () => {
+    it('should return status 200 and a list of noise tracking items sorted by timestamp descending', async () => {
         mockQuery();
 
         const result = await handler(createMockEvent(), {} as any, {} as any);
 
         expect(result.statusCode).toBe(200);
-        expect(result.body).toBe(JSON.stringify(EXAMPLE_DB_NOISE_TRACKING_ITEMS));
+        expect(result.body).toBe(JSON.stringify(SORTED_NOISE_TRACKING_ITEMS));
     });
 
     describe('When the query request fails', () => {
@@ -83,6 +83,22 @@ describe('Given the get_noise_tracking_items lambda handler', () => {
 });
 
 const mockQuery = () => vi.spyOn(DynamoDB, 'query').mockResolvedValue(EXAMPLE_DB_NOISE_TRACKING_ITEMS);
+
+// Sorted descending by timestamp
+const SORTED_NOISE_TRACKING_ITEMS: Record<string, unknown>[] = [
+    {
+        projectId: "test-project",
+        timestamp: 1814003200000,
+    },
+    {
+        projectId: "test-project",
+        timestamp: 1714003200000,
+    },
+    {
+        projectId: "test-project",
+        timestamp: 1614003200000,
+    },
+];
 
 const createMockEvent = (projectId: string = "test-project") => ({
     headers: {

@@ -131,4 +131,30 @@ describe('Given the updateRecipe database function', () => {
             }),
         });
     });
+
+    it('should set visibility to private when isPrivate is true', async () => {
+        await updateRecipe("recipe-1", { isPrivate: true, userId: "user-1" });
+
+        expect(DynamoDB.updateItem).toHaveBeenCalledWith({
+            tableName: DynamoDBTable.RECIPES,
+            key: { id: "recipe-1" },
+            updatedFields: expect.objectContaining({
+                visibility: "private",
+                ownerId: "user-1",
+            }),
+        });
+    });
+
+    it('should clear visibility when isPrivate is false', async () => {
+        await updateRecipe("recipe-1", { isPrivate: false });
+
+        expect(DynamoDB.updateItem).toHaveBeenCalledWith({
+            tableName: DynamoDBTable.RECIPES,
+            key: { id: "recipe-1" },
+            updatedFields: expect.objectContaining({
+                visibility: null,
+                ownerId: null,
+            }),
+        });
+    });
 });

@@ -70,6 +70,25 @@ describe('Given the add_birthday lambda handler', () => {
             });
         });
 
+        it('should set visibility to private when isPrivate is true', async () => {
+            await handler({
+                headers: { "X-Project-ID": "test-project" },
+                body: JSON.stringify({
+                    name: "John",
+                    month: 3,
+                    day: 15,
+                    isPrivate: true,
+                }),
+            } as any, {} as any, {} as any);
+
+            expect(DynamoDB.putItem).toHaveBeenCalledWith({
+                tableName: DynamoDBTable.BIRTHDAYS,
+                item: expect.objectContaining({
+                    visibility: "private",
+                }),
+            });
+        });
+
         it('should not include optional fields when not provided', async () => {
             await handler({
                 headers: { "X-Project-ID": "test-project" },

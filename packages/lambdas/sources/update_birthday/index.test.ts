@@ -7,6 +7,7 @@ import { handler } from "./index";
 vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
     ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
     updateItem: vi.fn(),
+    getItem: vi.fn(),
 }));
 
 describe('Given the update_birthday lambda handler', () => {
@@ -39,6 +40,17 @@ describe('Given the update_birthday lambda handler', () => {
         expect(result.statusCode).toBe(400);
     });
 
+    it('should return 403 when user does not own the item', async () => {
+        vi.mocked(DynamoDB.getItem).mockResolvedValueOnce({ visibility: "private", ownerId: "other-user" });
+
+        const result = await handler({
+            headers: { "X-Project-ID": "test-project" },
+            body: JSON.stringify({ id: "bday-1", name: "Jane" }),
+        } as any, {} as any, {} as any);
+
+        expect(result.statusCode).toBe(403);
+    });
+
     describe('When updating a birthday', () => {
         it('should call updateItem with correct parameters', async () => {
             await handler({
@@ -59,6 +71,37 @@ describe('Given the update_birthday lambda handler', () => {
                     month: 6,
                     day: 20,
                 },
+            });
+        });
+
+        it('should set visibility to private when isPrivate is true', async () => {
+            await handler({
+                headers: { "X-Project-ID": "test-project" },
+                body: JSON.stringify({ id: "bday-1", name: "Jane", isPrivate: true }),
+            } as any, {} as any, {} as any);
+
+            expect(DynamoDB.updateItem).toHaveBeenCalledWith({
+                tableName: DynamoDBTable.BIRTHDAYS,
+                key: { id: "bday-1" },
+                updatedFields: expect.objectContaining({
+                    visibility: "private",
+                }),
+            });
+        });
+
+        it('should clear visibility when isPrivate is false', async () => {
+            await handler({
+                headers: { "X-Project-ID": "test-project" },
+                body: JSON.stringify({ id: "bday-1", name: "Jane", isPrivate: false }),
+            } as any, {} as any, {} as any);
+
+            expect(DynamoDB.updateItem).toHaveBeenCalledWith({
+                tableName: DynamoDBTable.BIRTHDAYS,
+                key: { id: "bday-1" },
+                updatedFields: expect.objectContaining({
+                    visibility: null,
+                    ownerId: null,
+                }),
             });
         });
 

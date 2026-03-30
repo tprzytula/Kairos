@@ -1,7 +1,12 @@
 import { handler } from "./index";
 import * as database from "./database";
+import * as DynamoDB from "@kairos-lambdas-libs/dynamodb";
 
 vi.mock("./database");
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
+    ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
+    getItem: vi.fn(),
+}));
 
 describe('Given the update_adventure lambda handler', () => {
     beforeEach(() => {
@@ -33,6 +38,17 @@ describe('Given the update_adventure lambda handler', () => {
         expect(result.statusCode).toBe(400);
     });
 
+    it('should return 403 when user does not own the item', async () => {
+        vi.mocked(DynamoDB.getItem).mockResolvedValueOnce({ visibility: "private", ownerId: "other-user" });
+
+        const result = await handler({
+            headers: { "X-Project-ID": "test-project" },
+            body: JSON.stringify({ id: "adv-1", name: "Updated" }),
+        } as any, {} as any, {} as any);
+
+        expect(result.statusCode).toBe(403);
+    });
+
     describe('When updating an adventure', () => {
         it('should call updateAdventure with correct parameters', async () => {
             vi.mocked(database.updateAdventure).mockResolvedValue();
@@ -56,6 +72,8 @@ describe('Given the update_adventure lambda handler', () => {
                 endDate: undefined,
                 notes: undefined,
                 imagePath: undefined,
+                isPrivate: undefined,
+                userId: undefined,
             });
         });
 

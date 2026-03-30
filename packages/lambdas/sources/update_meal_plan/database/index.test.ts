@@ -77,4 +77,30 @@ describe('Given the updateMealPlan database function', () => {
         expect(call.updatedFields).not.toHaveProperty('mealType');
         expect(call.updatedFields).not.toHaveProperty('imagePath');
     });
+
+    it('should set visibility to private when isPrivate is true', async () => {
+        await updateMealPlan("mp-1", { isPrivate: true, userId: "user-1" });
+
+        expect(DynamoDB.updateItem).toHaveBeenCalledWith({
+            tableName: DynamoDBTable.MEAL_PLANS,
+            key: { id: "mp-1" },
+            updatedFields: expect.objectContaining({
+                visibility: "private",
+                ownerId: "user-1",
+            }),
+        });
+    });
+
+    it('should clear visibility when isPrivate is false', async () => {
+        await updateMealPlan("mp-1", { isPrivate: false });
+
+        expect(DynamoDB.updateItem).toHaveBeenCalledWith({
+            tableName: DynamoDBTable.MEAL_PLANS,
+            key: { id: "mp-1" },
+            updatedFields: expect.objectContaining({
+                visibility: null,
+                ownerId: null,
+            }),
+        });
+    });
 });

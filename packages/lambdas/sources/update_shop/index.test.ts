@@ -5,6 +5,7 @@ import * as body from "./body";
 vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
     ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
     updateItem: vi.fn(),
+    getItem: vi.fn(),
 }));
 
 vi.mock("./body");
@@ -39,6 +40,51 @@ describe("Given the update_shop lambda handler", () => {
       const result = await runHandler({ body: null }, true);
 
       expect(result.statusCode).toBe(400);
+    });
+  });
+
+  describe("When the user does not own the item", () => {
+    it("should return status code 403", async () => {
+      const updateBody = { id: "test-id", name: "Updated Shop" };
+      vi.mocked(body.getBody).mockReturnValue(updateBody);
+      vi.mocked(DynamoDB.getItem).mockResolvedValueOnce({ visibility: "private", ownerId: "other-user" });
+
+      const result = await runHandler({ body: JSON.stringify(updateBody) }, true);
+
+      expect(result.statusCode).toBe(403);
+    });
+  });
+
+  describe("When isPrivate is provided", () => {
+    it("should set visibility to private when isPrivate is true", async () => {
+      const updateBody = { id: "test-id", name: "Updated Shop", isPrivate: true };
+      vi.mocked(body.getBody).mockReturnValue(updateBody);
+
+      await runHandler({ body: JSON.stringify(updateBody) }, true);
+
+      expect(vi.mocked(DynamoDB.updateItem)).toHaveBeenCalledWith(
+        expect.objectContaining({
+          updatedFields: expect.objectContaining({
+            visibility: "private",
+          }),
+        }),
+      );
+    });
+
+    it("should clear visibility when isPrivate is false", async () => {
+      const updateBody = { id: "test-id", name: "Updated Shop", isPrivate: false };
+      vi.mocked(body.getBody).mockReturnValue(updateBody);
+
+      await runHandler({ body: JSON.stringify(updateBody) }, true);
+
+      expect(vi.mocked(DynamoDB.updateItem)).toHaveBeenCalledWith(
+        expect.objectContaining({
+          updatedFields: expect.objectContaining({
+            visibility: null,
+            ownerId: null,
+          }),
+        }),
+      );
     });
   });
 

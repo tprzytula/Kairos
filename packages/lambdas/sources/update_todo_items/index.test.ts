@@ -1,7 +1,7 @@
 import { getBody } from "./body";
 import { handler } from "./index";
 import { IRequestBody } from "./body/types";
-import { DynamoDBTable, updateItems } from "@kairos-lambdas-libs/dynamodb";
+import { DynamoDBTable, updateItems, getItem } from "@kairos-lambdas-libs/dynamodb";
 import { randomUUID } from "node:crypto";
 
 vi.mock('node:crypto', async () => ({
@@ -15,9 +15,23 @@ vi.mock('./body', async () => ({
 vi.mock('@kairos-lambdas-libs/dynamodb', async () => ({
     ...(await vi.importActual('@kairos-lambdas-libs/dynamodb')),
     updateItems: vi.fn(),
+    getItem: vi.fn(),
 }));
 
 describe('Given the update_todo_items lambda handler', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    it('should return 403 when user does not own an item', async () => {
+        vi.mocked(getBody).mockReturnValue(EXAMPLE_UPDATE_TODO_ITEM_STATUS_BODY);
+        vi.mocked(getItem).mockResolvedValueOnce({ visibility: "private", ownerId: "other-user" });
+
+        const result = await runHandler(EXAMPLE_REQUEST, true);
+
+        expect(result.statusCode).toBe(403);
+    });
+
     it('should require project ID', async () => {
         const result = await runHandler({ body: null });
 

@@ -109,6 +109,24 @@ describe('Given the createRecipe database function', () => {
         expect(call.item).not.toHaveProperty('dishTypes');
     });
 
+    it('should set visibility to private when isPrivate is true', async () => {
+        await createRecipe({
+            projectId: "test-project",
+            name: "Pasta",
+            ingredients: [VALID_INGREDIENT],
+            isPrivate: true,
+            userId: "user-1",
+        });
+
+        expect(DynamoDB.putItem).toHaveBeenCalledWith({
+            tableName: DynamoDBTable.RECIPES,
+            item: expect.objectContaining({
+                visibility: "private",
+                ownerId: "user-1",
+            }),
+        });
+    });
+
     it('should not include empty arrays', async () => {
         await createRecipe({
             projectId: "test-project",

@@ -471,6 +471,59 @@ describe('send_todo_notifications Lambda', () => {
       logSpy.mockRestore();
     });
 
+    it("should handle push subscription errors with other status codes", async () => {
+      const notificationMessage = {
+        projectId: mockProjectId,
+        todoItem: mockTodoItem,
+        authorId: mockAuthorId,
+        authorName: 'John Doe'
+      };
+
+      const mockProjectMembers = [
+        { userId: "member-1", projectId: mockProjectId, role: "member" }
+      ];
+
+      const mockProject = {
+        id: mockProjectId,
+        name: "Test Project",
+        ownerId: mockAuthorId
+      };
+
+      const mockPushSubscriptions = [
+        {
+          userId: "member-1",
+          endpoint: "https://push.service.com/endpoint-1",
+          keys: { p256dh: "key1", auth: "auth1" },
+          createdAt: Date.now()
+        }
+      ];
+
+      mockQuery
+        .mockResolvedValueOnce(mockProjectMembers)
+        .mockResolvedValueOnce(mockPushSubscriptions);
+
+      mockGetItem.mockResolvedValueOnce(mockProject);
+
+      const pushError = new Error("Internal Server Error") as any;
+      pushError.statusCode = 500;
+      mockSendNotification.mockRejectedValueOnce(pushError);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      const event = createSNSEvent(notificationMessage);
+
+      const response = await handler(event, {} as any, {} as any);
+      expect(response.statusCode).toBe(200);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Failed to send web push notification:",
+        expect.any(Error)
+      );
+
+      consoleSpy.mockRestore();
+      logSpy.mockRestore();
+    });
+
     it("should handle not found push subscriptions (404 status)", async () => {
       const notificationMessage = {
         projectId: mockProjectId,

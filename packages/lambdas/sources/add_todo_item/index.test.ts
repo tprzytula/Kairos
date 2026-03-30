@@ -242,6 +242,22 @@ describe('Given the add_todo_item lambda handler', () => {
             });
         });
 
+        it('should skip notification and set visibility when isPrivate is true', async () => {
+            const privateTodoItem = { ...EXAMPLE_TODO_ITEM, isPrivate: true };
+            vi.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
+            vi.mocked(getBody).mockReturnValue(privateTodoItem);
+            vi.mocked(putItem).mockResolvedValue({ $metadata: { httpStatusCode: 201 } });
+
+            const result = await runHandler({ body: JSON.stringify(privateTodoItem) }, true, true);
+
+            expect(result.statusCode).toBe(201);
+            expect(vi.mocked(putItem)).toHaveBeenCalledWith({
+                tableName: DynamoDBTable.TODO_LIST,
+                item: expect.objectContaining({ visibility: "private" }),
+            });
+            expect(mockSNSPublish).not.toHaveBeenCalled();
+        });
+
         describe('And the upsert fails', () => {
             it('should return status 500', async () => {
                 vi.mocked(putItem).mockRejectedValue(new Error('Upsert failed'));

@@ -7,9 +7,14 @@ import { handler } from "./index";
 vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
     ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
     deleteItems: vi.fn(),
+    getItem: vi.fn(),
 }));
 
 describe('Given the delete_grocery_item lambda handler', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
     it('should require project ID', async () => {
         const result = await runHandler({ body: { ids: ["1", "2"] } });
 
@@ -42,6 +47,14 @@ describe('Given the delete_grocery_item lambda handler', () => {
         const result = await handler(event, {} as any, {} as any);
 
         expect(result.statusCode).toBe(400);
+    });
+
+    it('should return 403 when user does not own an item', async () => {
+        vi.mocked(DynamoDB.getItem).mockResolvedValueOnce({ visibility: "private", ownerId: "other-user" });
+
+        const result = await runHandler({ body: { ids: ["1", "2"] } }, true);
+
+        expect(result.statusCode).toBe(403);
     });
 
     it('should make a delete request to the grocery list table', async () => {

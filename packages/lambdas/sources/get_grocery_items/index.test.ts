@@ -40,17 +40,17 @@ describe('Given the get_grocery_items lambda handler', () => {
 
         expect(logSpy).toHaveBeenCalledWith('Returning items', {
             count: 3,
-            items: JSON.stringify(EXAMPLE_DB_GROCERY_ITEMS),
+            items: JSON.stringify(SORTED_GROCERY_ITEMS),
         });
     });
 
-    it('should return status 200 and a list of grocery items', async () => {
+    it('should return status 200 and a list of grocery items sorted alphabetically', async () => {
         mockQuery();
 
         const result = await handler(createMockEvent(), {} as any, {} as any);
 
         expect(result.statusCode).toBe(200);
-        expect(result.body).toStrictEqual(JSON.stringify(EXAMPLE_DB_GROCERY_ITEMS));
+        expect(result.body).toStrictEqual(JSON.stringify(SORTED_GROCERY_ITEMS));
     });
 
     describe('When shopId query parameter is provided', () => {
@@ -116,6 +116,34 @@ describe('Given the get_grocery_items lambda handler', () => {
 });
 
 const mockQuery = () => vi.spyOn(DynamoDB, 'query').mockResolvedValue(EXAMPLE_DB_GROCERY_ITEMS);
+
+// Sorted alphabetically by name: Apple, Avocado, Banana
+const SORTED_GROCERY_ITEMS: Array<IGroceryItem> = [
+    {
+        id: "3",
+        projectId: "test-project",
+        name: "Apple",
+        quantity: "2",
+        imagePath: "Image 3",
+        unit: GroceryItemUnit.KILOGRAM,
+    },
+    {
+        id: "1",
+        projectId: "test-project",
+        name: "Avocado",
+        quantity: "2",
+        imagePath: "Image 1",
+        unit: GroceryItemUnit.KILOGRAM,
+    },
+    {
+        id: "2",
+        projectId: "test-project",
+        name: "Banana",
+        quantity: "1",
+        imagePath: "Image 2",
+        unit: GroceryItemUnit.KILOGRAM,
+    },
+];
 
 const createMockEvent = (projectId: string = "test-project") => ({
     headers: {
