@@ -148,6 +148,68 @@ describe('Given the add_todo_item lambda handler', () => {
                 mockConsoleError.mockRestore();
             });
 
+            it('should fallback to name when given_name is not available', async () => {
+                vi.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
+                vi.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
+                vi.mocked(putItem).mockResolvedValue({
+                    $metadata: {
+                        httpStatusCode: 201,
+                    },
+                });
+
+                const result = await runHandler({
+                    body: JSON.stringify(EXAMPLE_TODO_ITEM)
+                }, true, true, { useNameOnly: true });
+
+                expect(result.statusCode).toBe(201);
+
+                expect(mockSNSPublish).toHaveBeenCalledWith({
+                    TopicArn: 'arn:aws:sns:us-east-1:123456789012:test-topic',
+                    Message: JSON.stringify({
+                        projectId: 'test-project',
+                        todoItem: {
+                            id: EXAMPLE_ID,
+                            name: EXAMPLE_TODO_ITEM.name,
+                            description: EXAMPLE_TODO_ITEM.description
+                        },
+                        authorId: 'test-user-id',
+                        authorName: 'John Doe'
+                    }),
+                    Subject: `New todo item added: ${EXAMPLE_TODO_ITEM.name}`
+                });
+            });
+
+            it('should fallback to "Someone" when no user info is available', async () => {
+                vi.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
+                vi.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
+                vi.mocked(putItem).mockResolvedValue({
+                    $metadata: {
+                        httpStatusCode: 201,
+                    },
+                });
+
+                const result = await runHandler({
+                    body: JSON.stringify(EXAMPLE_TODO_ITEM)
+                }, true, true, { useNoUserInfo: true });
+
+                expect(result.statusCode).toBe(201);
+
+                expect(mockSNSPublish).toHaveBeenCalledWith({
+                    TopicArn: 'arn:aws:sns:us-east-1:123456789012:test-topic',
+                    Message: JSON.stringify({
+                        projectId: 'test-project',
+                        todoItem: {
+                            id: EXAMPLE_ID,
+                            name: EXAMPLE_TODO_ITEM.name,
+                            description: EXAMPLE_TODO_ITEM.description
+                        },
+                        authorId: 'test-user-id',
+                        authorName: 'Someone'
+                    }),
+                    Subject: `New todo item added: ${EXAMPLE_TODO_ITEM.name}`
+                });
+            });
+
             it('should fallback to email when given_name is not available', async () => {
                 vi.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
                 vi.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
@@ -184,12 +246,36 @@ describe('Given the add_todo_item lambda handler', () => {
             it('should return status 500', async () => {
                 vi.mocked(putItem).mockRejectedValue(new Error('Upsert failed'));
 
-                const result = await runHandler({ 
+                const result = await runHandler({
                     body: JSON.stringify(EXAMPLE_TODO_ITEM)
                 }, true, true);
 
                 expect(result.statusCode).toBe(500);
             });
+        });
+    });
+
+    describe('When TOPIC_ARN is not set', () => {
+        it('should not attempt to publish and still return 201', async () => {
+            delete process.env.TODO_NOTIFICATIONS_TOPIC_ARN;
+
+            vi.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
+            vi.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
+            vi.mocked(putItem).mockResolvedValue({
+                $metadata: { httpStatusCode: 201 },
+            });
+
+            const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const result = await runHandler({
+                body: JSON.stringify(EXAMPLE_TODO_ITEM)
+            }, true, true);
+
+            expect(result.statusCode).toBe(201);
+            expect(mockSNSPublish).not.toHaveBeenCalled();
+            expect(mockConsoleWarn).toHaveBeenCalledWith('TODO_NOTIFICATIONS_TOPIC_ARN environment variable not set');
+
+            mockConsoleWarn.mockRestore();
         });
     });
 });
@@ -210,20 +296,29 @@ const runHandler = async (
     { body }: IAPIGatewayProxyEvent,
     includeProjectId: boolean = false,
     includeUserInfo: boolean = false,
-    options: { useEmailOnly?: boolean } = {}
+    options: { useEmailOnly?: boolean; useNameOnly?: boolean; useNoUserInfo?: boolean } = {}
 ) => {
     const event = { body } as any;
     if (includeProjectId) {
         event.headers = { "X-Project-ID": "test-project" };
     }
     if (includeUserInfo) {
+        const claims: Record<string, string> = {
+            sub: "test-user-id",
+        };
+        if (options.useNoUserInfo) {
+            // No name or email fields
+        } else if (options.useEmailOnly) {
+            claims.email = "test-user@example.com";
+        } else if (options.useNameOnly) {
+            claims.name = "John Doe";
+        } else {
+            claims.given_name = "John";
+            claims.email = "test-user@example.com";
+        }
         event.requestContext = {
             authorizer: {
-                claims: {
-                    sub: "test-user-id",
-                    ...(options.useEmailOnly ? {} : { given_name: "John" }),
-                    email: "test-user@example.com"
-                }
+                claims
             }
         };
     }

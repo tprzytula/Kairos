@@ -2,6 +2,10 @@ import { getBody } from ".";
 import { IRequestBody } from "./types";
 
 describe('Given the getBody function for update_shop', () => {
+    it('should return null when body is null', () => {
+        expect(getBody(null)).toBeNull();
+    });
+
     describe('When the body is valid', () => {
         it('should return the body with name only', () => {
             const bodyWithName = {
@@ -61,10 +65,28 @@ describe('Given the getBody function for update_shop', () => {
             expect(body).toBeNull();
         });
 
+        it('should return null when name is a non-string type', () => {
+            const body = getBody(JSON.stringify({ id: 'test-id', name: 123 }));
+
+            expect(body).toBeNull();
+        });
+
         it('should return null when icon is empty string', () => {
             const body = getBody(JSON.stringify({ id: 'test-id', icon: '' }));
 
             expect(body).toBeNull();
+        });
+
+        it('should return null when icon is a non-string type', () => {
+            const body = getBody(JSON.stringify({ id: 'test-id', icon: 123 }));
+
+            expect(body).toBeNull();
+        });
+
+        it('should accept null icon as valid (skip validation)', () => {
+            const body = getBody(JSON.stringify({ id: 'test-id', name: 'Shop', icon: null }));
+
+            expect(body).toEqual({ id: 'test-id', name: 'Shop', icon: null });
         });
     });
 

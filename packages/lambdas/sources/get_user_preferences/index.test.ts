@@ -2,6 +2,7 @@ import { handler } from "./index";
 import { getItem } from "@kairos-lambdas-libs/dynamodb";
 import { DynamoDBTable } from "@kairos-lambdas-libs/dynamodb/enums";
 import { IUserPreferences } from "@kairos-lambdas-libs/dynamodb/types";
+import * as utils from "./utils";
 
 vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
   DynamoDBTable: {
@@ -10,9 +11,14 @@ vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
   getItem: vi.fn(),
 }));
 
+vi.mock("./utils", async () => ({
+  ...(await vi.importActual("./utils")),
+}));
+
 describe("Given the get_user_preferences lambda handler", () => {
   afterEach(() => {
     vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe("When user is not authenticated", () => {
@@ -33,7 +39,7 @@ describe("Given the get_user_preferences lambda handler", () => {
 
         expect(result.statusCode).toBe(200);
         const preferences = JSON.parse(result.body);
-        
+
         expect(preferences.userId).toBe("user-123");
         expect(preferences.currentProjectId).toBeUndefined();
         expect(preferences.lastUpdated).toBeDefined();
@@ -60,7 +66,7 @@ describe("Given the get_user_preferences lambda handler", () => {
 
         expect(result.statusCode).toBe(200);
         const preferences = JSON.parse(result.body);
-        
+
         expect(preferences).toEqual(mockPreferences);
 
         expect(getItem).toHaveBeenCalledWith({
@@ -78,10 +84,24 @@ describe("Given the get_user_preferences lambda handler", () => {
 
         expect(result.statusCode).toBe(200);
         const preferences = JSON.parse(result.body);
-        
+
         expect(preferences.userId).toBe("user-123");
         expect(preferences.currentProjectId).toBeUndefined();
         expect(preferences.lastUpdated).toBeDefined();
+      });
+    });
+
+    describe("And getUserPreferences throws an unhandled error", () => {
+      it("should return status 500", async () => {
+        vi.spyOn(utils, 'getUserPreferences').mockRejectedValue(new Error("Unexpected failure"));
+        const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+        const result = await runHandler({ userId: "user-123" });
+
+        expect(result.statusCode).toBe(500);
+        expect(result.body).toBe("Failed to retrieve user preferences");
+
+        consoleSpy.mockRestore();
       });
     });
   });
@@ -101,6 +121,6 @@ const runHandler = async ({ userId }: MockEvent) => {
       }
     }
   } : {};
-  
+
   return await handler(event as any, {} as any, {} as any);
 };

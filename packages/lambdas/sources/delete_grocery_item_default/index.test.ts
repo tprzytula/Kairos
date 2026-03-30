@@ -1,0 +1,89 @@
+import * as DynamoDB from "@kairos-lambdas-libs/dynamodb";
+
+const { DynamoDBTable } = DynamoDB;
+
+import { handler } from "./index";
+
+vi.mock("@kairos-lambdas-libs/dynamodb", async () => ({
+    ...(await vi.importActual("@kairos-lambdas-libs/dynamodb")),
+    deleteItem: vi.fn(),
+}));
+
+describe('Given the delete_grocery_item_default lambda handler', () => {
+    it('should return 400 when name is missing', async () => {
+        const result = await runHandler({});
+
+        expect(result.statusCode).toBe(400);
+    });
+
+    it('should return 400 when name is a non-string type', async () => {
+        const result = await runHandler({ name: 123 as unknown });
+
+        expect(result.statusCode).toBe(400);
+    });
+
+    it('should return 400 when pathParameters is null', async () => {
+        const event = { pathParameters: null } as any;
+        const result = await handler(event, {} as any, {} as any);
+
+        expect(result.statusCode).toBe(400);
+    });
+
+    it('should make a delete request to the grocery items defaults table', async () => {
+        const deleteSpy = mockDelete();
+
+        await runHandler({ name: "Avocado" });
+
+        expect(deleteSpy).toHaveBeenCalledWith({
+            key: {
+                name: "Avocado",
+            },
+            tableName: DynamoDBTable.GROCERY_ITEMS_DEFAULTS,
+        });
+    });
+
+    it('should return status 200', async () => {
+        mockDelete();
+
+        const result = await runHandler({ name: "Avocado" });
+
+        expect(result.statusCode).toBe(200);
+    });
+
+    describe('When the delete request fails', () => {
+        it('should log the error', async () => {
+            const logSpy = vi.spyOn(console, 'error');
+
+            const deleteSpy = mockDelete();
+            deleteSpy.mockRejectedValue(new Error('Delete failed'));
+
+            await runHandler({ name: "Avocado" });
+
+            expect(logSpy).toHaveBeenCalledWith('Handler Threw Exception:', new Error('Delete failed'));
+        });
+
+        it('should return status 500', async () => {
+            const deleteSpy = mockDelete();
+            deleteSpy.mockRejectedValue(new Error('Delete failed'));
+
+            const result = await runHandler({ name: "Avocado" });
+
+            expect(result).toEqual({
+                body: "Internal Server Error",
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID",
+                    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+                },
+                statusCode: 500,
+            });
+        });
+    });
+});
+
+const mockDelete = () => vi.spyOn(DynamoDB, 'deleteItem');
+
+const runHandler = async (pathParameters: Record<string, unknown>) => {
+    const event = { pathParameters } as any;
+    return await handler(event, {} as any, {} as any);
+}

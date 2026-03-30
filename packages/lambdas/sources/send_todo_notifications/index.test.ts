@@ -235,6 +235,54 @@ describe('send_todo_notifications Lambda', () => {
       expect(response.body).toContain("Failed to send notifications");
     });
 
+    it("should use fallback project name when getProject throws an error", async () => {
+      const notificationMessage = {
+        projectId: mockProjectId,
+        todoItem: mockTodoItem,
+        authorId: mockAuthorId,
+        authorName: 'John Doe'
+      };
+
+      const mockProjectMembers = [
+        { userId: "member-1", projectId: mockProjectId, role: "member" }
+      ];
+
+      const mockPushSubscriptions = [
+        {
+          userId: "member-1",
+          endpoint: "https://push.service.com/endpoint-1",
+          keys: { p256dh: "key1", auth: "auth1" },
+          createdAt: Date.now()
+        }
+      ];
+
+      mockQuery
+        .mockResolvedValueOnce(mockProjectMembers)
+        .mockResolvedValueOnce(mockPushSubscriptions);
+
+      mockGetItem.mockRejectedValueOnce(new Error("Project not found"));
+
+      const event = createSNSEvent(notificationMessage);
+
+      const response = await handler(event, {} as any, {} as any);
+      expect(response.statusCode).toBe(200);
+      expect(mockSendNotification).toHaveBeenCalledWith(
+        {
+          endpoint: "https://push.service.com/endpoint-1",
+          keys: { p256dh: "key1", auth: "auth1" },
+        },
+        JSON.stringify({
+          title: "New todo in your project",
+          body: "John Doe added: Test Todo Item",
+          data: {
+            projectId: mockProjectId,
+            todoId: mockTodoItem.id,
+            type: "todo_added"
+          }
+        })
+      );
+    });
+
     it("should handle projects with no members", async () => {
       const notificationMessage = {
         projectId: mockProjectId,
@@ -280,7 +328,7 @@ describe('send_todo_notifications Lambda', () => {
       mockQuery
         .mockResolvedValueOnce(mockProjectMembers)
         .mockResolvedValueOnce([]);
-      
+
       mockGetItem.mockResolvedValueOnce(mockProject);
 
       const event = createSNSEvent(notificationMessage);
@@ -288,6 +336,191 @@ describe('send_todo_notifications Lambda', () => {
       const response = await handler(event, {} as any, {} as any);
       expect(response.statusCode).toBe(200);
       expect(response.body).toContain("Notifications sent successfully");
+    });
+
+    it("should return empty array when getUserPushSubscriptions query fails", async () => {
+      const notificationMessage = {
+        projectId: mockProjectId,
+        todoItem: mockTodoItem,
+        authorId: mockAuthorId,
+        authorName: 'John Doe'
+      };
+
+      const mockProjectMembers = [
+        { userId: "member-1", projectId: mockProjectId, role: "member" }
+      ];
+
+      const mockProject = {
+        id: mockProjectId,
+        name: "Test Project",
+        ownerId: mockAuthorId
+      };
+
+      mockQuery
+        .mockResolvedValueOnce(mockProjectMembers)
+        .mockRejectedValueOnce(new Error("Push subscription query failed"));
+
+      mockGetItem.mockResolvedValueOnce(mockProject);
+
+      const event = createSNSEvent(notificationMessage);
+
+      const response = await handler(event, {} as any, {} as any);
+      expect(response.statusCode).toBe(200);
+      expect(mockSendNotification).not.toHaveBeenCalled();
+    });
+
+    it("should throw when VAPID keys are not configured", async () => {
+      delete process.env.VAPID_PUBLIC_KEY;
+      delete process.env.VAPID_PRIVATE_KEY;
+
+      const notificationMessage = {
+        projectId: mockProjectId,
+        todoItem: mockTodoItem,
+        authorId: mockAuthorId,
+        authorName: 'John Doe'
+      };
+
+      const mockProjectMembers = [
+        { userId: "member-1", projectId: mockProjectId, role: "member" }
+      ];
+
+      const mockProject = {
+        id: mockProjectId,
+        name: "Test Project",
+        ownerId: mockAuthorId
+      };
+
+      const mockPushSubscriptions = [
+        {
+          userId: "member-1",
+          endpoint: "https://push.service.com/endpoint-1",
+          keys: { p256dh: "key1", auth: "auth1" },
+          createdAt: Date.now()
+        }
+      ];
+
+      mockQuery
+        .mockResolvedValueOnce(mockProjectMembers)
+        .mockResolvedValueOnce(mockPushSubscriptions);
+
+      mockGetItem.mockResolvedValueOnce(mockProject);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const event = createSNSEvent(notificationMessage);
+
+      const response = await handler(event, {} as any, {} as any);
+      expect(response.statusCode).toBe(200);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Failed to send web push notification:",
+        expect.objectContaining({ message: 'VAPID keys are not configured in environment variables' })
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should handle expired push subscriptions (410 status)", async () => {
+      const notificationMessage = {
+        projectId: mockProjectId,
+        todoItem: mockTodoItem,
+        authorId: mockAuthorId,
+        authorName: 'John Doe'
+      };
+
+      const mockProjectMembers = [
+        { userId: "member-1", projectId: mockProjectId, role: "member" }
+      ];
+
+      const mockProject = {
+        id: mockProjectId,
+        name: "Test Project",
+        ownerId: mockAuthorId
+      };
+
+      const mockPushSubscriptions = [
+        {
+          userId: "member-1",
+          endpoint: "https://push.service.com/endpoint-1",
+          keys: { p256dh: "key1", auth: "auth1" },
+          createdAt: Date.now()
+        }
+      ];
+
+      mockQuery
+        .mockResolvedValueOnce(mockProjectMembers)
+        .mockResolvedValueOnce(mockPushSubscriptions);
+
+      mockGetItem.mockResolvedValueOnce(mockProject);
+
+      const pushError = new Error("Gone") as any;
+      pushError.statusCode = 410;
+      mockSendNotification.mockRejectedValueOnce(pushError);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      const event = createSNSEvent(notificationMessage);
+
+      const response = await handler(event, {} as any, {} as any);
+      expect(response.statusCode).toBe(200);
+      expect(logSpy).toHaveBeenCalledWith(
+        "Subscription https://push.service.com/endpoint-1 is no longer valid"
+      );
+
+      consoleSpy.mockRestore();
+      logSpy.mockRestore();
+    });
+
+    it("should handle not found push subscriptions (404 status)", async () => {
+      const notificationMessage = {
+        projectId: mockProjectId,
+        todoItem: mockTodoItem,
+        authorId: mockAuthorId,
+        authorName: 'John Doe'
+      };
+
+      const mockProjectMembers = [
+        { userId: "member-1", projectId: mockProjectId, role: "member" }
+      ];
+
+      const mockProject = {
+        id: mockProjectId,
+        name: "Test Project",
+        ownerId: mockAuthorId
+      };
+
+      const mockPushSubscriptions = [
+        {
+          userId: "member-1",
+          endpoint: "https://push.service.com/endpoint-1",
+          keys: { p256dh: "key1", auth: "auth1" },
+          createdAt: Date.now()
+        }
+      ];
+
+      mockQuery
+        .mockResolvedValueOnce(mockProjectMembers)
+        .mockResolvedValueOnce(mockPushSubscriptions);
+
+      mockGetItem.mockResolvedValueOnce(mockProject);
+
+      const pushError = new Error("Not Found") as any;
+      pushError.statusCode = 404;
+      mockSendNotification.mockRejectedValueOnce(pushError);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      const event = createSNSEvent(notificationMessage);
+
+      const response = await handler(event, {} as any, {} as any);
+      expect(response.statusCode).toBe(200);
+      expect(logSpy).toHaveBeenCalledWith(
+        "Subscription https://push.service.com/endpoint-1 is no longer valid"
+      );
+
+      consoleSpy.mockRestore();
+      logSpy.mockRestore();
     });
   });
 });

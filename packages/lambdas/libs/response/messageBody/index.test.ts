@@ -55,4 +55,10 @@ describe("Given the createBody function", () => {
       }),
     );
   });
+
+  it("should return 'No response' for an unknown status code without a message", () => {
+    const response = createBody({ statusCode: 418 });
+
+    expect(response).toBe("No response");
+  });
 });

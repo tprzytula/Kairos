@@ -157,9 +157,107 @@ describe("Given the get_user_projects lambda handler", () => {
 
         expect(result.statusCode).toBe(200);
         const returnedProjects = JSON.parse(result.body);
-        
+
         expect(returnedProjects).toHaveLength(1);
         expect(returnedProjects[0].id).toBe("project-1");
+      });
+    });
+
+    describe("And a project retrieval throws an error", () => {
+      it("should skip the errored project and return the rest", async () => {
+        const mockMemberships: IProjectMember[] = [
+          {
+            projectId: "project-1",
+            userId: "user-123",
+            role: ProjectRole.OWNER,
+            joinedAt: 1234567890,
+          },
+          {
+            projectId: "project-2",
+            userId: "user-123",
+            role: ProjectRole.MEMBER,
+            joinedAt: 1234567900,
+          },
+        ];
+
+        const mockProject: IProject = {
+          id: "project-1",
+          name: "My Personal Project",
+          ownerId: "user-123",
+          createdAt: 1234567880,
+          isPersonal: true,
+        };
+
+        vi.mocked(query).mockResolvedValue(mockMemberships);
+        vi.mocked(getItem)
+          .mockResolvedValueOnce(mockProject)
+          .mockRejectedValueOnce(new Error("Failed to get project"));
+
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const result = await runHandler({ userId: "user-123" });
+
+        expect(result.statusCode).toBe(200);
+        const returnedProjects = JSON.parse(result.body);
+
+        expect(returnedProjects).toHaveLength(1);
+        expect(returnedProjects[0].id).toBe("project-1");
+        expect(warnSpy).toHaveBeenCalledWith(
+          "Failed to get project project-2:",
+          expect.any(Error)
+        );
+
+        warnSpy.mockRestore();
+      });
+    });
+
+    describe("And projects have the same isPersonal value", () => {
+      it("should sort by createdAt descending", async () => {
+        const mockMemberships: IProjectMember[] = [
+          {
+            projectId: "project-1",
+            userId: "user-123",
+            role: ProjectRole.OWNER,
+            joinedAt: 1234567890,
+          },
+          {
+            projectId: "project-2",
+            userId: "user-123",
+            role: ProjectRole.MEMBER,
+            joinedAt: 1234567900,
+          },
+        ];
+
+        const mockProjects: IProject[] = [
+          {
+            id: "project-1",
+            name: "Older Project",
+            ownerId: "user-123",
+            createdAt: 1234567880,
+            isPersonal: false,
+          },
+          {
+            id: "project-2",
+            name: "Newer Project",
+            ownerId: "user-456",
+            createdAt: 1234567990,
+            isPersonal: false,
+          },
+        ];
+
+        vi.mocked(query).mockResolvedValue(mockMemberships);
+        vi.mocked(getItem)
+          .mockResolvedValueOnce(mockProjects[0])
+          .mockResolvedValueOnce(mockProjects[1]);
+
+        const result = await runHandler({ userId: "user-123" });
+
+        expect(result.statusCode).toBe(200);
+        const returnedProjects = JSON.parse(result.body);
+
+        expect(returnedProjects).toHaveLength(2);
+        expect(returnedProjects[0].id).toBe("project-2");
+        expect(returnedProjects[1].id).toBe("project-1");
       });
     });
   });

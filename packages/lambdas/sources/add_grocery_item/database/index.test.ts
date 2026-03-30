@@ -99,6 +99,45 @@ describe('Given the upsertItem function', () => {
 
         expect(vi.mocked(query)).not.toHaveBeenCalled();
     });
+
+    describe('When updating an existing item that has no category', () => {
+        it('should add category to the update fields when new item has a category', async () => {
+            const projectItems = [{ ...EXAMPLE_GROCERY_ITEM, category: undefined }] as IGroceryItem[];
+            const itemWithCategory = { ...EXAMPLE_GROCERY_ITEM, category: 'Produce' } as IGroceryItem;
+
+            await upsertItem(itemWithCategory, projectItems);
+
+            expect(vi.mocked(updateItem)).toHaveBeenCalledWith({
+                key: { id: '1' },
+                tableName: DynamoDBTable.GROCERY_LIST,
+                updatedFields: { quantity: 2, category: 'Produce' },
+            });
+        });
+
+        it('should update the in-memory category when category is added', async () => {
+            const projectItems = [{ ...EXAMPLE_GROCERY_ITEM, category: undefined }] as IGroceryItem[];
+            const itemWithCategory = { ...EXAMPLE_GROCERY_ITEM, category: 'Produce' } as IGroceryItem;
+
+            await upsertItem(itemWithCategory, projectItems);
+
+            expect(projectItems[0].category).toBe('Produce');
+        });
+    });
+
+    describe('When updating an existing item that already has a category', () => {
+        it('should not overwrite the existing category', async () => {
+            const projectItems = [{ ...EXAMPLE_GROCERY_ITEM, category: 'Existing' }] as IGroceryItem[];
+            const itemWithCategory = { ...EXAMPLE_GROCERY_ITEM, category: 'New' } as IGroceryItem;
+
+            await upsertItem(itemWithCategory, projectItems);
+
+            expect(vi.mocked(updateItem)).toHaveBeenCalledWith({
+                key: { id: '1' },
+                tableName: DynamoDBTable.GROCERY_LIST,
+                updatedFields: { quantity: 2 },
+            });
+        });
+    });
 });
 
 const EXAMPLE_GROCERY_ITEM: IGroceryItem = {

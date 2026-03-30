@@ -29,6 +29,14 @@ describe('Given the getBody function', () => {
         },
     );
 
+    describe('When the body is null', () => {
+        it('should return null', () => {
+            const body = getBody(null);
+
+            expect(body).toBeNull();
+        });
+    });
+
     describe('When the body is invalid JSON', () => {
         it('should return null', () => {
             const body = getBody('invalid JSON');
@@ -38,7 +46,7 @@ describe('Given the getBody function', () => {
 
         it('should log the error', () => {
             const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-            
+
             getBody('invalid JSON');
 
             expect(consoleSpy).toHaveBeenCalledWith('Failed to parse body:', new SyntaxError(`Unexpected token 'i', "invalid JSON" is not valid JSON`));

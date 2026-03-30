@@ -50,6 +50,26 @@ describe("Given the query command", () => {
       expect(items).toEqual([]);
     });
   });
+
+  describe("When Items is undefined", () => {
+    it("should return an empty array", async () => {
+      const mockClient = {
+        send: vi.fn().mockResolvedValue({
+          Items: undefined,
+        }),
+      } as unknown as DynamoDBDocumentClient;
+
+      vi.spyOn(Client, "getDocumentClient").mockReturnValue(mockClient);
+
+      const items = await query({
+        tableName: DynamoDBTable.GROCERY_LIST,
+        indexName: "test",
+        attributes: { name: "test" },
+      });
+
+      expect(items).toEqual([]);
+    });
+  });
 });
 
 const EXAMPLE_ITEM = {

@@ -110,6 +110,16 @@ describe('Migration Runner Functions', () => {
       expect(results[0].error).toBe('Database connection lost');
     });
 
+    it('should handle non-Error thrown values with "Unknown error" message', async () => {
+      vi.mocked(tracker.isMigrationExecuted).mockRejectedValue('string error');
+
+      const results = await runner.runMigrations(mockMigrations);
+
+      expect(results).toHaveLength(1);
+      expect(results[0].status).toBe('failed');
+      expect(results[0].error).toBe('Unknown error');
+    });
+
     it('should log migration progress', async () => {
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation();
       vi.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);

@@ -21,18 +21,6 @@ export const handler: Handler = middleware(async (event) => {
     ];
     
     console.log(`Loaded ${migrations.length} embedded migrations`);
-    
-    if (migrations.length === 0) {
-      console.log("No migrations found");
-      return createResponse({
-        statusCode: 200,
-        message: {
-          success: true,
-          message: "No migrations to execute",
-          results: [],
-        },
-      });
-    }
 
     const results = await runMigrations(migrations);
 

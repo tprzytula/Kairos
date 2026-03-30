@@ -17,6 +17,18 @@ describe('Given the delete_noise_tracking_item lambda handler', () => {
         expect(result.body).toBe("Project ID is required");
     });
 
+    it('should return 400 when timestamp is missing', async () => {
+        const result = await runHandler({ pathParameters: {} }, true);
+
+        expect(result.statusCode).toBe(400);
+    });
+
+    it('should return 400 when pathParameters is undefined', async () => {
+        const result = await runHandler({ pathParameters: undefined as any }, true);
+
+        expect(result.statusCode).toBe(400);
+    });
+
     it('should make a delete request to the noise tracking table', async () => {
         const deleteSpy = mockDelete();
 

@@ -74,5 +74,16 @@ describe('Migration Executor Functions', () => {
       expect(result.status).toBe('failed');
       expect(result.error).toBe('Execution failed');
     });
+
+    it('should handle non-Error thrown values with "Unknown error" message', async () => {
+      vi.mocked(tracker.isMigrationExecuted).mockResolvedValue(false);
+      vi.mocked(tracker.validateMigrationChecksum).mockResolvedValue(true);
+      (mockMigration.execute as Mock).mockRejectedValue('string rejection');
+
+      const result = await executor.executeMigration(mockMigration);
+
+      expect(result.status).toBe('failed');
+      expect(result.error).toBe('Unknown error');
+    });
   });
 });

@@ -125,4 +125,73 @@ describe("Given the getBody function", () => {
 
     expect(result).toBeNull();
   });
-}); 
+
+  it("should return null when quantity is a non-string type", () => {
+    const invalidBody = JSON.stringify({
+      id: "test-id",
+      quantity: 5,
+    });
+
+    const result = getBody(invalidBody);
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when imagePath is a non-string type", () => {
+    const invalidBody = JSON.stringify({
+      id: "test-id",
+      imagePath: 123,
+    });
+
+    const result = getBody(invalidBody);
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when shopId is empty string", () => {
+    const invalidBody = JSON.stringify({
+      id: "test-id",
+      shopId: "",
+    });
+
+    const result = getBody(invalidBody);
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when shopId is only whitespace", () => {
+    const invalidBody = JSON.stringify({
+      id: "test-id",
+      shopId: "   ",
+    });
+
+    const result = getBody(invalidBody);
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when shopId is a non-string type", () => {
+    const invalidBody = JSON.stringify({
+      id: "test-id",
+      shopId: 123,
+    });
+
+    const result = getBody(invalidBody);
+
+    expect(result).toBeNull();
+  });
+
+  it("should return the parsed body when shopId is valid", () => {
+    const validBody = JSON.stringify({
+      id: "test-id",
+      shopId: "shop-1",
+    });
+
+    const result = getBody(validBody);
+
+    expect(result).toEqual({
+      id: "test-id",
+      shopId: "shop-1",
+    });
+  });
+});

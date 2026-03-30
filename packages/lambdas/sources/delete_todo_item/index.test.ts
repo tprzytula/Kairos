@@ -17,6 +17,18 @@ describe('Given the delete_todo_item lambda handler', () => {
         expect(result.body).toBe("Project ID is required");
     });
 
+    it('should return 400 when body is missing', async () => {
+        const result = await runHandlerRaw({ body: null }, true);
+
+        expect(result.statusCode).toBe(400);
+    });
+
+    it('should return 400 when ids is not an array', async () => {
+        const result = await runHandler({ body: { ids: "not-an-array" as any } }, true);
+
+        expect(result.statusCode).toBe(400);
+    });
+
     it('should make a delete request to the todo list table', async () => {
         const deleteSpy = mockDelete();
 
@@ -75,6 +87,14 @@ interface IAPIGatewayProxyEvent {
 
 const runHandler = async ({ body }: IAPIGatewayProxyEvent, includeProjectId: boolean = false) => {
     const event = { body: JSON.stringify(body) } as any;
+    if (includeProjectId) {
+        event.headers = { "X-Project-ID": "test-project" };
+    }
+    return await handler(event, {} as any, {} as any);
+}
+
+const runHandlerRaw = async ({ body }: { body: string | null }, includeProjectId: boolean = false) => {
+    const event = { body } as any;
     if (includeProjectId) {
         event.headers = { "X-Project-ID": "test-project" };
     }

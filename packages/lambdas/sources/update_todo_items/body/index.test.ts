@@ -10,6 +10,14 @@ describe('Given the getBody function', () => {
         });
     });
 
+    describe('When the body is null', () => {
+        it('should return null', () => {
+            const body = getBody(null);
+
+            expect(body).toBeNull();
+        });
+    });
+
     describe('When the body is invalid', () => {
         it('should return null', () => {
             const body = getBody(JSON.stringify({}));
@@ -39,6 +47,14 @@ describe('Given the getBody function', () => {
             });
         },
     );
+
+    describe('When isDone is a non-boolean type', () => {
+        it('should return null', () => {
+            const body = getBody(JSON.stringify({ items: [{ id: EXAMPLE_ID, isDone: "true" }] }));
+
+            expect(body).toBeNull();
+        });
+    });
 
     describe('When the body is invalid JSON', () => {
         it('should return null', () => {

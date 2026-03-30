@@ -17,6 +17,19 @@ describe('Given the delete_grocery_item lambda handler', () => {
         expect(result.body).toBe("Project ID is required");
     });
 
+    it('should return 400 when id is a non-string type', async () => {
+        const result = await runHandler({ pathParameters: { id: 123 as unknown } }, true);
+
+        expect(result.statusCode).toBe(400);
+    });
+
+    it('should return 400 when pathParameters is null', async () => {
+        const event = { pathParameters: null, headers: { "X-Project-ID": "test-project" } } as any;
+        const result = await handler(event, {} as any, {} as any);
+
+        expect(result.statusCode).toBe(400);
+    });
+
     it('should make a delete request to the grocery list table', async () => {
         const deleteSpy = mockDelete();
 

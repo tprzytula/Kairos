@@ -53,6 +53,37 @@ describe('Given the get_grocery_items lambda handler', () => {
         expect(result.body).toStrictEqual(JSON.stringify(EXAMPLE_DB_GROCERY_ITEMS));
     });
 
+    describe('When shopId query parameter is provided', () => {
+        it('should filter items by shopId', async () => {
+            const itemsWithShops = [
+                ...EXAMPLE_DB_GROCERY_ITEMS,
+                {
+                    id: "4",
+                    projectId: "test-project",
+                    name: "Cherry",
+                    quantity: "1",
+                    imagePath: "Image 4",
+                    unit: GroceryItemUnit.KILOGRAM,
+                    shopId: "shop-1",
+                },
+            ];
+
+            vi.spyOn(DynamoDB, 'query').mockResolvedValue(itemsWithShops);
+
+            const event = {
+                headers: { "X-Project-ID": "test-project" },
+                queryStringParameters: { shopId: "shop-1" },
+            } as any;
+
+            const result = await handler(event, {} as any, {} as any);
+
+            expect(result.statusCode).toBe(200);
+            const body = JSON.parse(result.body);
+            expect(body).toHaveLength(1);
+            expect(body[0].shopId).toBe("shop-1");
+        });
+    });
+
     describe('When the query request fails', () => {
         it('should log the error', async () => {
             const logSpy = vi.spyOn(console, 'error');

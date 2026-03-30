@@ -1,5 +1,5 @@
 import { Callback, Context, APIGatewayProxyEvent } from "aws-lambda";
-import { middleware, extractUserFromEvent, extractProjectFromEvent } from ".";
+import { middleware, extractUserFromEvent, extractUserObjectFromEvent, extractProjectFromEvent } from ".";
 
 describe("Given the middleware", () => {
   describe("When invoked with a function", () => {
@@ -139,6 +139,22 @@ describe("Given the middleware", () => {
       expect(userId).toBe("user-456");
     });
 
+    it("should return null when JWT payload has no sub field", () => {
+      const mockJWT = Buffer.from(JSON.stringify({})).toString('base64') +
+                     '.' + Buffer.from(JSON.stringify({ email: "test@example.com" })).toString('base64') +
+                     '.' + Buffer.from('signature').toString('base64');
+
+      const event: Partial<APIGatewayProxyEvent> = {
+        headers: {
+          Authorization: `Bearer ${mockJWT}`
+        }
+      };
+
+      const userId = extractUserFromEvent(event as APIGatewayProxyEvent);
+
+      expect(userId).toBe(null);
+    });
+
     it("should return null when no authentication info available", () => {
       const event: Partial<APIGatewayProxyEvent> = {};
 
@@ -179,6 +195,170 @@ describe("Given the middleware", () => {
       const projectId = extractProjectFromEvent(event as APIGatewayProxyEvent);
 
       expect(projectId).toBe(null);
+    });
+  });
+
+  describe("extractUserFromEvent error handling", () => {
+    it("should return null and log error when event processing throws", () => {
+      const errorSpy = vi.spyOn(console, "error").mockImplementation();
+
+      const event = {
+        get requestContext(): any {
+          throw new Error("Unexpected failure");
+        },
+        headers: {},
+      } as unknown as APIGatewayProxyEvent;
+
+      const userId = extractUserFromEvent(event);
+
+      expect(userId).toBe(null);
+      expect(errorSpy).toHaveBeenCalledWith(
+        "Failed to extract user from event:",
+        expect.any(Error),
+      );
+    });
+
+    it("should return null when JWT payload decoding fails", () => {
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation();
+
+      const event: Partial<APIGatewayProxyEvent> = {
+        headers: {
+          Authorization: "Bearer invalid.notbase64.token",
+        },
+      };
+
+      const userId = extractUserFromEvent(event as APIGatewayProxyEvent);
+
+      expect(userId).toBe(null);
+      expect(warnSpy).toHaveBeenCalledWith(
+        "Failed to decode JWT payload:",
+        expect.any(Error),
+      );
+    });
+  });
+
+  describe("extractUserObjectFromEvent", () => {
+    it("should extract user object from Cognito claims", () => {
+      const event: Partial<APIGatewayProxyEvent> = {
+        requestContext: {
+          authorizer: {
+            claims: {
+              sub: "user-123",
+              email: "test@example.com",
+              name: "Test User",
+              given_name: "Test",
+              family_name: "User",
+            },
+          },
+        } as any,
+      };
+
+      const user = extractUserObjectFromEvent(event as APIGatewayProxyEvent);
+
+      expect(user).toEqual({
+        sub: "user-123",
+        email: "test@example.com",
+        name: "Test User",
+        given_name: "Test",
+        family_name: "User",
+      });
+    });
+
+    it("should extract user object from JWT Bearer token with sub", () => {
+      const payload = {
+        sub: "user-789",
+        email: "jwt@example.com",
+        name: "JWT User",
+        given_name: "JWT",
+        family_name: "User",
+      };
+      const mockJWT =
+        Buffer.from(JSON.stringify({})).toString("base64") +
+        "." +
+        Buffer.from(JSON.stringify(payload)).toString("base64") +
+        "." +
+        Buffer.from("signature").toString("base64");
+
+      const event: Partial<APIGatewayProxyEvent> = {
+        headers: {
+          Authorization: `Bearer ${mockJWT}`,
+        },
+      };
+
+      const user = extractUserObjectFromEvent(event as APIGatewayProxyEvent);
+
+      expect(user).toEqual({
+        sub: "user-789",
+        email: "jwt@example.com",
+        name: "JWT User",
+        given_name: "JWT",
+        family_name: "User",
+      });
+    });
+
+    it("should return null when JWT payload has no sub field", () => {
+      const payload = { email: "no-sub@example.com" };
+      const mockJWT =
+        Buffer.from(JSON.stringify({})).toString("base64") +
+        "." +
+        Buffer.from(JSON.stringify(payload)).toString("base64") +
+        "." +
+        Buffer.from("signature").toString("base64");
+
+      const event: Partial<APIGatewayProxyEvent> = {
+        headers: {
+          Authorization: `Bearer ${mockJWT}`,
+        },
+      };
+
+      const user = extractUserObjectFromEvent(event as APIGatewayProxyEvent);
+
+      expect(user).toBe(null);
+    });
+
+    it("should return null when no authentication info available", () => {
+      const event: Partial<APIGatewayProxyEvent> = {};
+
+      const user = extractUserObjectFromEvent(event as APIGatewayProxyEvent);
+
+      expect(user).toBe(null);
+    });
+
+    it("should return null and log error when event processing throws", () => {
+      const errorSpy = vi.spyOn(console, "error").mockImplementation();
+
+      const event = {
+        get requestContext(): any {
+          throw new Error("Unexpected failure");
+        },
+        headers: {},
+      } as unknown as APIGatewayProxyEvent;
+
+      const user = extractUserObjectFromEvent(event);
+
+      expect(user).toBe(null);
+      expect(errorSpy).toHaveBeenCalledWith(
+        "Failed to extract user object from event:",
+        expect.any(Error),
+      );
+    });
+
+    it("should return null when JWT payload decoding fails", () => {
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation();
+
+      const event: Partial<APIGatewayProxyEvent> = {
+        headers: {
+          Authorization: "Bearer invalid.notbase64.token",
+        },
+      };
+
+      const user = extractUserObjectFromEvent(event as APIGatewayProxyEvent);
+
+      expect(user).toBe(null);
+      expect(warnSpy).toHaveBeenCalledWith(
+        "Failed to decode JWT payload:",
+        expect.any(Error),
+      );
     });
   });
 });
