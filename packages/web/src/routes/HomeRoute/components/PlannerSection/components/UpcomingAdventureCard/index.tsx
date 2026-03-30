@@ -183,19 +183,21 @@ export const UpcomingAdventureCard: React.FC<IUpcomingAdventureCardProps> = ({ a
                     {dayLabel}
                   </HeroLabel>
                   <HeroTitle>{adventure.name}</HeroTitle>
-                  {(adventure.time || adventure.location) && (
+                  {(adventure.time || adventure.endTime || adventure.location) && (
                     <HeroMeta>
-                      {adventure.time && (
+                      {(adventure.time || adventure.endTime) && (
                         <>
                           <AccessTimeIcon />
-                          {adventure.time}
+                          {adventure.time && adventure.endTime
+                            ? `${adventure.time} - ${adventure.endTime}`
+                            : adventure.time ?? adventure.endTime}
                         </>
                       )}
                       {adventure.location && (() => {
                         const { label, href } = getLocationLink(adventure.location)
                         return (
                           <>
-                            {adventure.time && <span>·</span>}
+                            {(adventure.time || adventure.endTime) && <span>·</span>}
                             <LocationOnIcon />
                             <a
                               href={href}

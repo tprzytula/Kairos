@@ -115,6 +115,7 @@ const AdventureForm = () => {
   )
   const [endDate, setEndDate] = useState<Dayjs | null>(null)
   const [time, setTime] = useState('')
+  const [endTime, setEndTime] = useState('')
   const [location, setLocation] = useState('')
   const [notes, setNotes] = useState('')
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -182,6 +183,7 @@ const AdventureForm = () => {
         date: date!.format('YYYY-MM-DD'),
         endDate: endDate?.isValid() ? endDate.format('YYYY-MM-DD') : undefined,
         time: time.trim() || undefined,
+        endTime: endTime.trim() || undefined,
         location: location.trim() || undefined,
         notes: notes.trim() || undefined,
         imagePath,
@@ -193,7 +195,7 @@ const AdventureForm = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [canSave, name, date, endDate, time, location, notes, imagePath, isPrivate, addAdventure, navigate])
+  }, [canSave, name, date, endDate, time, endTime, location, notes, imagePath, isPrivate, addAdventure, navigate])
 
   return (
     <FormContainer>
@@ -344,6 +346,16 @@ const AdventureForm = () => {
                 type="time"
                 value={time}
                 onChange={e => setTime(e.target.value)}
+                disabled={isLoading}
+                InputLabelProps={{ shrink: true }}
+              />
+
+              <AdventureTextField
+                fullWidth
+                label="End time (optional)"
+                type="time"
+                value={endTime}
+                onChange={e => setEndTime(e.target.value)}
                 disabled={isLoading}
                 InputLabelProps={{ shrink: true }}
               />

@@ -17,6 +17,10 @@ const validateBody = (body: any): body is IRequestBody => {
     return false;
   }
 
+  if (body.endTime !== undefined && body.endTime !== null && typeof body.endTime !== 'string') {
+    return false;
+  }
+
   if (body.location !== undefined && body.location !== null && typeof body.location !== 'string') {
     return false;
   }

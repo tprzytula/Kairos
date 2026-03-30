@@ -128,6 +128,7 @@ const EditAdventureContent = () => {
   const [date, setDate] = useState<Dayjs | null>(null)
   const [endDate, setEndDate] = useState<Dayjs | null>(null)
   const [time, setTime] = useState('')
+  const [endTime, setEndTime] = useState('')
   const [location, setLocation] = useState('')
   const [notes, setNotes] = useState('')
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -145,6 +146,7 @@ const EditAdventureContent = () => {
       setDate(dayjs(adventure.date))
       setEndDate(adventure.endDate ? dayjs(adventure.endDate) : null)
       setTime(adventure.time ?? '')
+      setEndTime(adventure.endTime ?? '')
       setLocation(adventure.location ?? '')
       setNotes(adventure.notes ?? '')
       setImagePath(adventure.imagePath)
@@ -213,6 +215,7 @@ const EditAdventureContent = () => {
         date: date!.format('YYYY-MM-DD'),
         endDate: endDate?.isValid() ? endDate.format('YYYY-MM-DD') : null,
         time: time.trim() || null,
+        endTime: endTime.trim() || null,
         location: location.trim() || null,
         notes: notes.trim() || null,
         imagePath: imagePath ?? null,
@@ -225,7 +228,7 @@ const EditAdventureContent = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [canSave, id, name, date, endDate, time, location, notes, imagePath, isPrivate, updateAdventure, dispatch, navigate])
+  }, [canSave, id, name, date, endDate, time, endTime, location, notes, imagePath, isPrivate, updateAdventure, dispatch, navigate])
 
   const displayImageUrl = previewUrl ?? (adventure?.imagePath ? adventure.imagePath : null)
 
@@ -355,6 +358,16 @@ const EditAdventureContent = () => {
                   type="time"
                   value={time}
                   onChange={e => setTime(e.target.value)}
+                  disabled={isLoading}
+                  InputLabelProps={{ shrink: true }}
+                />
+
+                <AdventureTextField
+                  fullWidth
+                  label="End time (optional)"
+                  type="time"
+                  value={endTime}
+                  onChange={e => setEndTime(e.target.value)}
                   disabled={isLoading}
                   InputLabelProps={{ shrink: true }}
                 />
