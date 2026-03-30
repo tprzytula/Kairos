@@ -11,14 +11,8 @@ import CloseIcon from '@mui/icons-material/Close'
 import { IAdventure } from '../../types/adventure'
 import { getLocationLink } from '../../utils/location'
 import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
-import DraggableBottomDrawer from '../DraggableBottomDrawer'
-import {
-  DrawerHeader,
-  DrawerHeaderLeft,
-  DrawerIconBox,
-  DrawerTitle,
-  ContentContainer,
-} from '../DrawerHeader/index.styled'
+import BasePreviewDrawer from '../BasePreviewDrawer'
+import { ContentContainer } from '../DrawerHeader/index.styled'
 import {
   HeroImage,
   HeroPlaceholder,
@@ -68,23 +62,14 @@ const AdventurePreviewDrawer = ({ item, onClose, onEdit, onDelete }: AdventurePr
   const placeholderSeed = item?.name.charCodeAt(0) ?? 0
 
   return (
-    <DraggableBottomDrawer
+    <BasePreviewDrawer
       open={item !== null}
       onClose={onClose}
+      icon={<ExploreIcon />}
+      title="Adventure"
+      gradient={ADVENTURE_GRADIENT}
+      headerRight={<IconButton size="small" onClick={onClose} aria-label="Close"><CloseIcon /></IconButton>}
       paperSx={{ height: 'calc(100% - env(safe-area-inset-top) - 16px)' }}
-      dragHandleContent={
-        <DrawerHeader>
-          <DrawerHeaderLeft>
-            <DrawerIconBox gradient={ADVENTURE_GRADIENT}>
-              <ExploreIcon />
-            </DrawerIconBox>
-            <DrawerTitle gradient={ADVENTURE_GRADIENT}>Adventure</DrawerTitle>
-          </DrawerHeaderLeft>
-          <IconButton size="small" onClick={onClose} aria-label="Close">
-            <CloseIcon />
-          </IconButton>
-        </DrawerHeader>
-      }
     >
       <ContentContainer>
         {item?.imagePath ? (
@@ -177,7 +162,7 @@ const AdventurePreviewDrawer = ({ item, onClose, onEdit, onDelete }: AdventurePr
           color="error"
         />
       </Footer>
-    </DraggableBottomDrawer>
+    </BasePreviewDrawer>
   )
 }
 

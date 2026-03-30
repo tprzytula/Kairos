@@ -8,16 +8,12 @@ import EditIcon from '@mui/icons-material/Edit'
 import dayjs from 'dayjs'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
-import DraggableBottomDrawer from '../DraggableBottomDrawer'
+import BasePreviewDrawer from '../BasePreviewDrawer'
 import DrawerActionButton from '../DrawerActionButton'
 import PrivateItemBadge from '../PrivateItemBadge'
 import {
   ContentContainer,
   DescriptionText,
-  DrawerHeader,
-  DrawerHeaderLeft,
-  DrawerIconBox,
-  DrawerTitle,
   Footer,
   ItemName,
   MetaRow,
@@ -53,26 +49,21 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle
   const steps = item?.steps ?? []
 
   return (
-    <DraggableBottomDrawer
+    <BasePreviewDrawer
       open={item !== null}
       onClose={onClose}
-      paperSx={{ maxHeight: '80vh' }}
-      dragHandleContent={
-        <DrawerHeader>
-          <DrawerHeaderLeft>
-            <DrawerIconBox gradient={TODO_GRADIENT}>
-              <AssignmentIcon />
-            </DrawerIconBox>
-            <DrawerTitle gradient={TODO_GRADIENT}>Task Preview</DrawerTitle>
-          </DrawerHeaderLeft>
-          <Chip
-            label={item?.isDone ? 'Done' : 'Pending'}
-            size="small"
-            color={item?.isDone ? 'success' : 'default'}
-            variant="outlined"
-          />
-        </DrawerHeader>
+      icon={<AssignmentIcon />}
+      title="Task Preview"
+      gradient={TODO_GRADIENT}
+      headerRight={
+        <Chip
+          label={item?.isDone ? 'Done' : 'Pending'}
+          size="small"
+          color={item?.isDone ? 'success' : 'default'}
+          variant="outlined"
+        />
       }
+      paperSx={{ maxHeight: '80vh' }}
     >
       <ContentContainer>
         <ItemName>
@@ -165,7 +156,7 @@ const ToDoItemPreviewDrawer = ({ item, onClose, onEdit, onMarkDone, onStepToggle
           sx={{ mt: 1 }}
         />
       </Footer>
-    </DraggableBottomDrawer>
+    </BasePreviewDrawer>
   )
 }
 

@@ -17,15 +17,10 @@ import { useShopContext } from '../../providers/ShopProvider'
 import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
 import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
-import DraggableBottomDrawer from '../DraggableBottomDrawer'
+import BasePreviewDrawer from '../BasePreviewDrawer'
 import DrawerActionButton from '../DrawerActionButton'
-import {
-  DrawerHeader,
-  DrawerHeaderLeft,
-  DrawerIconBox,
-  DrawerTitle,
-  ContentContainer,
-} from '../DrawerHeader/index.styled'
+import { ContentContainer } from '../DrawerHeader/index.styled'
+import { SECTION_GRADIENTS } from '../../constants/sectionColors'
 import {
   HeroImage,
   HeroPlaceholder,
@@ -147,23 +142,14 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
   const canAdd = (!needsShopSelector || selectedShopId) && !isAdding
 
   return (
-    <DraggableBottomDrawer
+    <BasePreviewDrawer
       open={recipe !== null}
       onClose={onClose}
+      icon={<RestaurantIcon />}
+      title={recipe?.name ?? 'Recipe'}
+      gradient={SECTION_GRADIENTS.recipe}
+      headerRight={<IconButton size="small" onClick={onClose} aria-label="Close"><CloseIcon /></IconButton>}
       paperSx={{ height: 'calc(100% - env(safe-area-inset-top) - 16px)' }}
-      dragHandleContent={
-        <DrawerHeader>
-          <DrawerHeaderLeft>
-            <DrawerIconBox>
-              <RestaurantIcon />
-            </DrawerIconBox>
-            <DrawerTitle>{recipe?.name ?? 'Recipe'}</DrawerTitle>
-          </DrawerHeaderLeft>
-          <IconButton size="small" onClick={onClose} aria-label="Close">
-            <CloseIcon />
-          </IconButton>
-        </DrawerHeader>
-      }
     >
       <ContentContainer>
         {recipe?.imagePath ? (
@@ -336,7 +322,7 @@ const RecipeViewDrawer = ({ recipe, onClose, onEdit, defaults }: RecipeViewDrawe
           onClick={handleEdit}
         />
       </Footer>
-    </DraggableBottomDrawer>
+    </BasePreviewDrawer>
   )
 }
 

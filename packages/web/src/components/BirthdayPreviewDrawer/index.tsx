@@ -7,14 +7,10 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import dayjs from 'dayjs'
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types'
 import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
-import DraggableBottomDrawer from '../DraggableBottomDrawer'
+import BasePreviewDrawer from '../BasePreviewDrawer'
 import {
   BIRTHDAY_GRADIENT,
   ContentContainer,
-  DrawerHeader,
-  DrawerHeaderLeft,
-  DrawerIconBox,
-  DrawerTitle,
   Footer,
   MetaRow,
   NoNotesText,
@@ -58,20 +54,13 @@ const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPrev
   })()
 
   return (
-    <DraggableBottomDrawer
+    <BasePreviewDrawer
       open={item !== null}
       onClose={onClose}
+      icon={<CakeIcon />}
+      title="Birthday"
+      gradient={BIRTHDAY_GRADIENT}
       paperSx={{ maxHeight: '80vh' }}
-      dragHandleContent={
-        <DrawerHeader>
-          <DrawerHeaderLeft>
-            <DrawerIconBox gradient={BIRTHDAY_GRADIENT}>
-              <CakeIcon />
-            </DrawerIconBox>
-            <DrawerTitle gradient={BIRTHDAY_GRADIENT}>Birthday</DrawerTitle>
-          </DrawerHeaderLeft>
-        </DrawerHeader>
-      }
     >
       <ContentContainer>
         <PersonName>
@@ -111,7 +100,7 @@ const BirthdayPreviewDrawer = ({ item, onClose, onEdit, onDelete }: BirthdayPrev
           color="error"
         />
       </Footer>
-    </DraggableBottomDrawer>
+    </BasePreviewDrawer>
   )
 }
 

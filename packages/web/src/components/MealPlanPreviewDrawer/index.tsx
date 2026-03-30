@@ -21,15 +21,9 @@ import { useAppState } from '../../providers/AppStateProvider'
 import { showAlert } from '../../utils/alert'
 import PrivateItemBadge from '../PrivateItemBadge'
 import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
-import DraggableBottomDrawer from '../DraggableBottomDrawer'
+import BasePreviewDrawer from '../BasePreviewDrawer'
 import { SECTION_GRADIENTS } from '../../constants/sectionColors'
-import {
-  DrawerHeader,
-  DrawerHeaderLeft,
-  DrawerIconBox,
-  DrawerTitle,
-  ContentContainer,
-} from '../DrawerHeader/index.styled'
+import { ContentContainer } from '../DrawerHeader/index.styled'
 import {
   HeroImage,
   HeroPlaceholder,
@@ -167,23 +161,14 @@ const MealPlanPreviewDrawer = ({ item, onClose, onDelete, defaults }: MealPlanPr
   const canAdd = (!needsShopSelector || selectedShopId) && !isAdding
 
   return (
-    <DraggableBottomDrawer
+    <BasePreviewDrawer
       open={item !== null}
       onClose={onClose}
+      icon={<RestaurantIcon />}
+      title="Meal"
+      gradient={MEAL_GRADIENT}
+      headerRight={<IconButton size="small" onClick={onClose} aria-label="Close"><CloseIcon /></IconButton>}
       paperSx={{ height: 'calc(100% - env(safe-area-inset-top) - 16px)' }}
-      dragHandleContent={
-        <DrawerHeader>
-          <DrawerHeaderLeft>
-            <DrawerIconBox gradient={MEAL_GRADIENT}>
-              <RestaurantIcon />
-            </DrawerIconBox>
-            <DrawerTitle gradient={MEAL_GRADIENT}>Meal</DrawerTitle>
-          </DrawerHeaderLeft>
-          <IconButton size="small" onClick={onClose} aria-label="Close">
-            <CloseIcon />
-          </IconButton>
-        </DrawerHeader>
-      }
     >
       <ContentContainer>
         {heroImage ? (
@@ -387,7 +372,7 @@ const MealPlanPreviewDrawer = ({ item, onClose, onDelete, defaults }: MealPlanPr
           color="error"
         />
       </Footer>
-    </DraggableBottomDrawer>
+    </BasePreviewDrawer>
   )
 }
 
