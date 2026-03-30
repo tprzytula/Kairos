@@ -9,6 +9,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import CloseIcon from '@mui/icons-material/Close'
 import { IAdventure } from '../../types/adventure'
+import { getLocationLink } from '../../utils/location'
 import { usePreviewDrawerActions } from '../../hooks/usePreviewDrawerActions'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
 import {
@@ -128,19 +129,22 @@ const AdventurePreviewDrawer = ({ item, onClose, onEdit, onDelete }: AdventurePr
               </DetailRow>
             )}
 
-            {item?.location && (
-              <DetailRow>
-                <LocationOnIcon />
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: 'inherit', textDecoration: 'underline' }}
-                >
-                  {item.location}
-                </a>
-              </DetailRow>
-            )}
+            {item?.location && (() => {
+              const { label, href } = getLocationLink(item.location)
+              return (
+                <DetailRow>
+                  <LocationOnIcon />
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'inherit', textDecoration: 'underline' }}
+                  >
+                    {label}
+                  </a>
+                </DetailRow>
+              )
+            })()}
           </Box>
         </Box>
 

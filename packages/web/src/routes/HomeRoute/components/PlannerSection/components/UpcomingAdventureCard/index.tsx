@@ -3,6 +3,7 @@ import ExploreIcon from '@mui/icons-material/Explore'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import { IAdventure } from '../../../../../../types/adventure'
+import { getLocationLink } from '../../../../../../utils/location'
 import {
   CarouselContainer,
   CarouselTrack,
@@ -190,21 +191,24 @@ export const UpcomingAdventureCard: React.FC<IUpcomingAdventureCardProps> = ({ a
                           {adventure.time}
                         </>
                       )}
-                      {adventure.location && (
-                        <>
-                          {adventure.time && <span>·</span>}
-                          <LocationOnIcon />
-                          <a
-                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(adventure.location)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            style={{ color: 'inherit', textDecoration: 'underline' }}
-                          >
-                            {adventure.location}
-                          </a>
-                        </>
-                      )}
+                      {adventure.location && (() => {
+                        const { label, href } = getLocationLink(adventure.location)
+                        return (
+                          <>
+                            {adventure.time && <span>·</span>}
+                            <LocationOnIcon />
+                            <a
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              style={{ color: 'inherit', textDecoration: 'underline' }}
+                            >
+                              {label}
+                            </a>
+                          </>
+                        )
+                      })()}
                     </HeroMeta>
                   )}
                 </HeroOverlay>
