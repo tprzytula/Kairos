@@ -34,6 +34,8 @@ export const Planner = ({
   mealPlans = [],
   onAddMealPlan,
   onMealPlanClick,
+  onAddAdventure,
+  onAddTask: _onAddTask,
 }: IToDoListProps = {}) => {
   const { dispatch } = useAppState();
   const { user } = useAuth();
@@ -123,6 +125,11 @@ export const Planner = ({
     navigate(Route.AddPlannerItem)
   }, [dispatch, navigate])
 
+  const handleAddAdventure = useCallback((date: string) => {
+    dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: date })
+    navigate(Route.AddPlannerItem, { state: { itemType: 'adventure' } })
+  }, [dispatch, navigate])
+
   const handleStepToggle = useCallback(async (todoId: string, stepId: string, isDone: boolean) => {
     const item = toDoList.find(t => t.id === todoId)
     if (!item?.steps) return
@@ -201,6 +208,8 @@ export const Planner = ({
             onMealPlanClick={onMealPlanClick}
             adventures={adventures}
             onAdventureClick={handleAdventurePreview}
+            onAddAdventure={onAddAdventure ?? handleAddAdventure}
+            onAddTask={_onAddTask ?? handleAddTask}
           />
         )}
         {drawers}

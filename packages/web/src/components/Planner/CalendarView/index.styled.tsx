@@ -474,3 +474,21 @@ export const TasksAddButton = styled('span')({
     borderStyle: 'solid',
   },
 })
+
+export const AdventuresAddButton = styled('span')({
+  fontSize: '0.85rem',
+  fontWeight: 700,
+  color: '#0891b2',
+  backgroundColor: 'rgba(6, 182, 212, 0.12)',
+  border: '1.5px dashed #06b6d4',
+  borderRadius: '6px',
+  padding: '1px 8px',
+  cursor: 'pointer',
+  marginLeft: 'auto',
+  transition: 'all 0.12s ease',
+  lineHeight: 1.4,
+  '&:hover': {
+    backgroundColor: 'rgba(6, 182, 212, 0.22)',
+    borderStyle: 'solid',
+  },
+})

@@ -43,6 +43,8 @@ interface IWeeklyViewProps {
   onMealPlanClick?: (mealPlan: IMealPlan) => void
   adventures?: IAdventure[]
   onAdventureClick?: (id: string) => void
+  onAddAdventure?: (date: string) => void
+  onAddTask?: (date: string) => void
 }
 
 const getWeekStart = (d: Dayjs): Dayjs => {
@@ -61,6 +63,8 @@ const WeeklyView = ({
   onMealPlanClick,
   adventures = [],
   onAdventureClick,
+  onAddAdventure,
+  onAddTask,
 }: IWeeklyViewProps) => {
   const [currentWeek, setCurrentWeek] = useState<Dayjs>(() => getWeekStart(dayjs()))
   const [animationDirection, setAnimationDirection] = useState<'left' | 'right' | null>(null)
@@ -315,6 +319,8 @@ const WeeklyView = ({
         onAddMealPlan={_onAddMealPlan}
         onMealPlanClick={onMealPlanClick}
         onAdventureClick={onAdventureClick}
+        onAddAdventure={onAddAdventure}
+        onAddTask={onAddTask}
       />
     </WeeklyContainer>
   )

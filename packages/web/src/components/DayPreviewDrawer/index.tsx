@@ -20,6 +20,7 @@ import {
   AdventureDayDetailItem,
   AdventuresSectionHeader,
   TasksAddButton,
+  AdventuresAddButton,
 } from '../Planner/CalendarView/index.styled'
 import {
   DAY_PREVIEW_GRADIENT,
@@ -51,6 +52,7 @@ interface IDayPreviewDrawerProps {
   onAddMealPlan?: (date: string) => void
   onMealPlanClick?: (mealPlan: IMealPlan) => void
   onAdventureClick?: (id: string) => void
+  onAddAdventure?: (date: string) => void
   onAddTask?: (date: string) => void
 }
 
@@ -83,6 +85,7 @@ const DayPreviewDrawer = ({
   onAddMealPlan,
   onMealPlanClick,
   onAdventureClick,
+  onAddAdventure,
   onAddTask,
 }: IDayPreviewDrawerProps) => {
   return (
@@ -184,21 +187,26 @@ const DayPreviewDrawer = ({
           ))
         )}
 
-        {adventures.length > 0 && (
-          <>
-            <AdventuresSectionHeader>Adventures</AdventuresSectionHeader>
-            {adventures.map(adventure => {
-              const time = formatAdventureTime(adventure.time)
-              return (
-                <AdventureDayDetailItem key={adventure.id} onClick={() => onAdventureClick?.(adventure.id)}>
-                  <ExploreIcon sx={{ fontSize: '0.9rem', color: '#06b6d4', flexShrink: 0 }} />
-                  {time && <TimeBadge>{time}</TimeBadge>}
-                  <span style={{ flex: 1 }}>{adventure.name}</span>
-                  {adventure.visibility === 'private' && <PrivateItemBadge />}
-                </AdventureDayDetailItem>
-              )
-            })}
-          </>
+        <AdventuresSectionHeader>
+          Adventures
+          {onAddAdventure && selectedDay && (
+            <AdventuresAddButton onClick={(e) => { e.stopPropagation(); onAddAdventure(selectedDay) }}>+</AdventuresAddButton>
+          )}
+        </AdventuresSectionHeader>
+        {adventures.length === 0 ? (
+          <DayDetailEmpty>No adventures planned</DayDetailEmpty>
+        ) : (
+          adventures.map(adventure => {
+            const time = formatAdventureTime(adventure.time)
+            return (
+              <AdventureDayDetailItem key={adventure.id} onClick={() => onAdventureClick?.(adventure.id)}>
+                <ExploreIcon sx={{ fontSize: '0.9rem', color: '#06b6d4', flexShrink: 0 }} />
+                {time && <TimeBadge>{time}</TimeBadge>}
+                <span style={{ flex: 1 }}>{adventure.name}</span>
+                {adventure.visibility === 'private' && <PrivateItemBadge />}
+              </AdventureDayDetailItem>
+            )
+          })
         )}
       </DrawerContent>
     </DraggableBottomDrawer>
