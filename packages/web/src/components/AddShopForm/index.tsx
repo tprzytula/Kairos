@@ -1,8 +1,7 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
 import { Alert, CircularProgress, Typography } from '@mui/material'
 import PrivateToggle from '../PrivateToggle'
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
-import { type Area } from 'react-easy-crop'
 import { IAddShopFormProps } from './types'
 import {
   FormContainer,
@@ -17,21 +16,25 @@ import {
   ImagePreview,
 } from './index.styled'
 import ImageCropModal from '../RecipeForm/ImageCropModal'
-import { getCroppedBlob } from '../RecipeForm/cropUtils'
 import { getShopUploadUrl } from '../../api/shops/getUploadUrl'
 import { useProjectContext } from '../../providers/ProjectProvider'
+import { useImageCrop } from '../../hooks/useImageCrop'
 
 const AddShopForm = ({ onSubmit, onCancel, isSubmitting = false }: IAddShopFormProps) => {
   const { currentProject } = useProjectContext()
   const [name, setName] = useState('')
   const [nameError, setNameError] = useState('')
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [imagePath, setImagePath] = useState('')
-  const [isUploading, setIsUploading] = useState(false)
   const [isPrivate, setIsPrivate] = useState(false)
-  const [pendingImageSrc, setPendingImageSrc] = useState<string | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const {
+    previewUrl, imagePath, isUploading, pendingImageSrc, fileInputRef,
+    handleImageClick, handleFileChange, handleCropConfirm, handleCropCancel,
+  } = useImageCrop({
+    getUploadUrl: getShopUploadUrl,
+    projectId: currentProject?.id,
+    onError: setSubmitError,
+  })
 
   const handleNameChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
@@ -40,51 +43,6 @@ const AddShopForm = ({ onSubmit, onCancel, isSubmitting = false }: IAddShopFormP
       setNameError('')
     }
   }, [nameError])
-
-  const handleImageClick = useCallback(() => {
-    fileInputRef.current?.click()
-  }, [])
-
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setPendingImageSrc(URL.createObjectURL(file))
-    e.target.value = ''
-  }, [])
-
-  const handleCropConfirm = useCallback(async (croppedAreaPixels: Area) => {
-    if (!pendingImageSrc) return
-
-    const previousPreview = previewUrl
-    const previousPath = imagePath
-
-    try {
-      const croppedBlob = await getCroppedBlob(pendingImageSrc, croppedAreaPixels)
-      const objectUrl = URL.createObjectURL(croppedBlob)
-      setPreviewUrl(objectUrl)
-      setPendingImageSrc(null)
-      setIsUploading(true)
-
-      const { uploadUrl, imagePath: path } = await getShopUploadUrl('jpg', currentProject?.id)
-      await fetch(uploadUrl, {
-        method: 'PUT',
-        body: croppedBlob,
-        headers: { 'Content-Type': 'image/jpeg' },
-      })
-      setImagePath(path)
-    } catch {
-      setSubmitError('Failed to upload image. Please try again.')
-      setPreviewUrl(previousPreview)
-      setImagePath(previousPath)
-      setPendingImageSrc(null)
-    } finally {
-      setIsUploading(false)
-    }
-  }, [pendingImageSrc, previewUrl, imagePath, currentProject])
-
-  const handleCropCancel = useCallback(() => {
-    setPendingImageSrc(null)
-  }, [])
 
   const validateForm = useCallback(() => {
     if (!name.trim()) {
