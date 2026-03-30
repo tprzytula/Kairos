@@ -14,118 +14,45 @@ data "aws_iam_policy_document" "lambda_policies" {
     ]
   }
 
+  # Read-only database permissions (standard tables)
   dynamic "statement" {
-    for_each = each.value.permissions.database.grocery_list == local.permissions.read_only ? [each.key] : []
+    for_each = {
+      for table, config in local.dynamodb_table_config :
+      table => config
+      if table != "migrations" && each.value.permissions.database[table] == local.permissions.read_only
+    }
 
     content {
-      sid     = "DatabaseReadOnlyGroceryList"
+      sid     = "DatabaseReadOnly${statement.value.sid}"
       actions = local.database_read_only_actions
       effect  = "Allow"
       resources = [
-        var.dynamodb_grocery_list_arn,
-        "${var.dynamodb_grocery_list_arn}/index/*",
+        statement.value.arn,
+        "${statement.value.arn}/index/*",
       ]
     }
   }
 
+  # Read-write database permissions (standard tables)
   dynamic "statement" {
-    for_each = each.value.permissions.database.grocery_items_defaults == local.permissions.read_only ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadOnlyGroceryItemsDefaults"
-      actions = local.database_read_only_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_grocery_items_defaults_arn,
-        "${var.dynamodb_grocery_items_defaults_arn}/index/*",
-      ]
+    for_each = {
+      for table, config in local.dynamodb_table_config :
+      table => config
+      if table != "migrations" && each.value.permissions.database[table] == local.permissions.read_write
     }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.noise_tracking == local.permissions.read_only ? [each.key] : []
 
     content {
-      sid     = "DatabaseReadOnlyNoiseTracking"
-      actions = local.database_read_only_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_noise_tracking_arn,
-        "${var.dynamodb_noise_tracking_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.todo_list == local.permissions.read_only ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadOnlyTodoList"
-      actions = local.database_read_only_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_todo_list_arn,
-        "${var.dynamodb_todo_list_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.grocery_list == local.permissions.read_write ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadWriteGroceryList"
+      sid     = "DatabaseReadWrite${statement.value.sid}"
       actions = local.database_read_write_actions
       effect  = "Allow"
       resources = [
-        var.dynamodb_grocery_list_arn,
-        "${var.dynamodb_grocery_list_arn}/index/*",
+        statement.value.arn,
+        "${statement.value.arn}/index/*",
       ]
     }
   }
 
-  dynamic "statement" {
-    for_each = each.value.permissions.database.grocery_items_defaults == local.permissions.read_write ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadWriteGroceryItemsDefaults"
-      actions = local.database_read_write_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_grocery_items_defaults_arn,
-        "${var.dynamodb_grocery_items_defaults_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.noise_tracking == local.permissions.read_write ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadWriteNoiseTracking"
-      actions = local.database_read_write_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_noise_tracking_arn,
-        "${var.dynamodb_noise_tracking_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.todo_list == local.permissions.read_write ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadWriteTodoList"
-      actions = local.database_read_write_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_todo_list_arn,
-        "${var.dynamodb_todo_list_arn}/index/*",
-      ]
-    }
-  }
-
+  # Migrations table (special: read-only uses standard pattern)
   dynamic "statement" {
     for_each = each.value.permissions.database.migrations == local.permissions.read_only ? [each.key] : []
 
@@ -140,6 +67,7 @@ data "aws_iam_policy_document" "lambda_policies" {
     }
   }
 
+  # Migrations table (special: read-write has extra CreateTable action and wildcard resource)
   dynamic "statement" {
     for_each = each.value.permissions.database.migrations == local.permissions.read_write ? [each.key] : []
 
@@ -155,311 +83,19 @@ data "aws_iam_policy_document" "lambda_policies" {
     }
   }
 
+  # S3 upload permissions
   dynamic "statement" {
-    for_each = each.value.permissions.database.projects == local.permissions.read_only ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadOnlyProjects"
-      actions = local.database_read_only_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_projects_arn,
-        "${var.dynamodb_projects_arn}/index/*",
-      ]
+    for_each = {
+      for upload, config in local.s3_upload_config :
+      upload => config
+      if try(each.value.permissions.s3[upload], "none") == "put-only"
     }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.projects == local.permissions.read_write ? [each.key] : []
 
     content {
-      sid     = "DatabaseReadWriteProjects"
-      actions = local.database_read_write_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_projects_arn,
-        "${var.dynamodb_projects_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.project_members == local.permissions.read_only ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadOnlyProjectMembers"
-      actions = local.database_read_only_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_project_members_arn,
-        "${var.dynamodb_project_members_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.project_members == local.permissions.read_write ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadWriteProjectMembers"
-      actions = local.database_read_write_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_project_members_arn,
-        "${var.dynamodb_project_members_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.user_preferences == local.permissions.read_only ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadOnlyUserPreferences"
-      actions = local.database_read_only_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_user_preferences_arn,
-        "${var.dynamodb_user_preferences_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.user_preferences == local.permissions.read_write ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadWriteUserPreferences"
-      actions = local.database_read_write_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_user_preferences_arn,
-        "${var.dynamodb_user_preferences_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.push_subscriptions == local.permissions.read_only ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadOnlyPushSubscriptions"
-      actions = local.database_read_only_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_push_subscriptions_arn,
-        "${var.dynamodb_push_subscriptions_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.push_subscriptions == local.permissions.read_write ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadWritePushSubscriptions"
-      actions = local.database_read_write_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_push_subscriptions_arn,
-        "${var.dynamodb_push_subscriptions_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.shops == local.permissions.read_only ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadOnlyShops"
-      actions = local.database_read_only_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_shops_arn,
-        "${var.dynamodb_shops_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.shops == local.permissions.read_write ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadWriteShops"
-      actions = local.database_read_write_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_shops_arn,
-        "${var.dynamodb_shops_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.recipes == local.permissions.read_only ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadOnlyRecipes"
-      actions = local.database_read_only_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_recipes_arn,
-        "${var.dynamodb_recipes_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.recipes == local.permissions.read_write ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadWriteRecipes"
-      actions = local.database_read_write_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_recipes_arn,
-        "${var.dynamodb_recipes_arn}/index/*",
-      ]
-    }
-  }
-
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.birthdays == local.permissions.read_only ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadOnlyBirthdays"
-      actions = local.database_read_only_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_birthdays_arn,
-        "${var.dynamodb_birthdays_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.birthdays == local.permissions.read_write ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadWriteBirthdays"
-      actions = local.database_read_write_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_birthdays_arn,
-        "${var.dynamodb_birthdays_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.meal_plans == local.permissions.read_only ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadOnlyMealPlans"
-      actions = local.database_read_only_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_meal_plans_arn,
-        "${var.dynamodb_meal_plans_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.meal_plans == local.permissions.read_write ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadWriteMealPlans"
-      actions = local.database_read_write_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_meal_plans_arn,
-        "${var.dynamodb_meal_plans_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.adventures == local.permissions.read_only ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadOnlyAdventures"
-      actions = local.database_read_only_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_adventures_arn,
-        "${var.dynamodb_adventures_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = each.value.permissions.database.adventures == local.permissions.read_write ? [each.key] : []
-
-    content {
-      sid     = "DatabaseReadWriteAdventures"
-      actions = local.database_read_write_actions
-      effect  = "Allow"
-      resources = [
-        var.dynamodb_adventures_arn,
-        "${var.dynamodb_adventures_arn}/index/*",
-      ]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = try(each.value.permissions.s3.recipe_uploads, "none") == "put-only" ? [each.key] : []
-
-    content {
-      sid     = "S3PutRecipeUploads"
-      actions = ["s3:PutObject"]
-      effect  = "Allow"
-      resources = ["${var.s3_kairos_web_arn}/user-uploads/recipes/*"]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = try(each.value.permissions.s3.shop_uploads, "none") == "put-only" ? [each.key] : []
-
-    content {
-      sid     = "S3PutShopUploads"
-      actions = ["s3:PutObject"]
-      effect  = "Allow"
-      resources = ["${var.s3_kairos_web_arn}/user-uploads/shops/*"]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = try(each.value.permissions.s3.grocery_default_uploads, "none") == "put-only" ? [each.key] : []
-
-    content {
-      sid     = "S3PutGroceryDefaultUploads"
-      actions = ["s3:PutObject"]
-      effect  = "Allow"
-      resources = ["${var.s3_kairos_web_arn}/user-uploads/grocery-defaults/*"]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = try(each.value.permissions.s3.meal_plan_uploads, "none") == "put-only" ? [each.key] : []
-
-    content {
-      sid     = "S3PutMealPlanUploads"
-      actions = ["s3:PutObject"]
-      effect  = "Allow"
-      resources = ["${var.s3_kairos_web_arn}/user-uploads/meal-plans/*"]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = try(each.value.permissions.s3.adventure_uploads, "none") == "put-only" ? [each.key] : []
-
-    content {
-      sid     = "S3PutAdventureUploads"
-      actions = ["s3:PutObject"]
-      effect  = "Allow"
-      resources = ["${var.s3_kairos_web_arn}/user-uploads/adventures/*"]
+      sid       = "S3Put${statement.value.sid}"
+      actions   = ["s3:PutObject"]
+      effect    = "Allow"
+      resources = ["${var.s3_kairos_web_arn}/user-uploads/${statement.value.path}/*"]
     }
   }
 
