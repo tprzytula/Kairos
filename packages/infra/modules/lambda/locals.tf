@@ -1,6 +1,14 @@
 locals {
   s3_bucket_name = format("kairos-lambdas-%s", var.random_name)
 
+  upload_url_functions = {
+    get_recipe_upload_url          = { s3_permission = "recipe_uploads" }
+    get_shop_upload_url            = { s3_permission = "shop_uploads" }
+    get_meal_plan_upload_url       = { s3_permission = "meal_plan_uploads" }
+    get_adventure_upload_url       = { s3_permission = "adventure_uploads" }
+    get_grocery_default_upload_url = { s3_permission = "grocery_default_uploads" }
+  }
+
   lambda_functions = {
     "get_grocery_items" = {
       environment_variables = {}

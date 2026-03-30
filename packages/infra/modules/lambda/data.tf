@@ -21,27 +21,9 @@ data "aws_s3_object" "lambdas_s3_zips" {
   key    = format("%s/%s.zip", each.key, each.key)
 }
 
-data "aws_s3_object" "get_recipe_upload_url_zip" {
-  bucket = local.s3_bucket_name
-  key    = "get_recipe_upload_url/get_recipe_upload_url.zip"
-}
+data "aws_s3_object" "upload_url_zips" {
+  for_each = local.upload_url_functions
 
-data "aws_s3_object" "get_shop_upload_url_zip" {
   bucket = local.s3_bucket_name
-  key    = "get_shop_upload_url/get_shop_upload_url.zip"
-}
-
-data "aws_s3_object" "get_adventure_upload_url_zip" {
-  bucket = local.s3_bucket_name
-  key    = "get_adventure_upload_url/get_adventure_upload_url.zip"
-}
-
-data "aws_s3_object" "get_grocery_default_upload_url_zip" {
-  bucket = local.s3_bucket_name
-  key    = "get_grocery_default_upload_url/get_grocery_default_upload_url.zip"
-}
-
-data "aws_s3_object" "get_meal_plan_upload_url_zip" {
-  bucket = local.s3_bucket_name
-  key    = "get_meal_plan_upload_url/get_meal_plan_upload_url.zip"
+  key    = format("%s/%s.zip", each.key, each.key)
 }
