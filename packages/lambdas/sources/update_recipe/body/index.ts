@@ -1,3 +1,4 @@
+import { createBodyParser } from "@kairos-lambdas-libs/handler-factories";
 import { IRequestBody, IRecipeIngredientBody } from "./types";
 
 const isValidIngredient = (ingredient: any): ingredient is IRecipeIngredientBody => {
@@ -9,20 +10,26 @@ const isValidIngredient = (ingredient: any): ingredient is IRecipeIngredientBody
   );
 };
 
-const validateBody = (body: any): body is IRequestBody => {
-  if (!body.id || typeof body.id !== 'string') {
+const validateBody = (body: unknown): body is IRequestBody => {
+  if (!body || typeof body !== 'object') {
     return false;
   }
 
-  if (body.name !== undefined && (typeof body.name !== 'string' || body.name.trim().length === 0)) {
+  const b = body as Record<string, unknown>;
+
+  if (!b.id || typeof b.id !== 'string') {
     return false;
   }
 
-  if (body.ingredients !== undefined) {
-    if (!Array.isArray(body.ingredients) || body.ingredients.length === 0) {
+  if (b.name !== undefined && (typeof b.name !== 'string' || b.name.trim().length === 0)) {
+    return false;
+  }
+
+  if (b.ingredients !== undefined) {
+    if (!Array.isArray(b.ingredients) || b.ingredients.length === 0) {
       return false;
     }
-    if (!body.ingredients.every(isValidIngredient)) {
+    if (!b.ingredients.every(isValidIngredient)) {
       return false;
     }
   }
@@ -30,19 +37,4 @@ const validateBody = (body: any): body is IRequestBody => {
   return true;
 };
 
-export const getBody = (body: string | null): IRequestBody | null => {
-  if (!body) {
-    return null;
-  }
-
-  try {
-    const parsedBody = JSON.parse(body);
-    if (validateBody(parsedBody)) {
-      return parsedBody;
-    }
-  } catch (error) {
-    console.error('Failed to parse body:', error);
-  }
-
-  return null;
-};
+export const getBody = createBodyParser<IRequestBody>(validateBody);

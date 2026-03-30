@@ -1,40 +1,47 @@
+import { createBodyParser } from "@kairos-lambdas-libs/handler-factories";
 import { IRequestBody } from "./types";
 
-const validateBody = (body: IRequestBody) => {
-  if (!body.id) {
+const validateBody = (body: unknown): body is IRequestBody => {
+  if (!body || typeof body !== 'object') {
     return false;
   }
 
-  const hasAtLeastOneField = body.name !== undefined ||
-                           body.description !== undefined ||
-                           body.dueDate !== undefined ||
-                           body.isDone !== undefined ||
-                           body.steps !== undefined;
-  
+  const b = body as Record<string, unknown>;
+
+  if (!b.id) {
+    return false;
+  }
+
+  const hasAtLeastOneField = b.name !== undefined ||
+                           b.description !== undefined ||
+                           b.dueDate !== undefined ||
+                           b.isDone !== undefined ||
+                           b.steps !== undefined;
+
   if (!hasAtLeastOneField) {
     return false;
   }
 
-  if (body.name !== undefined && body.name !== null) {
-    if (typeof body.name !== 'string' || body.name.trim().length === 0) {
+  if (b.name !== undefined && b.name !== null) {
+    if (typeof b.name !== 'string' || b.name.trim().length === 0) {
       return false;
     }
   }
 
-  if (body.description !== undefined && body.description !== null) {
-    if (typeof body.description !== 'string') {
+  if (b.description !== undefined && b.description !== null) {
+    if (typeof b.description !== 'string') {
       return false;
     }
   }
 
-  if (body.dueDate !== undefined && body.dueDate !== null) {
-    if (typeof body.dueDate !== 'number' || body.dueDate < 0) {
+  if (b.dueDate !== undefined && b.dueDate !== null) {
+    if (typeof b.dueDate !== 'number' || b.dueDate < 0) {
       return false;
     }
   }
 
-  if (body.isDone !== undefined && body.isDone !== null) {
-    if (typeof body.isDone !== 'boolean') {
+  if (b.isDone !== undefined && b.isDone !== null) {
+    if (typeof b.isDone !== 'boolean') {
       return false;
     }
   }
@@ -42,20 +49,4 @@ const validateBody = (body: IRequestBody) => {
   return true;
 };
 
-export const getBody = (rawBody: string | null): IRequestBody | null => {
-  if (!rawBody) {
-    return null;
-  }
-
-  try {
-    const body = JSON.parse(rawBody);
-    
-    if (!validateBody(body)) {
-      return null;
-    }
-
-    return body;
-  } catch {
-    return null;
-  }
-};
+export const getBody = createBodyParser<IRequestBody>(validateBody);

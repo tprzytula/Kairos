@@ -1,24 +1,31 @@
+import { createBodyParser } from "@kairos-lambdas-libs/handler-factories";
 import { IRequestBody } from "./types";
 
-const validateBody = (body: IRequestBody) => {
-  if (!body.id) {
+const validateBody = (body: unknown): body is IRequestBody => {
+  if (!body || typeof body !== 'object') {
     return false;
   }
 
-  const hasAtLeastOneField = body.name !== undefined || body.icon !== undefined;
-  
+  const b = body as Record<string, unknown>;
+
+  if (!b.id) {
+    return false;
+  }
+
+  const hasAtLeastOneField = b.name !== undefined || b.icon !== undefined;
+
   if (!hasAtLeastOneField) {
     return false;
   }
 
-  if (body.name !== undefined && body.name !== null) {
-    if (typeof body.name !== 'string' || body.name.trim().length === 0) {
+  if (b.name !== undefined && b.name !== null) {
+    if (typeof b.name !== 'string' || b.name.trim().length === 0) {
       return false;
     }
   }
 
-  if (body.icon !== undefined && body.icon !== null) {
-    if (typeof body.icon !== 'string' || body.icon.trim().length === 0) {
+  if (b.icon !== undefined && b.icon !== null) {
+    if (typeof b.icon !== 'string' || b.icon.trim().length === 0) {
       return false;
     }
   }
@@ -26,20 +33,4 @@ const validateBody = (body: IRequestBody) => {
   return true;
 };
 
-export const getBody = (rawBody: string | null): IRequestBody | null => {
-  if (!rawBody) {
-    return null;
-  }
-
-  try {
-    const body = JSON.parse(rawBody);
-    
-    if (!validateBody(body)) {
-      return null;
-    }
-
-    return body;
-  } catch {
-    return null;
-  }
-};
+export const getBody = createBodyParser<IRequestBody>(validateBody);

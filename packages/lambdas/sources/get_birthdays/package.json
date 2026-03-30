@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "delete_meal_plan",
+  "name": "get_birthdays",
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {

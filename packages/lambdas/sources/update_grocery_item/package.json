@@ -7,9 +7,10 @@
     "test": "jest"
   },
   "dependencies": {
+    "@kairos-lambdas-libs/dynamodb": "*",
+    "@kairos-lambdas-libs/handler-factories": "1.0.0",
     "@kairos-lambdas-libs/middleware": "*",
-    "@kairos-lambdas-libs/response": "*",
-    "@kairos-lambdas-libs/dynamodb": "*"
+    "@kairos-lambdas-libs/response": "*"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.114",

@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "get_adventure_upload_url",
+  "name": "get_shop_upload_url",
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {

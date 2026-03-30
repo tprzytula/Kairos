@@ -1,3 +1,4 @@
+import { createBodyParser } from "@kairos-lambdas-libs/handler-factories";
 import { IRequestBody, IRequestBodyItem } from "./types";
 
 const MAX_BATCH_SIZE = 25;
@@ -19,33 +20,22 @@ const validateItem = (item: IRequestBodyItem) => {
   return true;
 };
 
-const validateBody = (body: IRequestBody) => {
-  if (!Array.isArray(body.items) || body.items.length === 0) {
+const validateBody = (body: unknown): body is IRequestBody => {
+  if (!body || typeof body !== 'object') {
     return false;
   }
 
-  if (body.items.length > MAX_BATCH_SIZE) {
+  const b = body as Record<string, unknown>;
+
+  if (!Array.isArray(b.items) || b.items.length === 0) {
     return false;
   }
 
-  return body.items.every(validateItem);
-};
-
-export const getBody = (body: string | null): IRequestBody | null => {
-  if (!body) {
-    return null;
+  if (b.items.length > MAX_BATCH_SIZE) {
+    return false;
   }
 
-  try {
-    const parsedBody = JSON.parse(body);
-    const isValid = validateBody(parsedBody);
-
-    if (isValid) {
-      return parsedBody;
-    }
-  } catch (error) {
-    console.error('Failed to parse body:', error);
-  }
-
-  return null;
+  return b.items.every(validateItem);
 };
+
+export const getBody = createBodyParser<IRequestBody>(validateBody);

@@ -1,29 +1,19 @@
+import { createBodyParser } from "@kairos-lambdas-libs/handler-factories";
 import { IRequestBody } from "./types";
 
-const validateBody = (body: IRequestBody) => {
-  console.debug('Validating body', body);
-  if (!body.name) {
+const validateBody = (body: unknown): body is IRequestBody => {
+  if (!body || typeof body !== 'object') {
+    return false;
+  }
+
+  const b = body as Record<string, unknown>;
+
+  console.debug('Validating body', b);
+  if (!b.name) {
     return false;
   }
 
   return true;
 };
 
-export const getBody = (body: string | null): IRequestBody | null => {
-  if (!body) {
-    return null;
-  } 
-
-  try {
-    const parsedBody = JSON.parse(body);
-    const isValid = validateBody(parsedBody);
-
-    if (isValid) {
-      return parsedBody;
-    }
-  } catch (error) {
-    console.error('Failed to parse body:', error);
-  }
-
-  return null;
-};
+export const getBody = createBodyParser<IRequestBody>(validateBody);

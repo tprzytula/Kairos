@@ -1,33 +1,23 @@
+import { createBodyParser } from "@kairos-lambdas-libs/handler-factories";
 import { IRequestBody } from "./types";
 
-const validateBody = (body: IRequestBody) => {
-  if (!body.name) {
+const validateBody = (body: unknown): body is IRequestBody => {
+  if (!body || typeof body !== 'object') {
     return false;
   }
-  if (typeof body.month !== "number" || body.month < 1 || body.month > 12) {
+
+  const b = body as Record<string, unknown>;
+
+  if (!b.name) {
     return false;
   }
-  if (typeof body.day !== "number" || body.day < 1 || body.day > 31) {
+  if (typeof b.month !== "number" || b.month < 1 || b.month > 12) {
+    return false;
+  }
+  if (typeof b.day !== "number" || b.day < 1 || b.day > 31) {
     return false;
   }
   return true;
 };
 
-export const getBody = (body: string | null): IRequestBody | null => {
-  if (!body) {
-    return null;
-  }
-
-  try {
-    const parsedBody = JSON.parse(body);
-    const isValid = validateBody(parsedBody);
-
-    if (isValid) {
-      return parsedBody;
-    }
-  } catch (error) {
-    console.error("Failed to parse body:", error);
-  }
-
-  return null;
-};
+export const getBody = createBodyParser<IRequestBody>(validateBody);
