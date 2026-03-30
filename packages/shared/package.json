@@ -1,0 +1,7 @@
+{
+  "name": "@kairos/shared",
+  "version": "1.0.0",
+  "license": "AGPL-3.0",
+  "main": "index.ts",
+  "private": true
+}

@@ -1,3 +1,4 @@
+import { ITodoItem as ITodoItemBase } from '@kairos/shared'
 
 export interface IStep {
   id: string
@@ -5,12 +6,7 @@ export interface IStep {
   isDone: boolean
 }
 
-export interface ITodoItem {
-  id: string
-  name: string
-  description?: string
-  isDone: boolean
-  dueDate?: number
+export interface ITodoItem extends Omit<ITodoItemBase, 'projectId'> {
   steps?: IStep[]
   visibility?: "private"
   ownerId?: string

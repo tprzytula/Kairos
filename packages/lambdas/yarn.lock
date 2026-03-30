@@ -1718,6 +1718,9 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@kairos/shared@file:../shared":
+  version "1.0.0"
+
 "@lerna/create@8.2.1":
   version "8.2.1"
   resolved "https://registry.npmjs.org/@lerna/create/-/create-8.2.1.tgz"

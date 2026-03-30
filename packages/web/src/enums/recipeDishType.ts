@@ -1,23 +1,15 @@
-export enum RecipeDishType {
-  PASTA = "pasta",
-  SOUP = "soup",
-  SALAD = "salad",
-  BAKED_GOODS = "baked_goods",
-  RICE = "rice",
-  STEW = "stew",
-  STIR_FRY = "stir_fry",
-  SANDWICH = "sandwich",
-}
+import { RecipeDishType } from '@kairos/shared'
+export { RecipeDishType }
 
 export const RecipeDishTypeLabelMap: Record<RecipeDishType, string> = {
-  [RecipeDishType.PASTA]: "Pasta",
-  [RecipeDishType.SOUP]: "Soup",
-  [RecipeDishType.SALAD]: "Salad",
-  [RecipeDishType.BAKED_GOODS]: "Baked Goods",
-  [RecipeDishType.RICE]: "Rice",
-  [RecipeDishType.STEW]: "Stew",
-  [RecipeDishType.STIR_FRY]: "Stir Fry",
-  [RecipeDishType.SANDWICH]: "Sandwich",
+  [RecipeDishType.PASTA]: 'Pasta',
+  [RecipeDishType.SOUP]: 'Soup',
+  [RecipeDishType.SALAD]: 'Salad',
+  [RecipeDishType.BAKED_GOODS]: 'Baked Goods',
+  [RecipeDishType.RICE]: 'Rice',
+  [RecipeDishType.STEW]: 'Stew',
+  [RecipeDishType.STIR_FRY]: 'Stir Fry',
+  [RecipeDishType.SANDWICH]: 'Sandwich',
 }
 
 export const RecipeDishTypeOrder: RecipeDishType[] = [

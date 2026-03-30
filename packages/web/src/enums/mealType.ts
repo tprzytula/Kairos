@@ -1,11 +1,5 @@
-export enum MealType {
-  Breakfast = 'Breakfast',
-  Brunch = 'Brunch',
-  Lunch = 'Lunch',
-  Snack = 'Snack',
-  Dinner = 'Dinner',
-  Other = 'Other',
-}
+import { MealType } from '@kairos/shared'
+export { MealType }
 
 export const MEAL_TYPE_ORDER: MealType[] = [
   MealType.Breakfast,

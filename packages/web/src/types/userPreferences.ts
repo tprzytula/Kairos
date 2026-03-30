@@ -1,9 +1,4 @@
-export interface IUserPreferences {
-  userId: string
-  currentProjectId?: string
-  currentShopId?: string
-  lastUpdated: number
-}
+export { IUserPreferences } from '@kairos/shared'
 
 export interface IUpdateUserPreferencesRequest {
   currentProjectId?: string

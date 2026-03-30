@@ -1,6 +1,6 @@
 import { GroceryItemUnit } from '../enums/groceryItem'
-import { MealType } from '../enums/mealType'
-import { RecipeDishType } from '../enums/recipeDishType'
+import { MealType } from '@kairos/shared'
+import { RecipeDishType } from '@kairos/shared'
 
 export interface IRecipeIngredient {
     name: string

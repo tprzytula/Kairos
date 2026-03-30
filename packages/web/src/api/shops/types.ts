@@ -1,13 +1,6 @@
-export interface IDBShop {
-  id: string
-  projectId: string
-  name: string
-  icon?: string
-  createdAt: string
-  updatedAt: string
-  visibility?: "private"
-  ownerId?: string
-}
+import { IShop } from '@kairos/shared'
+
+export type IDBShop = IShop
 
 export interface ICreateShopRequestBody {
   name: string
@@ -27,6 +20,4 @@ export interface IAddShopResponse {
   id: string
 }
 
-export interface IUpdateShopResponse {
-  // Update shop returns no content, just success status
-}
+export interface IUpdateShopResponse {}

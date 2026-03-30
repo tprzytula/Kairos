@@ -1,3 +1,7 @@
+export { ProjectRole } from '@kairos/shared'
+import { ProjectRole } from '@kairos/shared'
+
+// These types differ from lambdas (string vs number timestamps), so stay local
 export interface IProject {
   id: string
   ownerId: string
@@ -13,11 +17,6 @@ export interface IProjectMember {
   userId: string
   role: ProjectRole
   joinedAt: string
-}
-
-export enum ProjectRole {
-  OWNER = 'owner',
-  MEMBER = 'member'
 }
 
 export interface ICreateProjectRequest {

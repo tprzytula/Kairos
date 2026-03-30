@@ -5,6 +5,7 @@
   "main": "index.js",
   "private": true,
   "dependencies": {
+    "@kairos/shared": "file:../../../shared",
     "@aws-sdk/client-dynamodb": "^3.782.0",
     "@aws-sdk/lib-dynamodb": "^3.789.0"
   },

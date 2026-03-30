@@ -1,5 +1,3 @@
-export interface INoiseTrackingItem {
-  timestamp: number
-  visibility?: "private"
-  ownerId?: string
-}
+import { INoiseTracking } from '@kairos/shared'
+
+export type INoiseTrackingItem = Omit<INoiseTracking, 'projectId'>

@@ -1,7 +1,4 @@
-export enum ProjectRole {
-  OWNER = 'owner',
-  MEMBER = 'member',
-}
+export { ProjectRole } from '@kairos/shared'
 
 export interface IProject {
   id: string
