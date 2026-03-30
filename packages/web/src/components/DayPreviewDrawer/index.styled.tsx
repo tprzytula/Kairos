@@ -29,6 +29,18 @@ export const DrawerContent = styled(Box)({
   paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))',
 })
 
+export const TimeBadge = styled('span')({
+  fontSize: '0.6rem',
+  fontWeight: 600,
+  color: '#6366f1',
+  backgroundColor: '#eef2ff',
+  padding: '1px 5px',
+  borderRadius: '4px',
+  marginRight: '4px',
+  flexShrink: 0,
+  whiteSpace: 'nowrap',
+})
+
 export const SectionLabel = styled(Typography)<{ color?: string }>(
   ({ color = '#1d4ed8' }) => ({
     fontSize: '0.7rem',

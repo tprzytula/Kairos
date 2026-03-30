@@ -103,19 +103,17 @@ const getDayRowBorderRadius = (toNext?: boolean, fromPrev?: boolean) => {
   return `${topLeft} ${topRight} ${bottomRight} ${bottomLeft}`
 }
 
-export const DayRow = styled('div')<IDayRowProps & { isExpanded?: boolean }>(({ isToday, adventureContinuesToNext, adventureContinuesFromPrev, isExpanded }) => {
+export const DayRow = styled('div')<IDayRowProps>(({ isToday, adventureContinuesToNext, adventureContinuesFromPrev }) => {
   const isSpanning = adventureContinuesToNext || adventureContinuesFromPrev
   const borderColor = isToday ? TODAY_BORDER : isSpanning ? ADVENTURE_COLOR : BORDER_COLOR
   return {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'stretch',
-    borderRadius: isExpanded
-      ? getDayRowBorderRadius(true, adventureContinuesFromPrev)
-      : getDayRowBorderRadius(adventureContinuesToNext, adventureContinuesFromPrev),
+    borderRadius: getDayRowBorderRadius(adventureContinuesToNext, adventureContinuesFromPrev),
     borderLeft: `1.5px solid ${borderColor}`,
     borderRight: `1.5px solid ${borderColor}`,
-    borderBottom: isExpanded ? 'none' : `1.5px solid ${borderColor}`,
+    borderBottom: `1.5px solid ${borderColor}`,
     borderTop: adventureContinuesFromPrev ? 'none' : `1.5px solid ${borderColor}`,
     backgroundColor: isToday ? TODAY_BG : '#ffffff',
     boxShadow: isToday ? '0 2px 8px rgba(99,102,241,0.12)' : '0 1px 3px rgba(0,0,0,0.04)',
