@@ -31,6 +31,7 @@ import {
   DrawerTitle,
   DrawerSubtitle,
   SectionLabel,
+  TimeBadge,
 } from './index.styled'
 import PrivateItemBadge from '../PrivateItemBadge'
 import DraggableBottomDrawer from '../DraggableBottomDrawer'
@@ -51,6 +52,20 @@ interface IDayPreviewDrawerProps {
   onMealPlanClick?: (mealPlan: IMealPlan) => void
   onAdventureClick?: (id: string) => void
   onAddTask?: (date: string) => void
+}
+
+const getTodoTime = (todo: ITodoItem): string | null => {
+  if (!todo.dueDate) return null
+  const d = dayjs(todo.dueDate)
+  const hour = d.hour()
+  const minute = d.minute()
+  if (hour === 0 && minute === 0) return null
+  return d.format('h:mm A')
+}
+
+const formatAdventureTime = (time?: string): string | null => {
+  if (!time) return null
+  return dayjs(`2000-01-01 ${time}`).format('h:mm A')
 }
 
 const DayPreviewDrawer = ({
@@ -107,25 +122,32 @@ const DayPreviewDrawer = ({
           <DayDetailEmpty>No tasks on this day</DayDetailEmpty>
         ) : (
           <>
-            {pendingTodos.map(todo =>
-              isOverdue ? (
+            {pendingTodos.map(todo => {
+              const time = getTodoTime(todo)
+              return isOverdue ? (
                 <OverdueDayDetailItem key={todo.id} onClick={() => onTodoClick(todo.id)}>
+                  {time && <TimeBadge>{time}</TimeBadge>}
                   {todo.name}
                   {todo.visibility === 'private' && <PrivateItemBadge />}
                 </OverdueDayDetailItem>
               ) : (
                 <DayDetailItem key={todo.id} onClick={() => onTodoClick(todo.id)}>
+                  {time && <TimeBadge>{time}</TimeBadge>}
                   {todo.name}
                   {todo.visibility === 'private' && <PrivateItemBadge />}
                 </DayDetailItem>
               )
-            )}
-            {completedTodos.map(todo => (
-              <CompletedDayDetailItem key={todo.id} onClick={() => onTodoClick(todo.id)}>
-                {todo.name}
-                {todo.visibility === 'private' && <PrivateItemBadge />}
-              </CompletedDayDetailItem>
-            ))}
+            })}
+            {completedTodos.map(todo => {
+              const time = getTodoTime(todo)
+              return (
+                <CompletedDayDetailItem key={todo.id} onClick={() => onTodoClick(todo.id)}>
+                  {time && <TimeBadge>{time}</TimeBadge>}
+                  {todo.name}
+                  {todo.visibility === 'private' && <PrivateItemBadge />}
+                </CompletedDayDetailItem>
+              )
+            })}
           </>
         )}
 
@@ -154,6 +176,7 @@ const DayPreviewDrawer = ({
           mealPlans.map(plan => (
             <MealDayDetailItem key={plan.id} onClick={() => onMealPlanClick?.(plan)}>
               <MealPlanIcon sx={{ fontSize: '0.9rem', flexShrink: 0 }} />
+              {plan.mealType && <TimeBadge>{plan.mealType}</TimeBadge>}
               {plan.recipeName}
               {plan.visibility === 'private' && <PrivateItemBadge />}
               {plan.recipeId && <LinkIcon sx={{ fontSize: '0.75rem', color: '#d97706', marginLeft: 'auto', flexShrink: 0 }} />}
@@ -164,16 +187,17 @@ const DayPreviewDrawer = ({
         {adventures.length > 0 && (
           <>
             <AdventuresSectionHeader>Adventures</AdventuresSectionHeader>
-            {adventures.map(adventure => (
-              <AdventureDayDetailItem key={adventure.id} onClick={() => onAdventureClick?.(adventure.id)}>
-                <ExploreIcon sx={{ fontSize: '0.9rem', color: '#06b6d4', flexShrink: 0 }} />
-                <span style={{ flex: 1 }}>{adventure.name}</span>
-                {adventure.visibility === 'private' && <PrivateItemBadge />}
-                {adventure.time && (
-                  <span style={{ fontSize: '0.75rem', color: '#0891b2', flexShrink: 0 }}>{adventure.time}</span>
-                )}
-              </AdventureDayDetailItem>
-            ))}
+            {adventures.map(adventure => {
+              const time = formatAdventureTime(adventure.time)
+              return (
+                <AdventureDayDetailItem key={adventure.id} onClick={() => onAdventureClick?.(adventure.id)}>
+                  <ExploreIcon sx={{ fontSize: '0.9rem', color: '#06b6d4', flexShrink: 0 }} />
+                  {time && <TimeBadge>{time}</TimeBadge>}
+                  <span style={{ flex: 1 }}>{adventure.name}</span>
+                  {adventure.visibility === 'private' && <PrivateItemBadge />}
+                </AdventureDayDetailItem>
+              )
+            })}
           </>
         )}
       </DrawerContent>
