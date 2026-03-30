@@ -64,6 +64,7 @@ export const WeekRowsWrapper = styled('div')<{
 }>(({ $animationDirection }) => ({
   flex: 1,
   overflowY: 'auto',
+  overscrollBehavior: 'contain',
   padding: '0 12px 16px',
   display: 'flex',
   flexDirection: 'column',
