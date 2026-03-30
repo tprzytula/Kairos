@@ -42,6 +42,7 @@ describe('Given the AddItemButton component', () => {
       isLoading: false,
       refetchNoiseTrackingItems: mockRefetchNoiseTrackingItems,
       addItemToCache: mockAddItemToCache,
+      removeItemFromCache: vi.fn(),
     })
     
     vi.spyOn(NoiseTrackingAPI, 'addNoiseTrackingItem').mockImplementation(mockAddNoiseTrackingItem)
@@ -160,7 +161,7 @@ describe('Given the AddItemButton component', () => {
       expect(mockAddNoiseTrackingItem).toHaveBeenCalled()
       
       await waitFor(() => {
-        expect(mockAddItemToCache).toHaveBeenCalledWith({ timestamp: expect.any(Number) })
+        expect(mockAddItemToCache).toHaveBeenCalledWith({ id: expect.any(String), timestamp: expect.any(Number) })
         expect(mockRefetchNoiseTrackingItems).toHaveBeenCalled()
       })
       

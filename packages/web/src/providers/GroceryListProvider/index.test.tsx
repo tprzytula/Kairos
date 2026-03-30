@@ -341,7 +341,7 @@ describe('Given the useGroceryListContext hook', () => {
   it('should handle error when removeGroceryItem fails', async () => {
     vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
     vi.spyOn(API, 'removeGroceryItems').mockRejectedValue(new Error('Remove failed'))
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation()
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -369,7 +369,7 @@ describe('Given the useGroceryListContext hook', () => {
   it('should handle error when updateGroceryItem fails', async () => {
     vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
     vi.spyOn(API, 'updateGroceryItem').mockRejectedValue(new Error('Update failed'))
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation()
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -397,7 +397,7 @@ describe('Given the useGroceryListContext hook', () => {
   it('should handle error when updateGroceryItemFields fails', async () => {
     vi.spyOn(API, 'retrieveGroceryList').mockResolvedValue(EXAMPLE_GROCERY_LIST)
     vi.spyOn(API, 'updateGroceryItemFields').mockRejectedValue(new Error('Update fields failed'))
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation()
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (

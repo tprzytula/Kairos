@@ -173,7 +173,7 @@ describe('Given the HomeRoute component', () => {
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
       
       const mockNoiseList = [
-        { timestamp: today.getTime() + 2 * 60 * 60 * 1000 }
+        { id: 'noise-1', timestamp: today.getTime() + 2 * 60 * 60 * 1000 }
       ]
 
       vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
@@ -400,10 +400,10 @@ describe('Given the HomeRoute component', () => {
     const weekAgo = new Date(today.getTime() - 8 * 24 * 60 * 60 * 1000)
 
     const mockNoiseList = [
-      { timestamp: today.getTime() + 2 * 60 * 60 * 1000 }, // Today
-      { timestamp: today.getTime() + 4 * 60 * 60 * 1000 }, // Today  
-      { timestamp: yesterday.getTime() }, // Yesterday (last 7 days)
-      { timestamp: weekAgo.getTime() }, // Week ago (last 30 days)
+      { id: 'noise-1', timestamp: today.getTime() + 2 * 60 * 60 * 1000 }, // Today
+      { id: 'noise-2', timestamp: today.getTime() + 4 * 60 * 60 * 1000 }, // Today
+      { id: 'noise-3', timestamp: yesterday.getTime() }, // Yesterday (last 7 days)
+      { id: 'noise-4', timestamp: weekAgo.getTime() }, // Week ago (last 30 days)
     ]
 
     vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
@@ -602,8 +602,8 @@ describe('Given the HomeRoute component', () => {
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
       
       const mockNoiseList = [
-        { timestamp: today.getTime() + 2 * 60 * 60 * 1000 }, // Today at 2pm
-        { timestamp: today.getTime() + 4 * 60 * 60 * 1000 }, // Today at 4pm  
+        { id: 'noise-1', timestamp: today.getTime() + 2 * 60 * 60 * 1000 }, // Today at 2pm
+        { id: 'noise-2', timestamp: today.getTime() + 4 * 60 * 60 * 1000 }, // Today at 4pm
       ]
 
       vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
@@ -650,7 +650,7 @@ describe('Given the HomeRoute component', () => {
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
       
       const mockNoiseList = [
-        { timestamp: today.getTime() + 2 * 60 * 60 * 1000 },
+        { id: 'noise-1', timestamp: today.getTime() + 2 * 60 * 60 * 1000 },
       ]
 
       vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)
@@ -693,7 +693,7 @@ describe('Given the HomeRoute component', () => {
       const weekAgo = new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000) // 8 days ago
       
       const mockNoiseList = [
-        { timestamp: weekAgo.getTime() }, // Outside of 7 days range
+        { id: 'noise-1', timestamp: weekAgo.getTime() }, // Outside of 7 days range
       ]
 
       vi.spyOn(NoiseAPI, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseList)

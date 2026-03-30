@@ -45,7 +45,11 @@ describe('AppInfoCard', () => {
       currentProject: {
         id: 'project-1',
         name: 'Test Project',
-        isPersonal: false
+        isPersonal: false,
+        ownerId: 'owner-1',
+        maxMembers: 10,
+        inviteCode: 'invite-123',
+        createdAt: '2025-01-01T00:00:00Z',
       },
       projects: [],
       isLoading: false,
@@ -63,7 +67,11 @@ describe('AppInfoCard', () => {
         currentProject: {
           id: 'project-1',
           name: 'My Awesome Project',
-          isPersonal: false
+          isPersonal: false,
+          ownerId: 'owner-1',
+          maxMembers: 10,
+          inviteCode: 'invite-123',
+          createdAt: '2025-01-01T00:00:00Z',
         },
         projects: [],
         isLoading: false,
@@ -85,7 +93,11 @@ describe('AppInfoCard', () => {
         currentProject: {
           id: 'project-1',
           name: 'Personal Tasks',
-          isPersonal: true
+          isPersonal: true,
+          ownerId: 'owner-1',
+          maxMembers: 1,
+          inviteCode: 'invite-123',
+          createdAt: '2025-01-01T00:00:00Z',
         },
         projects: [],
         isLoading: false,
@@ -249,7 +261,7 @@ describe('AppInfoCard', () => {
   describe('edge cases', () => {
     it('should handle undefined version gracefully', () => {
       mockUseVersion.mockReturnValue({
-        version: undefined,
+        version: null,
         isLoading: false,
         error: null
       })
@@ -298,7 +310,11 @@ describe('AppInfoCard', () => {
         currentProject: {
           id: 'project-1',
           name: 'Very Long Project Name That Might Break Layout and Cause Issues',
-          isPersonal: false
+          isPersonal: false,
+          ownerId: 'owner-1',
+          maxMembers: 10,
+          inviteCode: 'invite-123',
+          createdAt: '2025-01-01T00:00:00Z',
         },
         projects: [],
         isLoading: false,

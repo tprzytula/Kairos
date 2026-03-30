@@ -156,9 +156,11 @@ describe('Given the Planner component', () => {
       vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
         toDoList: [],
         isLoading: false,
+        isError: false,
         refetchToDoList: vi.fn(),
         removeFromToDoList: vi.fn(),
         updateToDoItemFields: vi.fn(),
+        updateToDoItemsBulk: vi.fn(),
       })
 
       renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
@@ -173,9 +175,11 @@ describe('Given the Planner component', () => {
         vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
           toDoList: [],
           isLoading: false,
+          isError: false,
           refetchToDoList: vi.fn(),
           removeFromToDoList: vi.fn(),
           updateToDoItemFields: vi.fn(),
+          updateToDoItemsBulk: vi.fn(),
         })
 
         renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
@@ -195,9 +199,11 @@ describe('Given the Planner component', () => {
         vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
           toDoList: [],
           isLoading: false,
+          isError: false,
           refetchToDoList: vi.fn(),
           removeFromToDoList: vi.fn(),
           updateToDoItemFields: vi.fn(),
+          updateToDoItemsBulk: vi.fn(),
         })
 
         renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
@@ -217,9 +223,11 @@ describe('Given the Planner component', () => {
       vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
         toDoList: [],
         isLoading: true,
+        isError: false,
         refetchToDoList: vi.fn(),
         removeFromToDoList: vi.fn(),
         updateToDoItemFields: vi.fn(),
+        updateToDoItemsBulk: vi.fn(),
       })
 
       renderWithTheme(<Planner />)
@@ -307,7 +315,9 @@ const EXAMPLE_TO_DO_LIST_CONTEXT: IState = {
     },
   ],
   isLoading: false,
+  isError: false,
   refetchToDoList: vi.fn(),
   removeFromToDoList: vi.fn(),
   updateToDoItemFields: vi.fn(),
+  updateToDoItemsBulk: vi.fn(),
 }

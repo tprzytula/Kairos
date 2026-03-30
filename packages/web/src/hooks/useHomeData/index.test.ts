@@ -26,6 +26,7 @@ const createMockTodoItem = (overrides: Partial<ITodoItem> = {}): ITodoItem => ({
 })
 
 const createMockNoiseItem = (timestamp: number): INoiseTrackingItem => ({
+  id: timestamp.toString(),
   timestamp
 })
 

@@ -176,15 +176,15 @@ describe('useSwipeGesture', () => {
     });
     
     // Get the mouse move handler that was registered
-    const mouseMoveHandler = (document.addEventListener as Mock).mock.calls.find(
+    const mouseMoveHandler = ((document.addEventListener as Mock).mock.calls.find(
       call => call[0] === 'mousemove'
-    )[1];
-    
+    ) as [string, (...args: unknown[]) => unknown])[1];
+
     // Simulate mouse move (leftward swipe)
     act(() => {
       mouseMoveHandler({ clientX: 80 });
     });
-    
+
     expect(result.current.translateX).toBe(20);
     expect(onSwipeUpdate).toHaveBeenCalledWith(20, true);
   });
@@ -192,46 +192,46 @@ describe('useSwipeGesture', () => {
   it('should handle mouse move with rightward motion (negative delta)', () => {
     const onSwipeUpdate = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeUpdate }));
-    
+
     // Start mouse down
     act(() => {
       result.current.handlers.onMouseDown(createMockMouseEvent(100));
     });
-    
+
     // Get the mouse move handler
-    const mouseMoveHandler = (document.addEventListener as Mock).mock.calls.find(
+    const mouseMoveHandler = ((document.addEventListener as Mock).mock.calls.find(
       call => call[0] === 'mousemove'
-    )[1];
-    
+    ) as [string, (...args: unknown[]) => unknown])[1];
+
     // Simulate rightward mouse move (should create negative translateX for left action)
     act(() => {
       mouseMoveHandler({ clientX: 120 });
     });
-    
+
     expect(result.current.translateX).toBe(-20); // 100 - 120 = -20
   });
 
   it('should handle mouse up events', () => {
     const onSwipeEnd = vi.fn();
     const { result } = renderHook(() => useSwipeGesture({ onSwipeEnd }));
-    
+
     // Start mouse down and move
     act(() => {
       result.current.handlers.onMouseDown(createMockMouseEvent(100));
     });
-    
-    const mouseMoveHandler = (document.addEventListener as Mock).mock.calls.find(
+
+    const mouseMoveHandler = ((document.addEventListener as Mock).mock.calls.find(
       call => call[0] === 'mousemove'
-    )[1];
-    
+    ) as [string, (...args: unknown[]) => unknown])[1];
+
     act(() => {
       mouseMoveHandler({ clientX: 80 });
     });
-    
+
     // Get the mouse up handler
-    const mouseUpHandler = (document.addEventListener as Mock).mock.calls.find(
+    const mouseUpHandler = ((document.addEventListener as Mock).mock.calls.find(
       call => call[0] === 'mouseup'
-    )[1];
+    ) as [string, (...args: unknown[]) => unknown])[1];
     
     // Simulate mouse up
     act(() => {

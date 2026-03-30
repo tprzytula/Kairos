@@ -9,6 +9,8 @@ vi.spyOn(NoiseTrackingProvider, 'useNoiseTrackingContext').mockReturnValue({
   noiseTrackingItems: [],
   isLoading: false,
   refetchNoiseTrackingItems: mockRefetchNoiseTrackingItems,
+  addItemToCache: vi.fn(),
+  removeItemFromCache: vi.fn(),
 })
 
 const originalToLocaleDateString = Date.prototype.toLocaleDateString

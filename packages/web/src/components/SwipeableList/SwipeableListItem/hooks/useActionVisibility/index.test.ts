@@ -224,37 +224,37 @@ describe('useActionVisibility', () => {
     });
     
     // Simulate outside click
-    const clickHandler = (document.addEventListener as Mock).mock.calls.find(
+    const clickHandler = ((document.addEventListener as Mock).mock.calls.find(
       call => call[0] === 'click'
-    )[1];
-    
+    ) as [string, (...args: unknown[]) => unknown])[1];
+
     act(() => {
       clickHandler({ target: document.body });
     });
-    
+
     expect(result.current.isRightActionsVisible).toBe(false);
     expect(result.current.isLeftActionsVisible).toBe(false);
   });
 
   it('should not hide actions on inside click', () => {
     const { result } = renderHook(() => useActionVisibility({}));
-    
+
     // Make actions visible
     act(() => {
       result.current.updateVisibility(10, true);
     });
-    
+
     const containerRef = createMockContainerRef();
     containerRef.current.contains = vi.fn().mockReturnValue(true);
-    
+
     act(() => {
       result.current.setupOutsideClickHandler(containerRef as any);
     });
-    
+
     // Simulate inside click
-    const clickHandler = (document.addEventListener as Mock).mock.calls.find(
+    const clickHandler = ((document.addEventListener as Mock).mock.calls.find(
       call => call[0] === 'click'
-    )[1];
+    ) as [string, (...args: unknown[]) => unknown])[1];
     
     act(() => {
       clickHandler({ target: document.body });

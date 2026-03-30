@@ -218,7 +218,7 @@ describe('Given the usePlannerContext hook', () => {
   it('should handle errors when updating todo item fields fails', async () => {
     vi.spyOn(API, 'retrieveToDoList').mockResolvedValue(EXAMPLE_TODO_LIST)
     vi.spyOn(API, 'updateToDoItemFields').mockRejectedValue(new Error('Update failed'))
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation()
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     const queryClient = createTestQueryClient()
     const Wrapper = ({ children }: { children: React.ReactNode }) => (

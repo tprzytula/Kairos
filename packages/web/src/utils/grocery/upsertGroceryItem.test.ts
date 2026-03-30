@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest'
 import { upsertGroceryItem } from './upsertGroceryItem'
 import { IGroceryItem } from '../../providers/AppStateProvider/types'
+import { GroceryItemUnit } from '../../enums/groceryItem'
 
 const makeItem = (overrides: Partial<IGroceryItem> = {}): IGroceryItem => ({
   id: 'item-1',
   name: 'Milk',
   quantity: 2,
-  unit: 'l',
+  unit: GroceryItemUnit.LITER,
   shopId: 'shop-1',
   imagePath: '',
   toBeRemoved: false,

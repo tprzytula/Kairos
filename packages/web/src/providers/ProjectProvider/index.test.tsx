@@ -66,7 +66,7 @@ describe('ProjectProvider', () => {
         access_token: 'test-access-token'
       }
     })
-    mockUpdateUserPreferences.mockResolvedValue(undefined)
+    mockUpdateUserPreferences.mockResolvedValue({ userId: 'test-user-id', lastUpdated: 0 })
   })
 
   it('should fetch projects on mount when authenticated', async () => {

@@ -50,6 +50,7 @@ describe('GrocerySection component', () => {
           groceryStats={groceryStats}
           shops={[]}
           isLoading={true}
+          isError={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
       )
@@ -67,8 +68,8 @@ describe('GrocerySection component', () => {
         <GrocerySection
           groceryStats={groceryStats}
           shops={[]}
-          shops={[]}
           isLoading={false}
+          isError={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
       )
@@ -97,6 +98,7 @@ describe('GrocerySection component', () => {
           groceryStats={groceryStats}
           shops={[]}
           isLoading={false}
+          isError={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
       )
@@ -125,6 +127,7 @@ describe('GrocerySection component', () => {
           groceryStats={groceryStats}
           shops={[]}
           isLoading={false}
+          isError={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
       )
@@ -146,6 +149,7 @@ describe('GrocerySection component', () => {
           groceryStats={groceryStats}
           shops={[]}
           isLoading={false}
+          isError={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
       )
@@ -174,6 +178,7 @@ describe('GrocerySection component', () => {
           groceryStats={groceryStats}
           shops={[]}
           isLoading={false}
+          isError={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
       )
@@ -204,6 +209,7 @@ describe('GrocerySection component', () => {
           groceryStats={groceryStats}
           shops={[]}
           isLoading={false}
+          isError={false}
           onGroceryItemClick={mockOnGroceryItemClick}
         />
       )

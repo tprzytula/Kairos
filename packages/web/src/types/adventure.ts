@@ -1,1 +1,1 @@
-export { IAdventure } from '@kairos/shared'
+export type { IAdventure } from '@kairos/shared'

@@ -17,8 +17,8 @@ import {
 interface RecipeListProps {
   search?: string
   onViewRecipe: (recipe: IRecipe) => void
-  selectedMealTypes: MealType[]
-  selectedDishTypes: RecipeDishType[]
+  selectedMealTypes?: MealType[]
+  selectedDishTypes?: RecipeDishType[]
 }
 
 const RecipeSkeletonCard = () => (
@@ -34,7 +34,7 @@ const RecipeSkeletonCard = () => (
   </Box>
 )
 
-const RecipeList = ({ search = '', onViewRecipe, selectedMealTypes, selectedDishTypes }: RecipeListProps) => {
+const RecipeList = ({ search = '', onViewRecipe, selectedMealTypes = [], selectedDishTypes = [] }: RecipeListProps) => {
   const { recipes, isLoading } = useRecipeContext()
 
   const filtered = useMemo(() => {

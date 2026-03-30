@@ -1,5 +1,6 @@
 import { useRef, ReactNode } from 'react'
 import { CircularProgress } from '@mui/material'
+import type { SxProps, Theme } from '@mui/material'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import { Wrapper, ScrollArea, IndicatorContainer } from './index.styled'
 import { usePullToRefresh, PULL_THRESHOLD } from './usePullToRefresh'
@@ -8,9 +9,10 @@ interface Props {
   children: ReactNode
   onRefresh?: () => Promise<void>
   scrollArea?: typeof ScrollArea
+  sx?: SxProps<Theme>
 }
 
-export const ScrollableContainer = ({ children, onRefresh, scrollArea: ScrollAreaComponent = ScrollArea }: Props) => {
+export const ScrollableContainer = ({ children, onRefresh, scrollArea: ScrollAreaComponent = ScrollArea, sx }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const { pullDistance, isPulling, isRefreshing } = usePullToRefresh(containerRef, onRefresh)
 
@@ -36,6 +38,7 @@ export const ScrollableContainer = ({ children, onRefresh, scrollArea: ScrollAre
       )}
       <ScrollAreaComponent
         ref={containerRef}
+        sx={sx}
         style={{
           transform: `translateY(${contentOffset}px)`,
           transition,

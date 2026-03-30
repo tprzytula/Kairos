@@ -127,7 +127,7 @@ describe('ProjectInviteDisplay component', () => {
     it('should handle clipboard write failure gracefully', async () => {
       const mockWriteText = navigator.clipboard.writeText as Mock
       mockWriteText.mockRejectedValue(new Error('Clipboard error'))
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation()
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       
       renderComponent()
       

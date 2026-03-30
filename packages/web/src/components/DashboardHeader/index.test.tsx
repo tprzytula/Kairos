@@ -10,7 +10,7 @@ vi.mock('react-oidc-context', () => ({
   useAuth: vi.fn()
 }))
 
-import { useAuth } from 'react-oidc-context'
+import { useAuth, AuthContextProps } from 'react-oidc-context'
 
 // Mock the UserMenu component
 vi.mock('../UserMenu', () => ({
@@ -43,8 +43,8 @@ describe('DashboardHeader', () => {
       user: null,
       isAuthenticated: false,
       isLoading: false,
-      error: null
-    })
+      error: undefined
+    } as AuthContextProps)
   })
 
   afterEach(() => {
@@ -68,8 +68,8 @@ describe('DashboardHeader', () => {
         },
         isAuthenticated: true,
         isLoading: false,
-        error: null
-      })
+        error: undefined
+      } as AuthContextProps)
 
       renderWithTheme(<DashboardHeader />)
 
@@ -88,8 +88,8 @@ describe('DashboardHeader', () => {
         },
         isAuthenticated: true,
         isLoading: false,
-        error: null
-      })
+        error: undefined
+      } as AuthContextProps)
 
       renderWithTheme(<DashboardHeader />)
 
@@ -108,8 +108,8 @@ describe('DashboardHeader', () => {
         },
         isAuthenticated: true,
         isLoading: false,
-        error: null
-      })
+        error: undefined
+      } as AuthContextProps)
 
       renderWithTheme(<DashboardHeader />)
 
@@ -122,8 +122,8 @@ describe('DashboardHeader', () => {
         user: null,
         isAuthenticated: false,
         isLoading: false,
-        error: null
-      })
+        error: undefined
+      } as AuthContextProps)
 
       renderWithTheme(<DashboardHeader />)
 
@@ -140,8 +140,8 @@ describe('DashboardHeader', () => {
         },
         isAuthenticated: true,
         isLoading: false,
-        error: null
-      })
+        error: undefined
+      } as AuthContextProps)
 
       renderWithTheme(<DashboardHeader />)
 
@@ -171,8 +171,8 @@ describe('DashboardHeader', () => {
         },
         isAuthenticated: true,
         isLoading: false,
-        error: null
-      })
+        error: undefined
+      } as AuthContextProps)
 
       renderWithTheme(<DashboardHeader />)
 
@@ -184,8 +184,8 @@ describe('DashboardHeader', () => {
         user: null,
         isAuthenticated: false,
         isLoading: false,
-        error: null
-      })
+        error: undefined
+      } as AuthContextProps)
 
       renderWithTheme(<DashboardHeader />)
 
@@ -197,8 +197,8 @@ describe('DashboardHeader', () => {
         user: null,
         isAuthenticated: true,
         isLoading: false,
-        error: null
-      })
+        error: undefined
+      } as AuthContextProps)
 
       renderWithTheme(<DashboardHeader />)
 

@@ -134,7 +134,8 @@ const AddItemButton = () => {
         if (location.pathname === Route.NoiseTracking) {
             try {
                 await addNoiseTrackingItem(currentProject?.id);
-                addItemToCache({ timestamp: Date.now() });
+                const timestamp = Date.now();
+                addItemToCache({ id: timestamp.toString(), timestamp });
                 refetchNoiseTrackingItems();
             } catch (error) {
                 console.error('Failed to add noise tracking item:', error);

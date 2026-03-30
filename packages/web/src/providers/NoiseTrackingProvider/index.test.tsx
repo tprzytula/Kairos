@@ -100,6 +100,7 @@ describe('Given the useNoiseTrackingContext hook', () => {
 
     vi.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue([
       {
+        id: 'noise-1',
         timestamp: 1714003200000,
       },
     ])
@@ -111,6 +112,7 @@ describe('Given the useNoiseTrackingContext hook', () => {
     await waitFor(() => {
       expect(result.current.noiseTrackingItems).toStrictEqual([
         {
+          id: 'noise-1',
           timestamp: 1714003200000,
         },
       ])
@@ -176,9 +178,11 @@ describe('Given the useNoiseTrackingContext hook', () => {
 
 const EXAMPLE_NOISE_TRACKING_ITEMS: Array<INoiseTrackingItem> = [
   {
+    id: 'noise-1',
     timestamp: 1714003200000,
   },
   {
+    id: 'noise-2',
     timestamp: 1714003200000,
   },
 ]

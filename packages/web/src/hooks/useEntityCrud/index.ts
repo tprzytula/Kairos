@@ -2,14 +2,14 @@ import { useCallback, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useProjectContext } from '../../providers/ProjectProvider'
 
-interface UseEntityCrudConfig<T extends { id: string }> {
+interface UseEntityCrudConfig<T extends { id: string }, F extends object = Record<string, unknown>> {
   queryKey: string
   fetchFn: (projectId: string) => Promise<T[]>
-  updateFn: (id: string, fields: Record<string, unknown>, projectId: string) => Promise<void>
+  updateFn: (id: string, fields: F, projectId: string) => Promise<void>
   deleteFn: (id: string, projectId: string) => Promise<void>
 }
 
-export const useEntityCrud = <T extends { id: string }>(config: UseEntityCrudConfig<T>) => {
+export const useEntityCrud = <T extends { id: string }, F extends object = Record<string, unknown>>(config: UseEntityCrudConfig<T, F>) => {
   const { queryKey: key, fetchFn, updateFn, deleteFn } = config
   const { currentProject } = useProjectContext()
   const queryClient = useQueryClient()
@@ -37,12 +37,12 @@ export const useEntityCrud = <T extends { id: string }>(config: UseEntityCrudCon
     queryClient.setQueryData<T[]>(queryKey, (prev = []) => [...prev, item])
   }, [currentProject, queryClient])
 
-  const update = useCallback(async (id: string, fields: Record<string, unknown>) => {
+  const update = useCallback(async (id: string, fields: F) => {
     if (!currentProject) return
 
     await updateFn(id, fields, currentProject.id)
     const definedFields = Object.fromEntries(
-      Object.entries(fields).filter(([, v]) => v !== undefined)
+      Object.entries(fields as Record<string, unknown>).filter(([, v]) => v !== undefined)
     ) as Partial<T>
     queryClient.setQueryData<T[]>(queryKey, (prev = []) =>
       prev.map((item) => item.id === id ? { ...item, ...definedFields } : item)

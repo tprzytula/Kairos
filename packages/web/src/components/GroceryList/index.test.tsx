@@ -64,6 +64,7 @@ describe('Given the GroceryList component', () => {
       vi.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
         groceryList: [],
         isLoading: false,
+        isError: false,
         isAllItemsView: false,
         viewMode: GroceryViewMode.CATEGORIZED,
         refetchGroceryList: vi.fn(),
@@ -71,6 +72,8 @@ describe('Given the GroceryList component', () => {
         updateGroceryItem: vi.fn(),
         updateGroceryItemFields: vi.fn(),
         setViewMode: vi.fn(),
+        removeCachedItems: vi.fn(),
+        addItemToCache: vi.fn(),
       })
 
       renderComponent()
@@ -85,6 +88,7 @@ describe('Given the GroceryList component', () => {
         vi.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
           groceryList: [],
           isLoading: false,
+          isError: false,
           isAllItemsView: false,
           viewMode: GroceryViewMode.CATEGORIZED,
           refetchGroceryList: vi.fn(),
@@ -92,6 +96,8 @@ describe('Given the GroceryList component', () => {
           updateGroceryItem: vi.fn(),
           updateGroceryItemFields: vi.fn(),
           setViewMode: vi.fn(),
+          removeCachedItems: vi.fn(),
+          addItemToCache: vi.fn(),
         })
 
         renderComponent()
@@ -111,6 +117,7 @@ describe('Given the GroceryList component', () => {
         vi.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
           groceryList: [],
           isLoading: false,
+          isError: false,
           isAllItemsView: false,
           viewMode: GroceryViewMode.CATEGORIZED,
           refetchGroceryList: vi.fn(),
@@ -118,6 +125,8 @@ describe('Given the GroceryList component', () => {
           updateGroceryItem: vi.fn(),
           updateGroceryItemFields: vi.fn(),
           setViewMode: vi.fn(),
+          removeCachedItems: vi.fn(),
+          addItemToCache: vi.fn(),
         })
 
         renderComponent()
@@ -137,6 +146,7 @@ describe('Given the GroceryList component', () => {
       vi.spyOn(GroceryListProvider, 'useGroceryListContext').mockReturnValue({
         groceryList: [],
         isLoading: true,
+        isError: false,
         isAllItemsView: false,
         viewMode: GroceryViewMode.CATEGORIZED,
         refetchGroceryList: vi.fn(),
@@ -144,6 +154,8 @@ describe('Given the GroceryList component', () => {
         updateGroceryItem: vi.fn(),
         updateGroceryItemFields: vi.fn(),
         setViewMode: vi.fn(),
+        removeCachedItems: vi.fn(),
+        addItemToCache: vi.fn(),
       })
 
       renderComponent()
@@ -184,6 +196,7 @@ const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
     },
   ],
   isLoading: false,
+  isError: false,
   isAllItemsView: false,
   viewMode: GroceryViewMode.CATEGORIZED,
   refetchGroceryList: vi.fn(),
@@ -191,4 +204,6 @@ const EXAMPLE_GROCERY_LIST_CONTEXT: IState = {
   updateGroceryItem: vi.fn(),
   updateGroceryItemFields: vi.fn(),
   setViewMode: vi.fn(),
+  removeCachedItems: vi.fn(),
+  addItemToCache: vi.fn(),
 }

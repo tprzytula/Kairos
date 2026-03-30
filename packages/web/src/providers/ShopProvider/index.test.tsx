@@ -258,7 +258,7 @@ describe('Given the ShopProvider', () => {
 
   describe('When the fetch fails', () => {
     it('should log an error and set shops to an empty array', async () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation()
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       mockRetrieveShops.mockRejectedValue(new Error('Network error'))
 
       const { result } = renderHook(() => useShopContext(), { wrapper: createWrapper() })

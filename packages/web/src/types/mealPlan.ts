@@ -1,1 +1,1 @@
-export { IMealPlan } from '@kairos/shared'
+export type { IMealPlan } from '@kairos/shared'

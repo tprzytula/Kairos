@@ -1,4 +1,4 @@
-export { IUserPreferences } from '@kairos/shared'
+export type { IUserPreferences } from '@kairos/shared'
 
 export interface IUpdateUserPreferencesRequest {
   currentProjectId?: string

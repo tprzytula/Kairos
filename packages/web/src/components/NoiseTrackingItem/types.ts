@@ -1,3 +1,4 @@
-export interface IGroceryListProps {
-    groceryList: Array<GroceryItem>
+export interface INoiseTrackingItemProps {
+  timestamp: number
+  _id?: string
 }

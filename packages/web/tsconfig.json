@@ -8,7 +8,9 @@
     "module": "ESNext",
     "isolatedModules": true,
     "skipLibCheck": true,
-    "types": ["vite/client", "vitest/globals"]
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom", "vitest-fetch-mock"]
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/sw.ts"]
 }

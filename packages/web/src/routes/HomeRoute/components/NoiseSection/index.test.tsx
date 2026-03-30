@@ -7,6 +7,7 @@ import { INoiseTrackingItem } from '../../../../api/noiseTracking'
 import { INoiseCounts } from '../../../../hooks/useHomeData/types'
 
 const createMockNoiseItem = (timestamp: number): INoiseTrackingItem => ({
+  id: timestamp.toString(),
   timestamp
 })
 

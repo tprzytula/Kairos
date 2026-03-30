@@ -1,7 +1,7 @@
 import { createContext, useContext, useCallback, useMemo } from 'react'
 import { IAdventure } from '../../types/adventure'
 import { getAdventures, addAdventure as addAdventureApi, updateAdventure as updateAdventureApi, deleteAdventure } from '../../api/adventures'
-import { IState, IAdventureProviderProps, IAddAdventureRequest } from './types'
+import { IState, IAdventureProviderProps, IAddAdventureRequest, IUpdateAdventureRequest } from './types'
 import { useEntityCrud } from '../../hooks/useEntityCrud'
 
 const initialState: IState = {
@@ -18,7 +18,7 @@ export const AdventureContext = createContext<IState>(initialState)
 export const useAdventureContext = () => useContext(AdventureContext)
 
 export const AdventureProvider = ({ children }: IAdventureProviderProps) => {
-  const { items: adventures, isLoading, currentProject, refetch, addToCache, update, remove } = useEntityCrud<IAdventure>({
+  const { items: adventures, isLoading, currentProject, refetch, addToCache, update, remove } = useEntityCrud<IAdventure, IUpdateAdventureRequest>({
     queryKey: 'adventures',
     fetchFn: getAdventures,
     updateFn: (id, fields, projectId) => updateAdventureApi(id, fields, projectId),

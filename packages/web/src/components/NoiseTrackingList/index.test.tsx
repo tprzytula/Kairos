@@ -15,6 +15,8 @@ const EXAMPLE_NOISE_TRACKING_CONTEXT = {
   noiseTrackingItems: MOCK_ITEMS,
   isLoading: false,
   refetchNoiseTrackingItems: vi.fn(),
+  addItemToCache: vi.fn(),
+  removeItemFromCache: vi.fn(),
 }
 
 const mockRefetch = vi.fn()
@@ -30,6 +32,8 @@ describe('Given the NoiseTrackingList component', () => {
       noiseTrackingItems: [],
       isLoading: true,
       refetchNoiseTrackingItems: mockRefetch,
+      addItemToCache: vi.fn(),
+      removeItemFromCache: vi.fn(),
     })
 
     render(<NoiseTrackingList 
@@ -46,6 +50,8 @@ describe('Given the NoiseTrackingList component', () => {
       noiseTrackingItems: [],
       isLoading: false,
       refetchNoiseTrackingItems: mockRefetch,
+      addItemToCache: vi.fn(),
+      removeItemFromCache: vi.fn(),
     })
 
     render(<NoiseTrackingList 

@@ -280,13 +280,13 @@ describe('UserMenu', () => {
       )
       
       expect(portalCall).toBeDefined()
-      const overlayElement = portalCall[0].props.children.find(
+      const overlayElement = (portalCall as [{ props: { children: { props: { onClick?: () => void; style?: { position?: string } } }[] } }])[0].props.children.find(
         (child: any) => child?.props?.onClick && !child?.props?.style?.position
       )
-      
+
       // Simulate the overlay click by calling the onClick handler directly
       act(() => {
-        overlayElement.props.onClick()
+        (overlayElement as { props: { onClick: () => void } }).props.onClick()
       })
       
       expect(screen.queryByText('John Doe')).not.toBeInTheDocument()

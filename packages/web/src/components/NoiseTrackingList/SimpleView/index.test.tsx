@@ -3,12 +3,15 @@ import SimpleView from '.';
 
 const mockNoiseTrackingItems = [
   {
+    id: 'noise-1',
     timestamp: new Date().setHours(14, 58, 0, 0) // Today at 14:58
   },
   {
+    id: 'noise-2',
     timestamp: new Date('2027-04-25T10:46:00').getTime() // Future date at 10:46
   },
   {
+    id: 'noise-3',
     timestamp: new Date().setHours(2, 30, 0, 0) // Today at 2:30 AM (should be filtered out)
   }
 ];
@@ -122,8 +125,8 @@ describe('Given the SimpleView component', () => {
   describe('When rendering with items only outside 7am-11pm range', () => {
     it('should not display any items or section header', () => {
       const nightItems = [
-        { timestamp: new Date().setHours(2, 30, 0, 0) },
-        { timestamp: new Date().setHours(5, 15, 0, 0) },
+        { id: 'noise-1', timestamp: new Date().setHours(2, 30, 0, 0) },
+        { id: 'noise-2', timestamp: new Date().setHours(5, 15, 0, 0) },
       ];
 
       render(

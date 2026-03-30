@@ -41,6 +41,8 @@ export type IShop = {
   createdAt: string
   updatedAt: string
   itemCount?: number
+  visibility?: 'private'
+  ownerId?: string
 }
 
 export type Action = {

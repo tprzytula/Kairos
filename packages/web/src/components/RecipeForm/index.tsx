@@ -136,7 +136,7 @@ const RecipeForm = ({ initialRecipe, onDone }: RecipeFormProps) => {
   const [instructionIds, setInstructionIds] = useState<string[]>(
     (initialRecipe?.instructions ?? ['']).map(() => makeId())
   )
-  const [isPrivate, setIsPrivate] = useState(initialRecipe?.visibility === 'private' ?? false)
+  const [isPrivate, setIsPrivate] = useState(initialRecipe?.visibility === 'private')
   const [isSaving, setIsSaving] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 

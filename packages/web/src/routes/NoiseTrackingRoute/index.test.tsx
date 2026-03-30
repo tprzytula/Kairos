@@ -74,8 +74,8 @@ describe('Given the NoiseTrackingRoute component', () => {
 
   it('should display the noise tracking items', async () => {
     const mockNoiseTrackingItems = [
-      { timestamp: 1714028400000 }, // 25 Apr 2024, 07:00 (7am)
-      { timestamp: 1724003200001 }, // 18 Aug 2024, 18:46 (6:46 PM)
+      { id: '1', timestamp: 1714028400000 }, // 25 Apr 2024, 07:00 (7am)
+      { id: '2', timestamp: 1724003200001 }, // 18 Aug 2024, 18:46 (6:46 PM)
     ]
 
     vi.spyOn(API, 'retrieveNoiseTrackingItems').mockResolvedValue(mockNoiseTrackingItems)

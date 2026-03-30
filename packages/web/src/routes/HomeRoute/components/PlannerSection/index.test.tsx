@@ -50,6 +50,7 @@ const defaultProps = {
   todayMeals: [],
   upcomingAdventures: [],
   isLoading: false,
+  isError: false,
   onStepToggle: vi.fn(),
   onCardClick: vi.fn(),
 }

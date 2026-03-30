@@ -15,7 +15,6 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import ViewWeekIcon from '@mui/icons-material/ViewWeek'
 import ViewModuleIcon from '@mui/icons-material/ViewModule'
 import { Container, PlannerScrollArea } from './index.styled'
-import { ScrollableContainer } from '../../components/ScrollableContainer'
 import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
 import { useAppState } from '../../providers/AppStateProvider'
 import { useCallback, useMemo, useState } from 'react'
@@ -32,7 +31,7 @@ import { Route } from '../../enums/route'
 const VIEW_MODE_CYCLE = [PlannerViewMode.WEEKLY, PlannerViewMode.CALENDAR, PlannerViewMode.GROUPED] as const
 
 const PlannerContent = () => {
-  const { toDoList, refetchToDoList, updateToDoItemsBulk } = usePlannerContext()
+  const { toDoList, updateToDoItemsBulk } = usePlannerContext()
   const { state: { selectedTodoItems }, dispatch } = useAppState()
   const { currentProject } = useProjectContext()
   const navigate = useNavigate()
@@ -190,7 +189,7 @@ const PlannerContent = () => {
             onClick: toggleViewMode,
           }}
         />
-        <ScrollableContainer onRefresh={refetchToDoList} scrollArea={PlannerScrollArea}>
+        <PlannerScrollArea>
           <Planner
             allExpanded={allExpanded}
             expandKey={expandKey}
@@ -201,7 +200,7 @@ const PlannerContent = () => {
             onAddAdventure={handleAddAdventure}
             onAddTask={handleAddTask}
           />
-        </ScrollableContainer>
+        </PlannerScrollArea>
       </Container>
       <MealPlanPreviewDrawer
         item={previewMealPlan}
