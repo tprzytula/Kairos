@@ -110,8 +110,9 @@ describe('Given the AddPlannerItemContent component', () => {
       expect(addTodoItem).toHaveBeenCalledWith({
         name: 'Test',
         description: 'Test',
-        dueDate: 1609459200000
-      }, 'test-project-id', 'test-access-token')  
+        dueDate: 1609459200000,
+        steps: undefined
+      }, 'test-project-id', 'test-access-token', false)  
     })
 
     describe('And the createToDoItem call succeeds', () => {

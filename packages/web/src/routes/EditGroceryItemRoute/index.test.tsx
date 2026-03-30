@@ -160,6 +160,7 @@ describe('Given the EditGroceryItemRoute component', () => {
             unit: GroceryItemUnit.UNIT,
             imagePath: '/test.png',
             shopId: 'test-shop-1',
+            isPrivate: false,
           })
 
           expect(mockNavigate).toHaveBeenCalledWith('/groceries/test-shop-1')

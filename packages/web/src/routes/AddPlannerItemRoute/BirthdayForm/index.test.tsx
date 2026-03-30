@@ -98,7 +98,8 @@ describe('Given the BirthdayForm component', () => {
     fireEvent.change(screen.getByLabelText(/^day$/i), { target: { value: '15' } })
     fireEvent.click(screen.getByRole('button', { name: /add birthday/i }))
     await waitFor(() => expect(mockAddBirthdayItem).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'Alice', day: 15, month: 1 })
+      expect.objectContaining({ name: 'Alice', day: 15, month: 1 }),
+      false
     ))
   })
 
@@ -128,7 +129,8 @@ describe('Given the BirthdayForm component', () => {
     fireEvent.change(screen.getByLabelText(/notes/i), { target: { value: 'Best friend' } })
     fireEvent.click(screen.getByRole('button', { name: /add birthday/i }))
     await waitFor(() => expect(mockAddBirthdayItem).toHaveBeenCalledWith(
-      expect.objectContaining({ notes: 'Best friend' })
+      expect.objectContaining({ notes: 'Best friend' }),
+      false
     ))
   })
 })

@@ -127,7 +127,7 @@ describe('Given the AddItemButton component', () => {
       const button = screen.getByRole('button')
       fireEvent.click(button)
 
-      expect(mockNavigate).toHaveBeenCalledWith(Route.AddPlannerItem)
+      expect(mockNavigate).toHaveBeenCalledWith(Route.AddPlannerItem, expect.objectContaining({ state: { itemType: expect.any(String) } }))
     })
   })
 

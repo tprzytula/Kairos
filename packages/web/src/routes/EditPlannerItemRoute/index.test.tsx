@@ -133,6 +133,7 @@ describe('Given the EditPlannerItemRoute component', () => {
         description: 'Updated description',
         dueDate: expect.any(Number),
         steps: [],
+        isPrivate: false,
       })
       
       expect(mockNavigate).toHaveBeenCalledWith('/planner')
@@ -175,6 +176,7 @@ describe('Given the EditPlannerItemRoute component', () => {
         description: '',
         dueDate: expect.any(Number),
         steps: [],
+        isPrivate: false,
       })
     })
 

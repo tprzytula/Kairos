@@ -122,7 +122,9 @@ describe('Given the MealForm component', () => {
       '2026-06-15',
       'Pasta',
       'recipe-1',
-      expect.any(String)
+      expect.any(String),
+      undefined,
+      false
     ))
   })
 
@@ -137,7 +139,8 @@ describe('Given the MealForm component', () => {
       'Tacos',
       undefined,
       expect.any(String),
-      undefined
+      undefined,
+      false
     ))
   })
 

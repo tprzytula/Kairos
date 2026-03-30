@@ -146,7 +146,7 @@ describe("Given the AddShopForm component", () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnSubmit).toHaveBeenCalledWith('Test Shop', undefined);
+        expect(mockOnSubmit).toHaveBeenCalledWith('Test Shop', undefined, false);
       });
     });
 
@@ -175,7 +175,7 @@ describe("Given the AddShopForm component", () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnSubmit).toHaveBeenCalledWith('Test Shop', 'https://cdn.example.com/shops/test.jpg');
+        expect(mockOnSubmit).toHaveBeenCalledWith('Test Shop', 'https://cdn.example.com/shops/test.jpg', false);
       });
     });
   });

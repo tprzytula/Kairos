@@ -149,7 +149,8 @@ describe("Given the EditShopForm component", () => {
         expect(mockOnSubmit).toHaveBeenCalledWith(
           'shop-123',
           'Updated Shop',
-          'https://example.com/icon.png'
+          'https://example.com/icon.png',
+          false
         );
       });
     });
@@ -179,7 +180,8 @@ describe("Given the EditShopForm component", () => {
         expect(mockOnSubmit).toHaveBeenCalledWith(
           'shop-123',
           'Test Shop',
-          'https://cdn.example.com/shops/new.jpg'
+          'https://cdn.example.com/shops/new.jpg',
+          false
         );
       });
     });

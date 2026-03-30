@@ -183,7 +183,7 @@ describe('Given the ShopProvider', () => {
         returnedId = await result.current.addShop({ name: 'New Shop' })
       })
 
-      expect(mockAddShop).toHaveBeenCalledWith({ name: 'New Shop' }, 'project-1')
+      expect(mockAddShop).toHaveBeenCalledWith({ name: 'New Shop' }, 'project-1', undefined)
       expect(returnedId).toBe('shop-new')
     })
 
