@@ -122,10 +122,10 @@ const AdventurePreviewDrawer = ({ item, onClose, onEdit, onDelete }: AdventurePr
               {item && formatDateRange(item.date, item.endDate)}
             </DetailRow>
 
-            {item?.time && (
+            {(item?.time || item?.endTime) && (
               <DetailRow>
                 <AccessTimeIcon />
-                {item.time}
+                {item.time && item.endTime ? `${item.time} - ${item.endTime}` : item.time ?? item.endTime}
               </DetailRow>
             )}
 

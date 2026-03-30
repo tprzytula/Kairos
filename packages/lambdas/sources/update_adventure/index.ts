@@ -24,7 +24,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    const { id, name, date, endDate, time, location, notes, imagePath, isPrivate } = body;
+    const { id, name, date, endDate, time, endTime, location, notes, imagePath, isPrivate } = body;
 
     const existingItem = await getItem({
       tableName: DynamoDBTable.ADVENTURES,
@@ -38,7 +38,7 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    await updateAdventure(id, { name, date, endDate, time, location, notes, imagePath, isPrivate, userId });
+    await updateAdventure(id, { name, date, endDate, time, endTime, location, notes, imagePath, isPrivate, userId });
 
     return createResponse({
       statusCode: 200,

@@ -7,6 +7,7 @@ export const createAdventure = async (adventure: {
   date: string;
   endDate?: string;
   time?: string;
+  endTime?: string;
   location?: string;
   notes?: string;
   imagePath?: string;
@@ -31,6 +32,10 @@ export const createAdventure = async (adventure: {
 
   if (adventure.time) {
     item.time = adventure.time.trim();
+  }
+
+  if (adventure.endTime) {
+    item.endTime = adventure.endTime.trim();
   }
 
   if (adventure.location) {

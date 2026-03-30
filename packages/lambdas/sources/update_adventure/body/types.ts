@@ -4,6 +4,7 @@ export interface IRequestBody {
   date?: string
   endDate?: string | null
   time?: string | null
+  endTime?: string | null
   location?: string | null
   notes?: string | null
   imagePath?: string | null

@@ -3,6 +3,7 @@ export interface IAddAdventureRequest {
   date: string
   endDate?: string
   time?: string
+  endTime?: string
   location?: string
   notes?: string
   imagePath?: string
@@ -14,6 +15,7 @@ export interface IUpdateAdventureRequest {
   date?: string
   endDate?: string | null
   time?: string | null
+  endTime?: string | null
   location?: string | null
   notes?: string | null
   imagePath?: string | null

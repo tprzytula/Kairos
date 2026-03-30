@@ -23,9 +23,9 @@ export const handler: Handler<APIGatewayProxyEvent> = middleware(
       });
     }
 
-    const { name, date, endDate, time, location, notes, imagePath, isPrivate } = body;
+    const { name, date, endDate, time, endTime, location, notes, imagePath, isPrivate } = body;
 
-    const id = await createAdventure({ projectId, name, date, endDate, time, location, notes, imagePath, isPrivate, userId });
+    const id = await createAdventure({ projectId, name, date, endDate, time, endTime, location, notes, imagePath, isPrivate, userId });
 
     return createResponse({
       statusCode: 201,
