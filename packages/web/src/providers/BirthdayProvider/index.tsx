@@ -1,12 +1,11 @@
-import { createContext, useContext, useCallback, useMemo, useEffect } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { createContext, useContext, useCallback, useMemo } from 'react'
 import { StateComponentProps } from '../AppStateProvider/types'
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types'
 import { retrieveBirthdays } from '../../api/birthdays/retrieve'
 import { addBirthday } from '../../api/birthdays/add'
 import { updateBirthday, BirthdayUpdateFields } from '../../api/birthdays/update'
 import { removeBirthday } from '../../api/birthdays/remove'
-import { useProjectContext } from '../ProjectProvider'
+import { useEntityCrud } from '../../hooks/useEntityCrud'
 
 interface IBirthdayContext {
   birthdays: IBirthdayItem[]
@@ -33,62 +32,29 @@ export const BirthdayContext = createContext<IBirthdayContext>(initialState)
 export const useBirthdayContext = () => useContext(BirthdayContext)
 
 export const BirthdayProvider = ({ children }: StateComponentProps) => {
-  const { currentProject } = useProjectContext()
-  const queryClient = useQueryClient()
-  const queryKey = ['birthdays', currentProject?.id]
-
-  const query = useQuery({
-    queryKey,
-    queryFn: () => retrieveBirthdays(currentProject!.id),
-    enabled: !!currentProject,
+  const { items: birthdays, isLoading, isError, currentProject, refetch, addToCache, update, remove } = useEntityCrud<IBirthdayItem>({
+    queryKey: 'birthdays',
+    fetchFn: retrieveBirthdays,
+    updateFn: (id, fields, projectId) => updateBirthday(id, fields as BirthdayUpdateFields, projectId),
+    deleteFn: removeBirthday,
   })
-
-  useEffect(() => {
-    if (query.error) {
-      console.error('Failed to fetch birthdays:', query.error)
-    }
-  }, [query.error])
-
-  const birthdays = query.data ?? []
-
-  const refetchBirthdays = useCallback(async () => {
-    await query.refetch()
-  }, [query.refetch])
 
   const addBirthdayItem = useCallback(async (item: Omit<IBirthdayItem, 'id'>, isPrivate?: boolean) => {
     if (!currentProject) return
 
     const { id } = await addBirthday(item, currentProject.id, isPrivate)
-    queryClient.setQueryData<IBirthdayItem[]>(queryKey, (prev = []) => [...prev, { ...item, id, ...(isPrivate && { visibility: "private" as const }) }])
-  }, [currentProject, queryClient])
-
-  const updateBirthdayItem = useCallback(async (id: string, fields: BirthdayUpdateFields) => {
-    if (!currentProject) return
-
-    await updateBirthday(id, fields, currentProject.id)
-    queryClient.setQueryData<IBirthdayItem[]>(queryKey, (prev = []) =>
-      prev.map((b) => b.id === id ? { ...b, ...fields } : b)
-    )
-  }, [currentProject, queryClient])
-
-  const removeBirthdayItem = useCallback(async (id: string) => {
-    if (!currentProject) return
-
-    await removeBirthday(id, currentProject.id)
-    queryClient.setQueryData<IBirthdayItem[]>(queryKey, (prev = []) =>
-      prev.filter((b) => b.id !== id)
-    )
-  }, [currentProject, queryClient])
+    addToCache({ ...item, id, ...(isPrivate && { visibility: 'private' as const }) })
+  }, [currentProject, addToCache])
 
   const value = useMemo(() => ({
     birthdays,
-    isLoading: query.isLoading,
-    isError: query.isError,
+    isLoading,
+    isError,
     addBirthdayItem,
-    updateBirthdayItem,
-    removeBirthdayItem,
-    refetchBirthdays,
-  }), [birthdays, query.isLoading, query.isError, addBirthdayItem, updateBirthdayItem, removeBirthdayItem, refetchBirthdays])
+    updateBirthdayItem: update,
+    removeBirthdayItem: remove,
+    refetchBirthdays: refetch,
+  }), [birthdays, isLoading, isError, addBirthdayItem, update, remove, refetch])
 
   return (
     <BirthdayContext.Provider value={value}>

@@ -1,11 +1,10 @@
-import { createContext, useContext, useCallback, useMemo, useEffect } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { createContext, useContext, useCallback, useMemo } from 'react'
 import { MealType } from '../../enums/mealType'
 import { RecipeDishType } from '../../enums/recipeDishType'
 import { IRecipe, IRecipeIngredient } from '../../types/recipe'
 import { getRecipes, addRecipe as addRecipeApi, updateRecipe as updateRecipeApi, deleteRecipe } from '../../api/recipes'
 import { IState, IRecipeProviderProps } from './types'
-import { useProjectContext } from '../ProjectProvider'
+import { useEntityCrud } from '../../hooks/useEntityCrud'
 
 const initialState: IState = {
   recipes: [],
@@ -21,33 +20,18 @@ export const RecipeContext = createContext<IState>(initialState)
 export const useRecipeContext = () => useContext(RecipeContext)
 
 export const RecipeProvider = ({ children }: IRecipeProviderProps) => {
-  const { currentProject } = useProjectContext()
-  const queryClient = useQueryClient()
-  const queryKey = ['recipes', currentProject?.id]
-
-  const query = useQuery({
-    queryKey,
-    queryFn: () => getRecipes(currentProject!.id),
-    enabled: !!currentProject,
+  const { items: recipes, isLoading, currentProject, refetch, addToCache, update, remove } = useEntityCrud<IRecipe>({
+    queryKey: 'recipes',
+    fetchFn: getRecipes,
+    updateFn: (id, fields, projectId) => updateRecipeApi(id, fields, projectId),
+    deleteFn: deleteRecipe,
   })
-
-  useEffect(() => {
-    if (query.error) {
-      console.error('Failed to fetch recipes:', query.error)
-    }
-  }, [query.error])
-
-  const recipes = query.data ?? []
-
-  const fetchRecipes = useCallback(async () => {
-    await query.refetch()
-  }, [query.refetch])
 
   const addRecipe = useCallback(async (name: string, ingredients: IRecipeIngredient[], imagePath?: string, instructions?: string[], externalLink?: string, mealTypes?: MealType[], dishTypes?: RecipeDishType[], isPrivate?: boolean) => {
     if (!currentProject) return
 
     const result = await addRecipeApi({ name, ingredients, imagePath, instructions, externalLink, mealTypes, dishTypes }, currentProject.id, isPrivate)
-    const newRecipe: IRecipe = {
+    addToCache({
       ...result,
       name,
       ingredients,
@@ -57,41 +41,20 @@ export const RecipeProvider = ({ children }: IRecipeProviderProps) => {
       mealTypes,
       dishTypes,
       projectId: currentProject.id,
-    }
-    queryClient.setQueryData<IRecipe[]>(queryKey, (prev = []) => [...prev, newRecipe])
-  }, [currentProject, queryClient])
-
-  const updateRecipe = useCallback(async (id: string, fields: { name?: string; ingredients?: IRecipeIngredient[]; instructions?: string[]; imagePath?: string; externalLink?: string; mealTypes?: MealType[]; dishTypes?: RecipeDishType[] }) => {
-    if (!currentProject) return
-
-    await updateRecipeApi(id, fields, currentProject.id)
-    const definedFields = Object.fromEntries(
-      Object.entries(fields).filter(([, v]) => v !== undefined)
-    ) as Partial<IRecipe>
-    queryClient.setQueryData<IRecipe[]>(queryKey, (prev = []) =>
-      prev.map((recipe) => recipe.id === id ? { ...recipe, ...definedFields } : recipe)
-    )
-  }, [currentProject, queryClient])
-
-  const removeRecipe = useCallback(async (id: string) => {
-    if (!currentProject) return
-
-    await deleteRecipe(id, currentProject.id)
-    queryClient.setQueryData<IRecipe[]>(queryKey, (prev = []) =>
-      prev.filter((recipe) => recipe.id !== id)
-    )
-  }, [currentProject, queryClient])
+      ...(isPrivate && { visibility: 'private' as const }),
+    })
+  }, [currentProject, addToCache])
 
   const value = useMemo(
     () => ({
       recipes,
-      isLoading: query.isLoading,
-      fetchRecipes,
+      isLoading,
+      fetchRecipes: refetch,
       addRecipe,
-      updateRecipe,
-      removeRecipe,
+      updateRecipe: update,
+      removeRecipe: remove,
     }),
-    [recipes, query.isLoading, fetchRecipes, addRecipe, updateRecipe, removeRecipe]
+    [recipes, isLoading, refetch, addRecipe, update, remove]
   )
 
   return (
