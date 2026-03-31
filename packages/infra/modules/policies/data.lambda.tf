@@ -61,8 +61,8 @@ data "aws_iam_policy_document" "lambda_policies" {
       actions = local.database_read_only_actions
       effect  = "Allow"
       resources = [
-        var.dynamodb_migrations_arn,
-        "${var.dynamodb_migrations_arn}/index/*",
+        var.dynamodb_table_arns["migrations"],
+        "${var.dynamodb_table_arns["migrations"]}/index/*",
       ]
     }
   }
@@ -76,8 +76,8 @@ data "aws_iam_policy_document" "lambda_policies" {
       actions = concat(local.database_read_write_actions, ["dynamodb:CreateTable"])
       effect  = "Allow"
       resources = [
-        var.dynamodb_migrations_arn,
-        "${var.dynamodb_migrations_arn}/index/*",
+        var.dynamodb_table_arns["migrations"],
+        "${var.dynamodb_table_arns["migrations"]}/index/*",
         "arn:aws:dynamodb:*:*:table/Migrations"
       ]
     }

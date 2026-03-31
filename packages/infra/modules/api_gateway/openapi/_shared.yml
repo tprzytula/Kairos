@@ -1,0 +1,19 @@
+components:
+  parameters:
+    ProjectIDHeader:
+      name: X-Project-ID
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Project ID for multi-tenancy data isolation
+  securitySchemes:
+    CognitoAuthorizer:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: cognito_user_pools
+      x-amazon-apigateway-authorizer:
+        type: cognito_user_pools
+        providerARNs:
+          - ${cognito_user_pool_arn}

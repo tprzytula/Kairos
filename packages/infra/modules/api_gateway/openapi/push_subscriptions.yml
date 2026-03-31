@@ -199,9 +199,3 @@ components:
             type:
               type: string
               description: Error type identifier
-
-  securitySchemes:
-    CognitoUserPool:
-      type: apiKey
-      name: Authorization
-      in: header

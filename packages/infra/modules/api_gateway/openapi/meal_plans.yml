@@ -231,14 +231,6 @@ paths:
         passthroughBehavior: "when_no_match"
         type: "mock"
 components:
-  parameters:
-    ProjectIDHeader:
-      name: X-Project-ID
-      in: header
-      required: true
-      schema:
-        type: string
-      description: Project ID for multi-tenancy data isolation
   schemas:
     mealPlan:
       title: Meal Plan
@@ -326,17 +318,3 @@ components:
             - string
             - "null"
           example: "https://cdn.example.com/user-uploads/meal-plans/abc.jpg"
-  securitySchemes:
-    CognitoAuthorizer:
-      type: apiKey
-      name: Authorization
-      in: header
-      x-amazon-apigateway-authtype: cognito_user_pools
-      x-amazon-apigateway-authorizer:
-        type: cognito_user_pools
-        providerARNs:
-          - ${cognito_user_pool_arn}
-x-amazon-apigateway-request-validators:
-  Validate body:
-    validateRequestParameters: false
-    validateRequestBody: true
