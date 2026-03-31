@@ -62,12 +62,12 @@ locals {
     ]...
   )
 
-  merged_security_schemes = try(local.shared_spec.components.securitySchemes, {})
-
+  # Note: securitySchemes is intentionally excluded from merged_components.
+  # The Cognito authorizer is managed by the aws_api_gateway_authorizer
+  # resource in main.tf — including it here would conflict.
   merged_components = {
-    schemas         = local.merged_schemas
-    parameters      = local.merged_parameters
-    securitySchemes = local.merged_security_schemes
+    schemas    = local.merged_schemas
+    parameters = local.merged_parameters
   }
 
   # ─── CORS ────────────────────────────────────────────────────────────
