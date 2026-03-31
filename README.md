@@ -17,6 +17,7 @@ Kairos is a full-stack serverless application running on AWS. It provides:
 - **Birthday tracking** — keep track of upcoming birthdays
 - **Noise tracking** — log and review environmental noise readings
 - **Shop management** — define and manage shopping locations
+- **Adventures** — plan and track adventures with image uploads
 - **AI agent** — chat interface powered by a streaming Lambda backend
 - **Shared projects** — invite others to collaborate on lists in real time
 - **Progressive Web App** — installable, offline-capable, with push notifications
@@ -46,16 +47,16 @@ React 19 single-page application built with:
 | React + React Router | 19 / 7 |
 | Material-UI | 7 |
 | TypeScript | 5.8 |
-| Parcel (build) | 2 |
-| Jest + React Testing Library | 30 |
+| Vite (build) | 8 |
+| Vitest + React Testing Library | 4 |
 | Oxlint | 1.51 |
 | Prettier | 3.5 |
 
-Includes a compiled service worker (`sw.ts`) for PWA offline support and push notification handling.
+Includes a service worker (`sw.ts`) built via a separate Vite config (`vite.config.sw.ts`) for PWA offline support and push notification handling.
 
 ### `packages/lambdas`
 
-48 AWS Lambda handlers written in TypeScript, bundled with esbuild for Node.js 20. Organised as a Lerna workspace with four internal shared libraries:
+52 AWS Lambda handlers written in TypeScript, bundled with esbuild for Node.js 20. Organised as a Lerna workspace with four internal shared libraries:
 
 | Library | Purpose |
 |---------|---------|
@@ -72,7 +73,7 @@ Terraform configuration deploying to **eu-west-2 (London)** with eight modules:
 |--------|----------|
 | `api_gateway` | REST API with OpenAPI specs and Cognito authoriser |
 | `cognito` | User Pool, Google OAuth identity provider |
-| `dynamodb` | 13 tables with GSIs for multi-tenant queries |
+| `dynamodb` | 14 tables with GSIs for multi-tenant queries |
 | `lambda` | Function definitions and IAM execution roles |
 | `s3` | Web asset bucket, lambda dist bucket, CloudFront distribution |
 | `sns` | Topic for todo push notifications |
@@ -136,10 +137,10 @@ yarn prettier         # Check formatting across all packages
 ### Web (`packages/web`)
 
 ```bash
-yarn start            # Parcel dev server
+yarn start            # Vite dev server
 yarn build            # Production build (app + service worker + version injection)
-yarn test             # Jest (TZ=Europe/London)
-yarn test:watch       # Jest watch mode
+yarn test             # Vitest (TZ=Europe/London)
+yarn test:watch       # Vitest watch mode
 yarn lint             # Oxlint
 yarn prettier:fix     # Auto-fix formatting
 ```
@@ -150,8 +151,8 @@ yarn prettier:fix     # Auto-fix formatting
 yarn build            # Bundle with esbuild + zip each function
 yarn bundle           # esbuild only
 yarn package          # Zip only
-yarn test             # Jest
-yarn test:watch       # Jest watch mode
+yarn test             # Vitest
+yarn test:watch       # Vitest watch mode
 yarn lint             # Oxlint
 yarn prettier         # Prettier (writes files)
 ```
@@ -187,9 +188,10 @@ Every user gets a personal project (ID = their Cognito user ID). Projects can be
 | `user_preferences` | Per-user settings |
 | `push_subscriptions` | Web push notification subscriptions |
 | `shops` | Shop definitions, scoped by project |
+| `adventures` | Adventure entries with image uploads, scoped by project |
 | `migrations` | Database migration tracking |
 
-### Lambda functions (48)
+### Lambda functions (52)
 
 | Group | Functions |
 |-------|----------|
@@ -200,6 +202,7 @@ Every user gets a personal project (ID = their Cognito user ID). Projects can be
 | Recipes | `add`, `get`, `get_upload_url`, `update`, `delete` |
 | Birthdays | `add`, `get`, `update`, `delete` |
 | Noise tracking | `add`, `get`, `delete` |
+| Adventures | `add`, `get`, `get_upload_url`, `update`, `delete` |
 | Shops | `add`, `get`, `get_upload_url`, `update`, `delete` |
 | Projects | `create`, `get_user_projects`, `join`, `get_invite_info` |
 | User preferences | `get`, `update` |
@@ -215,7 +218,7 @@ Todo updates in shared projects trigger an SNS message. The `send_todo_notificat
 
 ## Testing
 
-Tests use Jest with BDD-style conventions (`Given / When / Then`).
+Tests use Vitest with BDD-style conventions (`Given / When / Then`).
 
 ```bash
 # All tests from root
@@ -226,7 +229,7 @@ yarn test:web
 yarn test:lambdas
 ```
 
-Web tests run in a jsdom environment with `TZ=Europe/London`. Lambda tests run in a Node environment. Coverage is collected to `.coverage/` in each package.
+Web tests run in a happy-dom environment with `TZ=Europe/London`. Lambda tests run in a Node environment. Coverage is collected to `.coverage/` in each package.
 
 **All tests must pass before committing.** See [Contributing](#contributing).
 
@@ -293,9 +296,7 @@ Use conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `chore:`, etc.
 
 ## License
 
-[GNU Affero General Public License v3.0 (AGPL-3.0)](LICENSE)
-
-You may use, modify, and distribute this software under the terms of the AGPL-3.0. Any network-accessible deployment of a modified version must make the source code available.
+This software is proprietary. All rights reserved. See [LICENSE](LICENSE) for details.
 
 ---
 

@@ -15,7 +15,7 @@ Kairos is a full-stack, serverless, multi-tenant productivity PWA running on AWS
 | `packages/infra` | Terraform IaC (AWS infrastructure) |
 | `packages/assets` | SVG icons + PWA manifest |
 
-**License:** AGPL-3.0
+**License:** Proprietary (All Rights Reserved)
 **Author:** Tomasz Przytula
 
 ---
@@ -281,9 +281,9 @@ Provider nesting order (outermost → innermost):
 
 ## DynamoDB Schema
 
-13 tables, all with `projectId` as partition key for multi-tenant isolation:
+14 tables, all with `projectId` as partition key for multi-tenant isolation:
 
-`grocery_list`, `todo_list`, `recipes`, `meal_plans`, `birthdays`, `noise_tracking`, `shops`, `projects`, `project_members`, `user_preferences`, `push_subscriptions`, `adventures`, `migrations`
+`grocery_list`, `grocery_items_defaults`, `todo_list`, `recipes`, `meal_plans`, `birthdays`, `noise_tracking`, `shops`, `projects`, `project_members`, `user_preferences`, `push_subscriptions`, `adventures`, `migrations`
 
 Use the `@kairos-lambdas-libs/dynamodb` wrapper — do not instantiate the AWS SDK client directly in Lambda handlers.
 
