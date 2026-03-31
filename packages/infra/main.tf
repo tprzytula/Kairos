@@ -44,25 +44,12 @@ module "sns" {
 module "policies" {
   source = "./modules/policies"
 
-  random_name                         = module.random.random_name
-  lambda_functions                    = module.lambda.lambda_functions
-  dynamodb_grocery_list_arn           = module.dynamodb.grocery_list_arn
-  dynamodb_grocery_items_defaults_arn = module.dynamodb.grocery_items_defaults_arn
-  dynamodb_noise_tracking_arn         = module.dynamodb.noise_tracking_arn
-  dynamodb_todo_list_arn              = module.dynamodb.todo_list_arn
-  dynamodb_migrations_arn             = module.dynamodb.migrations_arn
-  dynamodb_projects_arn               = module.dynamodb.projects_arn
-  dynamodb_project_members_arn        = module.dynamodb.project_members_arn
-  dynamodb_user_preferences_arn       = module.dynamodb.user_preferences_arn
-  dynamodb_push_subscriptions_arn     = module.dynamodb.push_subscriptions_arn
-  dynamodb_shops_arn                  = module.dynamodb.shops_arn
-  dynamodb_recipes_arn                = module.dynamodb.recipes_arn
-  dynamodb_birthdays_arn              = module.dynamodb.birthdays_arn
-  dynamodb_meal_plans_arn             = module.dynamodb.meal_plans_arn
-  dynamodb_adventures_arn             = module.dynamodb.adventures_arn
-  sns_todo_notifications_arn          = module.sns.todo_notifications_topic_arn
-  s3_kairos_web_arn                   = module.s3.kairos_web_arn
-  s3_kairos_lambdas_arn               = module.s3.kairos_lambdas_arn
+  random_name                = module.random.random_name
+  lambda_functions           = module.lambda.lambda_functions
+  dynamodb_table_arns        = module.dynamodb.table_arns
+  sns_todo_notifications_arn = module.sns.todo_notifications_topic_arn
+  s3_kairos_web_arn          = module.s3.kairos_web_arn
+  s3_kairos_lambdas_arn      = module.s3.kairos_lambdas_arn
 }
 
 module "assets" {

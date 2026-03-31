@@ -3,10 +3,6 @@ variable "random_name" {
   type        = string
 }
 
-variable "dynamodb_grocery_list_arn" {
-  type = string
-}
-
 variable "lambda_functions" {
   type = map(object({
     function_name = string
@@ -42,63 +38,16 @@ variable "lambda_functions" {
   }))
 }
 
+variable "dynamodb_table_arns" {
+  description = "Map of DynamoDB table names to their ARNs"
+  type        = map(string)
+}
+
 variable "s3_kairos_web_arn" {
   type = string
 }
 
 variable "s3_kairos_lambdas_arn" {
-  type = string
-}
-
-variable "dynamodb_noise_tracking_arn" {
-  type = string
-}
-
-variable "dynamodb_grocery_items_defaults_arn" {
-  type = string
-}
-
-variable "dynamodb_todo_list_arn" {
-  type = string
-}
-
-variable "dynamodb_migrations_arn" {
-  type = string
-}
-
-variable "dynamodb_projects_arn" {
-  type = string
-}
-
-variable "dynamodb_project_members_arn" {
-  type = string
-}
-
-variable "dynamodb_user_preferences_arn" {
-  type = string
-}
-
-variable "dynamodb_push_subscriptions_arn" {
-  type = string
-}
-
-variable "dynamodb_shops_arn" {
-  type = string
-}
-
-variable "dynamodb_recipes_arn" {
-  type = string
-}
-
-variable "dynamodb_birthdays_arn" {
-  type = string
-}
-
-variable "dynamodb_meal_plans_arn" {
-  type = string
-}
-
-variable "dynamodb_adventures_arn" {
   type = string
 }
 

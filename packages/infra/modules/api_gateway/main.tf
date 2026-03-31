@@ -7,7 +7,7 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
       description = "API for Kairos"
       version     = "1.0"
     }
-    paths = local.merged_paths
+    paths      = local.merged_paths
     components = local.merged_components
     x-amazon-apigateway-request-validators = {
       "Validate body" = {
@@ -17,41 +17,19 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
     }
     x-amazon-apigateway-gateway-responses = {
       DEFAULT_4XX = {
-        responseParameters = {
-          "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
-          "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
-          "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,PUT,POST,DELETE,PATCH,OPTIONS'"
-        }
+        responseParameters = local.cors_response_parameters
         responseTemplates = {
-          "application/json" = jsonencode({
-            error = {
-              message = "$context.error.message"
-              type    = "$context.error.responseType"
-            }
-          })
+          "application/json" = local.gateway_error_template
         }
       }
       DEFAULT_5XX = {
-        responseParameters = {
-          "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
-          "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
-          "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,PUT,POST,DELETE,PATCH,OPTIONS'"
-        }
+        responseParameters = local.cors_response_parameters
         responseTemplates = {
-          "application/json" = jsonencode({
-            error = {
-              message = "$context.error.message"
-              type    = "$context.error.responseType"
-            }
-          })
+          "application/json" = local.gateway_error_template
         }
       }
       UNAUTHORIZED = {
-        responseParameters = {
-          "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
-          "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
-          "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,PUT,POST,DELETE,PATCH,OPTIONS'"
-        }
+        responseParameters = local.cors_response_parameters
         responseTemplates = {
           "application/json" = jsonencode({
             error = {
@@ -66,6 +44,13 @@ resource "aws_api_gateway_rest_api" "kairos_api" {
 
   endpoint_configuration {
     types = ["REGIONAL"]
+  }
+
+  lifecycle {
+    precondition {
+      condition     = length(local.duplicate_paths) == 0
+      error_message = "OpenAPI path collision detected: ${jsonencode(local.duplicate_paths)}"
+    }
   }
 }
 
