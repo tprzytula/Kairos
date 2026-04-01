@@ -73,14 +73,14 @@ export const PlannerProvider = ({ children }: StateComponentProps) => {
   const value = useMemo(
     () => ({
       toDoList,
-      isLoading: query.isLoading,
+      isLoading: query.isPending,
       isError: query.isError,
       refetchToDoList,
       removeFromToDoList,
       updateToDoItemFields: updateToDoItemFieldsHandler,
       updateToDoItemsBulk,
     }),
-    [toDoList, query.isLoading, query.isError, refetchToDoList, removeFromToDoList, updateToDoItemFieldsHandler, updateToDoItemsBulk]
+    [toDoList, query.isPending, query.isError, refetchToDoList, removeFromToDoList, updateToDoItemFieldsHandler, updateToDoItemsBulk]
   )
 
   return (

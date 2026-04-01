@@ -60,7 +60,7 @@ export const useEntityCrud = <T extends { id: string }, F extends object = Recor
 
   return {
     items,
-    isLoading: query.isLoading,
+    isLoading: query.isPending,
     isError: query.isError,
     currentProject,
     refetch,

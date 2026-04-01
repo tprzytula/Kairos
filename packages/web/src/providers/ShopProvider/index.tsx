@@ -224,7 +224,7 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
 
   const value = useMemo(() => ({
     shops,
-    isLoading: query.isLoading,
+    isLoading: query.isPending,
     isError: query.isError,
     currentShop,
     fetchShops,
@@ -232,7 +232,7 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
     updateShop,
     deleteShop,
     setCurrentShop,
-  }), [shops, query.isLoading, query.isError, currentShop, fetchShops, addShop, updateShop, deleteShop, setCurrentShop])
+  }), [shops, query.isPending, query.isError, currentShop, fetchShops, addShop, updateShop, deleteShop, setCurrentShop])
 
   return (
     <ShopContext.Provider value={value}>
