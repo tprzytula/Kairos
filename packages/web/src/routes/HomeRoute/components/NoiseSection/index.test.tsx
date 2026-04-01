@@ -49,6 +49,7 @@ describe('NoiseSection component', () => {
           noiseTrackingItems={[]}
           noiseCounts={noiseCounts}
           isLoading={true}
+          isError={false}
           noiseView="overview"
           onNoiseViewChange={mockOnNoiseViewChange}
         />
@@ -62,18 +63,38 @@ describe('NoiseSection component', () => {
   describe('when no noise items exist', () => {
     it('should show empty state message in overview', () => {
       const noiseCounts = createMockNoiseCounts()
-      
+
       renderWithTheme(
         <NoiseSection
           noiseTrackingItems={[]}
           noiseCounts={noiseCounts}
           isLoading={false}
+          isError={false}
           noiseView="overview"
           onNoiseViewChange={mockOnNoiseViewChange}
         />
       )
-      
+
       expect(screen.getByText('No noise recordings found')).toBeInTheDocument()
+    })
+  })
+
+  describe('when loading noise items fails', () => {
+    it('should show error state message in overview', () => {
+      const noiseCounts = createMockNoiseCounts()
+
+      renderWithTheme(
+        <NoiseSection
+          noiseTrackingItems={[]}
+          noiseCounts={noiseCounts}
+          isLoading={false}
+          isError={true}
+          noiseView="overview"
+          onNoiseViewChange={mockOnNoiseViewChange}
+        />
+      )
+
+      expect(screen.getByText('Unable to load noise recordings')).toBeInTheDocument()
     })
   })
 
@@ -91,6 +112,7 @@ describe('NoiseSection component', () => {
           noiseTrackingItems={[]}
           noiseCounts={noiseCounts}
           isLoading={false}
+          isError={false}
           noiseView="overview"
           onNoiseViewChange={mockOnNoiseViewChange}
         />
@@ -118,6 +140,7 @@ describe('NoiseSection component', () => {
           noiseTrackingItems={[]}
           noiseCounts={noiseCounts}
           isLoading={false}
+          isError={false}
           noiseView="overview"
           onNoiseViewChange={mockOnNoiseViewChange}
         />
@@ -154,6 +177,7 @@ describe('NoiseSection component', () => {
           noiseTrackingItems={noiseItems}
           noiseCounts={noiseCounts}
           isLoading={false}
+          isError={false}
           noiseView="today"
           onNoiseViewChange={mockOnNoiseViewChange}
         />
@@ -187,6 +211,7 @@ describe('NoiseSection component', () => {
           noiseTrackingItems={noiseItems}
           noiseCounts={noiseCounts}
           isLoading={false}
+          isError={false}
           noiseView="last7days"
           onNoiseViewChange={mockOnNoiseViewChange}
         />
@@ -212,6 +237,7 @@ describe('NoiseSection component', () => {
           noiseTrackingItems={noiseItems}
           noiseCounts={noiseCounts}
           isLoading={false}
+          isError={false}
           noiseView="today"
           onNoiseViewChange={mockOnNoiseViewChange}
         />
@@ -229,6 +255,7 @@ describe('NoiseSection component', () => {
           noiseTrackingItems={[]}
           noiseCounts={noiseCounts}
           isLoading={false}
+          isError={false}
           noiseView="today"
           onNoiseViewChange={mockOnNoiseViewChange}
         />
@@ -259,6 +286,7 @@ describe('NoiseSection component', () => {
           noiseTrackingItems={noiseItems}
           noiseCounts={noiseCounts}
           isLoading={false}
+          isError={false}
           noiseView="today"
           onNoiseViewChange={mockOnNoiseViewChange}
         />

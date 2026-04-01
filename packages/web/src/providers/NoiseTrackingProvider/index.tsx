@@ -7,6 +7,7 @@ import { useProjectContext } from '../ProjectProvider'
 export const initialState: IState = {
   noiseTrackingItems: [],
   isLoading: false,
+  isError: false,
   refetchNoiseTrackingItems: async () => {},
   addItemToCache: (_item: INoiseTrackingItem) => {},
   removeItemFromCache: (_timestamp: number) => {},
@@ -53,11 +54,12 @@ export const NoiseTrackingProvider = ({ children }: INoiseTrackingProviderProps)
     () => ({
       noiseTrackingItems,
       isLoading: query.isLoading,
+      isError: query.isError,
       refetchNoiseTrackingItems,
       addItemToCache,
       removeItemFromCache,
     }),
-    [noiseTrackingItems, query.isLoading, refetchNoiseTrackingItems, addItemToCache, removeItemFromCache]
+    [noiseTrackingItems, query.isLoading, query.isError, refetchNoiseTrackingItems, addItemToCache, removeItemFromCache]
   )
 
   return (

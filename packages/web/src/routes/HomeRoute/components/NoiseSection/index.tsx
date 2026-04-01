@@ -52,6 +52,7 @@ export const NoiseSection: React.FC<INoiseSectionProps> = ({
   noiseTrackingItems,
   noiseCounts,
   isLoading,
+  isError,
   noiseView,
   onNoiseViewChange,
   onNavigate
@@ -69,7 +70,7 @@ export const NoiseSection: React.FC<INoiseSectionProps> = ({
 
     if (noiseView === 'overview') {
       if (noiseCounts.totalCount === 0) {
-        return <EmptyState>No noise recordings found</EmptyState>
+        return <EmptyState>{isError ? 'Unable to load noise recordings' : 'No noise recordings found'}</EmptyState>
       }
 
       return (

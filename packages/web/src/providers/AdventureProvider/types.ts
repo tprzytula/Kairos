@@ -6,6 +6,7 @@ export type { IAddAdventureRequest, IUpdateAdventureRequest }
 export interface IState {
   adventures: IAdventure[]
   isLoading: boolean
+  isError: boolean
   refetchAdventures: () => Promise<void>
   addAdventure: (adventure: IAddAdventureRequest) => Promise<void>
   updateAdventure: (id: string, fields: IUpdateAdventureRequest) => Promise<void>

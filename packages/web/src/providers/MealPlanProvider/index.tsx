@@ -8,6 +8,7 @@ import { useEntityCrud } from '../../hooks/useEntityCrud'
 const initialState: IState = {
   mealPlans: [],
   isLoading: false,
+  isError: false,
   fetchMealPlans: async () => {},
   addMealPlan: async () => {},
   updateMealPlan: async () => {},
@@ -19,7 +20,7 @@ export const MealPlanContext = createContext<IState>(initialState)
 export const useMealPlanContext = () => useContext(MealPlanContext)
 
 export const MealPlanProvider = ({ children }: IMealPlanProviderProps) => {
-  const { items: mealPlans, isLoading, currentProject, refetch, addToCache, update, remove } = useEntityCrud<IMealPlan>({
+  const { items: mealPlans, isLoading, isError, currentProject, refetch, addToCache, update, remove } = useEntityCrud<IMealPlan>({
     queryKey: 'mealPlans',
     fetchFn: getMealPlans,
     updateFn: (id, fields, projectId) => updateMealPlanApi(id, fields, projectId),
@@ -46,12 +47,13 @@ export const MealPlanProvider = ({ children }: IMealPlanProviderProps) => {
     () => ({
       mealPlans,
       isLoading,
+      isError,
       fetchMealPlans: refetch,
       addMealPlan,
       updateMealPlan: update,
       removeMealPlan: remove,
     }),
-    [mealPlans, isLoading, refetch, addMealPlan, update, remove]
+    [mealPlans, isLoading, isError, refetch, addMealPlan, update, remove]
   )
 
   return (

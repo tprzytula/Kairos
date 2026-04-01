@@ -8,6 +8,7 @@ export interface INoiseTrackingProviderProps {
 export interface IState {
     noiseTrackingItems: Array<INoiseTrackingItem>
     isLoading: boolean
+    isError: boolean
     refetchNoiseTrackingItems: () => Promise<void>
     addItemToCache: (item: INoiseTrackingItem) => void
     removeItemFromCache: (timestamp: number) => void
