@@ -53,13 +53,13 @@ export const NoiseTrackingProvider = ({ children }: INoiseTrackingProviderProps)
   const value = useMemo(
     () => ({
       noiseTrackingItems,
-      isLoading: query.isLoading,
+      isLoading: query.isPending,
       isError: query.isError,
       refetchNoiseTrackingItems,
       addItemToCache,
       removeItemFromCache,
     }),
-    [noiseTrackingItems, query.isLoading, query.isError, refetchNoiseTrackingItems, addItemToCache, removeItemFromCache]
+    [noiseTrackingItems, query.isPending, query.isError, refetchNoiseTrackingItems, addItemToCache, removeItemFromCache]
   )
 
   return (

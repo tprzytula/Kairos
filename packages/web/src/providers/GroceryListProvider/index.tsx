@@ -131,7 +131,7 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
   const value = useMemo(
     () => ({
       groceryList,
-      isLoading: query.isLoading,
+      isLoading: query.isPending,
       isError: query.isError,
       isAllItemsView,
       viewMode,
@@ -143,7 +143,7 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
       removeCachedItems,
       addItemToCache,
     }),
-    [groceryList, query.isLoading, query.isError, isAllItemsView, viewMode, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields, handleSetViewMode, removeCachedItems, addItemToCache]
+    [groceryList, query.isPending, query.isError, isAllItemsView, viewMode, refetchGroceryList, removeGroceryItem, updateGroceryItemQuantity, updateGroceryItemWithFields, handleSetViewMode, removeCachedItems, addItemToCache]
   )
 
   return (
