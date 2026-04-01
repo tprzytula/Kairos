@@ -7,6 +7,7 @@ import { useEntityCrud } from '../../hooks/useEntityCrud'
 const initialState: IState = {
   adventures: [],
   isLoading: false,
+  isError: false,
   refetchAdventures: async () => {},
   addAdventure: async () => {},
   updateAdventure: async () => {},
@@ -18,7 +19,7 @@ export const AdventureContext = createContext<IState>(initialState)
 export const useAdventureContext = () => useContext(AdventureContext)
 
 export const AdventureProvider = ({ children }: IAdventureProviderProps) => {
-  const { items: adventures, isLoading, currentProject, refetch, addToCache, update, remove } = useEntityCrud<IAdventure, IUpdateAdventureRequest>({
+  const { items: adventures, isLoading, isError, currentProject, refetch, addToCache, update, remove } = useEntityCrud<IAdventure, IUpdateAdventureRequest>({
     queryKey: 'adventures',
     fetchFn: getAdventures,
     updateFn: (id, fields, projectId) => updateAdventureApi(id, fields, projectId),
@@ -40,12 +41,13 @@ export const AdventureProvider = ({ children }: IAdventureProviderProps) => {
     () => ({
       adventures,
       isLoading,
+      isError,
       refetchAdventures: refetch,
       addAdventure,
       updateAdventure: update,
       removeAdventure: remove,
     }),
-    [adventures, isLoading, refetch, addAdventure, update, remove]
+    [adventures, isLoading, isError, refetch, addAdventure, update, remove]
   )
 
   return (

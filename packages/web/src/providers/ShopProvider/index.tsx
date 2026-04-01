@@ -12,6 +12,7 @@ import { useLocation } from 'react-router'
 export const initialState: IShopProviderState = {
   shops: [],
   isLoading: false,
+  isError: false,
   currentShop: null,
   fetchShops: async () => {},
   addShop: async (_shop: ICreateShopRequestBody, _isPrivate?: boolean) => '',
@@ -224,13 +225,14 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
   const value = useMemo(() => ({
     shops,
     isLoading: query.isLoading,
+    isError: query.isError,
     currentShop,
     fetchShops,
     addShop,
     updateShop,
     deleteShop,
     setCurrentShop,
-  }), [shops, query.isLoading, currentShop, fetchShops, addShop, updateShop, deleteShop, setCurrentShop])
+  }), [shops, query.isLoading, query.isError, currentShop, fetchShops, addShop, updateShop, deleteShop, setCurrentShop])
 
   return (
     <ShopContext.Provider value={value}>

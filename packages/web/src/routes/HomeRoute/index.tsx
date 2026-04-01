@@ -62,7 +62,7 @@ const getUpcomingDateStrings = (days = 7): string[] => {
 const HomeDataContent = () => {
   const { groceryList, isLoading: isGroceryLoading, isError: isGroceryError } = useGroceryListContext()
   const { toDoList, isLoading: isToDoLoading, isError: isToDoError, removeFromToDoList, updateToDoItemFields } = usePlannerContext()
-  const { noiseTrackingItems, isLoading: isNoiseLoading } = useNoiseTrackingContext()
+  const { noiseTrackingItems, isLoading: isNoiseLoading, isError: isNoiseError } = useNoiseTrackingContext()
   const { birthdays, isError: isBirthdayError } = useBirthdayContext()
   const { mealPlans, isLoading: isMealLoading } = useMealPlanContext()
   const { adventures, isLoading: isAdventureLoading, removeAdventure } = useAdventureContext()
@@ -210,6 +210,7 @@ const HomeDataContent = () => {
           noiseTrackingItems={noiseTrackingItems}
           noiseCounts={homeData.noiseCounts}
           isLoading={isNoiseLoading}
+          isError={isNoiseError}
           noiseView={interactions.noiseView}
           onNoiseViewChange={interactions.handleNoiseViewChange}
           onNavigate={handleNoiseNavigate}

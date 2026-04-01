@@ -9,6 +9,7 @@ export interface IShopProviderProps {
 export interface IShopProviderState {
     shops: Array<IShop>
     isLoading: boolean
+    isError: boolean
     currentShop: IShop | null
     fetchShops: () => Promise<void>
     addShop: (shop: ICreateShopRequestBody, isPrivate?: boolean) => Promise<string>

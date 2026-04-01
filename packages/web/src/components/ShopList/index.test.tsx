@@ -51,15 +51,31 @@ describe("Given the ShopList component", () => {
   });
 
   describe("When the shops list is empty", () => {
-    it("should render without errors", () => {
+    it("should show empty state message", () => {
       mockShopContext();
       const mockNavigate = vi.fn();
       (useNavigate as Mock).mockReturnValue(mockNavigate);
-      
+
       render(<ShopList shops={[]} onDelete={vi.fn()} onEdit={vi.fn()} />);
-      
-      expect(screen.getByTestId("swipeable-list")).toBeVisible();
-      expect(screen.queryAllByTestId("shop-item")).toHaveLength(0);
+
+      expect(screen.getByText('No shops found')).toBeVisible();
+    });
+  });
+
+  describe("When the shops list failed to load", () => {
+    it("should show error state message", () => {
+      (useShopContext as Mock).mockReturnValue({
+        currentShop: null,
+        setCurrentShop: vi.fn(),
+        isLoading: false,
+        isError: true,
+      });
+      const mockNavigate = vi.fn();
+      (useNavigate as Mock).mockReturnValue(mockNavigate);
+
+      render(<ShopList shops={[]} onDelete={vi.fn()} onEdit={vi.fn()} />);
+
+      expect(screen.getByText('Unable to load shops')).toBeVisible();
     });
   });
 
@@ -94,6 +110,7 @@ const mockShopContext = () => {
     currentShop: null,
     setCurrentShop: vi.fn(),
     isLoading: false,
+    isError: false,
   });
 };
 

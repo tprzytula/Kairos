@@ -6,6 +6,7 @@ export interface INoiseSectionProps {
   noiseTrackingItems: INoiseTrackingItem[]
   noiseCounts: INoiseCounts
   isLoading: boolean
+  isError: boolean
   noiseView: NoiseView
   onNoiseViewChange: (view: NoiseView) => void
   onNavigate?: () => void
