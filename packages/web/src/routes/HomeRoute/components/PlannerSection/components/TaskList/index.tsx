@@ -13,9 +13,10 @@ interface TaskListProps {
   isError?: boolean
   onStepToggle: (todoId: string, stepId: string, isDone: boolean) => void
   onCardClick: (item: ITodoItem) => void
+  onMarkDone?: (id: string) => void
 }
 
-const TaskList: React.FC<TaskListProps> = ({ items, isError, onStepToggle, onCardClick }) => {
+const TaskList: React.FC<TaskListProps> = ({ items, isError, onStepToggle, onCardClick, onMarkDone }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   if (items.length === 0) {
@@ -34,6 +35,7 @@ const TaskList: React.FC<TaskListProps> = ({ items, isError, onStepToggle, onCar
           item={item}
           onStepToggle={onStepToggle}
           onCardClick={onCardClick}
+          onMarkDone={onMarkDone}
         />
       ))}
 

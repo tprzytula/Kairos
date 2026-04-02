@@ -15,6 +15,7 @@ export interface IToDoSectionProps {
   isError: boolean
   onStepToggle: (todoId: string, stepId: string, isDone: boolean) => void
   onCardClick: (item: ITodoItem) => void
+  onMarkDone?: (id: string) => void
   onMealClick?: (meal: ITodayMealItem) => void
   onAdventureClick?: (adventure: IAdventure) => void
 }
