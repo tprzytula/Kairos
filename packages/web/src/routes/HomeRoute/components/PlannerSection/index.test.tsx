@@ -106,9 +106,10 @@ describe('PlannerSection component', () => {
 
       renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} />)
 
-      expect(screen.getByText('1/3 steps')).toBeInTheDocument()
+      const progressLabel = screen.getByTestId('progress-label')
+      expect(progressLabel).toHaveTextContent('33% · 1/3')
       // Steps are collapsed by default — expand to see them
-      fireEvent.click(screen.getByText('1/3 steps'))
+      fireEvent.click(progressLabel)
       expect(screen.getByText('Pack clothes')).toBeInTheDocument()
       expect(screen.getByText('Buy tickets')).toBeInTheDocument()
       expect(screen.getByText('Buy snacks')).toBeInTheDocument()
@@ -128,7 +129,7 @@ describe('PlannerSection component', () => {
       renderWithTheme(<PlannerSection {...defaultProps} toDoStats={toDoStats} onStepToggle={onStepToggle} />)
 
       // Steps are collapsed by default — expand first
-      fireEvent.click(screen.getByText('0/1 steps'))
+      fireEvent.click(screen.getByTestId('progress-label'))
       fireEvent.click(screen.getByText('Pack clothes'))
 
       expect(onStepToggle).toHaveBeenCalledWith('1', 's1', true)

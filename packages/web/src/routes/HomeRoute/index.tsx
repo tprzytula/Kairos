@@ -167,6 +167,7 @@ const HomeDataContent = () => {
           isError={isToDoError}
           onStepToggle={handleStepToggle}
           onCardClick={interactions.handleToDoItemSelect}
+          onMarkDone={handleMarkDone}
           onMealClick={handleMealClick}
           onAdventureClick={handleAdventureClick}
         />

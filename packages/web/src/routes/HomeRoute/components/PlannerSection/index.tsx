@@ -16,6 +16,7 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
   isError,
   onStepToggle,
   onCardClick,
+  onMarkDone,
   onMealClick,
   onAdventureClick,
 }) => {
@@ -44,6 +45,7 @@ export const PlannerSection: React.FC<IToDoSectionProps> = ({
           isError={isError}
           onStepToggle={onStepToggle}
           onCardClick={onCardClick}
+          onMarkDone={onMarkDone}
         />
       </SectionCard>
 
