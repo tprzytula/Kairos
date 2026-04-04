@@ -13,13 +13,41 @@ import {
   BirthdaySubLine,
   MoreCount,
   CollapseGrid,
+  BirthdayPlaceholderEntry,
+  BirthdayPlaceholderBadge,
+  BirthdayPlaceholderInfo,
+  BirthdayPlaceholderName,
+  BirthdayPlaceholderSub,
+  BirthdayPlaceholderPill,
 } from './index.styled'
 
 interface IUpcomingBirthdaysCardProps {
   birthdays: IBirthdayItem[]
+  isLoading?: boolean
   isExpanded?: boolean
   isError?: boolean
 }
+
+const BirthdayPlaceholder: React.FC = () => (
+  <BirthdayList>
+    <BirthdayPlaceholderEntry>
+      <BirthdayPlaceholderBadge />
+      <BirthdayPlaceholderInfo>
+        <BirthdayPlaceholderName />
+        <BirthdayPlaceholderSub />
+      </BirthdayPlaceholderInfo>
+      <BirthdayPlaceholderPill />
+    </BirthdayPlaceholderEntry>
+    <BirthdayPlaceholderEntry>
+      <BirthdayPlaceholderBadge />
+      <BirthdayPlaceholderInfo>
+        <BirthdayPlaceholderName />
+        <BirthdayPlaceholderSub />
+      </BirthdayPlaceholderInfo>
+      <BirthdayPlaceholderPill />
+    </BirthdayPlaceholderEntry>
+  </BirthdayList>
+)
 
 const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'short' })
 
@@ -67,7 +95,11 @@ const BirthdayEntry: React.FC<{ b: SortedBirthday; showDetails: boolean }> = ({ 
   )
 }
 
-export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ birthdays, isExpanded = false, isError = false }) => {
+export const UpcomingBirthdaysCard: React.FC<IUpcomingBirthdaysCardProps> = ({ birthdays, isLoading = false, isExpanded = false, isError = false }) => {
+  if (isLoading && birthdays.length === 0) {
+    return <BirthdayPlaceholder />
+  }
+
   if (birthdays.length === 0) {
     return <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #888)' }}>{isError ? 'Unable to load birthdays' : 'No birthdays saved'}</span>
   }

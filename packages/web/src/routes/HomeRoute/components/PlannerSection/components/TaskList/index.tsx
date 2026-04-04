@@ -4,20 +4,38 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import { ITodoItem } from '../../../../../../api/toDoList/retrieve/types'
 import TaskCard from '../TaskCard'
-import { TaskListContainer, ExpandButton, EmptyMessage } from './index.styled'
+import { TaskListContainer, ExpandButton, EmptyMessage, TaskPlaceholderCard, TaskPlaceholderTitle, TaskPlaceholderMeta } from './index.styled'
 
 const DEFAULT_VISIBLE = 2
 
 interface TaskListProps {
   items: ITodoItem[]
+  isLoading?: boolean
   isError?: boolean
   onStepToggle: (todoId: string, stepId: string, isDone: boolean) => void
   onCardClick: (item: ITodoItem) => void
   onMarkDone?: (id: string) => void
 }
 
-const TaskList: React.FC<TaskListProps> = ({ items, isError, onStepToggle, onCardClick, onMarkDone }) => {
+const TaskPlaceholder: React.FC = () => (
+  <TaskListContainer>
+    <TaskPlaceholderCard>
+      <TaskPlaceholderTitle />
+      <TaskPlaceholderMeta />
+    </TaskPlaceholderCard>
+    <TaskPlaceholderCard>
+      <TaskPlaceholderTitle />
+      <TaskPlaceholderMeta />
+    </TaskPlaceholderCard>
+  </TaskListContainer>
+)
+
+const TaskList: React.FC<TaskListProps> = ({ items, isLoading, isError, onStepToggle, onCardClick, onMarkDone }) => {
   const [isExpanded, setIsExpanded] = useState(false)
+
+  if (isLoading && items.length === 0) {
+    return <TaskPlaceholder />
+  }
 
   if (items.length === 0) {
     return <EmptyMessage>{isError ? 'Unable to load tasks' : 'No tasks planned — enjoy the day!'}</EmptyMessage>

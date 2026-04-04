@@ -1,4 +1,5 @@
 import { styled } from '@mui/material/styles'
+import { themedShimmerStyles } from '../../../../../../utils/styles/shimmer'
 
 export const TaskListContainer = styled('div')({
   display: 'flex',
@@ -35,4 +36,26 @@ export const EmptyMessage = styled('div')(({ theme }) => ({
   color: theme.palette.text.secondary,
   textAlign: 'center',
   padding: '0.5rem 0',
+}))
+
+export const TaskPlaceholderCard = styled('div')({
+  borderRadius: '12px',
+  padding: '0.5rem 0.65rem',
+  background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,1) 100%)',
+  border: '1px solid rgba(99, 102, 241, 0.08)',
+})
+
+export const TaskPlaceholderTitle = styled('div')(({ theme }) => ({
+  height: '0.85rem',
+  width: '68%',
+  borderRadius: '4px',
+  ...themedShimmerStyles(theme),
+}))
+
+export const TaskPlaceholderMeta = styled('div')(({ theme }) => ({
+  height: '0.65rem',
+  width: '40%',
+  borderRadius: '4px',
+  marginTop: '0.35rem',
+  ...themedShimmerStyles(theme),
 }))
