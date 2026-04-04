@@ -63,7 +63,7 @@ const HomeDataContent = () => {
   const { groceryList, isLoading: isGroceryLoading, isError: isGroceryError } = useGroceryListContext()
   const { toDoList, isLoading: isToDoLoading, isError: isToDoError, removeFromToDoList, updateToDoItemFields } = usePlannerContext()
   const { noiseTrackingItems, isLoading: isNoiseLoading, isError: isNoiseError } = useNoiseTrackingContext()
-  const { birthdays, isError: isBirthdayError } = useBirthdayContext()
+  const { birthdays, isLoading: isBirthdayLoading, isError: isBirthdayError } = useBirthdayContext()
   const { mealPlans, isLoading: isMealLoading } = useMealPlanContext()
   const { adventures, isLoading: isAdventureLoading, removeAdventure } = useAdventureContext()
   const { recipes } = useRecipeContext()
@@ -202,7 +202,7 @@ const HomeDataContent = () => {
               </Box>
             </MiniCardHeader>
             <MiniCardBody>
-              <UpcomingBirthdaysCard birthdays={birthdays} isExpanded={isBirthdaysExpanded} isError={isBirthdayError} />
+              <UpcomingBirthdaysCard birthdays={birthdays} isLoading={isBirthdayLoading} isExpanded={isBirthdaysExpanded} isError={isBirthdayError} />
             </MiniCardBody>
           </MiniCardContent>
         </BirthdayCard>

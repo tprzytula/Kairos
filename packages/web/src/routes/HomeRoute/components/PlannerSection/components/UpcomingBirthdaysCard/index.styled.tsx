@@ -1,4 +1,5 @@
 import { styled } from '@mui/material/styles'
+import { themedShimmerStyles } from '../../../../../../utils/styles/shimmer'
 
 export const BirthdayList = styled('div')({
   display: 'flex',
@@ -103,4 +104,49 @@ export const MoreCount = styled('div')(({ theme }) => ({
   fontWeight: 600,
   paddingLeft: '0.5rem',
   paddingTop: '0.15rem',
+}))
+
+export const BirthdayPlaceholderEntry = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.6rem',
+  padding: '0.35rem 0.5rem',
+  borderRadius: '10px',
+})
+
+export const BirthdayPlaceholderBadge = styled('div')(({ theme }) => ({
+  flexShrink: 0,
+  width: '2.2rem',
+  height: '2.6rem',
+  borderRadius: '8px',
+  ...themedShimmerStyles(theme),
+}))
+
+export const BirthdayPlaceholderInfo = styled('div')({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.35rem',
+})
+
+export const BirthdayPlaceholderName = styled('div')(({ theme }) => ({
+  height: '0.8rem',
+  width: '55%',
+  borderRadius: '4px',
+  ...themedShimmerStyles(theme),
+}))
+
+export const BirthdayPlaceholderSub = styled('div')(({ theme }) => ({
+  height: '0.65rem',
+  width: '35%',
+  borderRadius: '4px',
+  ...themedShimmerStyles(theme),
+}))
+
+export const BirthdayPlaceholderPill = styled('div')(({ theme }) => ({
+  flexShrink: 0,
+  height: '1.4rem',
+  width: '2.2rem',
+  borderRadius: '99px',
+  ...themedShimmerStyles(theme),
 }))
