@@ -7,36 +7,57 @@ import { AdventureProvider } from '../../providers/AdventureProvider'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { retrieveGroceryListDefaults } from '../../api/groceryList'
 import Planner from '../../components/Planner'
-import ActionButtonsBar from '../../components/ActionButtonsBar'
+import SegmentedControl, { SegmentedControlTab } from '../../components/SegmentedControl'
 import ModernPageHeader from '../../components/ModernPageHeader'
 import MealPlanPreviewDrawer from '../../components/MealPlanPreviewDrawer'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import ViewWeekIcon from '@mui/icons-material/ViewWeek'
 import ViewModuleIcon from '@mui/icons-material/ViewModule'
+import { Box } from '@mui/material'
 import { Container, PlannerScrollArea } from './index.styled'
 import { SECTION_GRADIENTS, SECTION_ACCENT_RGB } from '../../constants/sectionColors'
 import { useAppState } from '../../providers/AppStateProvider'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { showAlert } from '../../utils/alert'
 import { ActionName } from '../../providers/AppStateProvider/enums'
-import { useProjectContext } from '../../providers/ProjectProvider'
-import { updateToDoItems } from '../../api/toDoList'
 import { PlannerViewMode } from '../../enums/plannerViewMode'
 import { IMealPlan } from '../../types/mealPlan'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router'
 import { Route } from '../../enums/route'
 
-const VIEW_MODE_CYCLE = [PlannerViewMode.WEEKLY, PlannerViewMode.CALENDAR, PlannerViewMode.GROUPED] as const
+const PLANNER_VIEW_TABS: Array<SegmentedControlTab<PlannerViewMode>> = [
+  {
+    id: PlannerViewMode.WEEKLY,
+    label: 'Weekly',
+    icon: <ViewWeekIcon sx={{ fontSize: '1.1rem' }} />,
+    activeColor: '#6366f1',
+    activeBg: '#ffffff',
+    activeShadow: 'rgba(99, 102, 241, 0.15)',
+  },
+  {
+    id: PlannerViewMode.CALENDAR,
+    label: 'Calendar',
+    icon: <CalendarMonthIcon sx={{ fontSize: '1.1rem' }} />,
+    activeColor: '#6366f1',
+    activeBg: '#ffffff',
+    activeShadow: 'rgba(99, 102, 241, 0.15)',
+  },
+  {
+    id: PlannerViewMode.GROUPED,
+    label: 'Grouped',
+    icon: <ViewModuleIcon sx={{ fontSize: '1.1rem' }} />,
+    activeColor: '#6366f1',
+    activeBg: '#ffffff',
+    activeShadow: 'rgba(99, 102, 241, 0.15)',
+  },
+]
 
 const PlannerContent = () => {
-  const { toDoList, updateToDoItemsBulk } = usePlannerContext()
-  const { state: { selectedTodoItems }, dispatch } = useAppState()
-  const { currentProject } = useProjectContext()
+  const { toDoList } = usePlannerContext()
+  const { dispatch } = useAppState()
   const navigate = useNavigate()
-  const [allExpanded, setAllExpanded] = useState(true)
-  const [expandKey, setExpandKey] = useState(0)
   const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.WEEKLY)
   const { mealPlans, removeMealPlan } = useMealPlanContext()
   const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
@@ -78,57 +99,6 @@ const PlannerContent = () => {
 
   const stats = viewMode === PlannerViewMode.GROUPED ? defaultStats : calendarStats
 
-  const statusText = useMemo(() => {
-    const totalItems = toDoList.length
-    const selectedCount = selectedTodoItems.size
-
-    if (totalItems === 0) {
-      return "Your planner is empty"
-    }
-
-    if (selectedCount === 0) {
-      if (viewMode === PlannerViewMode.CALENDAR) return "Tap a day to see its tasks"
-      if (viewMode === PlannerViewMode.WEEKLY)   return "Tap a task to view details"
-      return "Tap items to mark as done"
-    }
-
-    return `${selectedCount} of ${totalItems} item${totalItems === 1 ? '' : 's'} selected`
-  }, [toDoList.length, selectedTodoItems.size, viewMode])
-
-  const clearSelectedTodoItems = useCallback((selectedTodoItems: Set<string>) => {
-    dispatch({
-      type: ActionName.CLEAR_SELECTED_TODO_ITEMS,
-      payload: Array.from(selectedTodoItems)
-    })
-  }, [dispatch])
-
-  const markToDoItemsAsDone = useCallback(async () => {
-    const ids = Array.from(selectedTodoItems)
-    try {
-      await updateToDoItems(ids.map(id => ({ id, isDone: true })), currentProject!.id)
-      updateToDoItemsBulk(ids, { isDone: true })
-      clearSelectedTodoItems(selectedTodoItems)
-    } catch (error) {
-      console.error("Failed to mark to do items as done:", error)
-      showAlert({
-        description: "Failed to mark to do items as done",
-        severity: "error",
-      }, dispatch)
-    }
-  }, [selectedTodoItems, currentProject, dispatch, updateToDoItemsBulk, clearSelectedTodoItems])
-
-  const toggleAll = useCallback(() => {
-    setAllExpanded(!allExpanded)
-    setExpandKey(prev => prev + 1) // Force re-render of sections
-  }, [allExpanded])
-
-  const toggleViewMode = useCallback(() => {
-    setViewMode(prev => {
-      const idx = VIEW_MODE_CYCLE.indexOf(prev)
-      return VIEW_MODE_CYCLE[(idx + 1) % VIEW_MODE_CYCLE.length]
-    })
-  }, [])
-
   const handleAddMealPlan = useCallback((date: string) => {
     dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: date })
     navigate(Route.AddPlannerItem, { state: { itemType: 'meal' } })
@@ -157,11 +127,6 @@ const PlannerContent = () => {
     }
   }, [removeMealPlan, dispatch])
 
-  const viewToggleIcon =
-    viewMode === PlannerViewMode.CALENDAR ? <CalendarMonthIcon /> :
-    viewMode === PlannerViewMode.WEEKLY ? <ViewWeekIcon /> :
-    <ViewModuleIcon />
-
   return (
     <StandardLayout>
       <ModernPageHeader
@@ -172,27 +137,16 @@ const PlannerContent = () => {
         accentRgb={SECTION_ACCENT_RGB.planner}
       />
       <Container>
-        <ActionButtonsBar
-          expandCollapseButton={{
-            isExpanded: allExpanded,
-            onToggle: toggleAll,
-            disabled: pendingItems.length === 0 || viewMode !== PlannerViewMode.GROUPED,
-          }}
-          actionButton={{
-            isEnabled: selectedTodoItems.size > 0,
-            onClick: markToDoItemsAsDone,
-            children: "Mark Tasks As Done",
-            statusText: statusText,
-          }}
-          viewToggleButton={{
-            children: viewToggleIcon,
-            onClick: toggleViewMode,
-          }}
-        />
+        <Box sx={{ px: 2, pt: 1, pb: 0.5 }}>
+          <SegmentedControl
+            tabs={PLANNER_VIEW_TABS}
+            activeTab={viewMode}
+            onChange={setViewMode}
+            collapseInactive
+          />
+        </Box>
         <PlannerScrollArea>
           <Planner
-            allExpanded={allExpanded}
-            expandKey={expandKey}
             viewMode={viewMode}
             mealPlans={mealPlans}
             onAddMealPlan={handleAddMealPlan}
