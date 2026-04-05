@@ -2,8 +2,6 @@ import { PlannerViewMode } from '../../enums/plannerViewMode';
 import { IMealPlan } from '../../types/mealPlan';
 
 export interface IToDoListProps {
-  allExpanded?: boolean;
-  expandKey?: string | number;
   viewMode?: PlannerViewMode;
   mealPlans?: IMealPlan[];
   onAddMealPlan?: (date: string) => void;

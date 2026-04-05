@@ -43,7 +43,7 @@ describe('Given the PlannerRoute component', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
-    
+
     // Mock ProjectProvider
     vi.mocked(useProjectContext).mockReturnValue({
       projects: [MOCK_PROJECT],
@@ -163,52 +163,24 @@ describe('Given the PlannerRoute component', () => {
     expect(headerContainer).toBeInTheDocument()
   })
 
-  it('should render the ActionButtonsBar with correct status text when no items selected', async () => {
+  it('should render the SegmentedControl with view mode tabs', async () => {
     await act(async () => {
       renderComponent()
     })
 
-    // The ActionButtonsBar should show status text when no items are selected
     await waitFor(() => {
-      expect(screen.getByText('Your planner is empty')).toBeInTheDocument()
+      expect(screen.getByText('Weekly')).toBeInTheDocument()
     })
   })
 
-  it('should render the ActionButtonsBar with enabled button when items are selected', async () => {
-    // Mock state with selected items
-    vi.mocked(useAppState).mockReturnValue({
-      state: {
-        ...initialState,
-        selectedTodoItems: new Set(['1', '2'])
-      },
-      dispatch: vi.fn(),
-    })
-
-    const mockTodoItems = [
-      { id: '1', name: 'Task 1', isDone: false, description: '', dueDate: undefined },
-      { id: '2', name: 'Task 2', isDone: false, description: '', dueDate: undefined },
-    ]
-
-    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
-
-    const queryClient = createTestQueryClient()
+  it('should default to weekly view', async () => {
     await act(async () => {
-      render(
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider theme={theme}>
-            <AppStateProvider>
-              <BrowserRouter>
-                <PlannerRoute />
-              </BrowserRouter>
-            </AppStateProvider>
-          </ThemeProvider>
-        </QueryClientProvider>
-      )
+      renderComponent()
     })
 
-    // The ActionButtonsBar should show the action button when items are selected
     await waitFor(() => {
-      expect(screen.getByText('Mark Tasks As Done')).toBeInTheDocument()
+      // Weekly tab should be visible with its label (active tab shows label with collapseInactive)
+      expect(screen.getByText('Weekly')).toBeInTheDocument()
     })
   })
 
@@ -223,63 +195,6 @@ describe('Given the PlannerRoute component', () => {
       expect(container).toBeInTheDocument()
     })
   })
-
-  it('should render the expand/collapse button (disabled in weekly view)', async () => {
-    const mockTodoItems = [
-      { id: '1', name: 'Task 1', isDone: false, description: '', dueDate: undefined },
-      { id: '2', name: 'Task 2', isDone: false, description: '', dueDate: undefined },
-    ]
-
-    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
-
-    await act(async () => {
-      renderComponent()
-    })
-
-    // The expand/collapse button should be rendered but disabled in the default calendar view
-    await waitFor(() => {
-      expect(screen.getByLabelText('Collapse all')).toBeInTheDocument()
-      expect(screen.getByLabelText('Collapse all')).toBeDisabled()
-    })
-  })
-
-  it('should disable the expand/collapse button when no pending items', async () => {
-    const mockTodoItems = [
-      { id: '1', name: 'Task 1', isDone: true, description: '', dueDate: undefined },
-      { id: '2', name: 'Task 2', isDone: true, description: '', dueDate: undefined },
-    ]
-
-    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
-
-    await act(async () => {
-      renderComponent()
-    })
-
-    // The expand/collapse button should be disabled when no pending items
-    await waitFor(() => {
-      const expandButton = screen.getByLabelText('Collapse all')
-      expect(expandButton).toBeDisabled()
-    })
-  })
-
-  it('should render the view toggle button', async () => {
-    const mockTodoItems = [
-      { id: '1', name: 'Task 1', isDone: false, description: '', dueDate: undefined },
-    ]
-
-    vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue(mockTodoItems)
-
-    await act(async () => {
-      renderComponent()
-    })
-
-    // The view toggle button should be rendered
-    await waitFor(() => {
-      expect(screen.getByLabelText('Toggle view mode')).toBeInTheDocument()
-    })
-  })
-
-
 })
 
 const renderComponent = () => {

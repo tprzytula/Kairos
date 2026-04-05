@@ -16,12 +16,10 @@ const TIME_GROUP_ICON_MAP: Record<TimeGroup, SectionIcon> = {
   [TimeGroup.NO_DUE_DATE]: { emoji: '📝', backgroundColor: '#f5f5f5', foregroundColor: '#6b7280' },
 };
 
-const GroupedView = ({ 
-  groupedToDoItems, 
-  allExpanded, 
-  expandKey, 
-  onSwipeAction, 
-  onEditAction 
+const GroupedView = ({
+  groupedToDoItems,
+  onSwipeAction,
+  onEditAction
 }: IGroupedViewProps) => {
   return (
     <Container>
@@ -31,8 +29,6 @@ const GroupedView = ({
           title={groupLabel}
           icon={TIME_GROUP_ICON_MAP[group]}
           items={items}
-          expandTo={allExpanded}
-          expandKey={expandKey}
         >
           <SwipeableList
             component={ToDoItem}

@@ -29,8 +29,6 @@ import ToDoItemPreviewDrawer from '../ToDoItemPreviewDrawer';
 import { IToDoListProps } from './types';
 
 export const Planner = ({
-  allExpanded = true,
-  expandKey = 0,
   viewMode = PlannerViewMode.CALENDAR,
   mealPlans = [],
   onAddMealPlan,
@@ -229,8 +227,6 @@ export const Planner = ({
   return (
     <GroupedView
       groupedToDoItems={groupedToDoItems}
-      allExpanded={allExpanded}
-      expandKey={expandKey}
       onSwipeAction={markToDoItemAsDone}
       onEditAction={handleEdit}
     />
