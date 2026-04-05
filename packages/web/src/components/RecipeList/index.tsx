@@ -1,12 +1,14 @@
 import { useMemo } from 'react'
-import { Box, Typography, Skeleton } from '@mui/material'
+import { Typography } from '@mui/material'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import { COLORS } from '../../constants/colors'
 import { IRecipe } from '../../types/recipe'
 import { MealType } from '../../enums/mealType'
 import { RecipeDishType } from '../../enums/recipeDishType'
 import { useRecipeContext } from '../../providers/RecipeProvider'
+import { shimmerStyles } from '../../utils/styles/shimmer'
 import RecipeItem from '../RecipeItem'
+import { RecipeCard, RecipeCardBody, RecipeMetaRow } from '../RecipeItem/index.styled'
 import {
   RecipeListContainer,
   EmptyStateContainer,
@@ -22,16 +24,15 @@ interface RecipeListProps {
 }
 
 const RecipeSkeletonCard = () => (
-  <Box sx={{ borderRadius: '14px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
-    <Skeleton variant="rectangular" sx={{ width: '100%', aspectRatio: '4 / 3' }} />
-    <Box sx={{ padding: '0.625rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-      <Skeleton variant="text" width="80%" height={20} />
-      <Box sx={{ display: 'flex', gap: '0.3rem' }}>
-        <Skeleton variant="rounded" width={75} height={20} />
-        <Skeleton variant="rounded" width={50} height={20} />
-      </Box>
-    </Box>
-  </Box>
+  <RecipeCard>
+    <div style={{ width: '100%', aspectRatio: '4 / 3', ...shimmerStyles }} />
+    <RecipeCardBody>
+      <div style={{ width: '80%', height: 14, borderRadius: 4, ...shimmerStyles }} />
+      <RecipeMetaRow>
+        <div style={{ width: 75, height: 20, borderRadius: 16, ...shimmerStyles }} />
+      </RecipeMetaRow>
+    </RecipeCardBody>
+  </RecipeCard>
 )
 
 const RecipeList = ({ search = '', onViewRecipe, selectedMealTypes = [], selectedDishTypes = [] }: RecipeListProps) => {

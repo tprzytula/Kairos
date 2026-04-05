@@ -22,6 +22,7 @@ import GroupedView from './GroupedView';
 import CalendarView from './CalendarView';
 import CalendarViewPlaceholder from './CalendarView/Placeholder';
 import WeeklyView from './WeeklyView';
+import WeeklyViewPlaceholder from './WeeklyView/Placeholder';
 import Placeholder from './Placeholder';
 import EmptyPlanner from './EmptyPlanner';
 import ToDoItemPreviewDrawer from '../ToDoItemPreviewDrawer';
@@ -197,7 +198,7 @@ export const Planner = ({
   if (viewMode === PlannerViewMode.WEEKLY) {
     return (
       <>
-        {isLoading ? <Placeholder /> : (
+        {isLoading ? <WeeklyViewPlaceholder /> : (
           <WeeklyView
             visibleToDoItems={toDoList}
             onItemClick={handlePreview}
