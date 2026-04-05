@@ -8,7 +8,7 @@ import { ActionName } from '../../providers/AppStateProvider/enums';
 import { removeTodoItems, updateToDoItems } from '../../api/toDoList';
 import { showAlert } from '../../utils/alert';
 import { Route } from '../../enums/route';
-import { groupTodosByTime } from './utils/timeGrouping';
+import { groupTodosByTime, groupAdventuresByTime } from './utils/timeGrouping';
 import { PlannerViewMode } from '../../enums/plannerViewMode';
 import { ITodoItem } from '../../api/toDoList/retrieve/types';
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types';
@@ -53,6 +53,10 @@ export const Planner = ({
   const groupedToDoItems = useMemo(() => {
     return groupTodosByTime(visibleToDoItems);
   }, [visibleToDoItems]);
+
+  const groupedAdventures = useMemo(() => {
+    return groupAdventuresByTime(adventures);
+  }, [adventures]);
 
   const clearSelectedTodoItems = useCallback((id: string) => {
     dispatch({
@@ -220,16 +224,21 @@ export const Planner = ({
     return <Placeholder />
   }
 
-  if (toDoList.length === 0) {
+  if (toDoList.length === 0 && adventures.length === 0) {
     return <EmptyPlanner />
   }
 
   return (
-    <GroupedView
-      groupedToDoItems={groupedToDoItems}
-      onSwipeAction={markToDoItemAsDone}
-      onEditAction={handleEdit}
-    />
+    <>
+      <GroupedView
+        groupedToDoItems={groupedToDoItems}
+        groupedAdventures={groupedAdventures}
+        onSwipeAction={markToDoItemAsDone}
+        onEditAction={handleEdit}
+        onAdventureClick={handleAdventurePreview}
+      />
+      {drawers}
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import ToDoItem from '../../ToDoItem';
 import CollapsibleSection from '../../CollapsibleSection';
 import SwipeableList from '../../SwipeableList';
+import AdventureGroupedItem from './AdventureGroupedItem';
 import { Container } from './index.styled';
 import { IGroupedViewProps } from './types';
 import { TimeGroup } from '../utils/timeGrouping';
@@ -16,13 +17,37 @@ const TIME_GROUP_ICON_MAP: Record<TimeGroup, SectionIcon> = {
   [TimeGroup.NO_DUE_DATE]: { emoji: '📝', backgroundColor: '#f5f5f5', foregroundColor: '#6b7280' },
 };
 
+const ADVENTURE_ICON: SectionIcon = {
+  emoji: '🧭',
+  backgroundColor: '#ecfeff',
+  foregroundColor: '#0891b2',
+};
+
 const GroupedView = ({
   groupedToDoItems,
+  groupedAdventures,
   onSwipeAction,
-  onEditAction
+  onEditAction,
+  onAdventureClick,
 }: IGroupedViewProps) => {
   return (
     <Container>
+      {groupedAdventures.map(({ group, groupLabel, items }) => (
+        <CollapsibleSection
+          key={`adventure-${group}`}
+          title={groupLabel}
+          icon={ADVENTURE_ICON}
+          items={items}
+        >
+          {items.map((adventure) => (
+            <AdventureGroupedItem
+              key={adventure.id}
+              adventure={adventure}
+              onClick={onAdventureClick}
+            />
+          ))}
+        </CollapsibleSection>
+      ))}
       {groupedToDoItems.map(({ group, groupLabel, items }) => (
         <CollapsibleSection
           key={group}

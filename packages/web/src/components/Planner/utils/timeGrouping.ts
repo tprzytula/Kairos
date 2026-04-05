@@ -1,4 +1,5 @@
 import { ITodoItem } from '../../../api/toDoList/retrieve/types'
+import { IAdventure } from '../../../types/adventure'
 
 export enum TimeGroup {
   OVERDUE = 'overdue',
@@ -162,4 +163,94 @@ export const groupTodosByTime = (todos: ITodoItem[]): IGroupedTodoItem[] => {
 
 export const getTotalItemsCount = (groupedItems: IGroupedTodoItem[]): number => {
   return groupedItems.reduce((total, group) => total + group.items.length, 0)
+}
+
+export interface IGroupedAdventureItem {
+  group: TimeGroup
+  groupLabel: string
+  items: IAdventure[]
+  priority: number
+}
+
+const getTimeGroupForDateString = (dateString: string): TimeGroup => {
+  const [year, month, day] = dateString.split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+  if (date < today) {
+    return TimeGroup.OVERDUE
+  }
+
+  if (isToday(date)) {
+    return TimeGroup.TODAY
+  }
+
+  if (isTomorrow(date)) {
+    return TimeGroup.TOMORROW
+  }
+
+  if (isThisWeek(date)) {
+    return TimeGroup.THIS_WEEK
+  }
+
+  if (isNextWeek(date)) {
+    return TimeGroup.NEXT_WEEK
+  }
+
+  return TimeGroup.LATER
+}
+
+const getAdventureGroupLabel = (group: TimeGroup, itemsCount: number): string => {
+  const count = itemsCount > 1 ? ` (${itemsCount})` : ''
+  switch (group) {
+    case TimeGroup.TODAY:
+      return `Today${count}`
+    case TimeGroup.TOMORROW:
+      return `Tomorrow${count}`
+    case TimeGroup.THIS_WEEK:
+      return `This Week${count}`
+    case TimeGroup.NEXT_WEEK:
+      return `Next Week${count}`
+    case TimeGroup.LATER:
+      return `Later${count}`
+    default:
+      return `Upcoming${count}`
+  }
+}
+
+export const groupAdventuresByTime = (adventures: IAdventure[]): IGroupedAdventureItem[] => {
+  const upcomingAdventures = adventures.filter(adventure => {
+    const group = getTimeGroupForDateString(adventure.date)
+    return group !== TimeGroup.OVERDUE
+  })
+
+  const groups = new Map<TimeGroup, IAdventure[]>()
+
+  upcomingAdventures.forEach(adventure => {
+    const group = getTimeGroupForDateString(adventure.date)
+    const existingItems = groups.get(group) || []
+    groups.set(group, [...existingItems, adventure])
+  })
+
+  groups.forEach((items) => {
+    items.sort((a, b) => a.date.localeCompare(b.date))
+  })
+
+  const result: IGroupedAdventureItem[] = []
+
+  groups.forEach((items, group) => {
+    if (items.length > 0) {
+      result.push({
+        group,
+        groupLabel: getAdventureGroupLabel(group, items.length),
+        items,
+        priority: TIME_GROUP_META[group].priority,
+      })
+    }
+  })
+
+  result.sort((a, b) => a.priority - b.priority)
+
+  return result
 }
