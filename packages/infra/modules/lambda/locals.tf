@@ -545,6 +545,60 @@ locals {
         }
       }
     },
+    "get_office_attendance" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          office_attendance  = "read-only"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "add_office_attendance" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          office_attendance  = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "delete_office_attendance" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          office_attendance  = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
+    "get_project_members_details" = {
+      timeout = 10
+      environment_variables = {
+        COGNITO_USER_POOL_ID = var.cognito_user_pool_id
+      }
+      permissions = {
+        database = {
+          project_members    = "read-only"
+          push_subscriptions = "none"
+        }
+        cognito = {
+          admin_get_user = "allow"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
     "add_adventure" = {
       environment_variables = {}
       permissions = {

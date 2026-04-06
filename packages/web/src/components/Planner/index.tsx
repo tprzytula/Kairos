@@ -31,10 +31,12 @@ import { IToDoListProps } from './types';
 export const Planner = ({
   viewMode = PlannerViewMode.CALENDAR,
   mealPlans = [],
+  officeAttendance = [],
   onAddMealPlan,
   onMealPlanClick,
   onAddAdventure,
   onAddTask: _onAddTask,
+  onRemoveAttendance,
 }: IToDoListProps = {}) => {
   const { dispatch } = useAppState();
   const { user } = useAuth();
@@ -190,6 +192,8 @@ export const Planner = ({
             onAddTask={handleAddTask}
             adventures={adventures}
             onAdventureClick={handleAdventurePreview}
+            officeAttendance={officeAttendance}
+            onRemoveAttendance={onRemoveAttendance}
           />
         )}
         {drawers}
@@ -213,6 +217,8 @@ export const Planner = ({
             onAdventureClick={handleAdventurePreview}
             onAddAdventure={onAddAdventure ?? handleAddAdventure}
             onAddTask={_onAddTask ?? handleAddTask}
+            officeAttendance={officeAttendance}
+            onRemoveAttendance={onRemoveAttendance}
           />
         )}
         {drawers}

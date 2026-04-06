@@ -4,6 +4,7 @@ import ChecklistIcon from '@mui/icons-material/Checklist'
 import CakeIcon from '@mui/icons-material/Cake'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import ExploreIcon from '@mui/icons-material/Explore'
+import BusinessIcon from '@mui/icons-material/Business'
 import ItemForm from '../../components/ItemForm'
 import { FormFieldType } from '../../components/ItemForm/enums'
 import { IFormField } from '../../components/ItemForm/types'
@@ -27,19 +28,22 @@ import dayjs from 'dayjs'
 import BirthdayForm from './BirthdayForm'
 import MealForm from './MealForm'
 import AdventureForm from './AdventureForm'
+import OfficeForm from './OfficeForm'
+import { OfficeAttendanceProvider } from '../../providers/OfficeAttendanceProvider'
+import { ProjectMembersProvider } from '../../providers/ProjectMembersProvider'
 import StepsEditor from '../../components/StepsEditor'
 import { IStep } from '../../api/toDoList/retrieve/types'
 import SegmentedControl, { SegmentedControlTab } from '../../components/SegmentedControl'
 import PrivateToggle from '../../components/PrivateToggle'
 
-type ItemType = 'task' | 'birthday' | 'meal' | 'adventure'
+type ItemType = 'task' | 'birthday' | 'meal' | 'adventure' | 'office'
 
 const LAST_PLANNER_ITEM_TYPE_KEY = 'kairos_last_planner_item_type'
 
 const getLastItemType = (): ItemType => {
   try {
     const stored = localStorage.getItem(LAST_PLANNER_ITEM_TYPE_KEY)
-    if (stored === 'task' || stored === 'birthday' || stored === 'meal' || stored === 'adventure') {
+    if (stored === 'task' || stored === 'birthday' || stored === 'meal' || stored === 'adventure' || stored === 'office') {
       return stored
     }
   } catch {}
@@ -86,6 +90,14 @@ const PLANNER_TABS: Array<SegmentedControlTab<ItemType>> = [
     activeColor: '#db2777',
     activeBg: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)',
     activeShadow: 'rgba(219, 39, 119, 0.2)',
+  },
+  {
+    id: 'office',
+    label: 'Office',
+    icon: <BusinessIcon sx={{ fontSize: '1.1rem' }} />,
+    activeColor: '#0284c7',
+    activeBg: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)',
+    activeShadow: 'rgba(2, 132, 199, 0.2)',
   },
 ]
 
@@ -174,8 +186,8 @@ export const AddPlannerItemContent = () => {
     { value: yearNumber, label: 'Year' }
   ]
 
-  const headerIcon = itemType === 'birthday' ? <CakeIcon /> : itemType === 'meal' ? <RestaurantIcon /> : itemType === 'adventure' ? <ExploreIcon /> : <ChecklistIcon />
-  const headerTitle = itemType === 'birthday' ? 'Add Birthday' : itemType === 'meal' ? 'Add Meal' : itemType === 'adventure' ? 'Add Adventure' : 'Add Task'
+  const headerIcon = itemType === 'birthday' ? <CakeIcon /> : itemType === 'meal' ? <RestaurantIcon /> : itemType === 'adventure' ? <ExploreIcon /> : itemType === 'office' ? <BusinessIcon /> : <ChecklistIcon />
+  const headerTitle = itemType === 'birthday' ? 'Add Birthday' : itemType === 'meal' ? 'Add Meal' : itemType === 'adventure' ? 'Add Adventure' : itemType === 'office' ? 'Office Attendance' : 'Add Task'
 
   return (
     <StandardLayout>
@@ -205,6 +217,8 @@ export const AddPlannerItemContent = () => {
         <BirthdayForm />
       ) : itemType === 'meal' ? (
         <MealForm />
+      ) : itemType === 'office' ? (
+        <OfficeForm />
       ) : (
         <AdventureForm />
       )}
@@ -219,7 +233,11 @@ export const AddPlannerItemRoute = () => {
         <RecipeProvider>
           <MealPlanProvider>
             <AdventureProvider>
-              <AddPlannerItemContent />
+              <OfficeAttendanceProvider>
+                <ProjectMembersProvider>
+                  <AddPlannerItemContent />
+                </ProjectMembersProvider>
+              </OfficeAttendanceProvider>
             </AdventureProvider>
           </MealPlanProvider>
         </RecipeProvider>

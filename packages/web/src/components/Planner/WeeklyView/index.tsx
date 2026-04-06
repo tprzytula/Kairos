@@ -8,6 +8,7 @@ import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../types/mealPlan'
 import { IAdventure } from '../../../types/adventure'
+import { IOfficeAttendance } from '../../../types/officeAttendance'
 import { buildAdventuresByDay, getAdventurePosition, AdventurePosition } from '../../../utils/adventure'
 import {
   WeeklyContainer,
@@ -29,6 +30,7 @@ import {
   MealIconStyled,
   AdventureConnectedDayWrapper,
 } from './index.styled'
+import { Avatar } from '@mui/material'
 import PrivateItemBadge from '../../PrivateItemBadge'
 import AdventureWeeklyItem from './AdventureWeeklyItem'
 import DayPreviewDrawer from '../../DayPreviewDrawer'
@@ -45,6 +47,8 @@ interface IWeeklyViewProps {
   onAdventureClick?: (id: string) => void
   onAddAdventure?: (date: string) => void
   onAddTask?: (date: string) => void
+  officeAttendance?: IOfficeAttendance[]
+  onRemoveAttendance?: (id: string) => void
 }
 
 const getWeekStart = (d: Dayjs): Dayjs => {
@@ -65,6 +69,8 @@ const WeeklyView = ({
   onAdventureClick,
   onAddAdventure,
   onAddTask,
+  officeAttendance = [],
+  onRemoveAttendance,
 }: IWeeklyViewProps) => {
   const [currentWeek, setCurrentWeek] = useState<Dayjs>(() => getWeekStart(dayjs()))
   const [animationDirection, setAnimationDirection] = useState<'left' | 'right' | null>(null)
@@ -179,6 +185,19 @@ const WeeklyView = ({
 
   const adventuresByDay = useMemo(() => buildAdventuresByDay(adventures), [adventures])
 
+  const officeAttendanceByDay = useMemo(() => {
+    const map = new Map<string, IOfficeAttendance[]>()
+    for (const entry of officeAttendance) {
+      const existing = map.get(entry.date)
+      if (existing) {
+        existing.push(entry)
+      } else {
+        map.set(entry.date, [entry])
+      }
+    }
+    return map
+  }, [officeAttendance])
+
   const isCurrentWeek = getWeekStart(today).isSame(currentWeek, 'day')
 
   return (
@@ -209,6 +228,7 @@ const WeeklyView = ({
           const dayBirthdays = birthdaysByDay.get(birthdayKey) ?? []
           const dayMeals = mealPlansByDay.get(key) ?? []
           const dayAdventures = adventuresByDay.get(key) ?? []
+          const dayOfficeAttendance = officeAttendanceByDay.get(key) ?? []
 
           const hasAdventureContinuingToNext = dayAdventures.some(
             a => {
@@ -297,6 +317,30 @@ const WeeklyView = ({
                       onClick={() => onAdventureClick?.(adventure.id)}
                     />
                   ))}
+                  {dayOfficeAttendance.length > 0 && (
+                    <div style={{ display: 'flex', gap: 4, alignItems: 'center', padding: '2px 0' }}>
+                      {dayOfficeAttendance.slice(0, 4).map(entry => (
+                        <Avatar
+                          key={entry.id}
+                          src={entry.userAvatar}
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            fontSize: '0.55rem',
+                            bgcolor: '#0284c7',
+                            fontWeight: 600,
+                          }}
+                        >
+                          {entry.userName.charAt(0).toUpperCase()}
+                        </Avatar>
+                      ))}
+                      {dayOfficeAttendance.length > 4 && (
+                        <span style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 600 }}>
+                          +{dayOfficeAttendance.length - 4}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </DayRowItems>
               </DayRow>
             </Wrapper>
@@ -313,6 +357,7 @@ const WeeklyView = ({
         birthdays={selectedDay ? (birthdaysByDay.get(`${dayjs(selectedDay).month() + 1}-${dayjs(selectedDay).date()}`) ?? []) : []}
         mealPlans={selectedDay ? (mealPlansByDay.get(selectedDay) ?? []) : []}
         adventures={selectedDay ? (adventuresByDay.get(selectedDay) ?? []) : []}
+        officeAttendance={selectedDay ? (officeAttendanceByDay.get(selectedDay) ?? []) : []}
         onClose={() => setSelectedDay(null)}
         onTodoClick={onItemClick}
         onBirthdayClick={onBirthdayClick}
@@ -321,6 +366,7 @@ const WeeklyView = ({
         onAdventureClick={onAdventureClick}
         onAddAdventure={onAddAdventure}
         onAddTask={onAddTask}
+        onRemoveAttendance={onRemoveAttendance}
       />
     </WeeklyContainer>
   )

@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "name": "delete_office_attendance",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@kairos-lambdas-libs/handler-factories": "1.0.0",
+    "@kairos-lambdas-libs/dynamodb": "1.0.0"
+  }
+}

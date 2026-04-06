@@ -19,6 +19,12 @@ variable "vapid_private_key" {
   sensitive   = true
 }
 
+variable "cognito_user_pool_id" {
+  description = "Cognito User Pool ID for AdminGetUser calls"
+  type        = string
+  default     = ""
+}
+
 variable "s3_kairos_web_bucket_name" {
   description = "Name of the S3 bucket for web assets (used for recipe image uploads)"
   type        = string

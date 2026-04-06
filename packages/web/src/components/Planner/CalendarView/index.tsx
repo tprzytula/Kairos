@@ -9,6 +9,8 @@ import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../types/mealPlan'
 import { IAdventure } from '../../../types/adventure'
+import { IOfficeAttendance } from '../../../types/officeAttendance'
+import { Avatar } from '@mui/material'
 import { buildAdventuresByDay } from '../../../utils/adventure'
 import { useSwipeToNavigate } from '../../../hooks/useSwipeToNavigate'
 import PrivateItemBadge from '../../PrivateItemBadge'
@@ -50,6 +52,8 @@ interface ICalendarViewProps {
   onAddTask?: (date: string) => void
   adventures?: IAdventure[]
   onAdventureClick?: (id: string) => void
+  officeAttendance?: IOfficeAttendance[]
+  onRemoveAttendance?: (id: string) => void
 }
 
 const CalendarView = ({
@@ -63,6 +67,8 @@ const CalendarView = ({
   onAddTask,
   adventures = [],
   onAdventureClick,
+  officeAttendance = [],
+  onRemoveAttendance,
 }: ICalendarViewProps) => {
   const { dispatch } = useAppState()
   const [currentMonth, setCurrentMonth] = useState<Dayjs>(() => dayjs().startOf('month'))
@@ -185,9 +191,28 @@ const CalendarView = ({
   // Map from "YYYY-MM-DD" -> IAdventure[]
   const adventuresByDay = useMemo(() => buildAdventuresByDay(adventures), [adventures])
 
+  // Map from "YYYY-MM-DD" -> IOfficeAttendance[]
+  const officeAttendanceByDay = useMemo(() => {
+    const map = new Map<string, IOfficeAttendance[]>()
+    for (const entry of officeAttendance) {
+      const existing = map.get(entry.date)
+      if (existing) {
+        existing.push(entry)
+      } else {
+        map.set(entry.date, [entry])
+      }
+    }
+    return map
+  }, [officeAttendance])
+
   const selectedDayAdventures = useMemo(
     () => (selectedDay ? (adventuresByDay.get(selectedDay) ?? []) : []),
     [selectedDay, adventuresByDay]
+  )
+
+  const selectedDayOfficeAttendance = useMemo(
+    () => (selectedDay ? (officeAttendanceByDay.get(selectedDay) ?? []) : []),
+    [selectedDay, officeAttendanceByDay]
   )
 
   // Build the grid: pad the start with days from the previous month
@@ -277,6 +302,37 @@ const CalendarView = ({
                     onClick={() => onAdventureClick?.(adv.id)}
                   />
                 ))}
+                {isCurrentMonth && (() => {
+                  const dayAttendance = officeAttendanceByDay.get(key) ?? []
+                  if (dayAttendance.length === 0) return null
+                  const maxShow = 3
+                  const shown = dayAttendance.slice(0, maxShow)
+                  const overflow = dayAttendance.length - maxShow
+                  return (
+                    <div style={{ display: 'flex', gap: 1, alignItems: 'center', marginTop: 1 }}>
+                      {shown.map(entry => (
+                        <Avatar
+                          key={entry.id}
+                          src={entry.userAvatar}
+                          sx={{
+                            width: 14,
+                            height: 14,
+                            fontSize: '0.45rem',
+                            bgcolor: '#0284c7',
+                            fontWeight: 600,
+                          }}
+                        >
+                          {entry.userName.charAt(0).toUpperCase()}
+                        </Avatar>
+                      ))}
+                      {overflow > 0 && (
+                        <span style={{ fontSize: '0.5rem', color: '#64748b', fontWeight: 600 }}>
+                          +{overflow}
+                        </span>
+                      )}
+                    </div>
+                  )
+                })()}
               </DayCell>
             )
           })}
@@ -302,6 +358,8 @@ const CalendarView = ({
         onMealPlanClick={onMealPlanClick}
         onAdventureClick={onAdventureClick}
         onAddTask={onAddTask}
+        officeAttendance={selectedDayOfficeAttendance}
+        onRemoveAttendance={onRemoveAttendance}
       />
 
       {itemsWithoutDueDate.length > 0 && (

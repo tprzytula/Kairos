@@ -1,0 +1,189 @@
+openapi: 3.0.1
+info:
+  title: Office Attendance
+  description: |
+    API for Office Attendance Management
+  version: "1.0"
+paths:
+  /office-attendance:
+    get:
+      security:
+        - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["get_office_attendance"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Office attendance entries retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/officeAttendance"
+    put:
+      security:
+        - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createOfficeAttendanceRequest"
+        required: true
+      x-amazon-apigateway-request-validator: Validate body
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["add_office_attendance"].invoke_arn}
+        passthroughBehavior: "when_no_match"
+        contentHandling: "CONVERT_TO_TEXT"
+      responses:
+        201:
+          description: Office attendance created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+        400:
+          description: Incorrect attendance details
+    options:
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET, PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /office-attendance/{id}:
+    delete:
+      security:
+        - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identifier of the office attendance entry to be removed
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: AWS_PROXY
+        uri: ${lambda_functions["delete_office_attendance"].invoke_arn}
+        passthroughBehavior: when_no_match
+        contentHandling: CONVERT_TO_TEXT
+      responses:
+        200:
+          description: Office attendance removed
+        400:
+          description: Invalid attendance ID
+        404:
+          description: Attendance entry does not exist
+    options:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identifier of the office attendance entry
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+components:
+  schemas:
+    officeAttendance:
+      title: Office Attendance
+      type: object
+      required:
+        - id
+        - projectId
+        - date
+        - userId
+        - userName
+        - createdBy
+        - createdAt
+      properties:
+        id:
+          type: string
+        projectId:
+          type: string
+        date:
+          type: string
+        userId:
+          type: string
+        userName:
+          type: string
+        userAvatar:
+          type: string
+        createdBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    createOfficeAttendanceRequest:
+      title: Create Office Attendance Request
+      type: object
+      required:
+        - date
+        - userId
+        - userName
+      properties:
+        date:
+          type: string
+        userId:
+          type: string
+        userName:
+          type: string
+        userAvatar:
+          type: string
