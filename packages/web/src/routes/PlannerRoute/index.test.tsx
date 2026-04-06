@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppStateProvider, initialState } from '../../providers/AppStateProvider'
@@ -42,6 +42,7 @@ const MOCK_PROJECT: IProject = {
 describe('Given the PlannerRoute component', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    localStorage.clear()
     vi.spyOn(ToDoAPI, 'retrieveToDoList').mockResolvedValue([])
 
     // Mock ProjectProvider
@@ -193,6 +194,73 @@ describe('Given the PlannerRoute component', () => {
     await waitFor(() => {
       const container = screen.getByText('Planner').closest('div')
       expect(container).toBeInTheDocument()
+    })
+  })
+
+  describe('When a planner view mode has been saved to localStorage', () => {
+    it('should restore the grouped view mode on mount', async () => {
+      localStorage.setItem('plannerViewMode', 'grouped')
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('Grouped')).toBeInTheDocument()
+      })
+    })
+
+    it('should restore the calendar view mode on mount', async () => {
+      localStorage.setItem('plannerViewMode', 'calendar')
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('Calendar')).toBeInTheDocument()
+      })
+    })
+
+    it('should default to weekly view when the stored value is invalid', async () => {
+      localStorage.setItem('plannerViewMode', 'invalid-value')
+
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('Weekly')).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('When the user changes the view mode', () => {
+    it('should save the selected view mode to localStorage', async () => {
+      await act(async () => {
+        renderComponent()
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('Weekly')).toBeInTheDocument()
+      })
+
+      // The Weekly tab is the first child of the SegmentedControl container.
+      // Calendar is the second child (index 1). We click it to change the view.
+      const weeklyTab = screen.getByText('Weekly')
+      const segmentedContainer = weeklyTab.parentElement
+      const calendarTab = segmentedContainer?.children[1] as HTMLElement
+
+      await act(async () => {
+        fireEvent.click(calendarTab)
+      })
+
+      // Verify Calendar becomes the active tab (its label becomes visible)
+      await waitFor(() => {
+        expect(screen.getByText('Calendar')).toBeInTheDocument()
+      })
+
+      expect(localStorage.getItem('plannerViewMode')).toBe('calendar')
     })
   })
 })

@@ -27,6 +27,19 @@ import dayjs from 'dayjs'
 import { useNavigate } from 'react-router'
 import { Route } from '../../enums/route'
 
+const PLANNER_VIEW_MODE_KEY = 'plannerViewMode'
+
+const VIEW_MODE_MAP: Record<string, PlannerViewMode> = {
+  [PlannerViewMode.CALENDAR]: PlannerViewMode.CALENDAR,
+  [PlannerViewMode.WEEKLY]: PlannerViewMode.WEEKLY,
+  [PlannerViewMode.GROUPED]: PlannerViewMode.GROUPED,
+}
+
+const getSavedViewMode = (): PlannerViewMode => {
+  const saved = localStorage.getItem(PLANNER_VIEW_MODE_KEY)
+  return (saved && VIEW_MODE_MAP[saved]) || PlannerViewMode.WEEKLY
+}
+
 const PLANNER_VIEW_TABS: Array<SegmentedControlTab<PlannerViewMode>> = [
   {
     id: PlannerViewMode.WEEKLY,
@@ -58,7 +71,13 @@ const PlannerContent = () => {
   const { toDoList } = usePlannerContext()
   const { dispatch } = useAppState()
   const navigate = useNavigate()
-  const [viewMode, setViewMode] = useState<PlannerViewMode>(PlannerViewMode.WEEKLY)
+  const [viewMode, setViewMode] = useState<PlannerViewMode>(getSavedViewMode)
+
+  const handleViewModeChange = useCallback((mode: PlannerViewMode) => {
+    setViewMode(mode)
+    localStorage.setItem(PLANNER_VIEW_MODE_KEY, mode)
+  }, [])
+
   const { mealPlans, removeMealPlan } = useMealPlanContext()
   const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
 
@@ -141,7 +160,7 @@ const PlannerContent = () => {
           <SegmentedControl
             tabs={PLANNER_VIEW_TABS}
             activeTab={viewMode}
-            onChange={setViewMode}
+            onChange={handleViewModeChange}
             collapseInactive
           />
         </Box>
