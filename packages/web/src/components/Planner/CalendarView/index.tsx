@@ -34,7 +34,7 @@ import {
   BirthdayCakeIcon,
   MealPlanIcon,
 } from './index.styled'
-import AdventureCellItem from './AdventureCellItem'
+import AdventureCellGroup from './AdventureCellGroup'
 
 // Jan 4 2021 was a Monday — generate Mon-first weekday labels via browser locale
 const WEEK_DAYS = Array.from({ length: 7 }, (_, i) =>
@@ -294,14 +294,13 @@ const CalendarView = ({
                 <CompletedTodoDot count={completedCount}>{completedCount > 0 ? completedCount : ''}</CompletedTodoDot>
                 {hasBirthday && <BirthdayCakeIcon />}
                 {hasMealPlan && <MealPlanIcon />}
-                {dayAdventureItems.map(adv => (
-                  <AdventureCellItem
-                    key={adv.id}
-                    adventure={adv}
+                {dayAdventureItems.length > 0 && (
+                  <AdventureCellGroup
+                    adventures={dayAdventureItems}
                     dayKey={key}
-                    onClick={() => onAdventureClick?.(adv.id)}
+                    onAdventureClick={onAdventureClick}
                   />
-                ))}
+                )}
                 {isCurrentMonth && (() => {
                   const dayAttendance = officeAttendanceByDay.get(key) ?? []
                   if (dayAttendance.length === 0) return null

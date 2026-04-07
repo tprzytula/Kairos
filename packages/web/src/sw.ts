@@ -12,15 +12,6 @@ enum SWMessageType {
   APP_HIDDEN = 'APP_HIDDEN',
 }
 
-interface SWMessageData {
-  type: SWMessageType
-}
-
-interface ExtendableMessageEvent extends ExtendableEvent {
-  data: SWMessageData | null
-  ports: readonly MessagePort[]
-}
-
 // Version is automatically replaced during build from package.json
 // This placeholder will be replaced by the CI/CD pipeline
 const APP_VERSION = '__APP_VERSION__'

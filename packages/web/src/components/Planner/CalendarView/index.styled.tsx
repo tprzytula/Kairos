@@ -403,6 +403,18 @@ export const AdventureCalendarIcon = styled(ExploreIcon)({
   color: '#06b6d4',
 })
 
+export const AdventureCountBadge = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2px',
+})
+
+export const AdventureCountLabel = styled('span')({
+  fontSize: '0.6rem',
+  color: '#06b6d4',
+  fontWeight: 600,
+})
+
 export const AdventureBar = styled('div')<{ position: AdventurePosition }>(({ position }) => ({
   height: '6px',
   marginTop: 'auto',
