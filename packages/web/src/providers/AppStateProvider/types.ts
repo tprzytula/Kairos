@@ -3,6 +3,7 @@ import { ReactNode } from 'react'
 import { ActionName } from './enums'
 import { IAlert } from '../../components/Alert/types'
 import { GroceryItemUnit } from '../../enums/groceryItem'
+import { IShop as ISharedShop } from '@kairos/shared'
 
 export type Context = {
   state: State
@@ -33,16 +34,8 @@ export type IGroceryItem = {
   ownerId?: string
 }
 
-export type IShop = {
-  id: string
-  projectId: string
-  name: string
-  icon?: string
-  createdAt: string
-  updatedAt: string
+export interface IShop extends ISharedShop {
   itemCount?: number
-  visibility?: 'private'
-  ownerId?: string
 }
 
 export type Action = {

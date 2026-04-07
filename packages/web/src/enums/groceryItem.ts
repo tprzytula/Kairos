@@ -1,16 +1,8 @@
-export enum GroceryItemUnit {
-    BAG = 'bag(s)',
-    BOTTLE = 'bottle(s)',
-    BOX = 'box(es)',
-    CAN = 'can(s)',
-    GRAM = 'g',
-    KILOGRAM = 'kg',
-    LITER = 'l',
-    MILLILITER = 'ml',
-    UNIT = 'unit(s)',
-}
+import { GroceryItemUnit } from '@kairos/shared'
 
-export const GroceryItemUnitLabelMap = {
+export { GroceryItemUnit } from '@kairos/shared'
+
+export const GroceryItemUnitLabelMap: Record<GroceryItemUnit, string> = {
     [GroceryItemUnit.BAG]: 'bags',
     [GroceryItemUnit.BOTTLE]: 'bottles',
     [GroceryItemUnit.BOX]: 'boxes',
@@ -19,5 +11,6 @@ export const GroceryItemUnitLabelMap = {
     [GroceryItemUnit.KILOGRAM]: 'kilograms',
     [GroceryItemUnit.LITER]: 'liters',
     [GroceryItemUnit.MILLILITER]: 'milliliters',
+    [GroceryItemUnit.ROLL]: 'rolls',
     [GroceryItemUnit.UNIT]: 'units',
 }
