@@ -111,12 +111,16 @@ export const TodoIcon = styled(RadioButtonUncheckedIcon)<{ isOverdue?: boolean }
 }))
 
 export const TodoCountBadge = styled('div')({
+  position: 'relative',
   display: 'flex',
   alignItems: 'center',
-  gap: '2px',
+  height: '0.85rem',
 })
 
 export const TodoCountLabel = styled('span')<{ isOverdue?: boolean }>(({ isOverdue = false }) => ({
+  position: 'absolute',
+  left: '100%',
+  marginLeft: '1px',
   fontSize: '0.6rem',
   color: isOverdue ? '#dc2626' : '#2563eb',
   fontWeight: 600,
@@ -245,12 +249,16 @@ export const CompletedTodoIcon = styled(CheckCircleIcon)({
 })
 
 export const CompletedTodoCountBadge = styled('div')({
+  position: 'relative',
   display: 'flex',
   alignItems: 'center',
-  gap: '2px',
+  height: '0.85rem',
 })
 
 export const CompletedTodoCountLabel = styled('span')({
+  position: 'absolute',
+  left: '100%',
+  marginLeft: '1px',
   fontSize: '0.6rem',
   color: '#059669',
   fontWeight: 600,
@@ -406,12 +414,16 @@ export const AdventureCalendarIcon = styled(ExploreIcon)({
 })
 
 export const AdventureCountBadge = styled('div')({
+  position: 'relative',
   display: 'flex',
   alignItems: 'center',
-  gap: '2px',
+  height: '0.85rem',
 })
 
 export const AdventureCountLabel = styled('span')({
+  position: 'absolute',
+  left: '100%',
+  marginLeft: '1px',
   fontSize: '0.6rem',
   color: '#06b6d4',
   fontWeight: 600,
