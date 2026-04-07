@@ -16,6 +16,7 @@
   "dependencies": {
     "@kairos/shared": "file:../shared",
     "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/client-sns": "^3.0.0",
     "@aws-sdk/lib-dynamodb": "^3.0.0",
     "esbuild": "^0.25.2",
     "lerna": "^8.2.1",
@@ -26,7 +27,7 @@
     "@vitest/coverage-v8": "^4.1.2",
     "aws-sdk": "^2.1692.0",
     "lint-staged": "^15.5.0",
-    "oxlint": "^1.51.0",
+    "oxlint": "1.51.0",
     "prettier": "^3.5.3",
     "vitest": "^4.1.0"
   },

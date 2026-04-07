@@ -1,16 +1,14 @@
 import { Mock } from 'vitest';
 import type { IRequestBody } from './body/types';
 
-vi.mock('aws-sdk', () => {
-    const mockPublish = vi.fn().mockReturnValue({
-        promise: vi.fn().mockResolvedValue({ MessageId: 'test-message-id' }),
-    });
-    class MockSNS {
-        publish = mockPublish;
-    }
+const mockSNSSend = vi.fn().mockResolvedValue({ MessageId: 'test-message-id' });
+
+vi.mock('@aws-sdk/client-sns', () => {
     return {
-        SNS: MockSNS,
-        __mocks: { publish: mockPublish },
+        SNSClient: vi.fn().mockImplementation(() => ({
+            send: mockSNSSend,
+        })),
+        PublishCommand: vi.fn(),
     };
 });
 
@@ -18,9 +16,7 @@ import { handler } from './index';
 import { getBody } from './body';
 import { DynamoDBTable, putItem } from '@kairos-lambdas-libs/dynamodb';
 import { randomUUID } from 'node:crypto';
-
-const { __mocks } = await import('aws-sdk') as unknown as { __mocks: { publish: Mock } };
-const mockSNSPublish: Mock = __mocks.publish;
+import { PublishCommand } from '@aws-sdk/client-sns';
 
 vi.mock('./body', async () => ({
     getBody: vi.fn()
@@ -106,7 +102,7 @@ describe('Given the add_todo_item lambda handler', () => {
                 expect(result.statusCode).toBe(201);
                 expect(JSON.parse(result.body)).toEqual({ id: EXAMPLE_ID });
 
-                expect(mockSNSPublish).toHaveBeenCalledWith({
+                expect(PublishCommand).toHaveBeenCalledWith({
                     TopicArn: 'arn:aws:sns:us-east-1:123456789012:test-topic',
                     Message: JSON.stringify({
                         projectId: 'test-project',
@@ -118,15 +114,12 @@ describe('Given the add_todo_item lambda handler', () => {
                         authorId: 'test-user-id',
                         authorName: 'John'
                     }),
-                    Subject: `New todo item added: ${EXAMPLE_TODO_ITEM.name}`
+                    Subject: `New todo item added: ${EXAMPLE_TODO_ITEM.name}`,
                 });
             });
 
             it('should continue if notification fails', async () => {
-                const mockFailedPromise = vi.fn().mockRejectedValue(new Error('SNS failed'));
-                mockSNSPublish.mockReturnValueOnce({
-                    promise: mockFailedPromise
-                });
+                mockSNSSend.mockRejectedValueOnce(new Error('SNS failed'));
 
                 vi.mocked(randomUUID).mockReturnValue(EXAMPLE_ID);
                 vi.mocked(getBody).mockReturnValue(EXAMPLE_TODO_ITEM);
@@ -163,7 +156,7 @@ describe('Given the add_todo_item lambda handler', () => {
 
                 expect(result.statusCode).toBe(201);
 
-                expect(mockSNSPublish).toHaveBeenCalledWith({
+                expect(PublishCommand).toHaveBeenCalledWith({
                     TopicArn: 'arn:aws:sns:us-east-1:123456789012:test-topic',
                     Message: JSON.stringify({
                         projectId: 'test-project',
@@ -175,7 +168,7 @@ describe('Given the add_todo_item lambda handler', () => {
                         authorId: 'test-user-id',
                         authorName: 'John Doe'
                     }),
-                    Subject: `New todo item added: ${EXAMPLE_TODO_ITEM.name}`
+                    Subject: `New todo item added: ${EXAMPLE_TODO_ITEM.name}`,
                 });
             });
 
@@ -194,7 +187,7 @@ describe('Given the add_todo_item lambda handler', () => {
 
                 expect(result.statusCode).toBe(201);
 
-                expect(mockSNSPublish).toHaveBeenCalledWith({
+                expect(PublishCommand).toHaveBeenCalledWith({
                     TopicArn: 'arn:aws:sns:us-east-1:123456789012:test-topic',
                     Message: JSON.stringify({
                         projectId: 'test-project',
@@ -206,7 +199,7 @@ describe('Given the add_todo_item lambda handler', () => {
                         authorId: 'test-user-id',
                         authorName: 'Someone'
                     }),
-                    Subject: `New todo item added: ${EXAMPLE_TODO_ITEM.name}`
+                    Subject: `New todo item added: ${EXAMPLE_TODO_ITEM.name}`,
                 });
             });
 
@@ -225,7 +218,7 @@ describe('Given the add_todo_item lambda handler', () => {
 
                 expect(result.statusCode).toBe(201);
 
-                expect(mockSNSPublish).toHaveBeenCalledWith({
+                expect(PublishCommand).toHaveBeenCalledWith({
                     TopicArn: 'arn:aws:sns:us-east-1:123456789012:test-topic',
                     Message: JSON.stringify({
                         projectId: 'test-project',
@@ -237,7 +230,7 @@ describe('Given the add_todo_item lambda handler', () => {
                         authorId: 'test-user-id',
                         authorName: 'test-user@example.com'
                     }),
-                    Subject: `New todo item added: ${EXAMPLE_TODO_ITEM.name}`
+                    Subject: `New todo item added: ${EXAMPLE_TODO_ITEM.name}`,
                 });
             });
         });
@@ -255,7 +248,7 @@ describe('Given the add_todo_item lambda handler', () => {
                 tableName: DynamoDBTable.TODO_LIST,
                 item: expect.objectContaining({ visibility: "private" }),
             });
-            expect(mockSNSPublish).not.toHaveBeenCalled();
+            expect(mockSNSSend).not.toHaveBeenCalled();
         });
 
         describe('And the upsert fails', () => {
@@ -288,7 +281,7 @@ describe('Given the add_todo_item lambda handler', () => {
             }, true, true);
 
             expect(result.statusCode).toBe(201);
-            expect(mockSNSPublish).not.toHaveBeenCalled();
+            expect(mockSNSSend).not.toHaveBeenCalled();
             expect(mockConsoleWarn).toHaveBeenCalledWith('TODO_NOTIFICATIONS_TOPIC_ARN environment variable not set');
 
             mockConsoleWarn.mockRestore();

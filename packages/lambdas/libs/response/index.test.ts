@@ -1,6 +1,7 @@
 import { createResponse } from ".";
 
 const expectedHeaders = {
+  "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID",
   "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
@@ -29,6 +30,18 @@ describe("Given the creteResponse function", () => {
     {
       statusCode: 400,
       expectedBody: "Bad Request",
+    },
+    {
+      statusCode: 404,
+      expectedBody: "Not Found",
+    },
+    {
+      statusCode: 409,
+      expectedBody: "Conflict",
+    },
+    {
+      statusCode: 422,
+      expectedBody: "Unprocessable Entity",
     },
     {
       statusCode: 500,
