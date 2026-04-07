@@ -2,11 +2,15 @@ import CakeIcon from '@mui/icons-material/Cake'
 import LinkIcon from '@mui/icons-material/Link'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import ExploreIcon from '@mui/icons-material/Explore'
+import BusinessIcon from '@mui/icons-material/Business'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import dayjs from 'dayjs'
+import { Avatar, IconButton } from '@mui/material'
 import { ITodoItem } from '../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../types/mealPlan'
 import { IAdventure } from '../../types/adventure'
+import { IOfficeAttendance } from '../../types/officeAttendance'
 import {
   DayDetailItem,
   OverdueDayDetailItem,
@@ -46,6 +50,7 @@ interface IDayPreviewDrawerProps {
   birthdays: IBirthdayItem[]
   mealPlans: IMealPlan[]
   adventures?: IAdventure[]
+  officeAttendance?: IOfficeAttendance[]
   onClose: () => void
   onTodoClick: (id: string) => void
   onBirthdayClick?: (id: string) => void
@@ -54,6 +59,7 @@ interface IDayPreviewDrawerProps {
   onAdventureClick?: (id: string) => void
   onAddAdventure?: (date: string) => void
   onAddTask?: (date: string) => void
+  onRemoveAttendance?: (id: string) => void
 }
 
 const getTodoTime = (todo: ITodoItem): string | null => {
@@ -79,6 +85,7 @@ const DayPreviewDrawer = ({
   birthdays,
   mealPlans,
   adventures = [],
+  officeAttendance = [],
   onClose,
   onTodoClick,
   onBirthdayClick,
@@ -87,6 +94,7 @@ const DayPreviewDrawer = ({
   onAdventureClick,
   onAddAdventure,
   onAddTask,
+  onRemoveAttendance,
 }: IDayPreviewDrawerProps) => {
   return (
     <DraggableBottomDrawer
@@ -207,6 +215,36 @@ const DayPreviewDrawer = ({
               </AdventureDayDetailItem>
             )
           })
+        )}
+        <SectionLabel color="#0284c7">
+          <BusinessIcon sx={{ fontSize: '0.75rem' }} />
+          Office
+        </SectionLabel>
+        {officeAttendance.length === 0 ? (
+          <DayDetailEmpty>No one at the office</DayDetailEmpty>
+        ) : (
+          officeAttendance.map(entry => (
+            <div key={entry.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 10px', borderRadius: '8px', background: 'rgba(2, 132, 199, 0.04)', marginBottom: '4px' }}>
+              <Avatar
+                src={entry.userAvatar}
+                sx={{ width: 28, height: 28, bgcolor: '#0284c7', fontSize: '0.75rem', fontWeight: 600 }}
+              >
+                {entry.userName.charAt(0).toUpperCase()}
+              </Avatar>
+              <span style={{ fontSize: '0.82rem', fontWeight: 500, color: '#334155', flex: 1 }}>
+                {entry.userName}
+              </span>
+              {onRemoveAttendance && (
+                <IconButton
+                  size="small"
+                  onClick={(e) => { e.stopPropagation(); onRemoveAttendance(entry.id) }}
+                  sx={{ padding: '2px', color: '#94a3b8', '&:hover': { color: '#ef4444' } }}
+                >
+                  <DeleteOutlineIcon sx={{ fontSize: '0.9rem' }} />
+                </IconButton>
+              )}
+            </div>
+          ))
         )}
       </DrawerContent>
     </DraggableBottomDrawer>

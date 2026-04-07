@@ -23,8 +23,12 @@ variable "lambda_functions" {
         recipes                = optional(string, "none")
         birthdays              = optional(string, "none")
         meal_plans             = optional(string, "none")
+        office_attendance      = optional(string, "none")
         adventures             = optional(string, "none")
       })
+      cognito = optional(object({
+        admin_get_user = optional(string, "none")
+      }), { admin_get_user = "none" })
       sns = object({
         todo_notifications = optional(string, "none")
       })
@@ -53,4 +57,10 @@ variable "s3_kairos_lambdas_arn" {
 
 variable "sns_todo_notifications_arn" {
   type = string
+}
+
+variable "cognito_user_pool_arn" {
+  description = "ARN of the Cognito User Pool for AdminGetUser permissions"
+  type        = string
+  default     = ""
 }

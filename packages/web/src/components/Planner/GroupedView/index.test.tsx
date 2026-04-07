@@ -111,13 +111,11 @@ describe('Given the GroupedView component', () => {
     });
   });
 
-  describe('When rendering with expand/collapse props', () => {
-    it('should pass expand props to CollapsibleSections', () => {
+  describe('When rendering with collapsible sections', () => {
+    it('should render section headers', () => {
       render(
         <GroupedView
           {...defaultProps}
-          allExpanded={false}
-          expandKey="test-key"
         />
       );
 

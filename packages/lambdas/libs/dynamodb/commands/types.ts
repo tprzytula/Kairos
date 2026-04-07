@@ -11,6 +11,7 @@ import { IRecipe } from "../types/recipes";
 import { IAdventure } from "../types/adventures";
 import { IBirthdayItem } from "../types/birthdays";
 import { IMealPlan } from "../types/mealPlans";
+import { IOfficeAttendance } from "../types/officeAttendance";
 
 export type TableResponseMap = {
     [DynamoDBTable.GROCERY_LIST]: IGroceryItem;
@@ -26,4 +27,5 @@ export type TableResponseMap = {
     [DynamoDBTable.ADVENTURES]: IAdventure;
     [DynamoDBTable.BIRTHDAYS]: IBirthdayItem;
     [DynamoDBTable.MEAL_PLANS]: IMealPlan;
+    [DynamoDBTable.OFFICE_ATTENDANCE]: IOfficeAttendance;
 };

@@ -4,6 +4,7 @@ import { BirthdayProvider } from '../../providers/BirthdayProvider'
 import { RecipeProvider } from '../../providers/RecipeProvider'
 import { MealPlanProvider, useMealPlanContext } from '../../providers/MealPlanProvider'
 import { AdventureProvider } from '../../providers/AdventureProvider'
+import { OfficeAttendanceProvider, useOfficeAttendanceContext } from '../../providers/OfficeAttendanceProvider'
 import { useItemDefaults } from '../../hooks/useItemDefaults'
 import { retrieveGroceryListDefaults } from '../../api/groceryList'
 import Planner from '../../components/Planner'
@@ -79,6 +80,7 @@ const PlannerContent = () => {
   }, [])
 
   const { mealPlans, removeMealPlan } = useMealPlanContext()
+  const { officeAttendance, removeAttendance } = useOfficeAttendanceContext()
   const { defaults } = useItemDefaults({ fetchMethod: retrieveGroceryListDefaults })
 
   const [previewMealPlan, setPreviewMealPlan] = useState<IMealPlan | null>(null)
@@ -168,10 +170,12 @@ const PlannerContent = () => {
           <Planner
             viewMode={viewMode}
             mealPlans={mealPlans}
+            officeAttendance={officeAttendance}
             onAddMealPlan={handleAddMealPlan}
             onMealPlanClick={handleMealPlanClick}
             onAddAdventure={handleAddAdventure}
             onAddTask={handleAddTask}
+            onRemoveAttendance={removeAttendance}
           />
         </PlannerScrollArea>
       </Container>
@@ -192,7 +196,9 @@ export const PlannerRoute = () => {
         <RecipeProvider>
           <MealPlanProvider>
             <AdventureProvider>
-              <PlannerContent />
+              <OfficeAttendanceProvider>
+                <PlannerContent />
+              </OfficeAttendanceProvider>
             </AdventureProvider>
           </MealPlanProvider>
         </RecipeProvider>

@@ -17,6 +17,7 @@ module "lambda" {
   vapid_private_key            = var.vapid_private_key
   s3_kairos_web_bucket_name    = module.s3.kairos_web_bucket_name
   s3_cloudfront_domain         = module.s3.cloudfront_domain
+  cognito_user_pool_id         = module.cognito.user_pool_id
 }
 
 module "api_gateway" {
@@ -50,6 +51,7 @@ module "policies" {
   sns_todo_notifications_arn = module.sns.todo_notifications_topic_arn
   s3_kairos_web_arn          = module.s3.kairos_web_arn
   s3_kairos_lambdas_arn      = module.s3.kairos_lambdas_arn
+  cognito_user_pool_arn      = module.cognito.user_pool_arn
 }
 
 module "assets" {

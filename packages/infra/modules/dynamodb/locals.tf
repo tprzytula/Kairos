@@ -9,11 +9,12 @@ locals {
   #
   tables = {
     # Standard tables: hash=id, one GSI on projectId
-    adventures = {}
-    birthdays  = {}
-    meal_plans = {}
-    recipes    = {}
-    shops      = {}
+    adventures        = {}
+    birthdays         = {}
+    meal_plans        = {}
+    office_attendance = {}
+    recipes           = {}
+    shops             = {}
 
     # Standard tables with non-default GSI names
     todo_list = {

@@ -99,6 +99,20 @@ data "aws_iam_policy_document" "lambda_policies" {
     }
   }
 
+  # Cognito AdminGetUser permissions
+  dynamic "statement" {
+    for_each = try(each.value.permissions.cognito.admin_get_user, "none") != "none" ? [each.key] : []
+
+    content {
+      sid     = "CognitoAdminGetUser"
+      actions = ["cognito-idp:AdminGetUser"]
+      effect  = "Allow"
+      resources = [
+        var.cognito_user_pool_arn
+      ]
+    }
+  }
+
   dynamic "statement" {
     for_each = each.value.permissions.sns.todo_notifications == local.permissions.publish ? [each.key] : []
 
