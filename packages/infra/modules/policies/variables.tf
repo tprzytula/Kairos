@@ -28,7 +28,8 @@ variable "lambda_functions" {
       })
       cognito = optional(object({
         admin_get_user = optional(string, "none")
-      }), { admin_get_user = "none" })
+        list_users     = optional(string, "none")
+      }), { admin_get_user = "none", list_users = "none" })
       sns = object({
         todo_notifications = optional(string, "none")
       })
