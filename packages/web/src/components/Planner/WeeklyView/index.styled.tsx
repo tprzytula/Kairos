@@ -3,6 +3,7 @@ import { Box, Typography, Button } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import ExploreIcon from '@mui/icons-material/Explore'
+import BusinessIcon from '@mui/icons-material/Business'
 import { AdventurePosition } from '../../../utils/adventure'
 
 const TODAY_COLOR = '#6366f1'
@@ -296,6 +297,12 @@ export const AdventureIconStyled = styled(ExploreIcon)({
   color: 'inherit',
   flexShrink: 0,
   marginTop: '2px',
+})
+
+export const OfficeIconStyled = styled(BusinessIcon)({
+  fontSize: '0.75rem',
+  color: '#0284c7',
+  flexShrink: 0,
 })
 
 export const AddMealButton = styled('div')({

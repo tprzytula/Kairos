@@ -5,6 +5,7 @@ import WeeklyView from './index'
 import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IBirthdayItem } from '../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../types/mealPlan'
+import { IOfficeAttendance } from '../../../types/officeAttendance'
 import { MealType } from '../../../enums/mealType'
 
 const today = dayjs()
@@ -131,6 +132,24 @@ describe('Given the WeeklyView component', () => {
     )
     fireEvent.click(screen.getAllByText('Pasta')[0])
     expect(onMealPlanClick).toHaveBeenCalledWith(meal)
+  })
+
+  it('should render a building icon when office attendance is present', () => {
+    const attendance: IOfficeAttendance[] = [
+      {
+        id: 'att-1',
+        projectId: 'proj-1',
+        date: todayStr,
+        userId: 'user-1',
+        userName: 'Alice',
+        createdBy: 'user-1',
+        createdAt: '2026-01-01',
+      },
+    ]
+    render(
+      <WeeklyView visibleToDoItems={[]} onItemClick={vi.fn()} officeAttendance={attendance} />
+    )
+    expect(screen.getByTestId('BusinessIcon')).toBeVisible()
   })
 
   it('should not render a todo with no dueDate in the weekly grid', () => {

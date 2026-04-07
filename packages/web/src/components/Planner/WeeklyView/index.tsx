@@ -29,6 +29,7 @@ import {
   MealItem,
   MealIconStyled,
   AdventureConnectedDayWrapper,
+  OfficeIconStyled,
 } from './index.styled'
 import { Avatar } from '@mui/material'
 import PrivateItemBadge from '../../PrivateItemBadge'
@@ -319,6 +320,7 @@ const WeeklyView = ({
                   ))}
                   {dayOfficeAttendance.length > 0 && (
                     <div style={{ display: 'flex', gap: 4, alignItems: 'center', padding: '2px 0' }}>
+                      <OfficeIconStyled />
                       {dayOfficeAttendance.slice(0, 4).map(entry => (
                         <Avatar
                           key={entry.id}
