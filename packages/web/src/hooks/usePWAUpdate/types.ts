@@ -9,6 +9,7 @@ export interface PWAUpdateActions {
   checkForUpdate: () => Promise<void>
   installUpdate: () => void
   dismissUpdate: () => void
+  clearError: () => void
 }
 
 export interface UsePWAUpdateReturn extends PWAUpdateState, PWAUpdateActions {}

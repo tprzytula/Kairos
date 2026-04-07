@@ -2,6 +2,13 @@ import { Button, Snackbar, Alert, AlertTitle, Box, CircularProgress } from '@mui
 import RefreshIcon from '@mui/icons-material/Refresh'
 import CloseIcon from '@mui/icons-material/Close'
 import { usePWAUpdate } from '../../hooks/usePWAUpdate'
+import {
+  UpdateSnackbar,
+  UpdateAlert,
+  UpdateButton,
+  DismissButton,
+  OfflineNotice,
+} from './index.styled'
 
 export const PWAUpdateNotification = () => {
   const {
@@ -11,7 +18,8 @@ export const PWAUpdateNotification = () => {
     isOnline,
     installUpdate,
     dismissUpdate,
-    checkForUpdate
+    checkForUpdate,
+    clearError,
   } = usePWAUpdate()
 
   if (!isUpdateAvailable && !updateError) {
@@ -21,24 +29,16 @@ export const PWAUpdateNotification = () => {
   return (
     <>
       {/* Update Available Notification */}
-      <Snackbar
+      <UpdateSnackbar
         open={isUpdateAvailable}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        sx={{ 
-          top: { xs: 16, sm: 24 },
-          zIndex: 9999
-        }}
       >
-        <Alert
+        <UpdateAlert
           severity="info"
           variant="filled"
-          sx={{ 
-            width: '100%',
-            maxWidth: '500px'
-          }}
           action={
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button
+              <UpdateButton
                 color="inherit"
                 size="small"
                 onClick={installUpdate}
@@ -50,45 +50,36 @@ export const PWAUpdateNotification = () => {
                     <RefreshIcon />
                   )
                 }
-                sx={{ 
-                  bgcolor: 'rgba(255, 255, 255, 0.2)',
-                  '&:hover': {
-                    bgcolor: 'rgba(255, 255, 255, 0.3)'
-                  }
-                }}
               >
                 {isUpdating ? 'Updating...' : 'Update'}
-              </Button>
-              <Button
+              </UpdateButton>
+              <DismissButton
                 color="inherit"
                 size="small"
                 onClick={dismissUpdate}
                 disabled={isUpdating}
-                sx={{ 
-                  minWidth: 'auto',
-                  p: 1
-                }}
+                aria-label="Dismiss update"
               >
                 <CloseIcon fontSize="small" />
-              </Button>
+              </DismissButton>
             </Box>
           }
         >
           <AlertTitle>New Version Available!</AlertTitle>
           A new version of Kairos is ready to install.
           {!isOnline && (
-            <Box sx={{ mt: 1, fontSize: '0.875rem', opacity: 0.8 }}>
+            <OfflineNotice>
               You're offline. Update will install when online.
-            </Box>
+            </OfflineNotice>
           )}
-        </Alert>
-      </Snackbar>
+        </UpdateAlert>
+      </UpdateSnackbar>
 
       {/* Error Notification */}
       <Snackbar
         open={!!updateError}
         autoHideDuration={6000}
-        onClose={() => {}}
+        onClose={clearError}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Alert
@@ -98,7 +89,9 @@ export const PWAUpdateNotification = () => {
             <Button
               color="inherit"
               size="small"
-              onClick={() => checkForUpdate()}
+              onClick={() => {
+                checkForUpdate().catch(() => {})
+              }}
               disabled={!isOnline}
               startIcon={<RefreshIcon />}
             >

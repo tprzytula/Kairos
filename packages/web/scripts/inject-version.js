@@ -55,7 +55,8 @@ swFiles.forEach(swFile => {
 });
 
 if (totalUpdated === 0) {
-  console.warn('⚠️  No service worker files were updated');
+  console.error('❌ No service worker files were updated — version injection failed');
+  process.exit(1);
 } else {
   console.log(`🎉 Successfully updated ${totalUpdated} service worker file(s)`);
 }

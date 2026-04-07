@@ -12,6 +12,7 @@ const mockUsePWAUpdate = {
   installUpdate: vi.fn(),
   dismissUpdate: vi.fn(),
   checkForUpdate: vi.fn(),
+  clearError: vi.fn(),
 }
 
 vi.mock('../../hooks/usePWAUpdate', () => ({
@@ -47,7 +48,7 @@ describe('PWAUpdateNotification', () => {
 
     expect(screen.getByText('New Version Available!')).toBeInTheDocument()
     expect(screen.getByText('A new version of Kairos is ready to install.')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /update/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Update' })).toBeInTheDocument()
   })
 
   it('should show updating state when update is in progress', () => {
@@ -74,7 +75,7 @@ describe('PWAUpdateNotification', () => {
 
     renderWithTheme(<PWAUpdateNotification />)
 
-    const updateButton = screen.getByRole('button', { name: /update/i })
+    const updateButton = screen.getByRole('button', { name: 'Update' })
     fireEvent.click(updateButton)
 
     expect(mockUsePWAUpdate.installUpdate).toHaveBeenCalledTimes(1)
@@ -85,7 +86,7 @@ describe('PWAUpdateNotification', () => {
 
     renderWithTheme(<PWAUpdateNotification />)
 
-    const closeButton = screen.getByRole('button', { name: '' }) // Close button has no text
+    const closeButton = screen.getByRole('button', { name: 'Dismiss update' })
     fireEvent.click(closeButton)
 
     expect(mockUsePWAUpdate.dismissUpdate).toHaveBeenCalledTimes(1)
@@ -118,7 +119,7 @@ describe('PWAUpdateNotification', () => {
 
     renderWithTheme(<PWAUpdateNotification />)
 
-    const updateButton = screen.getByRole('button', { name: /update/i })
+    const updateButton = screen.getByRole('button', { name: 'Update' })
     expect(updateButton).toBeDisabled()
   })
 
@@ -132,13 +133,24 @@ describe('PWAUpdateNotification', () => {
     expect(retryButton).toBeDisabled()
   })
 
+  it('should render both update and error notifications simultaneously', () => {
+    mockUsePWAUpdate.isUpdateAvailable = true
+    mockUsePWAUpdate.updateError = 'Previous check failed'
+
+    renderWithTheme(<PWAUpdateNotification />)
+
+    expect(screen.getByText('New Version Available!')).toBeInTheDocument()
+    expect(screen.getByText('Update Failed')).toBeInTheDocument()
+    expect(screen.getByText('Previous check failed')).toBeInTheDocument()
+  })
+
   it('should disable dismiss button when updating', () => {
     mockUsePWAUpdate.isUpdateAvailable = true
     mockUsePWAUpdate.isUpdating = true
 
     renderWithTheme(<PWAUpdateNotification />)
 
-    const closeButton = screen.getByRole('button', { name: '' }) // Close button
+    const closeButton = screen.getByRole('button', { name: 'Dismiss update' })
     expect(closeButton).toBeDisabled()
   })
 })

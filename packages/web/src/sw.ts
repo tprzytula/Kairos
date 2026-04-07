@@ -4,8 +4,20 @@
 
 declare const self: ServiceWorkerGlobalScope
 
+enum SWMessageType {
+  CHECK_FOR_UPDATE = 'CHECK_FOR_UPDATE',
+  SKIP_WAITING = 'SKIP_WAITING',
+  GET_VERSION = 'GET_VERSION',
+  APP_VISIBLE = 'APP_VISIBLE',
+  APP_HIDDEN = 'APP_HIDDEN',
+}
+
+interface SWMessageData {
+  type: SWMessageType
+}
+
 interface ExtendableMessageEvent extends ExtendableEvent {
-  data: any
+  data: SWMessageData | null
   ports: readonly MessagePort[]
 }
 
@@ -14,6 +26,34 @@ interface ExtendableMessageEvent extends ExtendableEvent {
 const APP_VERSION = '__APP_VERSION__'
 const CACHE_NAME = `kairos-v${APP_VERSION}`
 const RUNTIME_CACHE = `kairos-runtime-v${APP_VERSION}`
+
+const DEBUG = APP_VERSION === '__APP_VERSION__'
+function log(...args: unknown[]): void {
+  if (DEBUG) console.log(...args)
+}
+
+const CACHEABLE_RESOURCES = ['grocery_list', 'todo_list', 'noise_tracking'] as const
+
+function authCacheKey(authHeader: string): string {
+  // Use the JWT signature (last segment) as a unique per-user identifier
+  const parts = authHeader.split('.')
+  if (parts.length >= 3) {
+    return parts[parts.length - 1].slice(-32)
+  }
+  // Fallback: use last 32 chars of the header
+  return authHeader.slice(-32)
+}
+
+function cacheNetworkResponse(cacheName: string, cacheKey: Request | string, response: Response): void {
+  if (response.status === 200) {
+    const clone = response.clone()
+    caches.open(cacheName).then(cache => {
+      cache.put(cacheKey, cacheName === RUNTIME_CACHE ? addCacheTimestamp(clone) : clone)
+    }).catch(() => {
+      // Cache storage failed (quota exceeded, etc.)
+    })
+  }
+}
 
 // Files to cache immediately
 const PRECACHE_URLS = [
@@ -25,54 +65,50 @@ const PRECACHE_URLS = [
 
 // Install event - cache essential files
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing version:', APP_VERSION)
+  log('[SW] Installing version:', APP_VERSION)
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(PRECACHE_URLS))
       .then(() => {
-        console.log('[SW] Files cached successfully')
-        // Don't call skipWaiting immediately - let user control this
-        return true
+        log('[SW] Files cached successfully')
       })
   )
 })
 
 // Activate event - clean up old caches and take control
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating version:', APP_VERSION)
-  
+  log('[SW] Activating version:', APP_VERSION)
+
   event.waitUntil(
     Promise.all([
       // Clean up old caches
       caches.keys().then(cacheNames => {
-        console.log('[SW] Found caches:', cacheNames)
+        log('[SW] Found caches:', cacheNames)
         return Promise.all(
           cacheNames.map(cacheName => {
             if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
-              console.log('[SW] Deleting old cache:', cacheName)
+              log('[SW] Deleting old cache:', cacheName)
               return caches.delete(cacheName)
             }
           }).filter(Boolean)
         )
       }),
-      // Take control of all pages immediately for iOS compatibility
+      // Take control of all pages immediately for iOS compatibility,
+      // then notify clients after claim completes
       self.clients.claim().then(() => {
-        console.log('[SW] Claimed all clients')
+        log('[SW] Claimed all clients')
+        return self.clients.matchAll({ includeUncontrolled: true })
+      }).then((clients: readonly Client[]) => {
+        log('[SW] Notifying clients:', clients.length)
+        clients.forEach((client: Client) => {
+          client.postMessage({
+            type: 'SW_ACTIVATED',
+            version: APP_VERSION
+          })
+        })
       })
     ])
   )
-
-  // Notify all clients that a new version is available
-  self.clients.matchAll({ includeUncontrolled: true }).then((clients: readonly Client[]) => {
-    console.log('[SW] Notifying clients:', clients.length)
-    clients.forEach((client: Client) => {
-      client.postMessage({
-        type: 'SW_ACTIVATED',
-        payload: 'Service worker activated - new version available',
-        version: APP_VERSION
-      })
-    })
-  })
 })
 
 // Fetch event - cache strategy based on request type
@@ -81,14 +117,14 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url)
 
   // Handle API calls
-  if (url.pathname.includes('/api/') || url.hostname.includes('amazonaws.com')) {
+  if (url.pathname.includes('/api/') || (url.hostname.includes('.execute-api.') && url.hostname.endsWith('.amazonaws.com'))) {
     // Check if this is a GET request for retrieving data
     if (request.method === 'GET' && isDataRetrievalEndpoint(url.pathname)) {
       // Use a user-specific cache key based on the Authorization header to prevent
       // private items from leaking between users via the service worker cache
       const authHeader = request.headers.get('Authorization') || ''
       const cacheKeyUrl = authHeader
-        ? `${request.url}#auth=${hashCode(authHeader)}`
+        ? `${request.url}#auth=${authCacheKey(authHeader)}`
         : request.url
       const cacheRequest = new Request(cacheKeyUrl)
 
@@ -97,12 +133,7 @@ self.addEventListener('fetch', (event) => {
         event.respondWith(
           fetch(request)
             .then(response => {
-              if (response.status === 200) {
-                const responseClone = response.clone()
-                caches.open(RUNTIME_CACHE).then(cache => {
-                  cache.put(cacheRequest, addCacheTimestamp(responseClone))
-                })
-              }
+              cacheNetworkResponse(RUNTIME_CACHE, cacheRequest, response)
               return response
             })
             .catch(() => {
@@ -110,7 +141,7 @@ self.addEventListener('fetch', (event) => {
               return caches.match(cacheRequest).then(cachedResponse => {
                 return cachedResponse || new Response('{"userId":"","lastUpdated":0}', {
                   status: 200,
-                  headers: { 'Content-Type': 'application/json' }
+                  headers: { 'Content-Type': 'application/json', 'X-SW-Offline': 'true' }
                 })
               })
             })
@@ -124,12 +155,7 @@ self.addEventListener('fetch', (event) => {
               // Update in background (Stale While Revalidate)
               fetch(request)
                 .then(response => {
-                  if (response.status === 200) {
-                    const responseClone = response.clone()
-                    caches.open(RUNTIME_CACHE).then(cache => {
-                      cache.put(cacheRequest, addCacheTimestamp(responseClone))
-                    })
-                  }
+                  cacheNetworkResponse(RUNTIME_CACHE, cacheRequest, response)
                 })
                 .catch(() => {
                   // Background update failed, but we still have cached data
@@ -141,19 +167,14 @@ self.addEventListener('fetch', (event) => {
             // No cache or cache expired, try network first
             return fetch(request)
               .then(response => {
-                if (response.status === 200) {
-                  const responseClone = response.clone()
-                  caches.open(RUNTIME_CACHE).then(cache => {
-                    cache.put(cacheRequest, addCacheTimestamp(responseClone))
-                  })
-                }
+                cacheNetworkResponse(RUNTIME_CACHE, cacheRequest, response)
                 return response
               })
               .catch(() => {
                 // Network failed, return stale cache if available
                 return cachedResponse || new Response('[]', {
                   status: 200,
-                  headers: { 'Content-Type': 'application/json' }
+                  headers: { 'Content-Type': 'application/json', 'X-SW-Offline': 'true' }
                 })
               })
           })
@@ -174,7 +195,7 @@ self.addEventListener('fetch', (event) => {
             // For mutations, we can't use cache - return error
             return new Response(JSON.stringify({ error: 'Offline - changes cannot be saved' }), {
               status: 503,
-              headers: { 'Content-Type': 'application/json' }
+              headers: { 'Content-Type': 'application/json', 'X-SW-Offline': 'true' }
             })
           })
       )
@@ -194,10 +215,8 @@ self.addEventListener('fetch', (event) => {
         if (cachedResponse) {
           // Return cached version and update in background
           fetch(request).then(response => {
-            if (response.status === 200 && !isMismatchedContentType(request, response)) {
-              caches.open(CACHE_NAME).then(cache => {
-                cache.put(request, response.clone())
-              })
+            if (!isMismatchedContentType(request, response)) {
+              cacheNetworkResponse(CACHE_NAME, request, response)
             }
           }).catch(() => {
             // Network failed, cached version is fine
@@ -209,11 +228,8 @@ self.addEventListener('fetch', (event) => {
         return fetch(request).then(response => {
           // Don't cache HTML fallback responses for JS/CSS assets
           // (CloudFront returns index.html with 200 for missing files)
-          if (response.status === 200 && !isMismatchedContentType(request, response)) {
-            const responseClone = response.clone()
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(request, responseClone)
-            })
+          if (!isMismatchedContentType(request, response)) {
+            cacheNetworkResponse(CACHE_NAME, request, response)
           }
           return response
         })
@@ -236,36 +252,22 @@ function isMismatchedContentType(request: Request, response: Response): boolean 
   return false
 }
 
-// Simple hash function to create a user-specific cache key from the auth header
-function hashCode(str: string): string {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
-    hash |= 0
-  }
-  return hash.toString(36)
-}
-
 // Helper function to check if URL is a data retrieval endpoint
 function isDataRetrievalEndpoint(pathname: string): boolean {
   // Item-based endpoints (cache-friendly) - use Cache First strategy
-  const isItemEndpoint = pathname.includes('/items') && (
-    pathname.includes('grocery_list') ||
-    pathname.includes('todo_list') ||
-    pathname.includes('noise_tracking')
-  )
-  
+  const isItemEndpoint = pathname.includes('/items') &&
+    CACHEABLE_RESOURCES.some(resource => pathname.includes(resource))
+
   // User preferences endpoints (network-first for freshness) - use Network First strategy
   const isUserPreferencesEndpoint = pathname.includes('/user/preferences')
-  
+
   return isItemEndpoint || isUserPreferencesEndpoint
 }
 
 // Helper function to check if cache is expired (30 minutes)
 function isCacheExpired(response: Response): boolean {
   const cacheTimestamp = response.headers.get('sw-cache-timestamp')
-  if (!cacheTimestamp) return false
+  if (!cacheTimestamp) return true
   
   const thirtyMinutes = 30 * 60 * 1000
   return Date.now() - parseInt(cacheTimestamp) > thirtyMinutes
@@ -290,85 +292,81 @@ function invalidateRelatedCache(pathname: string): void {
       requests.forEach(request => {
         const requestUrl = new URL(request.url)
         // Invalidate cache for the same resource type
-        if (pathname.includes('grocery_list') && requestUrl.pathname.includes('grocery_list') ||
-            pathname.includes('todo_list') && requestUrl.pathname.includes('todo_list') ||
-            pathname.includes('noise_tracking') && requestUrl.pathname.includes('noise_tracking') ||
-            pathname.includes('/user/preferences') && requestUrl.pathname.includes('/user/preferences')) {
+        const matchesResource = CACHEABLE_RESOURCES.some(
+          resource => pathname.includes(resource) && requestUrl.pathname.includes(resource)
+        )
+        if (
+          matchesResource ||
+          (pathname.includes('/user/preferences') && requestUrl.pathname.includes('/user/preferences'))
+        ) {
           cache.delete(request)
         }
       })
-    })
-  })
+    }).catch(() => {})
+  }).catch(() => {})
 }
 
-// Listen for update check requests from the app
+// Check for updates every 30 minutes when app is active
+let updateCheckInterval: ReturnType<typeof setInterval> | undefined
+
+// Listen for messages from the app
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'CHECK_FOR_UPDATE') {
-    // Force update check
+  if (!event.data) return
+
+  const { type } = event.data
+
+  if (type === SWMessageType.CHECK_FOR_UPDATE) {
     event.waitUntil(
       self.registration.update().then(() => {
         if (event.ports && event.ports[0]) {
-          event.ports[0].postMessage({
-            type: 'UPDATE_CHECK_COMPLETE'
-          })
+          event.ports[0].postMessage({ type: 'UPDATE_CHECK_COMPLETE' })
         }
       })
     )
   }
 
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    console.log('[SW] Skip waiting requested')
+  if (type === SWMessageType.SKIP_WAITING) {
+    log('[SW] Skip waiting requested')
     self.skipWaiting()
   }
 
-  // iOS-specific: Handle version check requests
-  if (event.data && event.data.type === 'GET_VERSION') {
+  if (type === SWMessageType.GET_VERSION) {
     if (event.ports && event.ports[0]) {
-      event.ports[0].postMessage({
-        type: 'SW_VERSION',
-        version: APP_VERSION
-      })
+      event.ports[0].postMessage({ type: 'SW_VERSION', version: APP_VERSION })
     }
+  }
+
+  if (type === SWMessageType.APP_VISIBLE) {
+    if (updateCheckInterval) clearInterval(updateCheckInterval)
+    updateCheckInterval = setInterval(() => {
+      self.registration.update()
+    }, 30 * 60 * 1000)
+  }
+
+  if (type === SWMessageType.APP_HIDDEN) {
+    if (updateCheckInterval) clearInterval(updateCheckInterval)
   }
 })
 
-// Check for updates every 30 minutes when app is active
-let updateCheckInterval: ReturnType<typeof setInterval> | undefined
-
-const handleVisibilityMessage = (event: ExtendableMessageEvent) => {
-  if (event.data && event.data.type === 'APP_VISIBLE') {
-    // Clear existing interval
-    if (updateCheckInterval) {
-      clearInterval(updateCheckInterval)
-    }
-    
-    // Set up periodic update checks
-    updateCheckInterval = setInterval(() => {
-      self.registration.update()
-    }, 30 * 60 * 1000) // 30 minutes
-  }
-
-  if (event.data && event.data.type === 'APP_HIDDEN') {
-    // Clear interval when app is hidden
-    if (updateCheckInterval) {
-      clearInterval(updateCheckInterval)
-    }
-  }
-}
-
-self.addEventListener('message', handleVisibilityMessage)
-
 self.addEventListener('push', (event) => {
-  console.log('[SW] Push notification received:', event)
+  log('[SW] Push notification received:', event)
   
   if (!event.data) {
-    console.log('[SW] Push notification received but no data')
+    log('[SW] Push notification received but no data')
+    event.waitUntil(
+      self.registration.showNotification('Kairos', {
+        body: 'You have a new notification',
+        icon: '/icon-192.png',
+        badge: '/icon-72.png',
+        tag: 'kairos-no-data'
+      })
+    )
     return
   }
 
   try {
     const data = event.data.json()
-    console.log('[SW] Push notification data:', data)
+    log('[SW] Push notification data:', data)
     
     const options = {
       body: data.body || 'New notification from Kairos',
@@ -406,13 +404,12 @@ self.addEventListener('push', (event) => {
 })
 
 self.addEventListener('notificationclick', (event) => {
-  console.log('[SW] Notification click received:', event)
+  log('[SW] Notification click received:', event)
   
   event.notification.close()
   
   const notificationData = event.notification.data || {}
-  const _action = event.action
-  
+
   let urlToOpen = '/'
   
   if (notificationData.projectId) {
@@ -423,23 +420,25 @@ self.addEventListener('notificationclick', (event) => {
     urlToOpen = `${urlToOpen}#todo-${notificationData.todoId}`
   }
   
-  console.log('[SW] Opening URL:', urlToOpen)
+  log('[SW] Opening URL:', urlToOpen)
   
+  const targetUrl = new URL(urlToOpen, self.registration.scope)
+
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList: readonly Client[]) => {
       for (const client of clientList) {
-        if (client.url === self.registration.scope + urlToOpen.slice(1) && 'focus' in client) {
+        const clientUrl = new URL(client.url)
+        if (clientUrl.pathname === targetUrl.pathname && 'focus' in client) {
           return (client as WindowClient).focus()
         }
       }
-      
+
       for (const client of clientList) {
         if (client.url.startsWith(self.registration.scope) && 'navigate' in client) {
-          (client as WindowClient).navigate(urlToOpen)
-          return (client as WindowClient).focus()
+          return (client as WindowClient).navigate(urlToOpen).then(c => c ? c.focus() : undefined)
         }
       }
-      
+
       if (self.clients.openWindow) {
         return self.clients.openWindow(urlToOpen)
       }
@@ -448,7 +447,7 @@ self.addEventListener('notificationclick', (event) => {
 })
 
 self.addEventListener('notificationclose', (event) => {
-  console.log('[SW] Notification closed:', event.notification.tag)
+  log('[SW] Notification closed:', event.notification.tag)
 })
 
 export {}

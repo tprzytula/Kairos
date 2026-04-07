@@ -1,5 +1,5 @@
 import { renderHook, act, waitFor } from '@testing-library/react'
-import { usePWAUpdate } from './index'
+import { usePWAUpdate, _resetReloadGuard } from './index'
 
 // Mock service worker
 const mockRegistration = {
@@ -36,14 +36,56 @@ class MockMessageChannel {
 }
 global.MessageChannel = MockMessageChannel as any
 
-// Store original location
-const _originalLocation = window.location
-let originalConsoleError: any
+let originalConsoleError: typeof console.error
+
+interface IOSMockCleanup {
+  restore: () => void
+}
+
+const setupIOSMocks = (): IOSMockCleanup => {
+  const originalUserAgent = navigator.userAgent
+  const originalMatchMedia = window.matchMedia
+
+  Object.defineProperty(navigator, 'userAgent', {
+    value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)',
+    writable: true,
+    configurable: true
+  })
+
+  Object.defineProperty(window.navigator, 'standalone', {
+    value: true,
+    writable: true,
+    configurable: true
+  })
+
+  window.matchMedia = vi.fn().mockImplementation(query => ({
+    matches: query === '(display-mode: standalone)',
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }))
+
+  return {
+    restore: () => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: originalUserAgent,
+        writable: true,
+        configurable: true
+      })
+      window.matchMedia = originalMatchMedia
+    }
+  }
+}
 
 describe('usePWAUpdate', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.useFakeTimers({ shouldAdvanceTime: true })
+    _resetReloadGuard()
     // Reset mocks
     mockRegistration.installing = null
     mockRegistration.waiting = null
@@ -222,7 +264,7 @@ describe('usePWAUpdate', () => {
     }
 
     mockRegistration.installing = mockNewWorker
-    
+
     const { result } = renderHook(() => usePWAUpdate())
 
     // Wait for service worker to register
@@ -230,20 +272,26 @@ describe('usePWAUpdate', () => {
       expect(mockServiceWorker.register).toHaveBeenCalled()
     })
 
-    // Simulate state change to 'installed'
+    // Trigger updatefound first so statechange listener gets attached
+    const updateFoundCallback = mockRegistration.addEventListener.mock.calls.find(
+      call => call[0] === 'updatefound'
+    )?.[1]
+    expect(updateFoundCallback).toBeDefined()
+    act(() => { updateFoundCallback!() })
+
+    // Now simulate state change to 'installed'
     const stateChangeCallback = mockNewWorker.addEventListener.mock.calls.find(
       call => call[0] === 'statechange'
     )?.[1]
 
-    if (stateChangeCallback) {
-      act(() => {
-        stateChangeCallback()
-      })
+    expect(stateChangeCallback).toBeDefined()
+    act(() => {
+      stateChangeCallback!()
+    })
 
-      await waitFor(() => {
-        expect(result.current.isUpdateAvailable).toBe(true)
-      })
-    }
+    await waitFor(() => {
+      expect(result.current.isUpdateAvailable).toBe(true)
+    })
   })
 
   it('should handle first installation (no controller)', async () => {
@@ -263,7 +311,7 @@ describe('usePWAUpdate', () => {
     })
 
     mockRegistration.installing = mockNewWorker
-    
+
     const { result } = renderHook(() => usePWAUpdate())
 
     // Wait for service worker to register
@@ -271,22 +319,30 @@ describe('usePWAUpdate', () => {
       expect(mockServiceWorker.register).toHaveBeenCalled()
     })
 
+    // Trigger updatefound first so statechange listener gets attached
+    const updateFoundCallback = mockRegistration.addEventListener.mock.calls.find(
+      call => call[0] === 'updatefound'
+    )?.[1]
+    expect(updateFoundCallback).toBeDefined()
+    act(() => { updateFoundCallback!() })
+
     // Simulate state change to 'installed'
     const stateChangeCallback = mockNewWorker.addEventListener.mock.calls.find(
       call => call[0] === 'statechange'
     )?.[1]
 
-    if (stateChangeCallback) {
-      act(() => {
-        stateChangeCallback()
-      })
-    }
+    expect(stateChangeCallback).toBeDefined()
+    act(() => {
+      stateChangeCallback!()
+    })
 
     // Should not set update available for first install
     expect(result.current.isUpdateAvailable).toBe(false)
   })
 
-  it('should handle service worker messages', async () => {
+  it('should not reload on SW_ACTIVATED message', async () => {
+    const reloadSpy = vi.spyOn(window.location, 'reload')
+
     renderHook(() => usePWAUpdate())
 
     await waitFor(() => {
@@ -303,17 +359,24 @@ describe('usePWAUpdate', () => {
     // Simulate SW_ACTIVATED message
     act(() => {
       messageCallback({
-        data: { type: 'SW_ACTIVATED' }
+        data: { type: 'SW_ACTIVATED', version: '1.0.0' }
       })
     })
 
-    // Should trigger reload after delay
+    // Advance past any potential reload delay
     await act(async () => {
-      vi.advanceTimersByTime(200)
+      vi.advanceTimersByTime(1000)
     })
+
+    // SW_ACTIVATED should NOT trigger a reload (controllerchange is the single reload trigger)
+    expect(reloadSpy).not.toHaveBeenCalled()
+
+    reloadSpy.mockRestore()
   })
 
-  it('should handle controller change events', async () => {
+  it('should reload on controllerchange when a controller existed', async () => {
+    const reloadSpy = vi.spyOn(window.location, 'reload')
+
     renderHook(() => usePWAUpdate())
 
     await waitFor(() => {
@@ -336,6 +399,51 @@ describe('usePWAUpdate', () => {
     await act(async () => {
       vi.advanceTimersByTime(200)
     })
+
+    expect(reloadSpy).toHaveBeenCalledTimes(1)
+
+    reloadSpy.mockRestore()
+  })
+
+  it('should not reload on controllerchange during first install', async () => {
+    const reloadSpy = vi.spyOn(window.location, 'reload')
+
+    // No controller - first install scenario
+    Object.defineProperty(navigator, 'serviceWorker', {
+      value: {
+        ...mockServiceWorker,
+        controller: null
+      },
+      writable: true,
+    })
+
+    renderHook(() => usePWAUpdate())
+
+    await waitFor(() => {
+      expect(mockServiceWorker.register).toHaveBeenCalled()
+    })
+
+    // Get the controllerchange event listener
+    const controllerChangeCallback = mockServiceWorker.addEventListener.mock.calls.find(
+      call => call[0] === 'controllerchange'
+    )?.[1]
+
+    expect(controllerChangeCallback).toBeDefined()
+
+    // Simulate controller change (first install)
+    act(() => {
+      controllerChangeCallback()
+    })
+
+    // Advance past any potential reload delay
+    await act(async () => {
+      vi.advanceTimersByTime(1000)
+    })
+
+    // Should NOT reload on first install
+    expect(reloadSpy).not.toHaveBeenCalled()
+
+    reloadSpy.mockRestore()
   })
 
   it('should handle installUpdate', async () => {
@@ -358,28 +466,26 @@ describe('usePWAUpdate', () => {
       call => call[0] === 'updatefound'
     )?.[1]
 
-    if (updateFoundCallback) {
-      act(() => {
-        updateFoundCallback()
-      })
-    }
+    expect(updateFoundCallback).toBeDefined()
+    act(() => {
+      updateFoundCallback!()
+    })
 
     // Then trigger state change to make update available
     const stateChangeCallback = mockWorker.addEventListener.mock.calls.find(
       call => call[0] === 'statechange'
     )?.[1]
 
-    if (stateChangeCallback) {
-      // Set state to installed and trigger callback
-      mockWorker.state = 'installed'
-      act(() => {
-        stateChangeCallback()
-      })
+    expect(stateChangeCallback).toBeDefined()
+    // Set state to installed and trigger callback
+    mockWorker.state = 'installed'
+    act(() => {
+      stateChangeCallback!()
+    })
 
-      await waitFor(() => {
-        expect(result.current.isUpdateAvailable).toBe(true)
-      })
-    }
+    await waitFor(() => {
+      expect(result.current.isUpdateAvailable).toBe(true)
+    })
 
     // Now test install update
     act(() => {
@@ -425,35 +531,7 @@ describe('usePWAUpdate', () => {
   })
 
   it('should handle iOS-specific behavior', async () => {
-    // Store original values for cleanup
-    const originalUserAgent = navigator.userAgent
-    const originalMatchMedia = window.matchMedia
-
-    // Mock iOS environment
-    Object.defineProperty(navigator, 'userAgent', {
-      value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)',
-      writable: true,
-      configurable: true
-    })
-
-    // Mock standalone property for iOS PWA detection
-    Object.defineProperty(window.navigator, 'standalone', {
-      value: true,
-      writable: true,
-      configurable: true
-    })
-
-    // Mock matchMedia for PWA detection
-    window.matchMedia = vi.fn().mockImplementation(query => ({
-      matches: query === '(display-mode: standalone)',
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }))
+    const { restore } = setupIOSMocks()
 
     const { unmount } = renderHook(() => usePWAUpdate())
 
@@ -461,64 +539,29 @@ describe('usePWAUpdate', () => {
       expect(mockServiceWorker.register).toHaveBeenCalled()
     })
 
-    // Test iOS-specific message handling
-    const messageCallback = mockServiceWorker.addEventListener.mock.calls.find(
-      call => call[0] === 'message'
+    // Smoke test: verifies iOS controllerchange handler is registered and can be
+    // invoked without errors. JSDOM doesn't support navigation so we cannot assert
+    // that window.location.href was set, but this confirms no runtime exceptions.
+    const controllerChangeCallback = mockServiceWorker.addEventListener.mock.calls.find(
+      call => call[0] === 'controllerchange'
     )?.[1]
 
-    if (messageCallback) {
-      act(() => {
-        messageCallback({
-          data: { type: 'SW_ACTIVATED' }
-        })
-      })
-
-      // iOS should use longer delay and special reload
-      await act(async () => {
-        vi.advanceTimersByTime(600)
-      })
-    }
-
-    // Cleanup
-    unmount()
-    Object.defineProperty(navigator, 'userAgent', {
-      value: originalUserAgent,
-      writable: true,
-      configurable: true
+    expect(controllerChangeCallback).toBeDefined()
+    act(() => {
+      controllerChangeCallback!()
     })
-    window.matchMedia = originalMatchMedia
+
+    // iOS should use longer delay (500ms)
+    await act(async () => {
+      vi.advanceTimersByTime(600)
+    })
+
+    unmount()
+    restore()
   })
 
   it('should handle visibility change for iOS', async () => {
-    // Store original values for cleanup
-    const originalUserAgent = navigator.userAgent
-    const originalMatchMedia = window.matchMedia
-
-    // Mock iOS PWA environment
-    Object.defineProperty(navigator, 'userAgent', {
-      value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)',
-      writable: true,
-      configurable: true
-    })
-
-    // Mock standalone property for iOS PWA detection
-    Object.defineProperty(window.navigator, 'standalone', {
-      value: true,
-      writable: true,
-      configurable: true
-    })
-
-    // Mock matchMedia for PWA detection
-    window.matchMedia = vi.fn().mockImplementation(query => ({
-      matches: query === '(display-mode: standalone)',
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }))
+    const { restore } = setupIOSMocks()
 
     const { unmount } = renderHook(() => usePWAUpdate())
 
@@ -526,7 +569,6 @@ describe('usePWAUpdate', () => {
       expect(mockServiceWorker.register).toHaveBeenCalled()
     })
 
-    // Simulate app becoming visible on iOS
     Object.defineProperty(document, 'hidden', {
       value: false,
       writable: true,
@@ -542,14 +584,8 @@ describe('usePWAUpdate', () => {
 
     expect(mockRegistration.update).toHaveBeenCalled()
 
-    // Cleanup
     unmount()
-    Object.defineProperty(navigator, 'userAgent', {
-      value: originalUserAgent,
-      writable: true,
-      configurable: true
-    })
-    window.matchMedia = originalMatchMedia
+    restore()
   })
 
   it('should handle installUpdate when no waiting worker', () => {
@@ -563,36 +599,88 @@ describe('usePWAUpdate', () => {
     expect(result.current.isUpdating).toBe(false)
   })
 
-  it('should handle periodic iOS update checks', async () => {
-    // Store original values for cleanup
-    const originalUserAgent = navigator.userAgent
-    const originalMatchMedia = window.matchMedia
+  it('should clear error state', async () => {
+    const { result } = renderHook(() => usePWAUpdate())
 
-    // Mock iOS PWA environment
-    Object.defineProperty(navigator, 'userAgent', {
-      value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)',
-      writable: true,
-      configurable: true
+    await waitFor(() => {
+      expect(mockServiceWorker.register).toHaveBeenCalled()
     })
 
-    // Mock standalone property for iOS PWA detection
-    Object.defineProperty(window.navigator, 'standalone', {
-      value: true,
-      writable: true,
-      configurable: true
+    // Mock update to fail
+    mockRegistration.update.mockRejectedValueOnce(new Error('Update failed'))
+
+    await act(async () => {
+      try {
+        await result.current.checkForUpdate()
+      } catch {
+        // Expected
+      }
     })
 
-    // Mock matchMedia for PWA detection
-    window.matchMedia = vi.fn().mockImplementation(query => ({
-      matches: query === '(display-mode: standalone)',
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
+    await waitFor(() => {
+      expect(result.current.updateError).toContain('Update check failed')
+    })
+
+    // Clear the error
+    act(() => {
+      result.current.clearError()
+    })
+
+    expect(result.current.updateError).toBeNull()
+  })
+
+  it('should reset isUpdating state after timeout', async () => {
+    const mockWorker = {
+      postMessage: vi.fn(),
+      state: 'installed',
       addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }))
+    }
+
+    mockRegistration.installing = mockWorker
+
+    const { result } = renderHook(() => usePWAUpdate())
+
+    await waitFor(() => {
+      expect(mockServiceWorker.register).toHaveBeenCalled()
+    })
+
+    // Trigger updatefound and statechange to make update available
+    const updateFoundCallback = mockRegistration.addEventListener.mock.calls.find(
+      call => call[0] === 'updatefound'
+    )?.[1]
+    expect(updateFoundCallback).toBeDefined()
+    act(() => { updateFoundCallback!() })
+
+    const stateChangeCallback = mockWorker.addEventListener.mock.calls.find(
+      call => call[0] === 'statechange'
+    )?.[1]
+    expect(stateChangeCallback).toBeDefined()
+    mockWorker.state = 'installed'
+    act(() => { stateChangeCallback!() })
+
+    await waitFor(() => {
+      expect(result.current.isUpdateAvailable).toBe(true)
+    })
+
+    // Install update
+    act(() => {
+      result.current.installUpdate()
+    })
+
+    expect(result.current.isUpdating).toBe(true)
+
+    // Fast-forward past the timeout (15 seconds)
+    await act(async () => {
+      vi.advanceTimersByTime(16000)
+    })
+
+    // Should have reset
+    expect(result.current.isUpdating).toBe(false)
+    expect(result.current.updateError).toContain('timed out')
+  })
+
+  it('should handle periodic iOS update checks', async () => {
+    const { restore } = setupIOSMocks()
 
     const { unmount } = renderHook(() => usePWAUpdate())
 
@@ -608,13 +696,7 @@ describe('usePWAUpdate', () => {
     // Should trigger periodic update check
     expect(mockRegistration.update).toHaveBeenCalled()
 
-    // Cleanup
     unmount()
-    Object.defineProperty(navigator, 'userAgent', {
-      value: originalUserAgent,
-      writable: true,
-      configurable: true
-    })
-    window.matchMedia = originalMatchMedia
+    restore()
   })
 })
