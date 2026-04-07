@@ -1,3 +1,4 @@
+import { ApiEndpoint } from '../../../enums/apiResource'
 import { createUploadUrlFetcher } from '../../index'
 
-export const getGroceryDefaultUploadUrl = createUploadUrlFetcher('grocery_list/items_defaults')
+export const getGroceryDefaultUploadUrl = createUploadUrlFetcher(ApiEndpoint.GROCERY_ITEM_DEFAULTS)

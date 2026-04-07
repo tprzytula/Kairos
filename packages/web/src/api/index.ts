@@ -1,8 +1,9 @@
 import { createFetchOptions } from '../utils/api'
+import { ApiEndpoint, ApiResourceName } from '../enums/apiResource'
 
 export const API_BASE_URL = 'https://269ovkdwmf.execute-api.eu-west-2.amazonaws.com/v1'
 
-export const createGetFetcher = <T>(endpoint: string) =>
+export const createGetFetcher = <T>(endpoint: ApiEndpoint) =>
   async (projectId?: string): Promise<T[]> => {
     const response = await fetch(`${API_BASE_URL}/${endpoint}`, createFetchOptions({}, projectId))
 
@@ -13,7 +14,7 @@ export const createGetFetcher = <T>(endpoint: string) =>
     return []
   }
 
-export const createAddFetcher = <T>(endpoint: string, entityName: string) =>
+export const createAddFetcher = <T>(endpoint: ApiEndpoint) =>
   async (body: Record<string, unknown>, projectId?: string, isPrivate?: boolean): Promise<T> => {
     const response = await fetch(`${API_BASE_URL}/${endpoint}`, createFetchOptions({
       method: 'PUT',
@@ -33,10 +34,10 @@ export const createAddFetcher = <T>(endpoint: string, entityName: string) =>
       throw new Error('Unexpected response from API')
     }
 
-    throw new Error(`Failed to add ${entityName}`)
+    throw new Error(`Failed to add ${ApiResourceName[endpoint]}`)
   }
 
-export const createUpdateFetcher = (endpoint: string, entityName: string) =>
+export const createUpdateFetcher = (endpoint: ApiEndpoint) =>
   async (id: string, fields: Record<string, unknown>, projectId?: string): Promise<void> => {
     const response = await fetch(`${API_BASE_URL}/${endpoint}/${id}`, createFetchOptions({
       method: 'POST',
@@ -44,11 +45,11 @@ export const createUpdateFetcher = (endpoint: string, entityName: string) =>
     }, projectId))
 
     if (!response.ok) {
-      throw new Error(`Failed to update ${entityName}`)
+      throw new Error(`Failed to update ${ApiResourceName[endpoint]}`)
     }
   }
 
-export const createUploadUrlFetcher = (endpoint: string) =>
+export const createUploadUrlFetcher = (endpoint: ApiEndpoint) =>
   async (extension: string, projectId?: string): Promise<{ uploadUrl: string; imagePath: string }> => {
     const response = await fetch(
       `${API_BASE_URL}/${endpoint}/upload-url?extension=${encodeURIComponent(extension)}`,
@@ -58,11 +59,11 @@ export const createUploadUrlFetcher = (endpoint: string) =>
     throw new Error('Failed to get upload URL')
   }
 
-export const createDeleteFetcher = (endpoint: string, entityName: string) =>
+export const createDeleteFetcher = (endpoint: ApiEndpoint) =>
   async (id: string, projectId?: string): Promise<void> => {
     const response = await fetch(
       `${API_BASE_URL}/${endpoint}/${id}`,
       createFetchOptions({ method: 'DELETE' }, projectId)
     )
-    if (!response.ok) throw new Error(`Failed to delete ${entityName}`)
+    if (!response.ok) throw new Error(`Failed to delete ${ApiResourceName[endpoint]}`)
   }

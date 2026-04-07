@@ -1,6 +1,7 @@
+import { ApiEndpoint } from '../../../enums/apiResource'
 import { createUpdateFetcher } from '../../index'
 
-const updateFetcher = createUpdateFetcher('meal-plans', 'meal plan')
+const updateFetcher = createUpdateFetcher(ApiEndpoint.MEAL_PLANS)
 
 export const updateMealPlan = async (
   id: string,

@@ -1,7 +1,8 @@
+import { ApiEndpoint } from '../../../enums/apiResource'
 import { createUpdateFetcher } from '../../index'
 import { IUpdateAdventureRequest } from '../types'
 
-const updateFetcher = createUpdateFetcher('adventures', 'adventure')
+const updateFetcher = createUpdateFetcher(ApiEndpoint.ADVENTURES)
 
 export const updateAdventure = async (
   id: string,

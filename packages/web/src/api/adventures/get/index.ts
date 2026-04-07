@@ -1,4 +1,5 @@
+import { ApiEndpoint } from '../../../enums/apiResource'
 import { IAdventure } from '../../../types/adventure'
 import { createGetFetcher } from '../../index'
 
-export const getAdventures = createGetFetcher<IAdventure>('adventures')
+export const getAdventures = createGetFetcher<IAdventure>(ApiEndpoint.ADVENTURES)

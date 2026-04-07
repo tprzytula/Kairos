@@ -1,7 +1,8 @@
+import { ApiEndpoint } from '../../../enums/apiResource'
 import { IRecipeIngredient } from '../../../types/recipe'
 import { createUpdateFetcher } from '../../index'
 
-const updateFetcher = createUpdateFetcher('recipes', 'recipe')
+const updateFetcher = createUpdateFetcher(ApiEndpoint.RECIPES)
 
 export const updateRecipe = async (
   id: string,
