@@ -81,13 +81,13 @@ describe('Given the Planner component', () => {
     expect(mockNavigate).toHaveBeenCalledTimes(0) // Should not navigate on render
   })
 
-  it('should pass expand/collapse props to time sections when provided', () => {
+  it('should render collapsible section toggle buttons in grouped mode', () => {
     vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
 
-    renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} allExpanded={false} expandKey="test-key" />)
+    renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
-    // When allExpanded=false, sections should be collapsed (show expand button)
-    expect(screen.getByRole('button', { name: /expand/i })).toBeInTheDocument()
+    // Sections start expanded by default, so the toggle button shows 'Collapse'
+    expect(screen.getByRole('button', { name: /collapse/i })).toBeInTheDocument()
   })
 
   it('should render in grouped mode when viewMode is GROUPED', () => {
