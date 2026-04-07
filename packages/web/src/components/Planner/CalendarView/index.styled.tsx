@@ -3,6 +3,8 @@ import { Box, Typography } from '@mui/material'
 import CakeIcon from '@mui/icons-material/Cake'
 import RestaurantIcon from '@mui/icons-material/Restaurant'
 import ExploreIcon from '@mui/icons-material/Explore'
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { AdventurePosition } from '../../../utils/adventure'
 
 export const Container = styled('div')({
@@ -103,21 +105,21 @@ export const DayNumber = styled(Typography)<{ isToday?: boolean; isSelected?: bo
   lineHeight: 1.2,
 }))
 
-export const TodoDot = styled('div')<{ count?: number; isOverdue?: boolean }>(({ count = 0, isOverdue = false }) => ({
-  width: count > 0 ? 'auto' : '0',
-  minWidth: count > 0 ? '18px' : '0',
-  height: count > 0 ? '16px' : '0',
-  padding: count > 0 ? '0 4px' : '0',
-  borderRadius: '8px',
-  backgroundColor: isOverdue ? '#dc2626' : '#2563eb',
-  color: '#ffffff',
-  fontSize: '0.6rem',
-  fontWeight: 600,
+export const TodoIcon = styled(RadioButtonUncheckedIcon)<{ isOverdue?: boolean }>(({ isOverdue = false }) => ({
+  fontSize: '0.85rem',
+  color: isOverdue ? '#dc2626' : '#2563eb',
+}))
+
+export const TodoCountBadge = styled('div')({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
-  lineHeight: 1,
-  visibility: count > 0 ? 'visible' : 'hidden',
+  gap: '2px',
+})
+
+export const TodoCountLabel = styled('span')<{ isOverdue?: boolean }>(({ isOverdue = false }) => ({
+  fontSize: '0.6rem',
+  color: isOverdue ? '#dc2626' : '#2563eb',
+  fontWeight: 600,
 }))
 
 export const DayDetailPanel = styled('div')({
@@ -237,22 +239,22 @@ export const NoDueDateItem = styled('div')({
   },
 })
 
-export const CompletedTodoDot = styled('div')<{ count?: number }>(({ count = 0 }) => ({
-  width: count > 0 ? 'auto' : '0',
-  minWidth: count > 0 ? '18px' : '0',
-  height: count > 0 ? '16px' : '0',
-  padding: count > 0 ? '0 4px' : '0',
-  borderRadius: '8px',
-  backgroundColor: '#059669',
-  color: '#ffffff',
-  fontSize: '0.6rem',
-  fontWeight: 600,
+export const CompletedTodoIcon = styled(CheckCircleIcon)({
+  fontSize: '0.85rem',
+  color: '#059669',
+})
+
+export const CompletedTodoCountBadge = styled('div')({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
-  lineHeight: 1,
-  visibility: count > 0 ? 'visible' : 'hidden',
-}))
+  gap: '2px',
+})
+
+export const CompletedTodoCountLabel = styled('span')({
+  fontSize: '0.6rem',
+  color: '#059669',
+  fontWeight: 600,
+})
 
 export const CompletedDayDetailItem = styled('div')({
   fontSize: '0.875rem',

@@ -25,8 +25,12 @@ import {
   CalendarGrid,
   DayCell,
   DayNumber,
-  TodoDot,
-  CompletedTodoDot,
+  TodoIcon,
+  TodoCountBadge,
+  TodoCountLabel,
+  CompletedTodoIcon,
+  CompletedTodoCountBadge,
+  CompletedTodoCountLabel,
   NoDueDateSection,
   NoDueDateHeader,
   NoDueDateItem,
@@ -290,8 +294,18 @@ const CalendarView = ({
                 onClick={() => handleDayClick(day, isCurrentMonth)}
               >
                 <DayNumber isToday={isToday} isSelected={isSelected}>{day.date()}</DayNumber>
-                <TodoDot count={pendingCount} isOverdue={isCurrentMonth && day.isBefore(today, 'day')}>{pendingCount > 0 ? pendingCount : ''}</TodoDot>
-                <CompletedTodoDot count={completedCount}>{completedCount > 0 ? completedCount : ''}</CompletedTodoDot>
+                {pendingCount > 0 && (
+                  <TodoCountBadge>
+                    <TodoIcon isOverdue={isCurrentMonth && day.isBefore(today, 'day')} />
+                    {pendingCount > 1 && <TodoCountLabel isOverdue={isCurrentMonth && day.isBefore(today, 'day')}>{pendingCount}</TodoCountLabel>}
+                  </TodoCountBadge>
+                )}
+                {completedCount > 0 && (
+                  <CompletedTodoCountBadge>
+                    <CompletedTodoIcon />
+                    {completedCount > 1 && <CompletedTodoCountLabel>{completedCount}</CompletedTodoCountLabel>}
+                  </CompletedTodoCountBadge>
+                )}
                 {hasBirthday && <BirthdayCakeIcon />}
                 {hasMealPlan && <MealPlanIcon />}
                 {dayAdventureItems.length > 0 && (
