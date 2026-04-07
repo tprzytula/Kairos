@@ -5,11 +5,17 @@ import { TableResponseMap } from "../types";
 
 export const scan = async <T extends keyof TableResponseMap>({
   tableName,
+  filterExpression,
+  expressionAttributeNames,
+  expressionAttributeValues,
 }: IScanOptions & { tableName: T }): Promise<Array<TableResponseMap[T]>> => {
   const documentClient = getDocumentClient();
 
   const command = new ScanCommand({
     TableName: tableName,
+    ...(filterExpression && { FilterExpression: filterExpression }),
+    ...(expressionAttributeNames && { ExpressionAttributeNames: expressionAttributeNames }),
+    ...(expressionAttributeValues && { ExpressionAttributeValues: expressionAttributeValues }),
   });
 
   const { Items } = await documentClient.send(command);

@@ -31,7 +31,7 @@ export const OfficeAttendanceProvider = ({ children }: IOfficeAttendanceProvider
     addToCache,
     remove,
   } = useEntityCrud<IOfficeAttendance>({
-    queryKey: 'officeAttendance',
+    queryKeyPrefix: 'officeAttendance',
     fetchFn: getOfficeAttendance,
     updateFn: async () => {},
     deleteFn: deleteOfficeAttendance,
