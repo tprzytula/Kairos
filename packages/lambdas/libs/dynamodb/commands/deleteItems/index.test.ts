@@ -50,7 +50,7 @@ describe("Given the deleteItems function", () => {
   });
 
   it("should chunk deletes into batches of 25 when more than 25 items are passed", async () => {
-    const mock = mockDocumentClient();
+    const mock = createMockDocumentClient();
     const ids = Array.from({ length: 30 }, (_, i) => String(i + 1));
 
     await deleteItems({ ids, tableName: DynamoDBTable.GROCERY_LIST });
@@ -66,7 +66,7 @@ describe("Given the deleteItems function", () => {
   });
 
   it("should handle exactly 25 items in a single batch", async () => {
-    const mock = mockDocumentClient();
+    const mock = createMockDocumentClient();
     const ids = Array.from({ length: 25 }, (_, i) => String(i + 1));
 
     await deleteItems({ ids, tableName: DynamoDBTable.GROCERY_LIST });
@@ -75,7 +75,7 @@ describe("Given the deleteItems function", () => {
   });
 
   it("should handle empty ids array", async () => {
-    const mock = mockDocumentClient();
+    const mock = createMockDocumentClient();
 
     const result = await deleteItems({ ids: [], tableName: DynamoDBTable.GROCERY_LIST });
 
