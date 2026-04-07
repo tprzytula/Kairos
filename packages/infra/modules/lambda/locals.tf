@@ -592,7 +592,7 @@ locals {
           push_subscriptions = "none"
         }
         cognito = {
-          admin_get_user = "allow"
+          list_users = "allow"
         }
         sns = {
           todo_notifications = "none"

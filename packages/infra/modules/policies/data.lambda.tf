@@ -113,6 +113,20 @@ data "aws_iam_policy_document" "lambda_policies" {
     }
   }
 
+  # Cognito ListUsers permissions
+  dynamic "statement" {
+    for_each = try(each.value.permissions.cognito.list_users, "none") != "none" ? [each.key] : []
+
+    content {
+      sid     = "CognitoListUsers"
+      actions = ["cognito-idp:ListUsers"]
+      effect  = "Allow"
+      resources = [
+        var.cognito_user_pool_arn
+      ]
+    }
+  }
+
   dynamic "statement" {
     for_each = each.value.permissions.sns.todo_notifications == local.permissions.publish ? [each.key] : []
 

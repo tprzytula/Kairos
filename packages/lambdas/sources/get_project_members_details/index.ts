@@ -3,7 +3,7 @@ import { middleware, AuthenticatedEvent } from "@kairos-lambdas-libs/middleware"
 import { createResponse } from "@kairos-lambdas-libs/response";
 import {
   CognitoIdentityProviderClient,
-  AdminGetUserCommand,
+  ListUsersCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { getProjectMembers } from "./database";
 
@@ -22,12 +22,13 @@ const getUserDetails = async (
   userId: string,
 ): Promise<{ name: string; givenName?: string; avatar?: string }> => {
   try {
-    const command = new AdminGetUserCommand({
+    const command = new ListUsersCommand({
       UserPoolId: USER_POOL_ID,
-      Username: userId,
+      Filter: `sub = "${userId}"`,
+      Limit: 1,
     });
     const response = await cognitoClient.send(command);
-    const attrs = response.UserAttributes ?? [];
+    const attrs = response.Users?.[0]?.Attributes ?? [];
 
     const getAttribute = (name: string): string | undefined =>
       attrs.find((a) => a.Name === name)?.Value;

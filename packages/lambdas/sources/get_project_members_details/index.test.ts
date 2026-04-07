@@ -11,7 +11,7 @@ vi.mock("@aws-sdk/client-cognito-identity-provider", () => {
         CognitoIdentityProviderClient: class {
             send = mockSend;
         },
-        AdminGetUserCommand: class {
+        ListUsersCommand: class {
             constructor(public input: unknown) {}
         },
     };
@@ -37,17 +37,21 @@ describe('Given the get_project_members_details lambda handler', () => {
 
         mockSend
             .mockResolvedValueOnce({
-                UserAttributes: [
-                    { Name: "name", Value: "John Doe" },
-                    { Name: "given_name", Value: "John" },
-                    { Name: "picture", Value: "https://example.com/john.jpg" },
-                ],
+                Users: [{
+                    Attributes: [
+                        { Name: "name", Value: "John Doe" },
+                        { Name: "given_name", Value: "John" },
+                        { Name: "picture", Value: "https://example.com/john.jpg" },
+                    ],
+                }],
             })
             .mockResolvedValueOnce({
-                UserAttributes: [
-                    { Name: "name", Value: "Jane Smith" },
-                    { Name: "given_name", Value: "Jane" },
-                ],
+                Users: [{
+                    Attributes: [
+                        { Name: "name", Value: "Jane Smith" },
+                        { Name: "given_name", Value: "Jane" },
+                    ],
+                }],
             });
 
         const result = await handler({
