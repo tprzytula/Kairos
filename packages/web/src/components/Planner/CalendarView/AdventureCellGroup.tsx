@@ -10,15 +10,15 @@ interface IAdventureCellGroupProps {
 
 const AdventureCellGroup = ({ adventures, dayKey, onAdventureClick }: IAdventureCellGroupProps): React.ReactNode => {
   const multiDay = adventures.filter(adv => getAdventurePosition(adv, dayKey) !== AdventurePosition.Single)
-  const singleDayCount = adventures.length - multiDay.length
 
   return (
     <>
-      {singleDayCount === 1 && <AdventureCalendarIcon />}
-      {singleDayCount > 1 && (
+      {adventures.length === 1 ? (
+        <AdventureCalendarIcon />
+      ) : (
         <AdventureCountBadge>
           <AdventureCalendarIcon />
-          <AdventureCountLabel>{singleDayCount}</AdventureCountLabel>
+          <AdventureCountLabel>{adventures.length}</AdventureCountLabel>
         </AdventureCountBadge>
       )}
       {multiDay.map(adv => (
