@@ -44,8 +44,8 @@ describe('ProtectedRoute', () => {
     )
     
     expect(screen.getByText('Loading...')).toBeVisible()
-    expect(screen.queryByTestId('protected-content')).toBeNull()
-    expect(screen.queryByTestId('login-screen')).toBeNull()
+    expect(screen.queryByText('Protected Content')).toBeNull()
+    expect(screen.queryByText('Login Screen')).toBeNull()
   })
 
   it('should render error state when auth has error', () => {
@@ -59,8 +59,8 @@ describe('ProtectedRoute', () => {
     
     expect(screen.getByText('Authentication Error')).toBeVisible()
     expect(screen.getByText('Authentication failed')).toBeVisible()
-    expect(screen.queryByTestId('protected-content')).toBeNull()
-    expect(screen.queryByTestId('login-screen')).toBeNull()
+    expect(screen.queryByText('Protected Content')).toBeNull()
+    expect(screen.queryByText('Login Screen')).toBeNull()
   })
 
   it('should render login screen when not authenticated', () => {
@@ -70,8 +70,8 @@ describe('ProtectedRoute', () => {
       </ProtectedRoute>
     )
     
-    expect(screen.getByTestId('login-screen')).toBeVisible()
-    expect(screen.queryByTestId('protected-content')).toBeNull()
+    expect(screen.getByText('Login Screen')).toBeVisible()
+    expect(screen.queryByText('Protected Content')).toBeNull()
   })
 
   it('should render protected content when authenticated', () => {
@@ -83,8 +83,8 @@ describe('ProtectedRoute', () => {
       </ProtectedRoute>
     )
     
-    expect(screen.getByTestId('protected-content')).toBeVisible()
-    expect(screen.queryByTestId('login-screen')).toBeNull()
+    expect(screen.getByText('Protected Content')).toBeVisible()
+    expect(screen.queryByText('Login Screen')).toBeNull()
     expect(screen.queryByText('Loading...')).toBeNull()
   })
 })

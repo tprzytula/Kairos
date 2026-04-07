@@ -60,4 +60,42 @@ describe("Given the scan function", () => {
 
     expect(items).toEqual([]);
   });
+
+  it("should pass filterExpression to the scan command", async () => {
+    vi
+      .spyOn(DynamoDBDocumentClient.prototype, "send")
+      .mockImplementation(async () => ({
+        Items: [],
+        $metadata: {},
+      }));
+
+    await scan({
+      tableName: DynamoDBTable.GROCERY_LIST,
+      filterExpression: "#status = :status",
+      expressionAttributeNames: { "#status": "status" },
+      expressionAttributeValues: { ":status": "active" },
+    });
+
+    expect(ScanCommand).toHaveBeenCalledWith({
+      TableName: DynamoDBTable.GROCERY_LIST,
+      FilterExpression: "#status = :status",
+      ExpressionAttributeNames: { "#status": "status" },
+      ExpressionAttributeValues: { ":status": "active" },
+    });
+  });
+
+  it("should not include filter parameters when they are not provided", async () => {
+    vi
+      .spyOn(DynamoDBDocumentClient.prototype, "send")
+      .mockImplementation(async () => ({
+        Items: [],
+        $metadata: {},
+      }));
+
+    await scan({ tableName: DynamoDBTable.GROCERY_LIST });
+
+    expect(ScanCommand).toHaveBeenCalledWith({
+      TableName: DynamoDBTable.GROCERY_LIST,
+    });
+  });
 });

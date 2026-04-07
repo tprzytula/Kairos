@@ -21,7 +21,7 @@ export const useMealPlanContext = () => useContext(MealPlanContext)
 
 export const MealPlanProvider = ({ children }: IMealPlanProviderProps) => {
   const { items: mealPlans, isLoading, isError, currentProject, refetch, addToCache, update, remove } = useEntityCrud<IMealPlan>({
-    queryKey: 'mealPlans',
+    queryKeyPrefix: 'mealPlans',
     fetchFn: getMealPlans,
     updateFn: (id, fields, projectId) => updateMealPlanApi(id, fields, projectId),
     deleteFn: deleteMealPlan,

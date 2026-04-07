@@ -71,9 +71,9 @@ describe('SwipeableList', () => {
       />
     );
 
-    expect(screen.getByTestId('item-Item 1')).toBeInTheDocument();
-    expect(screen.getByTestId('item-Item 2')).toBeInTheDocument();
-    expect(screen.getByTestId('item-Item 3')).toBeInTheDocument();
+    expect(screen.getByText('Item 1')).toBeInTheDocument();
+    expect(screen.getByText('Item 2')).toBeInTheDocument();
+    expect(screen.getByText('Item 3')).toBeInTheDocument();
   });
 
   it('should call onSwipeAction when an item is swiped for deletion', () => {
@@ -89,7 +89,7 @@ describe('SwipeableList', () => {
     );
 
     // Get the first item's container and trigger a swipe action
-    const firstItem = screen.getByTestId('item-Item 1').closest('[data-testid]')?.parentElement;
+    const firstItem = screen.getByText('Item 1').closest('[data-testid]')?.parentElement;
     expect(firstItem).toBeInTheDocument();
   });
 
@@ -106,7 +106,7 @@ describe('SwipeableList', () => {
     );
 
     // Get the first item's container and trigger an edit action
-    const firstItem = screen.getByTestId('item-Item 1').closest('[data-testid]')?.parentElement;
+    const firstItem = screen.getByText('Item 1').closest('[data-testid]')?.parentElement;
     expect(firstItem).toBeInTheDocument();
   });
 
@@ -121,8 +121,8 @@ describe('SwipeableList', () => {
     );
 
     // Find all swipeable containers
-    const item1Container = screen.getByTestId('item-Item 1').closest('[data-testid]')?.parentElement;
-    const item2Container = screen.getByTestId('item-Item 2').closest('[data-testid]')?.parentElement;
+    const item1Container = screen.getByText('Item 1').closest('[data-testid]')?.parentElement;
+    const item2Container = screen.getByText('Item 2').closest('[data-testid]')?.parentElement;
     
     expect(item1Container).toBeInTheDocument();
     expect(item2Container).toBeInTheDocument();
@@ -153,9 +153,9 @@ describe('SwipeableList', () => {
     );
 
     // All items should receive the custom threshold
-    expect(screen.getByTestId('item-Item 1')).toBeInTheDocument();
-    expect(screen.getByTestId('item-Item 2')).toBeInTheDocument();
-    expect(screen.getByTestId('item-Item 3')).toBeInTheDocument();
+    expect(screen.getByText('Item 1')).toBeInTheDocument();
+    expect(screen.getByText('Item 2')).toBeInTheDocument();
+    expect(screen.getByText('Item 3')).toBeInTheDocument();
   });
 
   it('should handle empty list', () => {
@@ -183,8 +183,8 @@ describe('SwipeableList', () => {
       />
     );
 
-    expect(screen.getByTestId('item-Item 1')).toBeInTheDocument();
-    expect(screen.getByTestId('item-Item 2')).toBeInTheDocument();
+    expect(screen.getByText('Item 1')).toBeInTheDocument();
+    expect(screen.getByText('Item 2')).toBeInTheDocument();
   });
 
   it('should handle optional onSwipeAction prop', () => {
@@ -198,8 +198,8 @@ describe('SwipeableList', () => {
       />
     );
 
-    expect(screen.getByTestId('item-Item 1')).toBeInTheDocument();
-    expect(screen.getByTestId('item-Item 2')).toBeInTheDocument();
+    expect(screen.getByText('Item 1')).toBeInTheDocument();
+    expect(screen.getByText('Item 2')).toBeInTheDocument();
   });
 
   it('should memoize list properly when props change', () => {
@@ -212,7 +212,7 @@ describe('SwipeableList', () => {
       />
     );
 
-    expect(screen.getByTestId('item-Item 1')).toBeInTheDocument();
+    expect(screen.getByText('Item 1')).toBeInTheDocument();
 
     // Rerender with same props should not recreate elements
     rerender(
@@ -223,6 +223,6 @@ describe('SwipeableList', () => {
       />
     );
 
-    expect(screen.getByTestId('item-Item 1')).toBeInTheDocument();
+    expect(screen.getByText('Item 1')).toBeInTheDocument();
   });
 });

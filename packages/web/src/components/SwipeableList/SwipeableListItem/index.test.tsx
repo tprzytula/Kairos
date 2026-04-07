@@ -52,7 +52,7 @@ describe('SwipeableListItem', () => {
       </SwipeableListItem>
     );
 
-    expect(screen.getByTestId('test-child')).toBeInTheDocument();
+    expect(screen.getByText('Test Content')).toBeInTheDocument();
   });
 
   it('should call onSwipeStart when swipe begins', () => {
@@ -106,26 +106,26 @@ describe('SwipeableListItem', () => {
 
   it('should handle onSwipeAction prop', () => {
     const mockOnSwipeAction = vi.fn();
-    
+
     render(
       <SwipeableListItem onSwipeAction={mockOnSwipeAction}>
         <TestChild />
       </SwipeableListItem>
     );
 
-    expect(screen.getByTestId('test-child')).toBeInTheDocument();
+    expect(screen.getByText('Test Content')).toBeInTheDocument();
   });
 
   it('should handle onEditAction prop', () => {
     const mockOnEditAction = vi.fn();
-    
+
     render(
       <SwipeableListItem onEditAction={mockOnEditAction}>
         <TestChild />
       </SwipeableListItem>
     );
 
-    expect(screen.getByTestId('test-child')).toBeInTheDocument();
+    expect(screen.getByText('Test Content')).toBeInTheDocument();
   });
 
   it('should handle disabled prop', () => {
@@ -135,7 +135,7 @@ describe('SwipeableListItem', () => {
       </SwipeableListItem>
     );
 
-    expect(screen.getByTestId('test-child')).toBeInTheDocument();
+    expect(screen.getByText('Test Content')).toBeInTheDocument();
   });
 
   it('should handle threshold prop', () => {
@@ -145,7 +145,7 @@ describe('SwipeableListItem', () => {
       </SwipeableListItem>
     );
 
-    expect(screen.getByTestId('test-child')).toBeInTheDocument();
+    expect(screen.getByText('Test Content')).toBeInTheDocument();
   });
 
   it('should render action buttons', () => {

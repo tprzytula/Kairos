@@ -21,7 +21,7 @@ export const useRecipeContext = () => useContext(RecipeContext)
 
 export const RecipeProvider = ({ children }: IRecipeProviderProps) => {
   const { items: recipes, isLoading, currentProject, refetch, addToCache, update, remove } = useEntityCrud<IRecipe>({
-    queryKey: 'recipes',
+    queryKeyPrefix: 'recipes',
     fetchFn: getRecipes,
     updateFn: (id, fields, projectId) => updateRecipeApi(id, fields, projectId),
     deleteFn: deleteRecipe,

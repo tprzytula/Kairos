@@ -248,7 +248,7 @@ describe('Given the Planner component', () => {
 
       renderWithTheme(<Planner />)
 
-      fireEvent.click(screen.getByTestId('task-1'))
+      fireEvent.click(screen.getByRole('button', { name: 'Buy Groceries' }))
       fireEvent.click(screen.getByText('Delete Task'))
 
       await waitFor(() => {
@@ -268,7 +268,7 @@ describe('Given the Planner component', () => {
 
       renderWithTheme(<Planner />)
 
-      fireEvent.click(screen.getByTestId('task-1'))
+      fireEvent.click(screen.getByRole('button', { name: 'Buy Groceries' }))
       fireEvent.click(screen.getByText('Delete Task'))
 
       await waitFor(() => {

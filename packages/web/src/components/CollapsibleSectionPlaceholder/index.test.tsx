@@ -34,7 +34,6 @@ describe('Given the CollapsibleSectionPlaceholder component', () => {
       </CollapsibleSectionPlaceholder>
     );
     
-    expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByText('Child content')).toBeInTheDocument();
   });
 });

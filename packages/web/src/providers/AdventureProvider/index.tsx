@@ -20,7 +20,7 @@ export const useAdventureContext = () => useContext(AdventureContext)
 
 export const AdventureProvider = ({ children }: IAdventureProviderProps) => {
   const { items: adventures, isLoading, isError, currentProject, refetch, addToCache, update, remove } = useEntityCrud<IAdventure, IUpdateAdventureRequest>({
-    queryKey: 'adventures',
+    queryKeyPrefix: 'adventures',
     fetchFn: getAdventures,
     updateFn: (id, fields, projectId) => updateAdventureApi(id, fields, projectId),
     deleteFn: deleteAdventure,
