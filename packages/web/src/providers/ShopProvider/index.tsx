@@ -5,6 +5,7 @@ import { IShopProviderProps, IShopProviderState } from './types'
 import { retrieveShops, addShop as addShopAPI, updateShop as updateShopAPI, deleteShop as deleteShopAPI, ICreateShopRequestBody, IUpdateShopRequestBody } from '../../api/shops'
 import { retrieveGroceryList } from '../../api/groceryList/retrieve'
 import { getUserPreferences, updateUserPreferences } from '../../api/userPreferences'
+import { IDBGroceryItem } from '../../api/groceryList/retrieve/types'
 import { useProjectContext } from '../ProjectProvider'
 import { useAuth } from 'react-oidc-context'
 import { useLocation } from 'react-router'
@@ -42,21 +43,31 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
         getUserPreferences(auth.user!.access_token),
       ])
 
-      const shopsWithItemCounts = await Promise.all(
-        shopList.map(async (shop) => {
+      return { shops: shopList, userPreferences }
+    },
+    enabled: !!currentProject && !!auth.user?.access_token,
+  })
+
+  const itemCountsQuery = useQuery({
+    queryKey: ['shop-item-counts', currentProject?.id, query.data?.shops?.map(s => s.id).join(',')],
+    queryFn: async (): Promise<Record<string, number>> => {
+      const shopIds = query.data?.shops?.map(s => s.id) ?? []
+      if (shopIds.length === 0) return {}
+
+      const results = await Promise.all(
+        shopIds.map(async (shopId): Promise<[string, IDBGroceryItem[]]> => {
           try {
-            const groceryItems = await retrieveGroceryList(currentProject!.id, shop.id)
-            return { ...shop, itemCount: groceryItems.length }
-          } catch (error) {
-            console.error(`Failed to fetch items for shop ${shop.id}:`, error)
-            return { ...shop, itemCount: 0 }
+            const items = await retrieveGroceryList(currentProject!.id, shopId)
+            return [shopId, items]
+          } catch {
+            return [shopId, []]
           }
         })
       )
 
-      return { shops: shopsWithItemCounts, userPreferences }
+      return Object.fromEntries(results.map(([id, items]) => [id, items.length]))
     },
-    enabled: !!currentProject && !!auth.user?.access_token,
+    enabled: !!currentProject && !!query.data?.shops && query.data.shops.length > 0,
     staleTime: 5 * 60 * 1000,
   })
 
@@ -70,16 +81,16 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
   useEffect(() => {
     if (!query.data) return
 
-    const { shops: shopsWithItemCounts, userPreferences } = query.data
+    const { shops: shopList, userPreferences } = query.data
 
     setCurrentShopState((prev) => {
       if (prev) {
-        const stillValidShop = shopsWithItemCounts.find((shop) => shop.id === prev.id)
+        const stillValidShop = shopList.find((shop) => shop.id === prev.id)
         if (stillValidShop) return stillValidShop
       }
 
       if (userPreferences.currentShopId) {
-        const savedShop = shopsWithItemCounts.find((shop) => shop.id === userPreferences.currentShopId)
+        const savedShop = shopList.find((shop) => shop.id === userPreferences.currentShopId)
         if (savedShop) return savedShop
 
         // Clear invalid saved shop id from database
@@ -103,11 +114,20 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
       const pathname = location.pathname
       if (pathname === '/shops' || pathname.startsWith('/groceries/')) {
         query.refetch()
+        itemCountsQuery.refetch()
       }
     }
   }, [location.pathname, currentProject, auth?.user?.access_token])
 
-  const shops = query.data?.shops ?? []
+  const itemCounts = itemCountsQuery.data
+  const shops = useMemo(() => {
+    const baseShops = query.data?.shops ?? []
+    if (!itemCounts) return baseShops
+    return baseShops.map(shop => ({
+      ...shop,
+      itemCount: itemCounts[shop.id] ?? 0,
+    }))
+  }, [query.data?.shops, itemCounts])
 
   const fetchShops = useCallback(async () => {
     await query.refetch()

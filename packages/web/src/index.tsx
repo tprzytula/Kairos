@@ -12,7 +12,6 @@ import { AppStateProvider } from './providers/AppStateProvider'
 import { BrowserRouter } from 'react-router'
 import AuthProvider from './providers/AuthProvider'
 import { ProjectProvider } from './providers/ProjectProvider'
-import { RecipeProvider } from './providers/RecipeProvider'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,11 +44,9 @@ if (container) {
         <AuthProvider>
           <ProjectProvider>
             <AppStateProvider>
-              <RecipeProvider>
-                <BrowserRouter>
-                  <App />
-                </BrowserRouter>
-              </RecipeProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
             </AppStateProvider>
           </ProjectProvider>
         </AuthProvider>
