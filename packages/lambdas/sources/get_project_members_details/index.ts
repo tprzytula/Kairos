@@ -7,7 +7,15 @@ import {
 } from "@aws-sdk/client-cognito-identity-provider";
 import { getProjectMembers } from "./database";
 
-const cognitoClient = new CognitoIdentityProviderClient({});
+let cognitoClient: CognitoIdentityProviderClient | null = null;
+
+const getCognitoClient = (): CognitoIdentityProviderClient => {
+  if (!cognitoClient) {
+    cognitoClient = new CognitoIdentityProviderClient({});
+  }
+  return cognitoClient;
+};
+
 const USER_POOL_ID = process.env.COGNITO_USER_POOL_ID ?? "";
 
 interface MemberDetails {
@@ -27,7 +35,7 @@ const getUserDetails = async (
       Filter: `sub = "${userId}"`,
       Limit: 1,
     });
-    const response = await cognitoClient.send(command);
+    const response = await getCognitoClient().send(command);
     const attrs = response.Users?.[0]?.Attributes ?? [];
 
     const getAttribute = (name: string): string | undefined =>

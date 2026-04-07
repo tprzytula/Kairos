@@ -4,14 +4,21 @@ import { createResponse } from "@kairos-lambdas-libs/response";
 import { getBody } from "./body";
 import { DynamoDBTable, putItem } from "@kairos-lambdas-libs/dynamodb";
 import { randomUUID } from "node:crypto";
-import { SNS } from "aws-sdk";
-import { 
-  TodoItem, 
-  TodoNotificationPayload, 
-  CreateTodoResponse 
+import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+import {
+  TodoItem,
+  TodoNotificationPayload,
+  CreateTodoResponse
 } from "./types";
 
-const sns = new SNS();
+let snsClient: SNSClient | null = null;
+
+const getSnsClient = (): SNSClient => {
+  if (!snsClient) {
+    snsClient = new SNSClient({});
+  }
+  return snsClient;
+};
 
 export const handler: Handler<APIGatewayProxyEvent> = middleware(
   async (event: AuthenticatedEvent) => {
@@ -89,11 +96,11 @@ const publishTodoNotification = async (payload: TodoNotificationPayload): Promis
     return;
   }
 
-  const publishParams = {
+  const command = new PublishCommand({
     TopicArn: topicArn,
     Message: JSON.stringify(payload),
-    Subject: `New todo item added: ${payload.todoItem.name}`
-  };
+    Subject: `New todo item added: ${payload.todoItem.name}`,
+  });
 
-  await sns.publish(publishParams).promise();
+  await getSnsClient().send(command);
 };
