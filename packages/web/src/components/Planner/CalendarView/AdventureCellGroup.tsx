@@ -14,13 +14,6 @@ const AdventureCellGroup = ({ adventures, dayKey, onAdventureClick }: IAdventure
 
   return (
     <>
-      {multiDay.map(adv => (
-        <AdventureBar
-          key={adv.id}
-          position={getAdventurePosition(adv, dayKey)}
-          onClick={() => onAdventureClick?.(adv.id)}
-        />
-      ))}
       {singleDayCount === 1 && <AdventureCalendarIcon />}
       {singleDayCount > 1 && (
         <AdventureCountBadge>
@@ -28,6 +21,13 @@ const AdventureCellGroup = ({ adventures, dayKey, onAdventureClick }: IAdventure
           <AdventureCountLabel>{singleDayCount}</AdventureCountLabel>
         </AdventureCountBadge>
       )}
+      {multiDay.map(adv => (
+        <AdventureBar
+          key={adv.id}
+          position={getAdventurePosition(adv, dayKey)}
+          onClick={() => onAdventureClick?.(adv.id)}
+        />
+      ))}
     </>
   )
 }
