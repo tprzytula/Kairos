@@ -57,6 +57,7 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
       return { shops: shopsWithItemCounts, userPreferences }
     },
     enabled: !!currentProject && !!auth.user?.access_token,
+    staleTime: 5 * 60 * 1000,
   })
 
   useEffect(() => {

@@ -1,7 +1,6 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { ThemeProvider } from '@mui/material/styles'
-import theme from '../../../../theme'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { PlannerSection } from './index'
 import { UpcomingBirthdaysCard } from './components/UpcomingBirthdaysCard'
 import { ITodoItem } from '../../../../api/toDoList/retrieve/types'
@@ -9,6 +8,7 @@ import { IToDoStats } from '../../../../hooks/useHomeData/types'
 import { IBirthdayItem } from '../../../../api/birthdays/retrieve/types'
 import { IMealPlan } from '../../../../types/mealPlan'
 import { MealType } from '../../../../enums/mealType'
+import { renderWithTheme } from '../../../../testUtils/renderWithTheme'
 
 const createMockTodoItem = (overrides: Partial<ITodoItem> = {}): ITodoItem => ({
   id: 'todo-1',
@@ -36,14 +36,6 @@ const createMockMealPlan = (overrides: Partial<IMealPlan> = {}): IMealPlan => ({
   updatedAt: '',
   ...overrides
 })
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  )
-}
 
 const defaultProps = {
   toDoStats: createMockToDoStats(),
@@ -228,6 +220,8 @@ const createMockBirthday = (overrides: Partial<IBirthdayItem> = {}): IBirthdayIt
   day: 15,
   ...overrides
 })
+
+const theme = createTheme()
 
 describe('UpcomingBirthdaysCard component', () => {
   beforeEach(() => {

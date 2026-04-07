@@ -1,21 +1,21 @@
 import { updateItems } from ".";
 import { DynamoDBTable } from "../../enums";
-import * as Client from '../../client';
-import { TransactWriteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
+import { createMockDocumentClient } from "../../testUtils";
 
 vi.mock("../../client");
 vi.mock("@aws-sdk/lib-dynamodb");
 
 describe("Given the updateItems function", () => {
   it("should pass the right table name and items to the updateItems command", async () => {
-    mockDocumentClient();
+    createMockDocumentClient();
 
-    await updateItems({ 
+    await updateItems({
       items: [
-        { id: "1", fieldsToUpdate: { isDone: true } }, 
+        { id: "1", fieldsToUpdate: { isDone: true } },
         { id: "2", fieldsToUpdate: { isDone: false } }
-      ], 
-      tableName: DynamoDBTable.GROCERY_LIST 
+      ],
+      tableName: DynamoDBTable.GROCERY_LIST
     });
 
     expect(TransactWriteCommand).toHaveBeenCalledWith({
@@ -43,7 +43,7 @@ describe("Given the updateItems function", () => {
   });
 
   it("should return the response from the updateItems command", async () => {
-    mockDocumentClient();
+    createMockDocumentClient();
 
     const items = await updateItems({
       items: [
@@ -56,13 +56,3 @@ describe("Given the updateItems function", () => {
     expect(items).toBe('send response');
   });
 });
-
-const mockDocumentClient = () => {
-  const mockDocumentClient = {
-    send: vi.fn().mockResolvedValue('send response'),
-  } as unknown as DynamoDBDocumentClient;
-
-  vi.spyOn(Client, "getDocumentClient").mockReturnValue(mockDocumentClient);
-
-  return mockDocumentClient;
-};

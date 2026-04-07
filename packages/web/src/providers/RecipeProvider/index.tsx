@@ -25,6 +25,7 @@ export const RecipeProvider = ({ children }: IRecipeProviderProps) => {
     fetchFn: getRecipes,
     updateFn: (id, fields, projectId) => updateRecipeApi(id, fields, projectId),
     deleteFn: deleteRecipe,
+    staleTime: 5 * 60 * 1000,
   })
 
   const addRecipe = useCallback(async (name: string, ingredients: IRecipeIngredient[], imagePath?: string, instructions?: string[], externalLink?: string, mealTypes?: MealType[], dishTypes?: RecipeDishType[], isPrivate?: boolean) => {

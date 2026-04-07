@@ -1,17 +1,7 @@
-import { render, screen } from '@testing-library/react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { screen } from '@testing-library/react';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { EmptyState } from './index';
-
-const theme = createTheme();
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  );
-};
+import { renderWithTheme } from '../../testUtils/renderWithTheme';
 
 describe('EmptyState component', () => {
   const mockProps = {

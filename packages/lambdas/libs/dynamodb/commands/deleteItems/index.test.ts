@@ -1,14 +1,14 @@
 import { deleteItems } from ".";
 import { DynamoDBTable } from "../../enums";
-import * as Client from '../../client';
-import { BatchWriteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
+import { createMockDocumentClient } from "../../testUtils";
 
 vi.mock("../../client");
 vi.mock("@aws-sdk/lib-dynamodb");
 
 describe("Given the deleteItems function", () => {
   it("should pass the right table name and ids to the deleteItems command", async () => {
-    mockDocumentClient();
+    createMockDocumentClient();
 
     await deleteItems({ ids: ["1", "2"], tableName: DynamoDBTable.GROCERY_LIST });
 
@@ -35,7 +35,7 @@ describe("Given the deleteItems function", () => {
   });
 
   it("should return the response from the deleteItem command", async () => {
-    mockDocumentClient();
+    createMockDocumentClient();
 
     const items = await deleteItems({
       ids: ["1", "2"],
@@ -45,13 +45,3 @@ describe("Given the deleteItems function", () => {
     expect(items).toBe('send response');
   });
 });
-
-const mockDocumentClient = () => {
-  const mockDocumentClient = {
-    send: vi.fn().mockResolvedValue('send response'),
-  } as unknown as DynamoDBDocumentClient;
-
-  vi.spyOn(Client, "getDocumentClient").mockReturnValue(mockDocumentClient);
-
-  return mockDocumentClient;
-};

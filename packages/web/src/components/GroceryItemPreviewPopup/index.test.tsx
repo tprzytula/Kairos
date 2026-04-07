@@ -1,10 +1,9 @@
 import React from 'react'
-import { act, render, screen, fireEvent, cleanup } from '@testing-library/react'
-import { ThemeProvider } from '@mui/material/styles'
-import theme from '../../theme'
+import { act, screen, fireEvent, cleanup } from '@testing-library/react'
 import GroceryItemPreviewPopup from './index'
 import { IGroceryItem } from '../../providers/AppStateProvider/types'
 import { GroceryItemUnit } from '../../enums/groceryItem'
+import { renderWithTheme } from '../../testUtils/renderWithTheme'
 
 const mockGroceryItem: IGroceryItem = {
   id: '1',
@@ -29,14 +28,6 @@ const mockAnchorPosition = {
   top: 100,
   left: 200,
   arrowOffset: 0
-}
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  )
 }
 
 describe('GroceryItemPreviewPopup component', () => {

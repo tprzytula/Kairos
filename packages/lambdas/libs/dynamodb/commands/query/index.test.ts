@@ -1,14 +1,16 @@
 import { query } from ".";
 import { DynamoDBTable } from "../../enums";
+import { QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { createMockDocumentClient } from "../../testUtils";
 import * as Client from '../../client';
-import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
 vi.mock("../../client");
 vi.mock('@aws-sdk/lib-dynamodb');
 
 describe("Given the query command", () => {
   it('should create a query command with the right table name and attributes', async () => {
-    mockDocumentClient();
+    createMockDocumentClient({ Items: [EXAMPLE_ITEM] });
 
     await query({
       tableName: DynamoDBTable.GROCERY_LIST,
@@ -26,7 +28,7 @@ describe("Given the query command", () => {
   });
 
   it("should return the items", async () => {
-    mockDocumentClient();
+    createMockDocumentClient({ Items: [EXAMPLE_ITEM] });
 
     const items = await query({
       tableName: DynamoDBTable.GROCERY_LIST,
@@ -39,7 +41,7 @@ describe("Given the query command", () => {
 
   describe("When there are no items", () => {
     it("should return an empty array", async () => {
-      mockDocumentClient([]);
+      createMockDocumentClient({ Items: [] });
 
       const items = await query({
         tableName: DynamoDBTable.GROCERY_LIST,
@@ -53,13 +55,7 @@ describe("Given the query command", () => {
 
   describe("When Items is undefined", () => {
     it("should return an empty array", async () => {
-      const mockClient = {
-        send: vi.fn().mockResolvedValue({
-          Items: undefined,
-        }),
-      } as unknown as DynamoDBDocumentClient;
-
-      vi.spyOn(Client, "getDocumentClient").mockReturnValue(mockClient);
+      createMockDocumentClient({ Items: undefined });
 
       const items = await query({
         tableName: DynamoDBTable.GROCERY_LIST,
@@ -75,16 +71,4 @@ describe("Given the query command", () => {
 const EXAMPLE_ITEM = {
   id: "1",
   name: "test",
-};
-
-const mockDocumentClient = (Items: Array<unknown> = [EXAMPLE_ITEM]) => {
-  const mockDocumentClient = {
-    send: vi.fn().mockResolvedValue({
-      Items,
-    }),
-  } as unknown as DynamoDBDocumentClient;
-
-  vi.spyOn(Client, "getDocumentClient").mockReturnValue(mockDocumentClient);
-
-  return mockDocumentClient;
 };

@@ -1,23 +1,13 @@
 import { MockedFunction } from 'vitest'
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import PushNotificationSettings from './index';
 import { usePushNotifications } from '../../hooks/usePushNotifications';
+import { renderWithTheme } from '../../testUtils/renderWithTheme';
 
 vi.mock('../../hooks/usePushNotifications');
 
 const mockUsePushNotifications = usePushNotifications as MockedFunction<typeof usePushNotifications>;
-
-const theme = createTheme();
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  );
-};
 
 describe('PushNotificationSettings component', () => {
   const defaultMockReturn = {

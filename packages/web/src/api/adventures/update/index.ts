@@ -1,18 +1,12 @@
-import { API_BASE_URL } from '../../index'
-import { createFetchOptions } from '../../../utils/api'
+import { createUpdateFetcher } from '../../index'
 import { IUpdateAdventureRequest } from '../types'
+
+const updateFetcher = createUpdateFetcher('adventures', 'adventure')
 
 export const updateAdventure = async (
   id: string,
   fields: IUpdateAdventureRequest,
   projectId?: string
 ): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/adventures/${id}`, createFetchOptions({
-    method: 'POST',
-    body: JSON.stringify({ id, ...fields }),
-  }, projectId))
-
-  if (!response.ok) {
-    throw new Error('Failed to update adventure')
-  }
+  return updateFetcher(id, fields, projectId)
 }

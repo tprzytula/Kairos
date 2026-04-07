@@ -35,6 +35,7 @@ export const OfficeAttendanceProvider = ({ children }: IOfficeAttendanceProvider
     fetchFn: getOfficeAttendance,
     updateFn: async () => {},
     deleteFn: deleteOfficeAttendance,
+    staleTime: 5 * 60 * 1000,
   })
 
   const addAttendance = useCallback(

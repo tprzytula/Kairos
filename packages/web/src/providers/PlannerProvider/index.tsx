@@ -29,6 +29,7 @@ export const PlannerProvider = ({ children }: StateComponentProps) => {
     queryKey,
     queryFn: () => retrieveToDoList(currentProject!.id),
     enabled: !!currentProject,
+    staleTime: 5 * 60 * 1000,
   })
 
   useEffect(() => {

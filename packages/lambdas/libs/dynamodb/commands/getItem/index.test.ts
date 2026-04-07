@@ -1,14 +1,22 @@
 import { getItem } from ".";
 import { DynamoDBTable } from "../../enums";
-import * as Client from '../../client';
-import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand } from "@aws-sdk/lib-dynamodb";
+import { createMockDocumentClient } from "../../testUtils";
 
 vi.mock("../../client");
 vi.mock("@aws-sdk/lib-dynamodb");
 
 describe("Given the getItem function", () => {
   it("should pass the right table name and id to the getItem command", async () => {
-    mockDocumentClient();
+    createMockDocumentClient({
+      Item: {
+        id: "1",
+        name: "test",
+        unit: "test",
+        quantity: "1",
+        imagePath: "test",
+      },
+    });
 
     await getItem({
       tableName: DynamoDBTable.GROCERY_LIST,
@@ -26,7 +34,15 @@ describe("Given the getItem function", () => {
   });
 
   it("should return the response from the getItem command", async () => {
-    mockDocumentClient();
+    createMockDocumentClient({
+      Item: {
+        id: "1",
+        name: "test",
+        unit: "test",
+        quantity: "1",
+        imagePath: "test",
+      },
+    });
 
     const items = await getItem({
       tableName: DynamoDBTable.GROCERY_LIST,
@@ -44,21 +60,3 @@ describe("Given the getItem function", () => {
     });
   });
 });
-
-const mockDocumentClient = () => {
-  const mockDocumentClient = {
-    send: vi.fn().mockResolvedValue({
-      Item: {
-        id: "1",
-        name: "test",
-        unit: "test",
-        quantity: "1",
-        imagePath: "test",
-      },
-    }),
-  } as unknown as DynamoDBDocumentClient;
-
-  vi.spyOn(Client, "getDocumentClient").mockReturnValue(mockDocumentClient);
-
-  return mockDocumentClient;
-};
