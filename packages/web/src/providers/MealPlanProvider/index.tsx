@@ -25,7 +25,6 @@ export const MealPlanProvider = ({ children }: IMealPlanProviderProps) => {
     fetchFn: getMealPlans,
     updateFn: (id, fields, projectId) => updateMealPlanApi(id, fields, projectId),
     deleteFn: deleteMealPlan,
-    staleTime: 5 * 60 * 1000,
   })
 
   const addMealPlan = useCallback(async (date: string, recipeName: string, recipeId?: string, mealType?: MealType, imagePath?: string, isPrivate?: boolean) => {

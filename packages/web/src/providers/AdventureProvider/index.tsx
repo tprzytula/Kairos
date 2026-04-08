@@ -24,7 +24,6 @@ export const AdventureProvider = ({ children }: IAdventureProviderProps) => {
     fetchFn: getAdventures,
     updateFn: (id, fields, projectId) => updateAdventureApi(id, fields, projectId),
     deleteFn: deleteAdventure,
-    staleTime: 5 * 60 * 1000,
   })
 
   const addAdventure = useCallback(async (adventure: IAddAdventureRequest) => {

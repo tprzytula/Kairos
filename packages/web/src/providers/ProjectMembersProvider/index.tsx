@@ -21,7 +21,6 @@ export const ProjectMembersProvider = ({ children }: IProjectMembersProviderProp
     queryKey: ['projectMembers', currentProject?.id],
     queryFn: () => getProjectMembersDetails(currentProject!.id),
     enabled: !!currentProject,
-    staleTime: 5 * 60 * 1000,
   })
 
   useEffect(() => {

@@ -68,7 +68,6 @@ export const ShopProvider = ({ children }: IShopProviderProps) => {
       return Object.fromEntries(results.map(([id, items]) => [id, items.length]))
     },
     enabled: !!currentProject && !!query.data?.shops && query.data.shops.length > 0,
-    staleTime: 5 * 60 * 1000,
   })
 
   useEffect(() => {

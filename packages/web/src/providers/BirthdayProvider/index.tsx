@@ -37,7 +37,6 @@ export const BirthdayProvider = ({ children }: StateComponentProps) => {
     fetchFn: retrieveBirthdays,
     updateFn: (id, fields, projectId) => updateBirthday(id, fields as BirthdayUpdateFields, projectId),
     deleteFn: removeBirthday,
-    staleTime: 5 * 60 * 1000,
   })
 
   const addBirthdayItem = useCallback(async (item: Omit<IBirthdayItem, 'id'>, isPrivate?: boolean) => {

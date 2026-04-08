@@ -19,7 +19,6 @@ export const useEntityCrud = <T extends { id: string }, F extends object = Recor
     queryKey,
     queryFn: () => fetchFn(currentProject!.id),
     enabled: !!currentProject,
-    staleTime,
   })
 
   useEffect(() => {

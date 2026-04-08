@@ -26,7 +26,6 @@ export const NoiseTrackingProvider = ({ children }: INoiseTrackingProviderProps)
     queryKey,
     queryFn: () => retrieveNoiseTrackingItems(currentProject!.id),
     enabled: !!currentProject,
-    staleTime: 5 * 60 * 1000,
   })
 
   useEffect(() => {
