@@ -125,7 +125,7 @@ const getTimeGroup = (dueDate?: number): TimeGroup => {
   return TimeGroup.LATER
 }
 
-const getGroupLabel = (group: TimeGroup, itemsCount: number): string => {
+const getTodoGroupLabel = (group: TimeGroup, itemsCount: number): string => {
   switch (group) {
     case TimeGroup.OVERDUE:
       return itemsCount === 1 ? 'Overdue' : `Overdue (${itemsCount})`
@@ -133,6 +133,48 @@ const getGroupLabel = (group: TimeGroup, itemsCount: number): string => {
       return 'Due Today'
     case TimeGroup.TOMORROW:
       return 'Due Tomorrow'
+    case TimeGroup.THIS_WEEK:
+      return 'This Week'
+    case TimeGroup.NEXT_WEEK:
+      return 'Next Week'
+    case TimeGroup.LATER:
+      return 'Later'
+    case TimeGroup.NO_DUE_DATE:
+      return 'No Due Date'
+    default:
+      return 'Unknown'
+  }
+}
+
+const getDateGroupLabel = (group: TimeGroup, itemsCount: number): string => {
+  const count = itemsCount > 1 ? ` (${itemsCount})` : ''
+  switch (group) {
+    case TimeGroup.TODAY:
+      return `Today${count}`
+    case TimeGroup.TOMORROW:
+      return `Tomorrow${count}`
+    case TimeGroup.THIS_WEEK:
+      return `This Week${count}`
+    case TimeGroup.NEXT_WEEK:
+      return `Next Week${count}`
+    case TimeGroup.LATER:
+      return `Later${count}`
+    default:
+      return `Upcoming${count}`
+  }
+}
+
+export const getUnifiedGroupLabel = (
+  group: TimeGroup,
+  totalCount: number
+): string => {
+  switch (group) {
+    case TimeGroup.OVERDUE:
+      return totalCount === 1 ? 'Overdue' : `Overdue (${totalCount})`
+    case TimeGroup.TODAY:
+      return 'Today'
+    case TimeGroup.TOMORROW:
+      return 'Tomorrow'
     case TimeGroup.THIS_WEEK:
       return 'This Week'
     case TimeGroup.NEXT_WEEK:
@@ -178,7 +220,7 @@ export const groupTodosByTime = (todos: ITodoItem[]): IGroupedTodoItem[] => {
     if (items.length > 0) {
       result.push({
         group,
-        groupLabel: getGroupLabel(group, items.length),
+        groupLabel: getTodoGroupLabel(group, items.length),
         items,
         priority: TIME_GROUP_META[group].priority,
       })
@@ -233,55 +275,38 @@ export const getTimeGroupForDateString = (dateString: string): TimeGroup => {
   return TimeGroup.LATER
 }
 
-const getAdventureGroupLabel = (
-  group: TimeGroup,
-  itemsCount: number
-): string => {
-  const count = itemsCount > 1 ? ` (${itemsCount})` : ''
-  switch (group) {
-    case TimeGroup.TODAY:
-      return `Today${count}`
-    case TimeGroup.TOMORROW:
-      return `Tomorrow${count}`
-    case TimeGroup.THIS_WEEK:
-      return `This Week${count}`
-    case TimeGroup.NEXT_WEEK:
-      return `Next Week${count}`
-    case TimeGroup.LATER:
-      return `Later${count}`
-    default:
-      return `Upcoming${count}`
-  }
+interface IGroupedDateItem<T> {
+  group: TimeGroup
+  groupLabel: string
+  items: T[]
+  priority: number
 }
 
-export const groupAdventuresByTime = (
-  adventures: IAdventure[]
-): IGroupedAdventureItem[] => {
-  const upcomingAdventures = adventures.filter((adventure) => {
-    const group = getTimeGroupForDateString(adventure.date)
-    return group !== TimeGroup.OVERDUE
+const groupByDateString = <T>(
+  items: T[],
+  getDate: (item: T) => string
+): IGroupedDateItem<T>[] => {
+  const groups = new Map<TimeGroup, T[]>()
+
+  items.forEach((item) => {
+    const group = getTimeGroupForDateString(getDate(item))
+    if (group === TimeGroup.OVERDUE) return
+    const existing = groups.get(group) || []
+    groups.set(group, [...existing, item])
   })
 
-  const groups = new Map<TimeGroup, IAdventure[]>()
-
-  upcomingAdventures.forEach((adventure) => {
-    const group = getTimeGroupForDateString(adventure.date)
-    const existingItems = groups.get(group) || []
-    groups.set(group, [...existingItems, adventure])
+  groups.forEach((groupItems) => {
+    groupItems.sort((a, b) => getDate(a).localeCompare(getDate(b)))
   })
 
-  groups.forEach((items) => {
-    items.sort((a, b) => a.date.localeCompare(b.date))
-  })
+  const result: IGroupedDateItem<T>[] = []
 
-  const result: IGroupedAdventureItem[] = []
-
-  groups.forEach((items, group) => {
-    if (items.length > 0) {
+  groups.forEach((groupItems, group) => {
+    if (groupItems.length > 0) {
       result.push({
         group,
-        groupLabel: getAdventureGroupLabel(group, items.length),
-        items,
+        groupLabel: getDateGroupLabel(group, groupItems.length),
+        items: groupItems,
         priority: TIME_GROUP_META[group].priority,
       })
     }
@@ -291,6 +316,10 @@ export const groupAdventuresByTime = (
 
   return result
 }
+
+export const groupAdventuresByTime = (
+  adventures: IAdventure[]
+): IGroupedAdventureItem[] => groupByDateString(adventures, (a) => a.date)
 
 export interface IBirthdayWithNextDate extends IBirthdayItem {
   nextDate: string
@@ -319,64 +348,15 @@ export const getNextBirthdayDate = (month: number, day: number): string => {
   return `${y}-${m}-${d}`
 }
 
-const getBirthdayGroupLabel = (
-  group: TimeGroup,
-  itemsCount: number
-): string => {
-  const count = itemsCount > 1 ? ` (${itemsCount})` : ''
-  switch (group) {
-    case TimeGroup.TODAY:
-      return `Today${count}`
-    case TimeGroup.TOMORROW:
-      return `Tomorrow${count}`
-    case TimeGroup.THIS_WEEK:
-      return `This Week${count}`
-    case TimeGroup.NEXT_WEEK:
-      return `Next Week${count}`
-    case TimeGroup.LATER:
-      return `Later${count}`
-    default:
-      return `Upcoming${count}`
-  }
-}
-
 export const groupBirthdaysByTime = (
   birthdays: IBirthdayItem[]
 ): IGroupedBirthdayItem[] => {
-  const enriched = birthdays.map((birthday) => ({
+  const enriched: IBirthdayWithNextDate[] = birthdays.map((birthday) => ({
     ...birthday,
     nextDate: getNextBirthdayDate(birthday.month, birthday.day),
   }))
 
-  const groups = new Map<TimeGroup, IBirthdayWithNextDate[]>()
-
-  enriched.forEach((birthday) => {
-    const group = getTimeGroupForDateString(birthday.nextDate)
-    if (group === TimeGroup.OVERDUE) return
-    const existing = groups.get(group) || []
-    groups.set(group, [...existing, birthday])
-  })
-
-  groups.forEach((items) => {
-    items.sort((a, b) => a.nextDate.localeCompare(b.nextDate))
-  })
-
-  const result: IGroupedBirthdayItem[] = []
-
-  groups.forEach((items, group) => {
-    if (items.length > 0) {
-      result.push({
-        group,
-        groupLabel: getBirthdayGroupLabel(group, items.length),
-        items,
-        priority: TIME_GROUP_META[group].priority,
-      })
-    }
-  })
-
-  result.sort((a, b) => a.priority - b.priority)
-
-  return result
+  return groupByDateString(enriched, (b) => b.nextDate)
 }
 
 export interface IGroupedOfficeAttendanceItem {
@@ -386,57 +366,7 @@ export interface IGroupedOfficeAttendanceItem {
   priority: number
 }
 
-const getAttendanceGroupLabel = (
-  group: TimeGroup,
-  itemsCount: number
-): string => {
-  const count = itemsCount > 1 ? ` (${itemsCount})` : ''
-  switch (group) {
-    case TimeGroup.TODAY:
-      return `Today${count}`
-    case TimeGroup.TOMORROW:
-      return `Tomorrow${count}`
-    case TimeGroup.THIS_WEEK:
-      return `This Week${count}`
-    case TimeGroup.NEXT_WEEK:
-      return `Next Week${count}`
-    case TimeGroup.LATER:
-      return `Later${count}`
-    default:
-      return `Upcoming${count}`
-  }
-}
-
 export const groupOfficeAttendanceByTime = (
   attendance: IOfficeAttendance[]
-): IGroupedOfficeAttendanceItem[] => {
-  const groups = new Map<TimeGroup, IOfficeAttendance[]>()
-
-  attendance.forEach((entry) => {
-    const group = getTimeGroupForDateString(entry.date)
-    if (group === TimeGroup.OVERDUE) return
-    const existing = groups.get(group) || []
-    groups.set(group, [...existing, entry])
-  })
-
-  groups.forEach((items) => {
-    items.sort((a, b) => a.date.localeCompare(b.date))
-  })
-
-  const result: IGroupedOfficeAttendanceItem[] = []
-
-  groups.forEach((items, group) => {
-    if (items.length > 0) {
-      result.push({
-        group,
-        groupLabel: getAttendanceGroupLabel(group, items.length),
-        items,
-        priority: TIME_GROUP_META[group].priority,
-      })
-    }
-  })
-
-  result.sort((a, b) => a.priority - b.priority)
-
-  return result
-}
+): IGroupedOfficeAttendanceItem[] =>
+  groupByDateString(attendance, (a) => a.date)

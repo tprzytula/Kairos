@@ -13,7 +13,10 @@ import PrivateItemBadge from '../../../PrivateItemBadge'
 const formatBirthdayDate = (nextDate: string): string => {
   const [year, month, day] = nextDate.split('-').map(Number)
   const date = new Date(year, month - 1, day)
-  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+  return new Intl.DateTimeFormat(undefined, {
+    day: 'numeric',
+    month: 'short',
+  }).format(date)
 }
 
 const calculateAge = (birthYear: number, nextDate: string): number => {

@@ -14,49 +14,34 @@ import {
   IGroupedAdventureItem,
   IGroupedBirthdayItem,
   IGroupedOfficeAttendanceItem,
+  IBirthdayWithNextDate,
+  getUnifiedGroupLabel,
 } from '../utils/timeGrouping'
 import { SectionIcon } from '../../CollapsibleSection/types'
 import { ITodoItem } from '../../../api/toDoList/retrieve/types'
 import { IAdventure } from '../../../types/adventure'
-import { IBirthdayWithNextDate } from '../utils/timeGrouping'
 import { IOfficeAttendance } from '../../../types/officeAttendance'
 
+const toSectionIcon = (meta: {
+  emoji: string
+  bg: string
+  fg: string
+}): SectionIcon => ({
+  emoji: meta.emoji,
+  backgroundColor: meta.bg,
+  foregroundColor: meta.fg,
+})
+
 const TIME_GROUP_ICON_MAP: Record<TimeGroup, SectionIcon> = {
-  [TimeGroup.OVERDUE]: {
-    emoji: '⚠️',
-    backgroundColor: '#fef2f2',
-    foregroundColor: '#dc2626',
-  },
-  [TimeGroup.TODAY]: {
-    emoji: '📅',
-    backgroundColor: '#ecfdf5',
-    foregroundColor: '#059669',
-  },
-  [TimeGroup.TOMORROW]: {
-    emoji: '📌',
-    backgroundColor: '#eff6ff',
-    foregroundColor: '#2563eb',
-  },
-  [TimeGroup.THIS_WEEK]: {
-    emoji: '📆',
-    backgroundColor: '#fefce8',
-    foregroundColor: '#ca8a04',
-  },
-  [TimeGroup.NEXT_WEEK]: {
-    emoji: '🗓️',
-    backgroundColor: '#f0f9ff',
-    foregroundColor: '#0284c7',
-  },
-  [TimeGroup.LATER]: {
-    emoji: '⏳',
-    backgroundColor: '#f8fafc',
-    foregroundColor: '#64748b',
-  },
-  [TimeGroup.NO_DUE_DATE]: {
-    emoji: '📝',
-    backgroundColor: '#f5f5f5',
-    foregroundColor: '#6b7280',
-  },
+  [TimeGroup.OVERDUE]: toSectionIcon(TIME_GROUP_META[TimeGroup.OVERDUE]),
+  [TimeGroup.TODAY]: toSectionIcon(TIME_GROUP_META[TimeGroup.TODAY]),
+  [TimeGroup.TOMORROW]: toSectionIcon(TIME_GROUP_META[TimeGroup.TOMORROW]),
+  [TimeGroup.THIS_WEEK]: toSectionIcon(TIME_GROUP_META[TimeGroup.THIS_WEEK]),
+  [TimeGroup.NEXT_WEEK]: toSectionIcon(TIME_GROUP_META[TimeGroup.NEXT_WEEK]),
+  [TimeGroup.LATER]: toSectionIcon(TIME_GROUP_META[TimeGroup.LATER]),
+  [TimeGroup.NO_DUE_DATE]: toSectionIcon(
+    TIME_GROUP_META[TimeGroup.NO_DUE_DATE]
+  ),
 }
 
 interface IUnifiedGroup {
@@ -67,27 +52,6 @@ interface IUnifiedGroup {
   adventures: IAdventure[]
   birthdays: IBirthdayWithNextDate[]
   attendance: IOfficeAttendance[]
-}
-
-const getUnifiedGroupLabel = (group: TimeGroup, totalCount: number): string => {
-  switch (group) {
-    case TimeGroup.OVERDUE:
-      return totalCount === 1 ? 'Overdue' : `Overdue (${totalCount})`
-    case TimeGroup.TODAY:
-      return 'Today'
-    case TimeGroup.TOMORROW:
-      return 'Tomorrow'
-    case TimeGroup.THIS_WEEK:
-      return 'This Week'
-    case TimeGroup.NEXT_WEEK:
-      return 'Next Week'
-    case TimeGroup.LATER:
-      return 'Later'
-    case TimeGroup.NO_DUE_DATE:
-      return 'No Due Date'
-    default:
-      return 'Unknown'
-  }
 }
 
 const buildUnifiedGroups = (
