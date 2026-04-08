@@ -1,4 +1,5 @@
 export * from './retrieve'
 export * from './create'
 export * from './join'
+export * from './leave'
 export * from './getInviteInfo'
