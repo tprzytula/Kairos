@@ -108,6 +108,30 @@ paths:
         httpMethod: "POST"
         uri: "${lambda_functions.get_project_members_details.invoke_arn}"
         passthroughBehavior: "when_no_match"
+    delete:
+      summary: Leave a project
+      security:
+        - CognitoAuthorizer: []
+      parameters:
+        - $ref: "#/components/parameters/ProjectIDHeader"
+      responses:
+        "200":
+          description: "Successfully left the project"
+        "400":
+          description: "Cannot leave personal project"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Project owner cannot leave"
+        "404":
+          description: "Not a member of this project"
+        "500":
+          description: "Internal server error"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "${lambda_functions.leave_project.invoke_arn}"
+        passthroughBehavior: "when_no_match"
     options:
       responses:
         "200":
@@ -127,7 +151,7 @@ paths:
           default:
             statusCode: "200"
             responseParameters:
-              method.response.header.Access-Control-Allow-Methods: "'GET'"
+              method.response.header.Access-Control-Allow-Methods: "'GET, DELETE'"
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Project-ID'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:

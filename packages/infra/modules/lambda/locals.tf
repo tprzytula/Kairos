@@ -326,6 +326,19 @@ locals {
         }
       }
     },
+    "leave_project" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          projects           = "read-only"
+          project_members    = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
     "get_project_invite_info" = {
       environment_variables = {}
       permissions = {
