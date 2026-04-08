@@ -1,10 +1,10 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react"
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { BrowserRouter } from 'react-router'
-import Planner from "."
+import Planner from '.'
 import * as PlannerProvider from '../../providers/PlannerProvider'
 import * as ProjectProvider from '../../providers/ProjectProvider'
 import * as ReactRouter from 'react-router'
-import { IState } from "../../providers/PlannerProvider/types"
+import { IState } from '../../providers/PlannerProvider/types'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import * as ToDoAPI from '../../api/toDoList'
 import { PlannerViewMode } from '../../enums/plannerViewMode'
@@ -23,10 +23,20 @@ vi.mock('../../api/toDoList')
 
 vi.mock('./CalendarView', async () => ({
   __esModule: true,
-  default: ({ visibleToDoItems, onItemClick }: { visibleToDoItems: Array<{ id: string; name: string }>, onItemClick: (id: string) => void }) => (
+  default: ({
+    visibleToDoItems,
+    onItemClick,
+  }: {
+    visibleToDoItems: Array<{ id: string; name: string }>
+    onItemClick: (id: string) => void
+  }) => (
     <div data-testid="calendar-view">
       {visibleToDoItems.map((item) => (
-        <button key={item.id} data-testid={`task-${item.id}`} onClick={() => onItemClick(item.id)}>
+        <button
+          key={item.id}
+          data-testid={`task-${item.id}`}
+          onClick={() => onItemClick(item.id)}
+        >
           {item.name}
         </button>
       ))}
@@ -40,14 +50,14 @@ describe('Given the Planner component', () => {
   beforeEach(() => {
     vi.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate)
     vi.spyOn(ProjectProvider, 'useProjectContext').mockReturnValue({
-      currentProject: { 
-        id: 'test-project-id', 
+      currentProject: {
+        id: 'test-project-id',
         name: 'Test Project',
         ownerId: 'test-owner-id',
         isPersonal: false,
         maxMembers: 10,
         inviteCode: 'test-invite-code',
-        createdAt: '2023-01-01T00:00:00Z'
+        createdAt: '2023-01-01T00:00:00Z',
       },
       projects: [],
       createProject: vi.fn(),
@@ -60,7 +70,9 @@ describe('Given the Planner component', () => {
     mockNavigate.mockClear()
   })
   it('should render only the not completed items grouped by time', () => {
-    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(
+      EXAMPLE_TO_DO_LIST_CONTEXT
+    )
 
     renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
@@ -72,7 +84,9 @@ describe('Given the Planner component', () => {
   })
 
   it('should pass edit and swipe functions to time sections', () => {
-    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(
+      EXAMPLE_TO_DO_LIST_CONTEXT
+    )
 
     renderWithTheme(<Planner />)
 
@@ -82,16 +96,22 @@ describe('Given the Planner component', () => {
   })
 
   it('should render collapsible section toggle buttons in grouped mode', () => {
-    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(
+      EXAMPLE_TO_DO_LIST_CONTEXT
+    )
 
     renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
     // Sections start expanded by default, so the toggle button shows 'Collapse'
-    expect(screen.getByRole('button', { name: /collapse/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /collapse/i })
+    ).toBeInTheDocument()
   })
 
   it('should render in grouped mode when viewMode is GROUPED', () => {
-    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(EXAMPLE_TO_DO_LIST_CONTEXT)
+    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(
+      EXAMPLE_TO_DO_LIST_CONTEXT
+    )
 
     renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
@@ -105,11 +125,19 @@ describe('Given the Planner component', () => {
       ...EXAMPLE_TO_DO_LIST_CONTEXT,
       toDoList: [
         ...EXAMPLE_TO_DO_LIST_CONTEXT.toDoList,
-        { id: '3', name: 'Completed Item', isDone: true, description: '', dueDate: undefined }
-      ]
+        {
+          id: '3',
+          name: 'Completed Item',
+          isDone: true,
+          description: '',
+          dueDate: undefined,
+        },
+      ],
     }
 
-    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(contextWithMixedItems)
+    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(
+      contextWithMixedItems
+    )
 
     renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
@@ -125,26 +153,46 @@ describe('Given the Planner component', () => {
     const contextWithDifferentDueDates = {
       ...EXAMPLE_TO_DO_LIST_CONTEXT,
       toDoList: [
-        { id: '1', name: 'Task for today', isDone: false, description: '', dueDate: today.getTime() },
-        { id: '2', name: 'Task for tomorrow', isDone: false, description: '', dueDate: tomorrow.getTime() },
-        { id: '3', name: 'Task without date', isDone: false, description: '', dueDate: undefined }
-      ]
+        {
+          id: '1',
+          name: 'Task for today',
+          isDone: false,
+          description: '',
+          dueDate: today.getTime(),
+        },
+        {
+          id: '2',
+          name: 'Task for tomorrow',
+          isDone: false,
+          description: '',
+          dueDate: tomorrow.getTime(),
+        },
+        {
+          id: '3',
+          name: 'Task without date',
+          isDone: false,
+          description: '',
+          dueDate: undefined,
+        },
+      ],
     }
-    
-    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(contextWithDifferentDueDates)
+
+    vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue(
+      contextWithDifferentDueDates
+    )
 
     renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
-    // Check section headers
-    expect(screen.getByText('Due Today')).toBeVisible()
-    expect(screen.getByText('Due Tomorrow')).toBeVisible()  
+    // Check section headers (unified labels for all item types)
+    expect(screen.getByText('Today')).toBeVisible()
+    expect(screen.getByText('Tomorrow')).toBeVisible()
     expect(screen.getByText('No Due Date')).toBeVisible()
-    
+
     // Check emojis
     expect(screen.getByText('📅')).toBeVisible() // Today emoji
     expect(screen.getByText('📌')).toBeVisible() // Tomorrow emoji
     expect(screen.getByText('📝')).toBeVisible() // No due date emoji
-    
+
     // Check todo items
     expect(screen.getByText('Task for today')).toBeVisible()
     expect(screen.getByText('Task for tomorrow')).toBeVisible()
@@ -167,7 +215,9 @@ describe('Given the Planner component', () => {
 
       expect(screen.getByLabelText('Empty planner')).toBeVisible()
       expect(screen.getByText('No pending tasks found')).toBeVisible()
-      expect(screen.getByText('Tap the + button to add your first task')).toBeVisible()
+      expect(
+        screen.getByText('Tap the + button to add your first task')
+      ).toBeVisible()
     })
 
     describe('Empty state layout behavior', () => {
@@ -184,10 +234,14 @@ describe('Given the Planner component', () => {
 
         renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
-        const emptyStateElement = screen.getByText('No pending tasks found').parentElement
+        const emptyStateElement = screen.getByText(
+          'No pending tasks found'
+        ).parentElement
         expect(emptyStateElement).toBeInTheDocument()
-        
-        const computedStyle = window.getComputedStyle(emptyStateElement as Element)
+
+        const computedStyle = window.getComputedStyle(
+          emptyStateElement as Element
+        )
         expect(computedStyle.display).toBe('flex')
         expect(computedStyle.flexDirection).toBe('column')
         expect(computedStyle.justifyContent).toBe('center')
@@ -208,9 +262,13 @@ describe('Given the Planner component', () => {
 
         renderWithTheme(<Planner viewMode={PlannerViewMode.GROUPED} />)
 
-        const emptyStateElement = screen.getByText('No pending tasks found').parentElement
-        const computedStyle = window.getComputedStyle(emptyStateElement as Element)
-        
+        const emptyStateElement = screen.getByText(
+          'No pending tasks found'
+        ).parentElement
+        const computedStyle = window.getComputedStyle(
+          emptyStateElement as Element
+        )
+
         expect(computedStyle.gap).toBe('12px')
         expect(computedStyle.opacity).toBe('0.6')
         expect(computedStyle.minHeight).toBe('300px')
@@ -239,7 +297,9 @@ describe('Given the Planner component', () => {
   describe('When the user deletes a todo item', () => {
     it('should call removeTodoItems API and removeFromToDoList on successful deletion', async () => {
       const removeFromToDoListMock = vi.fn()
-      const removeTodoItemsSpy = vi.mocked(ToDoAPI.removeTodoItems).mockResolvedValue(undefined)
+      const removeTodoItemsSpy = vi
+        .mocked(ToDoAPI.removeTodoItems)
+        .mockResolvedValue(undefined)
 
       vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
         ...EXAMPLE_TO_DO_LIST_CONTEXT,
@@ -252,14 +312,20 @@ describe('Given the Planner component', () => {
       fireEvent.click(screen.getByText('Delete Task'))
 
       await waitFor(() => {
-        expect(removeTodoItemsSpy).toHaveBeenCalledWith(['1'], 'test-project-id', 'test-access-token')
+        expect(removeTodoItemsSpy).toHaveBeenCalledWith(
+          ['1'],
+          'test-project-id',
+          'test-access-token'
+        )
         expect(removeFromToDoListMock).toHaveBeenCalledWith('1')
       })
     })
 
     it('should not call removeFromToDoList when the API call fails', async () => {
       const removeFromToDoListMock = vi.fn()
-      vi.mocked(ToDoAPI.removeTodoItems).mockRejectedValue(new Error('API error'))
+      vi.mocked(ToDoAPI.removeTodoItems).mockRejectedValue(
+        new Error('API error')
+      )
 
       vi.spyOn(PlannerProvider, 'usePlannerContext').mockReturnValue({
         ...EXAMPLE_TO_DO_LIST_CONTEXT,
@@ -283,9 +349,7 @@ const theme = createTheme()
 const renderWithTheme = (component: React.ReactElement) => {
   return render(
     <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        {component}
-      </BrowserRouter>
+      <BrowserRouter>{component}</BrowserRouter>
     </ThemeProvider>
   )
 }
