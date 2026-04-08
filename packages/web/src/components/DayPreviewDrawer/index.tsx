@@ -1,7 +1,9 @@
 import CakeIcon from '@mui/icons-material/Cake'
+import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl'
 import LinkIcon from '@mui/icons-material/Link'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import ExploreIcon from '@mui/icons-material/Explore'
+import RestaurantIcon from '@mui/icons-material/Restaurant'
 import BusinessIcon from '@mui/icons-material/Business'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import dayjs from 'dayjs'
@@ -127,6 +129,7 @@ const DayPreviewDrawer = ({
           color={isOverdue ? '#dc2626' : '#1d4ed8'}
           sx={{ mt: 0, pt: 0, borderTop: 'none' }}
         >
+          <ChecklistRtlIcon sx={{ fontSize: '0.75rem' }} />
           Tasks
           {onAddTask && selectedDay && (
             <TasksAddButton onClick={(e) => { e.stopPropagation(); onAddTask(selectedDay) }}>+</TasksAddButton>
@@ -167,7 +170,10 @@ const DayPreviewDrawer = ({
 
         {birthdays.length > 0 && (
           <>
-            <SectionLabel color="#db2777">Birthdays</SectionLabel>
+            <SectionLabel color="#db2777">
+              <CakeIcon sx={{ fontSize: '0.75rem' }} />
+              Birthdays
+            </SectionLabel>
             {birthdays.map(birthday => (
               <BirthdayDayDetailItem key={birthday.id} onClick={() => onBirthdayClick?.(birthday.id)}>
                 <CakeIcon sx={{ fontSize: '0.9rem', color: '#db2777', flexShrink: 0 }} />
@@ -179,6 +185,7 @@ const DayPreviewDrawer = ({
         )}
 
         <MealsSectionHeader>
+          <RestaurantIcon sx={{ fontSize: '0.75rem' }} />
           <span>Meals</span>
           {onAddMealPlan && selectedDay && (
             <MealsAddButton onClick={(e) => { e.stopPropagation(); onAddMealPlan(selectedDay) }}>+</MealsAddButton>
@@ -199,6 +206,7 @@ const DayPreviewDrawer = ({
         )}
 
         <AdventuresSectionHeader>
+          <ExploreIcon sx={{ fontSize: '0.75rem' }} />
           Adventures
           {onAddAdventure && selectedDay && (
             <AdventuresAddButton onClick={(e) => { e.stopPropagation(); onAddAdventure(selectedDay) }}>+</AdventuresAddButton>
