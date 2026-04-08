@@ -8,6 +8,7 @@ import {
   Notifications as NotificationsIcon,
   ShoppingCart as ShoppingCartIcon,
   VolumeUp as VolumeUpIcon,
+  People as PeopleIcon,
 } from '@mui/icons-material'
 import * as Styled from './index.styled'
 import { getPostLogoutRedirectUri, oidcConfig } from '../../config/oidc'
@@ -20,8 +21,9 @@ import LeaveProjectDialog from '../LeaveProjectDialog'
 import ProjectSettingsSubpage from './ProjectSettingsSubpage'
 import NotificationSettingsSubpage from './NotificationSettingsSubpage'
 import GrocerySettingsSubpage from './GrocerySettingsSubpage'
+import MembersSettingsSubpage from './MembersSettingsSubpage'
 
-type SubpageView = 'main' | 'projects' | 'notifications' | 'grocery'
+type SubpageView = 'main' | 'projects' | 'notifications' | 'grocery' | 'members'
 
 const UserMenu: React.FC = () => {
   const auth = useAuth()
@@ -96,6 +98,10 @@ const UserMenu: React.FC = () => {
 
   const handleShowGrocerySettings = () => {
     setCurrentView('grocery')
+  }
+
+  const handleShowMembersSettings = () => {
+    setCurrentView('members')
   }
 
   const handleNavigateToNoiseTracking = () => {
@@ -202,6 +208,13 @@ const UserMenu: React.FC = () => {
                     <ListItemText primary="Project Settings" />
                   </Styled.MainMenuItem>
 
+                  <Styled.MainMenuItem onClick={handleShowMembersSettings}>
+                    <ListItemIcon>
+                      <PeopleIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Project Members" />
+                  </Styled.MainMenuItem>
+
                   <Styled.MainMenuItem onClick={handleShowNotificationSettings}>
                     <ListItemIcon>
                       <NotificationsIcon fontSize="small" />
@@ -251,6 +264,10 @@ const UserMenu: React.FC = () => {
 
               {currentView === 'grocery' && (
                 <GrocerySettingsSubpage onBack={handleBackToMain} />
+              )}
+
+              {currentView === 'members' && (
+                <MembersSettingsSubpage onBack={handleBackToMain} />
               )}
             </Styled.UserDropdown>
           </>,

@@ -12,7 +12,7 @@ export const UserButton = styled(Button)({
   justifyContent: 'center',
   transition: 'all 0.2s ease',
   minWidth: 'auto',
-  
+
   '&:hover': {
     background: 'rgba(0, 0, 0, 0.05)',
   },
@@ -44,7 +44,7 @@ export const UserDropdown = styled(Box)({
   maxHeight: '400px',
   overflowY: 'auto',
   zIndex: 1000,
-  
+
   '&::before': {
     content: '""',
     position: 'absolute',
@@ -88,7 +88,7 @@ export const LogoutButton = styled(Button)({
   cursor: 'pointer',
   transition: 'all 0.2s ease',
   textTransform: 'none',
-  
+
   '&:hover': {
     background: '#f3f4f6',
     borderColor: '#d1d5db',
@@ -110,18 +110,18 @@ export const CurrentProject = styled(Box)({
   alignItems: 'center',
   padding: '8px 0',
   marginBottom: '8px',
-  
+
   '& .MuiListItemIcon-root': {
     minWidth: '32px',
     color: '#667eea',
   },
-  
+
   '& .MuiListItemText-primary': {
     fontSize: '14px',
     fontWeight: 500,
     color: '#1f2937',
   },
-  
+
   '& .MuiListItemText-secondary': {
     fontSize: '12px',
     color: '#6b7280',
@@ -135,23 +135,23 @@ export const ProjectMenuItem = styled(Box)({
   borderRadius: '6px',
   cursor: 'pointer',
   transition: 'all 0.2s ease',
-  
+
   '&:hover': {
     background: '#f9fafb',
     paddingLeft: '8px',
     paddingRight: '8px',
   },
-  
+
   '& .MuiListItemIcon-root': {
     minWidth: '32px',
     color: '#6b7280',
   },
-  
+
   '& .MuiListItemText-primary': {
     fontSize: '14px',
     color: '#374151',
   },
-  
+
   '& .MuiListItemText-secondary': {
     fontSize: '12px',
     color: '#6b7280',
@@ -166,16 +166,16 @@ export const MainMenuItem = styled(Box)({
   cursor: 'pointer',
   transition: 'all 0.2s ease',
   marginBottom: '4px',
-  
+
   '&:hover': {
     background: '#f9fafb',
   },
-  
+
   '& .MuiListItemIcon-root': {
     minWidth: '36px',
     color: '#667eea',
   },
-  
+
   '& .MuiListItemText-primary': {
     fontSize: '14px',
     fontWeight: 500,
@@ -203,11 +203,11 @@ export const BackButton = styled(Button)({
   alignItems: 'center',
   justifyContent: 'center',
   transition: 'all 0.2s ease',
-  
+
   '&:hover': {
     background: '#f3f4f6',
   },
-  
+
   '& .MuiSvgIcon-root': {
     fontSize: '18px',
     color: '#6b7280',
@@ -228,3 +228,39 @@ export const VersionFooter = styled(Typography)({
   fontFamily: 'monospace',
   letterSpacing: '0.3px',
 })
+
+export const MemberItem = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+  padding: '8px',
+  borderRadius: '8px',
+})
+
+export const MemberNameText = styled(Typography)({
+  fontSize: '14px',
+  fontWeight: 500,
+  color: '#1f2937',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+})
+
+export const RoleBadge = styled('span')<{ isOwner: boolean }>(
+  ({ isOwner }) => ({
+    fontSize: '11px',
+    fontWeight: 600,
+    padding: '2px 8px',
+    borderRadius: '12px',
+    whiteSpace: 'nowrap',
+    ...(isOwner
+      ? {
+          background: 'rgba(102, 126, 234, 0.1)',
+          color: '#667eea',
+        }
+      : {
+          background: 'rgba(107, 114, 128, 0.1)',
+          color: '#6b7280',
+        }),
+  })
+)
