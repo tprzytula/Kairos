@@ -12,7 +12,7 @@ import RecipeViewDrawer from '../../components/RecipeViewDrawer'
 import RecipeFilterSheet from '../../components/RecipeFilterSheet'
 import FilterChip from '../../components/FilterChip'
 import DraggableBottomDrawer from '../../components/DraggableBottomDrawer'
-import { useRecipeContext } from '../../providers/RecipeProvider'
+import { useRecipeContext, RecipeProvider } from '../../providers/RecipeProvider'
 import { IRecipe } from '../../types/recipe'
 import { MealType } from '../../enums/mealType'
 import { RecipeDishType, RecipeDishTypeLabelMap, RecipeDishTypeOrder } from '../../enums/recipeDishType'
@@ -197,7 +197,11 @@ const RecipesContent = () => {
 }
 
 export const RecipesRoute = () => {
-  return <RecipesContent />
+  return (
+    <RecipeProvider>
+      <RecipesContent />
+    </RecipeProvider>
+  )
 }
 
 export default RecipesRoute

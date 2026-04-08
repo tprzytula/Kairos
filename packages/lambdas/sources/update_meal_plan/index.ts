@@ -1,48 +1,11 @@
-import { APIGatewayProxyEvent, Handler } from "aws-lambda";
-import { middleware, AuthenticatedEvent } from "@kairos-lambdas-libs/middleware";
-import { createResponse } from "@kairos-lambdas-libs/response";
+import { DynamoDBTable } from "@kairos-lambdas-libs/dynamodb";
+import { createUpdateHandler } from "@kairos-lambdas-libs/handler-factories";
 import { getBody } from "./body";
 import { updateMealPlan } from "./database";
-import { DynamoDBTable, getItem, verifyPrivateItemOwnership } from "@kairos-lambdas-libs/dynamodb";
+import { IRequestBody } from "./body/types";
 
-export const handler: Handler<APIGatewayProxyEvent> = middleware(
-  async (event: AuthenticatedEvent) => {
-    const { projectId, userId } = event;
-
-    if (!projectId) {
-      return createResponse({
-        statusCode: 400,
-        message: "Project ID is required",
-      });
-    }
-
-    const body = getBody(event.body);
-
-    if (!body) {
-      return createResponse({
-        statusCode: 400,
-      });
-    }
-
-    const { id, date, recipeName, recipeId, mealType, imagePath, isPrivate } = body;
-
-    const existingItem = await getItem({
-      tableName: DynamoDBTable.MEAL_PLANS,
-      item: { id },
-    });
-
-    if (existingItem && !verifyPrivateItemOwnership(existingItem, userId ?? '')) {
-      return createResponse({
-        statusCode: 403,
-        message: "You do not have permission to modify this item",
-      });
-    }
-
-    await updateMealPlan(id, { date, recipeName, recipeId, mealType, imagePath, isPrivate, userId });
-
-    return createResponse({
-      statusCode: 200,
-      message: { id },
-    });
-  },
-);
+export const handler = createUpdateHandler<IRequestBody>({
+  tableName: DynamoDBTable.MEAL_PLANS,
+  getBody,
+  update: updateMealPlan,
+});

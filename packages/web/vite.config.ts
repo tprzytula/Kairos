@@ -13,6 +13,20 @@ export default defineConfig({
         assetFileNames: '[name]-[hash][extname]',
         chunkFileNames: '[name]-[hash].js',
         entryFileNames: '[name]-[hash].js',
+        manualChunks(id: string): string | undefined {
+          if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/') || id.includes('node_modules/react-router')) {
+            return 'vendor-react'
+          }
+          if (id.includes('node_modules/@mui/') || id.includes('node_modules/@emotion/')) {
+            return 'vendor-mui'
+          }
+          if (id.includes('node_modules/@tanstack/react-query')) {
+            return 'vendor-query'
+          }
+          if (id.includes('node_modules/dayjs')) {
+            return 'vendor-dates'
+          }
+        },
       },
     },
   },

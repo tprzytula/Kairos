@@ -5,7 +5,14 @@ import { v4 as uuidv4 } from "uuid"
 import { middleware, AuthenticatedEvent } from "@kairos-lambdas-libs/middleware"
 import { createResponse } from "@kairos-lambdas-libs/response"
 
-const client = new S3Client({})
+let s3Client: S3Client | null = null
+
+const getS3Client = (): S3Client => {
+  if (!s3Client) {
+    s3Client = new S3Client({})
+  }
+  return s3Client
+}
 
 const generateUploadUrl = async (
   folder: string,
@@ -20,7 +27,7 @@ const generateUploadUrl = async (
     Key: key,
   })
 
-  const uploadUrl = await getSignedUrl(client, command, { expiresIn: 300 })
+  const uploadUrl = await getSignedUrl(getS3Client(), command, { expiresIn: 300 })
   const imagePath = `https://${cloudfrontDomain}/${key}`
 
   return { uploadUrl, imagePath }

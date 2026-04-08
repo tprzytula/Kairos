@@ -1,9 +1,9 @@
 import { Mock } from 'vitest'
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import ToDoItem from ".";
 import { useAppState } from "../../providers/AppStateProvider";
 import { ActionName } from "../../providers/AppStateProvider/enums";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { renderWithTheme } from '../../testUtils/renderWithTheme';
 
 vi.mock("../../providers/AppStateProvider");
 
@@ -53,15 +53,6 @@ describe("Given the ToDoItem component", () => {
   });
 });
 
-const theme = createTheme()
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  )
-}
 const renderToDoItem = () => {
   renderWithTheme(<ToDoItem {...EXAMPLE_TO_DO_ITEM_PROPS} />);
 };

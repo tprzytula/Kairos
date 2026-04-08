@@ -1,9 +1,6 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import { ThemeProvider } from '@mui/material/styles'
-import { createTheme } from '@mui/material/styles'
+import { screen, waitFor } from '@testing-library/react'
 import DashboardHeader from './index'
-
-
+import { renderWithTheme } from '../../testUtils/renderWithTheme'
 
 // Mock the useAuth hook
 vi.mock('react-oidc-context', () => ({
@@ -20,16 +17,6 @@ vi.mock('../UserMenu', () => ({
 }))
 
 const mockUseAuth = vi.mocked(useAuth)
-
-const theme = createTheme()
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  )
-}
 
 describe('DashboardHeader', () => {
   beforeEach(() => {

@@ -3,14 +3,14 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useProjectContext } from '../../providers/ProjectProvider'
 
 interface UseEntityCrudConfig<T extends { id: string }, F extends object = Record<string, unknown>> {
-  queryKey: string
+  queryKeyPrefix: string
   fetchFn: (projectId: string) => Promise<T[]>
   updateFn: (id: string, fields: F, projectId: string) => Promise<void>
   deleteFn: (id: string, projectId: string) => Promise<void>
 }
 
 export const useEntityCrud = <T extends { id: string }, F extends object = Record<string, unknown>>(config: UseEntityCrudConfig<T, F>) => {
-  const { queryKey: key, fetchFn, updateFn, deleteFn } = config
+  const { queryKeyPrefix: key, fetchFn, updateFn, deleteFn } = config
   const { currentProject } = useProjectContext()
   const queryClient = useQueryClient()
   const queryKey = [key, currentProject?.id]

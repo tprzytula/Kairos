@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "incremental": true
+  },
+  "files": [],
+  "references": [
+    { "path": "packages/web" },
+    { "path": "packages/lambdas" }
+  ]
+}

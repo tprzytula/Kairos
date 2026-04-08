@@ -1,7 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { ThemeProvider } from '@mui/material/styles'
-import theme from '../../theme'
+import { screen, fireEvent } from '@testing-library/react'
 import PWAUpdateNotification from './index'
+import { renderWithTheme } from '../../testUtils/renderWithTheme'
 
 // Mock the usePWAUpdate hook
 const mockUsePWAUpdate = {
@@ -18,14 +17,6 @@ const mockUsePWAUpdate = {
 vi.mock('../../hooks/usePWAUpdate', () => ({
   usePWAUpdate: () => mockUsePWAUpdate,
 }))
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  )
-}
 
 describe('PWAUpdateNotification', () => {
   beforeEach(() => {

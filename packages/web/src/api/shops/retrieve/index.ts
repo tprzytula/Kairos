@@ -1,13 +1,5 @@
-import { API_BASE_URL } from '../../index'
+import { ApiEndpoint } from '../../../enums/apiResource'
 import { IDBShop } from '../types'
-import { createFetchOptions } from '../../../utils/api'
+import { createGetFetcher } from '../../index'
 
-export const retrieveShops = async (projectId?: string): Promise<Array<IDBShop>> => {
-  const response = await fetch(`${API_BASE_URL}/shops`, createFetchOptions({}, projectId))
-
-  if (response.ok) {
-    return await response.json()
-  }
-
-  return []
-}
+export const retrieveShops = createGetFetcher<IDBShop>(ApiEndpoint.SHOPS)

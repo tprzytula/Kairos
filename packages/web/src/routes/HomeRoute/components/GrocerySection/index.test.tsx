@@ -1,11 +1,10 @@
 import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
-import { ThemeProvider } from '@mui/material/styles'
-import theme from '../../../../theme'
+import { screen, fireEvent } from '@testing-library/react'
 import { GrocerySection } from './index'
 import { IGroceryItem } from '../../../../providers/AppStateProvider/types'
 import { IGroceryStats } from '../../../../hooks/useHomeData/types'
 import { GroceryItemUnit } from '../../../../enums/groceryItem'
+import { renderWithTheme } from '../../../../testUtils/renderWithTheme'
 
 const createMockGroceryItem = (overrides: Partial<IGroceryItem> = {}): IGroceryItem => ({
   id: 'grocery-1',
@@ -25,14 +24,6 @@ const createMockGroceryStats = (overrides: Partial<IGroceryStats> = {}): IGrocer
   hasOverflow: false,
   ...overrides
 })
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  )
-}
 
 describe('GrocerySection component', () => {
   const mockOnGroceryItemClick = vi.fn()

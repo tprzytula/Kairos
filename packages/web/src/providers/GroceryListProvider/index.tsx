@@ -57,6 +57,7 @@ export const GroceryListProvider = ({ children, shopId }: IGroceryListProviderPr
       }))
     },
     enabled: !!currentProject,
+    staleTime: 60 * 1000,
   })
 
   useEffect(() => {

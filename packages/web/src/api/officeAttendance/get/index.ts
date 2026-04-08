@@ -1,13 +1,5 @@
+import { ApiEndpoint } from '../../../enums/apiResource'
 import { IOfficeAttendance } from '../../../types/officeAttendance'
-import { API_BASE_URL } from '../../index'
-import { createFetchOptions } from '../../../utils/api'
+import { createGetFetcher } from '../../index'
 
-export const getOfficeAttendance = async (projectId?: string): Promise<IOfficeAttendance[]> => {
-  const response = await fetch(`${API_BASE_URL}/office-attendance`, createFetchOptions({}, projectId))
-
-  if (response.ok) {
-    return await response.json()
-  }
-
-  return []
-}
+export const getOfficeAttendance = createGetFetcher<IOfficeAttendance>(ApiEndpoint.OFFICE_ATTENDANCE)

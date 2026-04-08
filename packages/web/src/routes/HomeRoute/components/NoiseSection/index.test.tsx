@@ -1,10 +1,9 @@
 import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
-import { ThemeProvider } from '@mui/material/styles'
-import theme from '../../../../theme'
+import { screen, fireEvent } from '@testing-library/react'
 import { NoiseSection } from './index'
 import { INoiseTrackingItem } from '../../../../api/noiseTracking'
 import { INoiseCounts } from '../../../../hooks/useHomeData/types'
+import { renderWithTheme } from '../../../../testUtils/renderWithTheme'
 
 const createMockNoiseItem = (timestamp: number): INoiseTrackingItem => ({
   id: timestamp.toString(),
@@ -18,14 +17,6 @@ const createMockNoiseCounts = (overrides: Partial<INoiseCounts> = {}): INoiseCou
   totalCount: 0,
   ...overrides
 })
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  )
-}
 
 describe('NoiseSection component', () => {
   const mockOnNoiseViewChange = vi.fn()

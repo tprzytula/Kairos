@@ -1,10 +1,12 @@
-import { render, screen } from '@testing-library/react'
-import { ThemeProvider } from '@mui/material/styles'
-import { createTheme } from '@mui/material/styles'
+import { screen } from '@testing-library/react'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
 import AppInfoCard from './index'
 
 import { useVersion } from '../../hooks/useVersion'
 import { useProjectContext } from '../../providers/ProjectProvider'
+import { renderWithTheme } from '../../testUtils/renderWithTheme'
+
+const theme = createTheme()
 
 // Mock the useVersion hook
 vi.mock('../../hooks/useVersion', () => ({
@@ -18,16 +20,6 @@ vi.mock('../../providers/ProjectProvider', () => ({
 
 const mockUseVersion = vi.mocked(useVersion)
 const mockUseProjectContext = vi.mocked(useProjectContext)
-
-const theme = createTheme()
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  )
-}
 
 describe('AppInfoCard', () => {
   beforeEach(() => {

@@ -34,18 +34,7 @@ export enum DynamoDBIndex {
   ADVENTURES_PROJECT = "ProjectAdventuresIndex",
 }
 
-export enum GroceryItemUnit {
-  BAG = 'bag(s)',
-  BOTTLE = 'bottle(s)',
-  BOX = 'box(es)',
-  CAN = 'can(s)',
-  GRAM = 'gram(s)',
-  KILOGRAM = 'kg',
-  LITER = 'liter(s)',
-  MILLILITER = 'ml(s)',
-  ROLL = 'roll(s)',
-  UNIT = 'unit(s)',
-}
+export { GroceryItemUnit } from '@kairos/shared'
 
 export enum GroceryItemCategory {
   MEAT_POULTRY = "Meat & Poultry",

@@ -1,16 +1,7 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
-import { ThemeProvider } from '@mui/material/styles'
-import theme from '../../../../../theme'
+import { screen } from '@testing-library/react'
 import { EmptyState } from './index'
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  )
-}
+import { renderWithTheme } from '../../../../../testUtils/renderWithTheme'
 
 describe('EmptyState component', () => {
   describe('when rendered with text content', () => {

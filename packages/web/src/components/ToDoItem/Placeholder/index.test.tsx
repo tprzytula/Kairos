@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react"
+import { screen } from "@testing-library/react"
 import ToDoItemPlaceholder from "."
-import { ThemeProvider, createTheme } from "@mui/material/styles"
+import { renderWithTheme } from '../../../testUtils/renderWithTheme'
 
 describe('Given the ToDoItemPlaceholder component', () => {
   it('should render the placeholder', () => {
@@ -9,14 +9,4 @@ describe('Given the ToDoItemPlaceholder component', () => {
     expect(screen.getByLabelText('To do item placeholder')).toBeInTheDocument()
   })
 })
-
-const theme = createTheme()
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  )
-}
 

@@ -1,15 +1,5 @@
-import { render } from "@testing-library/react"
-import { ThemeProvider } from '@mui/material/styles'
-import theme from '../../../theme'
 import NoiseTrackingItemPlaceholder from "."
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  )
-}
+import { renderWithTheme } from '../../../testUtils/renderWithTheme'
 
 describe('Given the NoiseTrackingItemPlaceholder component', () => {
   it('should render placeholder elements', () => {

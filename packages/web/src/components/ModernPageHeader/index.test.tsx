@@ -1,20 +1,9 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { ThemeProvider } from '@mui/material/styles'
-import { createTheme } from '@mui/material/styles'
+import { screen, fireEvent } from '@testing-library/react'
 import ModernPageHeader from './index'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import ChecklistIcon from '@mui/icons-material/Checklist'
 import StorefrontIcon from '@mui/icons-material/Storefront'
-
-const theme = createTheme()
-
-const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  )
-}
+import { renderWithTheme } from '../../testUtils/renderWithTheme'
 
 describe('ModernPageHeader', () => {
   describe('basic rendering', () => {

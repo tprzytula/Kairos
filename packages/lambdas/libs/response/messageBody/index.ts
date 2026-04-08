@@ -5,6 +5,9 @@ const TEMPLATES: ITemplates = {
   [ResponseStatusCodes.OK]: "OK",
   [ResponseStatusCodes.CREATED]: "Created",
   [ResponseStatusCodes.BAD_REQUEST]: "Bad Request",
+  [ResponseStatusCodes.NOT_FOUND]: "Not Found",
+  [ResponseStatusCodes.CONFLICT]: "Conflict",
+  [ResponseStatusCodes.UNPROCESSABLE_ENTITY]: "Unprocessable Entity",
   [ResponseStatusCodes.INTERNAL_SERVER_ERROR]: "Internal Server Error",
 };
 

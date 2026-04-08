@@ -33,7 +33,7 @@ export const useBirthdayContext = () => useContext(BirthdayContext)
 
 export const BirthdayProvider = ({ children }: StateComponentProps) => {
   const { items: birthdays, isLoading, isError, currentProject, refetch, addToCache, update, remove } = useEntityCrud<IBirthdayItem>({
-    queryKey: 'birthdays',
+    queryKeyPrefix: 'birthdays',
     fetchFn: retrieveBirthdays,
     updateFn: (id, fields, projectId) => updateBirthday(id, fields as BirthdayUpdateFields, projectId),
     deleteFn: removeBirthday,
