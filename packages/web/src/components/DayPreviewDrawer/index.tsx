@@ -25,6 +25,7 @@ import {
   AdventuresSectionHeader,
   TasksAddButton,
   AdventuresAddButton,
+  OfficeAddButton,
 } from '../Planner/CalendarView/index.styled'
 import {
   DAY_PREVIEW_GRADIENT,
@@ -59,6 +60,7 @@ interface IDayPreviewDrawerProps {
   onAdventureClick?: (id: string) => void
   onAddAdventure?: (date: string) => void
   onAddTask?: (date: string) => void
+  onAddOfficeDay?: (date: string) => void
   onRemoveAttendance?: (id: string) => void
 }
 
@@ -94,6 +96,7 @@ const DayPreviewDrawer = ({
   onAdventureClick,
   onAddAdventure,
   onAddTask,
+  onAddOfficeDay,
   onRemoveAttendance,
 }: IDayPreviewDrawerProps) => {
   return (
@@ -219,6 +222,9 @@ const DayPreviewDrawer = ({
         <SectionLabel color="#0284c7">
           <BusinessIcon sx={{ fontSize: '0.75rem' }} />
           Office
+          {onAddOfficeDay && selectedDay && (
+            <OfficeAddButton onClick={(e) => { e.stopPropagation(); onAddOfficeDay(selectedDay) }}>+</OfficeAddButton>
+          )}
         </SectionLabel>
         {officeAttendance.length === 0 ? (
           <DayDetailEmpty>No one at the office</DayDetailEmpty>

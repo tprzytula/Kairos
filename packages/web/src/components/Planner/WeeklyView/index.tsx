@@ -49,6 +49,7 @@ interface IWeeklyViewProps {
   onAddAdventure?: (date: string) => void
   onAddTask?: (date: string) => void
   officeAttendance?: IOfficeAttendance[]
+  onAddOfficeDay?: (date: string) => void
   onRemoveAttendance?: (id: string) => void
 }
 
@@ -71,6 +72,7 @@ const WeeklyView = ({
   onAddAdventure,
   onAddTask,
   officeAttendance = [],
+  onAddOfficeDay,
   onRemoveAttendance,
 }: IWeeklyViewProps) => {
   const [currentWeek, setCurrentWeek] = useState<Dayjs>(() => getWeekStart(dayjs()))
@@ -368,6 +370,7 @@ const WeeklyView = ({
         onAdventureClick={onAdventureClick}
         onAddAdventure={onAddAdventure}
         onAddTask={onAddTask}
+        onAddOfficeDay={onAddOfficeDay}
         onRemoveAttendance={onRemoveAttendance}
       />
     </WeeklyContainer>

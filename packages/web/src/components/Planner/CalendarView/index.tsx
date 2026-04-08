@@ -57,6 +57,7 @@ interface ICalendarViewProps {
   adventures?: IAdventure[]
   onAdventureClick?: (id: string) => void
   officeAttendance?: IOfficeAttendance[]
+  onAddOfficeDay?: (date: string) => void
   onRemoveAttendance?: (id: string) => void
 }
 
@@ -72,6 +73,7 @@ const CalendarView = ({
   adventures = [],
   onAdventureClick,
   officeAttendance = [],
+  onAddOfficeDay,
   onRemoveAttendance,
 }: ICalendarViewProps) => {
   const { dispatch } = useAppState()
@@ -372,6 +374,7 @@ const CalendarView = ({
         onAdventureClick={onAdventureClick}
         onAddTask={onAddTask}
         officeAttendance={selectedDayOfficeAttendance}
+        onAddOfficeDay={onAddOfficeDay}
         onRemoveAttendance={onRemoveAttendance}
       />
 

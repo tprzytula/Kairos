@@ -41,6 +41,7 @@ export const Planner = ({
   onMealPlanClick,
   onAddAdventure,
   onAddTask: _onAddTask,
+  onAddOfficeDay,
   onRemoveAttendance,
 }: IToDoListProps = {}) => {
   const { dispatch } = useAppState()
@@ -268,6 +269,7 @@ export const Planner = ({
             adventures={adventures}
             onAdventureClick={handleAdventurePreview}
             officeAttendance={officeAttendance}
+            onAddOfficeDay={onAddOfficeDay}
             onRemoveAttendance={onRemoveAttendance}
           />
         )}
@@ -295,6 +297,7 @@ export const Planner = ({
             onAddAdventure={onAddAdventure ?? handleAddAdventure}
             onAddTask={_onAddTask ?? handleAddTask}
             officeAttendance={officeAttendance}
+            onAddOfficeDay={onAddOfficeDay}
             onRemoveAttendance={onRemoveAttendance}
           />
         )}

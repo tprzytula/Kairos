@@ -135,6 +135,11 @@ const PlannerContent = () => {
     navigate(Route.AddPlannerItem)
   }, [dispatch, navigate])
 
+  const handleAddOfficeDay = useCallback((date: string) => {
+    dispatch({ type: ActionName.SET_SELECTED_CALENDAR_DATE, payload: date })
+    navigate(Route.AddPlannerItem, { state: { itemType: 'office' } })
+  }, [dispatch, navigate])
+
   const handleMealPlanClick = useCallback((mealPlan: IMealPlan) => {
     setPreviewMealPlan(mealPlan)
   }, [])
@@ -175,6 +180,7 @@ const PlannerContent = () => {
             onMealPlanClick={handleMealPlanClick}
             onAddAdventure={handleAddAdventure}
             onAddTask={handleAddTask}
+            onAddOfficeDay={handleAddOfficeDay}
             onRemoveAttendance={removeAttendance}
           />
         </PlannerScrollArea>

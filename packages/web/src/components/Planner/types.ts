@@ -10,5 +10,6 @@ export interface IToDoListProps {
   onMealPlanClick?: (mealPlan: IMealPlan) => void;
   onAddAdventure?: (date: string) => void;
   onAddTask?: (date: string) => void;
+  onAddOfficeDay?: (date: string) => void;
   onRemoveAttendance?: (id: string) => void;
 };

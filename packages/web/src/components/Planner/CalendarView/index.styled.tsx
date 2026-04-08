@@ -518,3 +518,21 @@ export const AdventuresAddButton = styled('span')({
     borderStyle: 'solid',
   },
 })
+
+export const OfficeAddButton = styled('span')({
+  fontSize: '0.85rem',
+  fontWeight: 700,
+  color: '#0284c7',
+  backgroundColor: 'rgba(2, 132, 199, 0.12)',
+  border: '1.5px dashed #0284c7',
+  borderRadius: '6px',
+  padding: '1px 8px',
+  cursor: 'pointer',
+  marginLeft: 'auto',
+  transition: 'all 0.12s ease',
+  lineHeight: 1.4,
+  '&:hover': {
+    backgroundColor: 'rgba(2, 132, 199, 0.22)',
+    borderStyle: 'solid',
+  },
+})
