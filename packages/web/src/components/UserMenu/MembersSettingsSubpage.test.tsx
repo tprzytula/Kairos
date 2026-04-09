@@ -1,8 +1,10 @@
-import { render, screen } from '@testing-library/react'
-import { fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
 import MembersSettingsSubpage from './MembersSettingsSubpage'
 import { ProjectRole } from '../../types/project'
 import { IProjectMemberDetails } from '../../types/projectMemberDetails'
+
+const theme = createTheme()
 
 const mockMembers: IProjectMemberDetails[] = [
   {
@@ -19,10 +21,21 @@ const mockMembers: IProjectMemberDetails[] = [
   },
 ]
 
+const mockRemoveMember = vi.fn()
+
 const mockUseProjectMembersContext = vi.fn(() => ({
   members: mockMembers,
   isLoading: false,
   isError: false,
+  removeMember: mockRemoveMember,
+}))
+
+const mockUseProjectContext = vi.fn(() => ({
+  currentProject: { id: 'project-1', ownerId: 'user-1', name: 'Test Project', isPersonal: false },
+}))
+
+const mockUseAuth = vi.fn(() => ({
+  user: { profile: { sub: 'user-1' }, access_token: 'token' },
 }))
 
 vi.mock('../../providers/ProjectMembersProvider', () => ({
@@ -31,6 +44,22 @@ vi.mock('../../providers/ProjectMembersProvider', () => ({
   ),
   useProjectMembersContext: () => mockUseProjectMembersContext(),
 }))
+
+vi.mock('../../providers/ProjectProvider', () => ({
+  useProjectContext: () => mockUseProjectContext(),
+}))
+
+vi.mock('react-oidc-context', () => ({
+  useAuth: () => mockUseAuth(),
+}))
+
+const renderComponent = (props = {}) => {
+  return render(
+    <ThemeProvider theme={theme}>
+      <MembersSettingsSubpage onBack={vi.fn()} {...props} />
+    </ThemeProvider>
+  )
+}
 
 describe('Given the MembersSettingsSubpage component', () => {
   const defaultProps = {
@@ -43,39 +72,52 @@ describe('Given the MembersSettingsSubpage component', () => {
       members: mockMembers,
       isLoading: false,
       isError: false,
+      removeMember: mockRemoveMember,
+    })
+    mockUseProjectContext.mockReturnValue({
+      currentProject: {
+        id: 'project-1',
+        ownerId: 'user-1',
+        name: 'Test Project',
+        isPersonal: false,
+      },
+    })
+    mockUseAuth.mockReturnValue({
+      user: { profile: { sub: 'user-1' }, access_token: 'token' },
     })
   })
 
   it('should render the subpage title', () => {
-    render(<MembersSettingsSubpage {...defaultProps} />)
+    renderComponent(defaultProps)
 
     expect(screen.getByText('Project Members')).toBeVisible()
   })
 
   it('should call onBack when back button is clicked', () => {
-    render(<MembersSettingsSubpage {...defaultProps} />)
+    renderComponent(defaultProps)
 
-    fireEvent.click(screen.getByRole('button'))
+    const backButton = screen.getByText('Project Members').previousElementSibling!
+    fireEvent.click(backButton)
 
     expect(defaultProps.onBack).toHaveBeenCalledTimes(1)
   })
 
   it('should render member names', () => {
-    render(<MembersSettingsSubpage {...defaultProps} />)
+    renderComponent(defaultProps)
 
     expect(screen.getByText('Alice Smith')).toBeVisible()
     expect(screen.getByText('Bob Jones')).toBeVisible()
   })
 
   it('should render role badges', () => {
-    render(<MembersSettingsSubpage {...defaultProps} />)
+    renderComponent(defaultProps)
 
     expect(screen.getByText('Owner')).toBeVisible()
     expect(screen.getByText('Member')).toBeVisible()
   })
 
   it('should render member avatars with initials as fallback', () => {
-    render(<MembersSettingsSubpage {...defaultProps} />)
+    renderComponent(defaultProps)
 
     expect(screen.getByText('B')).toBeVisible()
   })
@@ -85,9 +127,10 @@ describe('Given the MembersSettingsSubpage component', () => {
       members: [],
       isLoading: true,
       isError: false,
+      removeMember: mockRemoveMember,
     })
 
-    render(<MembersSettingsSubpage {...defaultProps} />)
+    renderComponent(defaultProps)
 
     expect(screen.getByRole('progressbar')).toBeVisible()
   })
@@ -97,9 +140,10 @@ describe('Given the MembersSettingsSubpage component', () => {
       members: [],
       isLoading: false,
       isError: true,
+      removeMember: mockRemoveMember,
     })
 
-    render(<MembersSettingsSubpage {...defaultProps} />)
+    renderComponent(defaultProps)
 
     expect(screen.getByText('Failed to load members')).toBeVisible()
   })
@@ -109,10 +153,74 @@ describe('Given the MembersSettingsSubpage component', () => {
       members: [],
       isLoading: false,
       isError: false,
+      removeMember: mockRemoveMember,
     })
 
-    render(<MembersSettingsSubpage {...defaultProps} />)
+    renderComponent(defaultProps)
 
     expect(screen.getByText('No members found')).toBeVisible()
+  })
+
+  describe('When the current user is the owner', () => {
+    it('should show remove button for non-owner members', () => {
+      renderComponent(defaultProps)
+
+      expect(screen.getByLabelText('Remove Bob Jones')).toBeVisible()
+    })
+
+    it('should not show remove button for the owner', () => {
+      renderComponent(defaultProps)
+
+      expect(screen.queryByLabelText('Remove Alice Smith')).not.toBeInTheDocument()
+    })
+
+    it('should open confirmation dialog when remove button is clicked', () => {
+      renderComponent(defaultProps)
+
+      fireEvent.click(screen.getByLabelText('Remove Bob Jones'))
+
+      expect(screen.getByText('Remove Member')).toBeVisible()
+      expect(
+        screen.getByText(/Are you sure you want to remove/)
+      ).toBeVisible()
+    })
+
+    it('should call removeMember when confirmed', async () => {
+      mockRemoveMember.mockResolvedValue(undefined)
+      renderComponent(defaultProps)
+
+      fireEvent.click(screen.getByLabelText('Remove Bob Jones'))
+      fireEvent.click(screen.getByRole('button', { name: 'Remove' }))
+
+      await waitFor(() => {
+        expect(mockRemoveMember).toHaveBeenCalledWith('user-2')
+      })
+    })
+
+    it('should close dialog when cancel is clicked', async () => {
+      renderComponent(defaultProps)
+
+      fireEvent.click(screen.getByLabelText('Remove Bob Jones'))
+      expect(screen.getByText('Remove Member')).toBeVisible()
+
+      fireEvent.click(screen.getByText('Cancel'))
+
+      await waitFor(() => {
+        expect(screen.queryByText('Remove Member')).not.toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('When the current user is not the owner', () => {
+    it('should not show remove buttons', () => {
+      mockUseAuth.mockReturnValue({
+        user: { profile: { sub: 'user-2' }, access_token: 'token' },
+      })
+
+      renderComponent(defaultProps)
+
+      expect(screen.queryByLabelText('Remove Bob Jones')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('Remove Alice Smith')).not.toBeInTheDocument()
+    })
   })
 })
