@@ -4,6 +4,7 @@ export interface IState {
   members: IProjectMemberDetails[]
   isLoading: boolean
   isError: boolean
+  removeMember: (userId: string) => Promise<void>
 }
 
 export interface IProjectMembersProviderProps {

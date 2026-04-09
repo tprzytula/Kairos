@@ -339,6 +339,18 @@ locals {
         }
       }
     },
+    "remove_project_member" = {
+      environment_variables = {}
+      permissions = {
+        database = {
+          project_members    = "read-write"
+          push_subscriptions = "none"
+        }
+        sns = {
+          todo_notifications = "none"
+        }
+      }
+    },
     "get_project_invite_info" = {
       environment_variables = {}
       permissions = {
