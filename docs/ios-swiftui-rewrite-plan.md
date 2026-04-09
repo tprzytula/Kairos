@@ -62,7 +62,9 @@ OIDC config (from `packages/web/src/config/oidc.ts`):
 - Scopes: `email openid profile`
 - Response type: `code` (PKCE flow)
 
-**One infra change required**: Add `kairos://auth/callback` to `callback_urls` in `packages/infra/modules/cognito/main.tf:94`.
+**Infra changes required** in `packages/infra/modules/cognito/main.tf`:
+- Add `kairos://auth/callback` to `callback_urls` (line ~94)
+- Add `kairos://` to `logout_urls` (line ~99)
 
 ### Data Layer
 
@@ -428,17 +430,28 @@ struct RecipeIngredient: Codable, Sendable {
     var unit: GroceryItemUnit
 }
 
-// GroceryItem — defined in web app only  
+// GroceryItem — defined in web app only
+// IMPORTANT: quantity is a String on the wire (e.g., "5"). Use custom Codable or
+// a computed property to convert to/from Double for UI display.
 struct GroceryItem: Codable, Identifiable, Sendable {
     let id: String
     var name: String
-    var quantity: Double
+    var quantity: String       // String on the wire — convert to Double for display
     var unit: GroceryItemUnit
     var shopId: String
     var imagePath: String?
     var category: String?
-    var visibility: String?
+    var visibility: String?    // "private" or nil (see isPrivate mapping in API Patterns)
     var ownerId: String?
+}
+
+// GroceryItemDefault — user-scoped autocomplete defaults for grocery items
+// Used in grocery settings UI for managing default items
+struct GroceryItemDefault: Codable, Sendable {
+    var name: String           // Also used as the path parameter for PATCH/DELETE
+    var unit: GroceryItemUnit?
+    var icon: String?
+    var category: String?
 }
 
 // Project — defined in web app only
@@ -450,6 +463,16 @@ struct Project: Codable, Identifiable, Sendable {
     let maxMembers: Int
     let inviteCode: String
     let createdAt: String
+}
+
+// ProjectInviteInfo — returned by GET /projects/invite/{inviteCode} (public, no auth)
+// Used in the join-project flow to preview a project before joining
+struct ProjectInviteInfo: Codable, Sendable {
+    let id: String
+    let name: String
+    let memberCount: Int
+    let maxMembers: Int
+    var ownerName: String?
 }
 ```
 
@@ -481,12 +504,16 @@ enum MealType: String, Codable, CaseIterable, Sendable {
 }
 
 // From packages/shared/enums/recipeDishType.ts
+// All raw values explicit to match wire format exactly
 enum RecipeDishType: String, Codable, CaseIterable, Sendable {
-    case pasta, soup, salad
+    case pasta = "pasta"
+    case soup = "soup"
+    case salad = "salad"
     case bakedGoods = "baked_goods"
-    case rice, stew
+    case rice = "rice"
+    case stew = "stew"
     case stirFry = "stir_fry"
-    case sandwich
+    case sandwich = "sandwich"
 }
 
 // From packages/shared/types/project.ts
@@ -532,29 +559,295 @@ enum PlannerViewMode: String, Codable, Sendable {
 
 ## API Endpoints
 
-From `packages/web/src/enums/apiResource.ts` and provider analysis:
+Source: `packages/infra/modules/api_gateway/openapi/*.yml` and `packages/web/src/api/*/index.ts`.
 
-| Domain | Base Path | GET | PUT (create) | POST /{id} (update) | DELETE /{id} |
-|---|---|---|---|---|---|
-| Shops | `/shops` | List shops | Create shop | Update shop | Delete shop |
-| Grocery | `/grocery_list` | List items (`?shopId=`) | Add item | Update item | Delete item |
-| Grocery Defaults | `/grocery_list/items_defaults` | List defaults | Add default | Update default | Delete default |
-| To-Do | `/todo_list/items` | List items | Add item | Update item | Delete item |
-| Recipes | `/recipes` | List recipes | Add recipe | Update recipe | Delete recipe |
-| Meal Plans | `/meal-plans` | List plans | Add plan | Update plan | Delete plan |
-| Adventures | `/adventures` | List adventures | Add adventure | Update adventure | Delete adventure |
-| Birthdays | `/birthdays/items` | List birthdays | Add birthday | Update birthday | Delete birthday |
-| Noise | `/noise-tracking` | List items | Add item | — | Delete item |
-| Office | `/office-attendance` | List attendance | Add attendance | — | Delete attendance |
-| Projects | `/projects` | List projects | Create project | — | Leave project |
-| Project Members | `/projects/members` | List members | — | — | Remove `/{userId}` |
-| User Prefs | `/user/preferences` | Get prefs | Update prefs | — | — |
-| Push Subs | `/push-subscriptions` | — | Save sub | — | Delete sub |
-| Upload URLs | `/{resource}/upload-url` | Get signed URL (`?extension=`) | — | — | — |
+### Header Construction
+
+```swift
+// Project-scoped requests (most domain endpoints)
+"Authorization": "Bearer \(idToken)"
+"X-Project-ID": projectId    // from ProjectStore.currentProject.id
+"Content-Type": "application/json"
+
+// User-scoped requests (projects, preferences, push subscriptions, grocery defaults)
+"Authorization": "Bearer \(accessToken)"
+"Content-Type": "application/json"
+// NO X-Project-ID header
+```
+
+### Endpoint Reference
+
+#### Shops
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| GET | `/shops` | — | `[Shop]` | Project-scoped |
+| PUT | `/shops` | `{ name, icon? }` | `{ id }` | |
+| PATCH | `/shops/{id}` | `{ id, name?, icon? }` | `Shop` | **PATCH not POST** |
+| DELETE | `/shops/{id}` | — | 200 | |
+| GET | `/shops/upload-url?extension=jpg` | — | `{ uploadUrl, imagePath }` | Pre-signed S3 URL |
+
+#### Grocery Items (batch operations)
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| GET | `/grocery_list/items` | — | `[GroceryItem]` | `?shopId=` optional filter. Project-scoped |
+| PUT | `/grocery_list/items` | `{ items: [GroceryItem], isPrivate?: true }` | `{ items: [{ id }] }` | **BATCH add (max 25)**. `quantity` is a **String** on the wire |
+| PATCH | `/grocery_list/items/{id}` | `{ id, name?, quantity?, unit?, shopId?, imagePath?, isPrivate? }` | `GroceryItem` | Single item update |
+| DELETE | `/grocery_list/items/{id}` | — | 200 | Single item delete |
+
+#### Grocery Item Defaults (user-scoped, NO X-Project-ID)
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| GET | `/grocery_list/items_defaults` | — | `[GroceryItemDefault]` | User-scoped |
+| POST | `/grocery_list/items_defaults` | `{ name, unit?, icon?, category? }` | 201 | |
+| PATCH | `/grocery_list/items_defaults/{name}` | `{ icon?, unit?, category? }` | 200 | Keyed by **name** not id |
+| DELETE | `/grocery_list/items_defaults/{name}` | — | 200 | |
+| GET | `/grocery_list/items_defaults/upload-url?extension=jpg` | — | `{ uploadUrl, imagePath }` | |
+
+#### To-Do Items (supports batch update)
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| GET | `/todo_list/items` | — | `[TodoItem]` | Project-scoped |
+| PUT | `/todo_list/items` | `{ name, description?, dueDate?, isDone? }` | 201 | Single create |
+| PATCH | `/todo_list/items/{id}` | `{ id, name?, description?, dueDate?, isDone? }` | `TodoItem` | Single update |
+| POST | `/todo_list/items` | `{ items: [{ id, isDone }] }` | `[TodoItem]` | **BATCH toggle isDone** |
+| DELETE | `/todo_list/items` | `{ items: [TodoItem] }` | 200 | |
+
+#### Recipes
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| GET | `/recipes` | — | `[Recipe]` | Project-scoped |
+| PUT | `/recipes` | `{ name, ingredients, instructions?, imagePath?, mealTypes?, dishTypes? }` | `{ id }` | |
+| POST | `/recipes/{id}` | `{ id, name?, ingredients?, instructions?, imagePath?, mealTypes?, dishTypes? }` | 200 | |
+| DELETE | `/recipes/{id}` | — | 200 | |
+| GET | `/recipes/upload-url?extension=jpg` | — | `{ uploadUrl, imagePath }` | |
+
+#### Meal Plans
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| GET | `/meal-plans` | — | `[MealPlan]` | Project-scoped |
+| PUT | `/meal-plans` | `{ date, recipeName, recipeId?, imagePath? }` | `{ id }` | |
+| POST | `/meal-plans/{id}` | `{ id, date?, recipeName?, recipeId?, mealType?, imagePath? }` | 200 | |
+| DELETE | `/meal-plans/{id}` | — | 200 | |
+| GET | `/meal-plans/upload-url?extension=jpg` | — | `{ uploadUrl, imagePath }` | |
+
+#### Adventures
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| GET | `/adventures` | — | `[Adventure]` | Project-scoped |
+| PUT | `/adventures` | `{ name, date, endDate?, time?, location?, notes?, imagePath? }` | `{ id }` | |
+| POST | `/adventures/{id}` | `{ id, name?, date?, endDate?, time?, location?, notes?, imagePath? }` | 200 | |
+| DELETE | `/adventures/{id}` | — | 200 | |
+| GET | `/adventures/upload-url?extension=jpg` | — | `{ uploadUrl, imagePath }` | |
+
+#### Birthdays
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| GET | `/birthdays/items` | — | `[Birthday]` | Project-scoped |
+| PUT | `/birthdays/items` | `{ name, month, day, birthYear?, notes? }` | 201 | |
+| PATCH | `/birthdays/items/{id}` | `{ id, name?, month?, day?, birthYear?, notes? }` | 200 | **PATCH not POST** |
+| DELETE | `/birthdays/items/{id}` | — | 200 | |
+
+#### Noise Tracking
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| GET | `/noise_tracking/items` | — | `[NoiseTrackingItem]` | Project-scoped. Note: **underscores** |
+| PUT | `/noise_tracking/items` | `{ timestamp }` | 201 | timestamp = Unix ms |
+| DELETE | `/noise_tracking/items/{timestamp}` | — | 200 | Path param is **timestamp (number)** not id |
+
+#### Office Attendance
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| GET | `/office-attendance` | — | `[OfficeAttendance]` | Project-scoped |
+| PUT | `/office-attendance` | `{ date, userId, userName, userAvatar? }` | `{ id }` | |
+| DELETE | `/office-attendance/{id}` | — | 200 | |
+
+#### Projects (user-scoped, NO X-Project-ID except members)
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| GET | `/projects` | — | `[Project]` | User-scoped |
+| POST | `/projects` | `{ name, isPersonal? }` | `ProjectWithRole` | Create project |
+| POST | `/projects/join` | `{ inviteCode }` | `ProjectWithRole` | 6-char uppercase alphanumeric |
+| GET | `/projects/invite/{inviteCode}` | — | `ProjectInviteInfo` | **Public, no auth required** |
+| GET | `/projects/members` | — | `[ProjectMember]` | **Requires X-Project-ID** |
+| DELETE | `/projects/members` | — | 200 | Leave project. Requires X-Project-ID |
+| DELETE | `/projects/members/{userId}` | — | 200 | Remove member (owner only). Requires X-Project-ID |
+
+#### User Preferences (user-scoped, NO X-Project-ID)
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| GET | `/user/preferences` | — | `UserPreferences` | |
+| PUT | `/user/preferences` | `{ currentProjectId? }` | `UserPreferences` | |
+
+#### Push Subscriptions (user-scoped, uses accessToken)
+| Method | Path | Body | Response | Notes |
+|--------|------|------|----------|-------|
+| POST | `/push-subscriptions` | `{ endpoint, keys: { p256dh, auth } }` | `{ success }` | VAPID web push |
+| DELETE | `/push-subscriptions?endpoint={urlEncoded}` | — | `{ success }` | |
+
+### Key API Patterns
+
+1. **PATCH vs POST for updates**: Shops, grocery items, todo items, and birthdays use `PATCH`. Adventures, recipes, and meal plans use `POST`. Always check the table above.
+2. **Batch operations**: Grocery PUT accepts `{ items: [...] }` (max 25). Todo POST accepts `{ items: [{ id, isDone }] }` for bulk toggle.
+3. **`isPrivate` → `visibility` mapping**: Create/update requests send `isPrivate: true`. The backend stores `visibility: "private"`. When reading, check `visibility === "private"`.
+4. **`quantity` is a String on the wire**: The API sends/receives grocery item `quantity` as a `String` (e.g., `"5"`). Convert to/from `Double` in the Swift model using custom `Codable`.
+5. **Upload URLs**: GET `/{resource}/upload-url?extension=jpg` returns `{ uploadUrl, imagePath }`. PUT the file bytes directly to `uploadUrl`. Store `imagePath` on the entity.
+6. **Noise tracking**: Delete uses `{timestamp}` (Unix ms number) as path param, not `{id}`.
+
+---
+
+## Cross-Cutting Concerns
+
+These patterns apply across ALL phases. Every agent must follow them for consistency.
+
+### Auth Token Injection
+
+The `APIClient` must support two calling modes:
+
+1. **Project-scoped** (most domain endpoints): sends `Authorization: Bearer <idToken>` + `X-Project-ID` headers
+2. **User-scoped** (projects, preferences, push subscriptions, grocery defaults): sends `Authorization: Bearer <accessToken>` only, NO `X-Project-ID`
+
+```swift
+protocol APIClient: Sendable {
+    func get<T: Decodable>(endpoint: Endpoint, projectScoped: Bool) async throws -> T
+    func put<T: Decodable>(endpoint: Endpoint, body: Encodable, projectScoped: Bool) async throws -> T
+    func post<T: Decodable>(endpoint: Endpoint, body: Encodable, projectScoped: Bool) async throws -> T
+    func patch<T: Decodable>(endpoint: Endpoint, body: Encodable, projectScoped: Bool) async throws -> T
+    func delete(endpoint: Endpoint, projectScoped: Bool) async throws
+}
+```
+
+The `APIClient` implementation should:
+- Get tokens from `AuthStore` (which stores them in Keychain)
+- Default `projectScoped: true` for most calls
+- Get `projectId` from `ProjectStore.currentProject.id`
+
+### Token Refresh Flow
+
+The web app uses OIDC automatic silent renewal:
+- `automaticSilentRenew: true`
+- `accessTokenExpiringNotificationTimeInSeconds: 300` (5-min warning)
+- Token refresh triggered on: app startup (if session exists), visibility change (app foregrounded)
+
+**iOS equivalent**: On `AuthStore`:
+- Attempt `signinSilent()` equivalent on app launch if Keychain has tokens
+- Refresh tokens on `scenePhase` change to `.active` (replaces `visibilitychange`)
+- No explicit 401 retry logic — the web app doesn't have one either. If a token expires mid-session, the next foreground event refreshes it.
+
+### Error Handling Pattern
+
+Every store must expose:
+
+```swift
+@Observable
+class SomeStore {
+    var isLoading: Bool = false
+    var isError: Bool = false
+    // ...
+}
+```
+
+**Rules:**
+- Set `isLoading = true` before fetch, `false` after (regardless of success/failure)
+- Set `isError = true` on fetch failure, `false` on next successful fetch
+- Log errors with `print()` or `os_log` (the web app uses `console.error()` in a useEffect)
+- Mutation errors (add/update/delete): throw the error so the calling view can handle it (show alert)
+- No structured error parsing — just boolean flag + thrown errors
+- Status 409 on shop creation means duplicate name — surface as user-facing message
+
+### Loading State Convention
+
+Every store that fetches data must expose `isLoading: Bool`. Views should:
+- Show `LoadingView()` when `store.isLoading && store.items.isEmpty` (first load only)
+- Show inline `.refreshable {}` spinner on subsequent refreshes
+- Never show a full-screen loader when data is already cached
+
+### Update-After-Success Pattern
+
+**This is NOT optimistic updates.** The web app calls the API first, then updates the local cache on success:
+
+```swift
+func addShop(name: String) async throws {
+    let response = try await apiClient.put(endpoint: .shops, body: CreateShopRequest(name: name))
+    // Only update local state AFTER API succeeds
+    let newShop = Shop(id: response.id, projectId: projectStore.currentProjectId, name: name, ...)
+    shops.append(newShop)
+}
+```
+
+- **Create**: API call → append to local array
+- **Update**: API call → find and replace in local array
+- **Delete**: API call → filter out from local array
+- **On failure**: throw error, local state unchanged. No rollback needed.
+
+### `isPrivate` ↔ `visibility` Mapping
+
+- **Create/update requests**: send `isPrivate: true` in the request body to mark as private
+- **Read responses**: items have `visibility: "private"` (or nil/absent for shared)
+- **Display logic**: check `item.visibility == "private"` to determine if item is private
+- **UI**: private items should show a lock icon or similar indicator
+
+### Date Format Conventions
+
+| Field | Format | Example |
+|-------|--------|---------|
+| `createdAt`, `updatedAt` | ISO 8601 string | `"2026-03-15T10:30:00.000Z"` |
+| `dueDate` (TodoItem) | Unix timestamp in **milliseconds** (Int) | `1710500000000` |
+| `timestamp` (NoiseTracking) | Unix timestamp in **milliseconds** (Int) | `1710500000000` |
+| `date` (Adventure, MealPlan, OfficeAttendance) | ISO date string | `"2026-03-15"` |
+| `time`, `endTime` (Adventure) | Time string | `"14:30"` |
+| `month`, `day` (Birthday) | Int | `3`, `15` |
+
+Use `ISO8601DateFormatter` for ISO strings. Use `Date(timeIntervalSince1970: timestamp / 1000)` for Unix ms timestamps.
+
+### AppState Ephemeral UI State
+
+`AppStateStore` manages session-local UI state that is NOT persisted to the backend:
+
+```swift
+@Observable
+class AppStateStore {
+    var alerts: [String: Alert] = [:]              // Toast notifications (key = unique ID)
+    var purchasedItems: Set<String> = []           // Grocery items "checked off" during shopping
+    var selectedTodoItems: Set<String> = []        // Multi-selected todo items (for batch toggle)
+    var selectedCalendarDate: String? = nil         // Currently highlighted date in planner calendar
+}
+```
+
+**`purchasedItems`** is critical for the grocery shopping UX: when a user taps a grocery item in the list, its ID is added to this set. The item appears struck-through but is NOT deleted from the backend. Clearing purchased items is a separate action.
 
 ---
 
 ## Implementation Phases
+
+### Phase Dependency Graph
+
+```
+Phase 0 (Scaffold)
+  └── Phase 1 (Auth + Networking)
+        └── Phase 2 (Projects + Core Wiring)
+              ├── Phase 3a (Shared Views)  ──────────────────────┐
+              │     └── Phase 3b (Shops)                         │
+              │           └── Phase 3c (Grocery Store + Views)   │
+              │                 └── Phase 3d (Grocery Forms)     │
+              ├── Phase 4 (Planner / To-Do)  ←── needs 3a       │
+              ├── Phase 5 (Recipes + Meal Plans)  ←── needs 3a   │
+              ├── Phase 7a (Adventures)  ←── needs 3a            │
+              ├── Phase 7b (Birthdays)  ←── needs 3a             │
+              ├── Phase 7c (Noise Tracking)  ←── needs 3a        │
+              ├── Phase 7d (Office Attendance)  ←── needs 3a     │
+              ├── Phase 8a (Project Members)                     │
+              └── Phase 9 (Push Notifications)                   │
+                                                                 │
+Phase 6 (Home Dashboard) ←── needs 3b, 4, 5, 7a-d ─────────────┘
+Phase 8b (Polish) ←── needs all above
+Phase 10 (App Store) ←── needs all above
+```
+
+**Parallelizable after Phase 3a completes**: Phases 3b, 4, 5, 7a, 7b, 7c, 7d, 8a, 9 can all run in parallel.
+
+**Shared file bottleneck**: `DependencyContainer.swift` and `KairosApp.swift` must be updated by every phase that adds a store. See "Shared File Coordination" section below for the merge pattern.
+
+---
 
 ### Phase 0: Project Scaffold
 **Goal**: Empty app builds and runs on simulator.
@@ -567,85 +860,193 @@ From `packages/web/src/enums/apiResource.ts` and provider analysis:
 - Add `packages/ios/` to root `.prettierignore`
 - Verify build + empty test suite passes
 
+**Acceptance criteria**: `xcodebuild build` succeeds with zero warnings. `xcodebuild test` runs and passes (empty suite). App launches on iOS 17 simulator showing a blank screen.
+
 ### Phase 1: Auth + Networking
 **Goal**: User can log in via Google, see empty tab bar, log out.
 
 - **Models**: All `Codable` structs and enums (pure data, no dependencies)
-- **Networking**: `APIClient` protocol + URLSession implementation, `Endpoint` enum
-- **Auth**: `AuthStore` with `ASWebAuthenticationSession`, `KeychainService`, token refresh
-- **Views**: `LoginView`, `ContentView` (auth gate → TabView skeleton)
-- **Infra change**: Add `kairos://auth/callback` to Cognito `callback_urls` in `packages/infra/modules/cognito/main.tf:94`
-- **Tests**: `APIClientTests`, `EndpointTests`, `AuthStoreTests`
+- **Networking**: `APIClient` protocol + URLSession implementation with both project-scoped and user-scoped modes (see Cross-Cutting Concerns), `Endpoint` enum covering all paths from the API Endpoints table
+- **Auth**: `AuthStore` with `ASWebAuthenticationSession`, `KeychainService`, token refresh on foreground
+- **Views**: `LoginView`, `ContentView` (auth gate → TabView skeleton with 5 empty tabs)
+- **Infra change**: Add `kairos://auth/callback` to `callback_urls` AND `kairos://` to `logout_urls` in `packages/infra/modules/cognito/main.tf`
+- **Tests**: `APIClientTests` (URL construction, header injection for both scoped modes, error handling), `EndpointTests` (all path strings match API table), `AuthStoreTests` (login flow, token persistence, refresh)
+
+**Acceptance criteria**: User taps Login → Google sign-in sheet appears → completes OIDC flow → lands on TabView with 5 tabs. Kill and relaunch app → session restored from Keychain (no re-login). Tap Logout → returns to LoginView, tokens cleared from Keychain. All tests pass.
 
 ### Phase 2: Projects + Core Wiring
 **Goal**: User can see/switch projects and access user menu.
 
-- **Stores**: `ProjectStore` (fetch projects, switch, user preferences), `AppStateStore`
-- **DI**: `DependencyContainer` wiring all stores
-- **Views**: `ProjectSwitcherView`, `UserMenuView` (basic: project info, switch, logout)
-- **Tests**: `ProjectStoreTests`
+- **Stores**: `ProjectStore` (fetch projects, switch active project, user preferences with `currentProjectId`), `AppStateStore` (alerts, purchasedItems, selectedTodoItems, selectedCalendarDate — see Cross-Cutting Concerns)
+- **DI**: `DependencyContainer` wiring `AuthStore`, `ProjectStore`, `AppStateStore`. See "Shared File Coordination" for the pattern other phases must follow.
+- **Views**: `ProjectSwitcherView` (list projects, tap to switch), `UserMenuView` (project info, switch project, logout button)
+- **Tests**: `ProjectStoreTests` (fetch projects, switch project updates preferences, user-scoped API calls have no X-Project-ID)
+
+**Acceptance criteria**: After login, app fetches user's projects and sets the active project. User menu shows current project name. Switching projects updates `UserPreferences.currentProjectId` via API. Subsequent domain fetches use the new project ID. All tests pass.
 
 ### Phase 3: Shops + Grocery Lists
-**Goal**: Full grocery shopping workflow (highest daily-use feature).
 
-- **Stores**: `ShopStore`, `GroceryStore`
-- **Views**: `ShopListView`, `ShopRowView`, `AddShopSheet`, `EditShopSheet`, `GroceryListView` (3 view modes), `GroceryItemRow` (with `.swipeActions`), `AddGroceryItemView`, `EditGroceryItemView`, `GroceryViewModePicker`
-- **Shared views**: `SwipeActionRow`, `AsyncS3Image`, `EmptyStateView`, `LoadingView`
-- **Utilities**: `CategoryMatcher` (port from web), `HapticFeedback`
-- **Tests**: `ShopStoreTests`, `GroceryStoreTests`, `CategoryMatcherTests`
+Split into 4 sub-phases for parallelization. **3a must complete before 3b-3d and before any other domain phase.**
+
+#### Phase 3a: Shared Views (PREREQUISITE for all domain phases)
+**Goal**: Reusable view components available for all domain phases.
+
+- `LoadingView`, `ErrorView`, `EmptyStateView` — standard states used by every domain
+- `SwipeActionRow` — reusable swipe-to-delete/edit row (wraps `.swipeActions`)
+- `AsyncS3Image` — loads images from S3 `imagePath`
+- `SearchBar` — reusable search input
+- `AlertBanner` — toast notification display driven by `AppStateStore.alerts`
+- `HapticFeedback` utility
+
+**Acceptance criteria**: Each shared view renders correctly in Xcode previews. No domain-specific logic — purely presentational. All views accept configuration via parameters.
+
+#### Phase 3b: Shops
+**Goal**: User can manage shops (CRUD).
+
+- **Store**: `ShopStore` (follows EntityStore protocol pattern, uses `PATCH` for updates)
+- **Views**: `ShopListView`, `ShopRowView`, `AddShopSheet`, `EditShopSheet`
+- **Tests**: `ShopStoreTests`
+- **Note**: Shop update uses `PATCH /shops/{id}`, not POST. Status 409 = duplicate name.
+
+**Acceptance criteria**: User sees list of shops sorted by name. Can add a shop (name + optional icon). Can edit shop name/icon via swipe action. Can delete shop via swipe action. Pull-to-refresh reloads from API. Empty state shown when no shops. All tests pass.
+
+#### Phase 3c: Grocery Store + List Views
+**Goal**: Grocery list display with 3 view modes.
+
+- **Store**: `GroceryStore` (batch add via `PUT { items: [...] }`, single update via `PATCH`, `quantity` is String on wire)
+- **Views**: `GroceryListView` (3 view modes: categorized, alphabetical, uncategorized), `GroceryItemRow` (with swipe actions + tap to toggle `purchasedItems` in `AppStateStore`), `GroceryCategorySection`, `GroceryViewModePicker`
+- **Utilities**: `CategoryMatcher` (port from `packages/web/src/utils/grocery/categoryMatcher.ts`)
+- **Tests**: `GroceryStoreTests`, `CategoryMatcherTests`
+- **Note**: Purchased items are tracked in `AppStateStore.purchasedItems` (ephemeral, not persisted)
+
+**Acceptance criteria**: Navigate from shop to its grocery list. Items grouped by category (categorized mode), alphabetical, or flat. Tap item → struck-through (added to purchasedItems). Swipe to delete. View mode picker switches between 3 modes. Pull-to-refresh. All tests pass.
+
+#### Phase 3d: Grocery Item Forms
+**Goal**: Add and edit grocery items.
+
+- **Views**: `AddGroceryItemView` (quantity picker, unit selector, category, shop assignment), `EditGroceryItemView`
+- **Integration**: Uses `GroceryItemDefault` for autocomplete suggestions (fetched from user-scoped defaults endpoint)
+
+**Acceptance criteria**: Add form shows name, quantity (numeric input), unit (picker from `GroceryItemUnit`), category. Autocomplete from defaults works. Edit form pre-fills existing values. Submit calls appropriate API. New item appears in list without manual refresh.
 
 ### Phase 4: Planner / To-Do
-**Goal**: Full task management with 3 view modes.
+**Goal**: Full task management with 3 view modes. **Depends on**: Phase 3a (shared views).
 
-- **Store**: `PlannerStore`
-- **Views**: `PlannerView` (segmented control), `PlannerCalendarView`, `PlannerWeeklyView`, `PlannerGroupedView`, `TodoItemRow`, `TodoStepRow`, `AddTodoItemView`, `EditTodoItemView`
-- **Tests**: `PlannerStoreTests`
+- **Store**: `PlannerStore` (single update via `PATCH`, batch isDone toggle via `POST { items: [...] }`, uses `selectedTodoItems` and `selectedCalendarDate` from `AppStateStore`)
+- **Views**: `PlannerView` (segmented control for 3 modes), `PlannerCalendarView` (highlights dates with items, tapping date sets `selectedCalendarDate`), `PlannerWeeklyView` (groups by week), `PlannerGroupedView` (separates done/undone), `TodoItemRow` (with steps expansion), `TodoStepRow`, `AddTodoItemView` (name, description, due date picker), `EditTodoItemView`
+- **Tests**: `PlannerStoreTests` (CRUD, batch toggle, date filtering)
+- **Note**: `dueDate` is Unix timestamp in milliseconds. Batch toggle uses `POST /todo_list/items` with `{ items: [{ id, isDone }] }`.
+
+**Acceptance criteria**: Planner shows 3 view modes via segmented control. Calendar view highlights dates that have items; tapping a date shows that day's items. Weekly view groups items by week. Grouped view separates done/undone. Can add/edit/delete items. Swipe to delete. Tap checkbox toggles isDone (batch toggle for multi-select). Steps expand inline. All tests pass.
 
 ### Phase 5: Recipes + Meal Plans
-**Goal**: Recipe library and meal planning.
+**Goal**: Recipe library and meal planning. **Depends on**: Phase 3a (shared views).
 
-- **Stores**: `RecipeStore`, `MealPlanStore`
-- **Views**: `RecipeListView` (search + filter), `RecipeCard`, `RecipeDetailView`, `AddRecipeView`, `EditRecipeView`, `RecipeFilterSheet`, `AddMealPlanSheet`
-- **Features**: Image upload via pre-signed S3 URL, ingredient builder
+- **Stores**: `RecipeStore` (follows EntityStore protocol, update via `POST`), `MealPlanStore` (follows EntityStore protocol, update via `POST`)
+- **Views**: `RecipeListView` (search by name + filter by mealType/dishType), `RecipeCard`, `RecipeDetailView` (ingredients list, instructions, external link), `AddRecipeView` (ingredient builder with name/quantity/unit), `EditRecipeView`, `RecipeFilterSheet` (multi-select mealType + dishType), `AddMealPlanSheet` (date picker, recipe selector, meal type)
+- **Features**: Image upload via pre-signed S3 URL (`GET /recipes/upload-url?extension=jpg` → PUT bytes to `uploadUrl` → save `imagePath`)
 - **Tests**: `RecipeStoreTests`, `MealPlanStoreTests`
 
-### Phase 6: Home Dashboard
-**Goal**: Aggregated dashboard with all domain data.
+**Acceptance criteria**: Recipe list shows cards with images. Search filters by name. Filter sheet narrows by meal type and dish type. Recipe detail shows ingredients, instructions, external link. Can add recipe with ingredient builder (add/remove rows). Image upload works (pick photo → upload → display). Meal plan sheet lets user pick date + recipe + meal type. All tests pass.
 
-- **Views**: `HomeView`, `HomeGrocerySection`, `HomeTodoSection`, `HomeNoiseSection`, `HomeBirthdaySection`, `HomeAdventureSection`, `HomeMealPlanSection`
-- **Logic**: Port `useHomeData` aggregation (pending items, stats, upcoming items)
+### Phase 6: Home Dashboard
+**Goal**: Aggregated dashboard with all domain data. **Depends on**: Phases 3b, 4, 5, 7a-d (all domain stores must exist).
+
+- **Views**: `HomeView`, `HomeGrocerySection` (pending items count per shop), `HomeTodoSection` (overdue + upcoming), `HomeNoiseSection` (recent count + stats), `HomeBirthdaySection` (upcoming birthdays), `HomeAdventureSection` (upcoming adventures), `HomeMealPlanSection` (today's meals)
+- **Logic**: Port `useHomeData` aggregation from `packages/web/src/hooks/useHomeData/index.ts` — pending item counts, upcoming items, stats
+- **Note**: Each section reads from its domain store (injected via `.environment()`). Sections should gracefully handle empty data. Build sections incrementally as domain stores become available — if a domain phase is delayed, its home section can show empty state.
+
+**Acceptance criteria**: Dashboard shows summary cards for each domain. Grocery section shows total pending items. Todo section shows overdue count. Birthday section shows next upcoming. Tapping a section navigates to its full domain view. All sections show empty states gracefully. Pull-to-refresh reloads all domains.
 
 ### Phase 7: Secondary Domains
-**Goal**: All 10 domain areas functional.
 
-- **Stores**: `AdventureStore`, `BirthdayStore`, `NoiseTrackingStore`, `OfficeAttendanceStore`
-- **Views**: Adventure CRUD, Birthday CRUD, Noise tracking + stats, Office attendance
-- **Tests**: One test file per store
+Split into 4 independent sub-phases that can run fully in parallel. Each depends only on Phase 3a (shared views).
+
+#### Phase 7a: Adventures
+**Goal**: Adventure CRUD with image upload. **Depends on**: Phase 3a.
+
+- **Store**: `AdventureStore` (follows EntityStore protocol, update via `POST`, image upload via `/adventures/upload-url`)
+- **Views**: `AdventureListView` (sorted by date), `AddAdventureView` (name, date range, time range, location, notes, image), `EditAdventureView`
+- **Tests**: `AdventureStoreTests`
+
+**Acceptance criteria**: List shows adventures sorted by date. Can add/edit/delete. Date/time pickers work. Image upload works. Swipe to delete. All tests pass.
+
+#### Phase 7b: Birthdays
+**Goal**: Birthday CRUD. **Depends on**: Phase 3a.
+
+- **Store**: `BirthdayStore` (follows EntityStore protocol, update via `PATCH`)
+- **Views**: `BirthdayListView` (sorted by upcoming), `AddBirthdaySheet` (name, month, day, optional birth year, notes)
+- **Tests**: `BirthdayStoreTests`
+- **Note**: Update uses `PATCH /birthdays/items/{id}`, not POST.
+
+**Acceptance criteria**: List shows birthdays sorted by upcoming date. Age calculated from birthYear if provided. Can add/edit/delete. All tests pass.
+
+#### Phase 7c: Noise Tracking
+**Goal**: Noise event logging with stats. **Depends on**: Phase 3a.
+
+- **Store**: `NoiseTrackingStore` (add sends `{ timestamp }`, delete path is `/noise_tracking/items/{timestamp}` — uses timestamp as identifier, NOT id)
+- **Views**: `NoiseTrackingView` (log button + event list), `NoiseStatsView` (frequency charts/stats)
+- **Tests**: `NoiseTrackingStoreTests`
+- **Note**: Path uses **underscores** (`noise_tracking`). Delete uses `{timestamp}` (number) as path param.
+
+**Acceptance criteria**: User taps button to log noise event (creates item with current Unix ms timestamp). List shows events in reverse chronological order. Stats view shows frequency data. Can delete events. All tests pass.
+
+#### Phase 7d: Office Attendance
+**Goal**: Office day tracking. **Depends on**: Phase 3a.
+
+- **Store**: `OfficeAttendanceStore` (create-only + delete, no update endpoint)
+- **Views**: `OfficeAttendanceView` (calendar marking office days, quick-add for today)
+- **Tests**: `OfficeAttendanceStoreTests`
+
+**Acceptance criteria**: Calendar shows office days marked. Can add attendance for a date. Can delete attendance. Shows who else is in the office (from project members). All tests pass.
 
 ### Phase 8: Project Members + Polish
-**Goal**: Feature-complete with polished UX.
 
-- **Store**: `ProjectMembersStore`
-- **Views**: `MemberListView`, `ProjectSettingsView`, invite code sharing, create/join project flows
-- **Polish**: `AlertBanner` (toast notifications), haptic feedback on completions, `.refreshable` on all lists, empty states, loading skeletons, error retry
+Split into 2 independent sub-phases.
+
+#### Phase 8a: Project Members
+**Goal**: Project member management and join/create flows. **Depends on**: Phase 2.
+
+- **Store**: `ProjectMembersStore` (GET members requires X-Project-ID, remove member via `DELETE /projects/members/{userId}`)
+- **Views**: `MemberListView` (shows member name, avatar, role), `ProjectSettingsView` (project name, invite code sharing via `ShareLink`), create project form (`POST /projects`), join project flow (`GET /projects/invite/{code}` for preview → `POST /projects/join`)
+- **Models**: Uses `ProjectInviteInfo` for the join preview
+- **Tests**: `ProjectMembersStoreTests`
+
+**Acceptance criteria**: Member list shows all project members with roles. Owner can remove members. Invite code can be shared. User can create a new project. User can join a project by entering an invite code (shows preview first). All tests pass.
+
+#### Phase 8b: Polish Pass (cross-cutting)
+**Goal**: Feature-complete with polished UX. **Depends on**: ALL previous phases.
+
+- Haptic feedback on: item completion (todo checked, grocery purchased), successful create/delete
+- `.refreshable { }` on all list views (verify already present from domain phases)
+- Empty states for all lists (verify `EmptyStateView` used consistently)
+- Loading skeletons on first load (verify `LoadingView` used consistently)
+- Error retry: tap-to-retry on `ErrorView` for all fetch failures
+- `AlertBanner` overlay driven by `AppStateStore.alerts` for success/error toasts
+
+**Acceptance criteria**: All lists have pull-to-refresh. All empty states show helpful messages. All first-load states show loading indicators. Error states show retry button. Haptic feedback fires on key interactions. Toast notifications appear for mutations.
 
 ### Phase 9: Push Notifications
-**Goal**: Remote notifications working end-to-end.
+**Goal**: Remote notifications working end-to-end. **Depends on**: Phase 1 (auth).
 
 - Register for APNs, send device token to backend
 - Handle incoming notifications
 - Configure notification categories + actions
 - Deep-link from notification tap to relevant screen
-- **Note**: May need a small backend change to accept APNs tokens alongside VAPID subscriptions
+- **Note**: The current backend only supports VAPID web push subscriptions (`POST /push-subscriptions` with `{ endpoint, keys: { p256dh, auth } }`). APNs requires a **backend change** to accept device tokens and send via APNs instead of web push. This phase may require a new Lambda + API endpoint.
+
+**Acceptance criteria**: App requests notification permission on first launch. Device token sent to backend. Incoming notifications display correctly. Tapping a notification navigates to the relevant screen (e.g., grocery list, planner). Notification settings view allows toggling categories.
 
 ### Phase 10: App Store Prep
-**Goal**: App Store submission.
+**Goal**: App Store submission. **Depends on**: ALL previous phases.
 
 - App icon, launch screen
 - App Store screenshots + metadata
 - Privacy policy
 - Final QA pass
 - TestFlight external testing → App Store submission
+
+**Acceptance criteria**: App icon displays correctly at all sizes. Launch screen shows branding. All screenshots captured for required device sizes. Privacy policy URL configured. TestFlight build uploaded and external testers invited. No crashes in 48-hour TestFlight soak test.
 
 ---
 
@@ -696,6 +1097,100 @@ func fetchShopsPopulatesArray() async {
 
 ---
 
+## EntityStore Protocol
+
+Multiple stores (Recipe, Adventure, Birthday, MealPlan, etc.) follow the identical CRUD pattern from `packages/web/src/hooks/useEntityCrud/index.ts`. To prevent agents from independently inventing different patterns, all CRUD stores MUST conform to this protocol:
+
+```swift
+/// Protocol for stores that manage a collection of identifiable entities via REST CRUD.
+/// Mirrors the useEntityCrud hook from the web app.
+protocol EntityStore: Observable {
+    associatedtype Entity: Codable & Identifiable & Sendable
+    associatedtype CreateFields: Encodable
+    associatedtype UpdateFields: Encodable
+
+    var items: [Entity] { get set }
+    var isLoading: Bool { get set }
+    var isError: Bool { get set }
+
+    /// Fetch all entities for the current project
+    func fetch() async
+
+    /// Create a new entity. Calls API, then appends to local items on success.
+    func add(_ fields: CreateFields) async throws
+
+    /// Update an entity by ID. Calls API, then replaces in local items on success.
+    func update(id: String, fields: UpdateFields) async throws
+
+    /// Delete an entity by ID. Calls API, then removes from local items on success.
+    func remove(id: String) async throws
+}
+```
+
+**Stores that DON'T fit this protocol** (handle them individually):
+- `AuthStore` — no CRUD, manages OIDC flow
+- `ProjectStore` — mixed user-scoped + project-scoped, handles switching
+- `AppStateStore` — ephemeral UI state only, no API calls
+- `GroceryStore` — batch operations, non-standard endpoints
+- `NoiseTrackingStore` — no update endpoint, delete by timestamp
+- `OfficeAttendanceStore` — no update endpoint
+
+---
+
+## Shared File Coordination
+
+### The DependencyContainer Bottleneck
+
+Every phase that adds a store must modify two files:
+1. `DependencyContainer.swift` — add property + initialize in `init()`
+2. `KairosApp.swift` (or `RootView`) — add `.environment()` injection
+
+To minimize merge conflicts, follow this exact pattern when adding a new store:
+
+```swift
+// In DependencyContainer.swift — add ONE property + ONE init line per store:
+@Observable
+class DependencyContainer {
+    let authStore: AuthStore
+    let projectStore: ProjectStore
+    let appStateStore: AppStateStore
+    // Phase 3b adds:
+    let shopStore: ShopStore
+    // Phase 3c adds:
+    let groceryStore: GroceryStore
+    // Phase 4 adds:
+    let plannerStore: PlannerStore
+    // ... each phase appends here
+
+    init() {
+        let apiClient = URLSessionAPIClient()
+        authStore = AuthStore(apiClient: apiClient)
+        projectStore = ProjectStore(apiClient: apiClient, authStore: authStore)
+        appStateStore = AppStateStore()
+        // Phase 3b adds:
+        shopStore = ShopStore(apiClient: apiClient, projectStore: projectStore)
+        // Phase 3c adds:
+        groceryStore = GroceryStore(apiClient: apiClient, projectStore: projectStore)
+        // ... each phase appends here
+    }
+}
+```
+
+```swift
+// In KairosApp.swift — add ONE .environment() line per store:
+RootView()
+    .environment(container.authStore)
+    .environment(container.projectStore)
+    .environment(container.appStateStore)
+    // Phase 3b adds:
+    .environment(container.shopStore)
+    // ... each phase appends here
+```
+
+**Rule**: Always append at the end. Never reorder existing lines. This makes merge conflicts trivially resolvable.
+
+---
+
 ## Critical Files to Reference During Implementation
 
 | Purpose | File Path |
@@ -706,11 +1201,16 @@ func fetchShopsPopulatesArray() async {
 | API client factory pattern | `packages/web/src/api/index.ts` |
 | API header construction | `packages/web/src/utils/api.ts` |
 | OIDC configuration | `packages/web/src/config/oidc.ts` |
-| Cognito Terraform (callback URLs) | `packages/infra/modules/cognito/main.tf:94` |
+| Cognito Terraform (callback + logout URLs) | `packages/infra/modules/cognito/main.tf` (lines ~94-103) |
 | Provider patterns (reference impl) | `packages/web/src/providers/ShopProvider/index.tsx` |
 | Generic CRUD hook | `packages/web/src/hooks/useEntityCrud/index.ts` |
-| Category matcher logic | `packages/web/src/utils/categoryMatcher/` |
-| Home dashboard aggregation | `packages/web/src/hooks/useHomeData/` |
+| Category matcher logic | `packages/web/src/utils/grocery/categoryMatcher.ts` |
+| Grocery category grouping hook | `packages/web/src/hooks/useGroceryCategories/index.ts` |
+| Home dashboard aggregation | `packages/web/src/hooks/useHomeData/index.ts` |
+| Entity CRUD hook (reference pattern) | `packages/web/src/hooks/useEntityCrud/index.ts` |
+| AppState (ephemeral UI state) | `packages/web/src/providers/AppStateProvider/index.tsx` |
+| Grocery item defaults type | `packages/web/src/api/groceryList/retrieve/types.ts` |
+| Project invite info type | `packages/web/src/types/project.ts` |
 
 ---
 
