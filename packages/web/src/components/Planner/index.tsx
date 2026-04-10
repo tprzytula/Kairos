@@ -268,6 +268,7 @@ export const Planner = ({
             onAddTask={handleAddTask}
             adventures={adventures}
             onAdventureClick={handleAdventurePreview}
+            onAddAdventure={onAddAdventure ?? handleAddAdventure}
             officeAttendance={officeAttendance}
             onAddOfficeDay={onAddOfficeDay}
             onRemoveAttendance={onRemoveAttendance}
