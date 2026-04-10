@@ -56,6 +56,7 @@ interface ICalendarViewProps {
   onAddTask?: (date: string) => void
   adventures?: IAdventure[]
   onAdventureClick?: (id: string) => void
+  onAddAdventure?: (date: string) => void
   officeAttendance?: IOfficeAttendance[]
   onAddOfficeDay?: (date: string) => void
   onRemoveAttendance?: (id: string) => void
@@ -72,6 +73,7 @@ const CalendarView = ({
   onAddTask,
   adventures = [],
   onAdventureClick,
+  onAddAdventure,
   officeAttendance = [],
   onAddOfficeDay,
   onRemoveAttendance,
@@ -372,6 +374,7 @@ const CalendarView = ({
         onAddMealPlan={onAddMealPlan}
         onMealPlanClick={onMealPlanClick}
         onAdventureClick={onAdventureClick}
+        onAddAdventure={onAddAdventure}
         onAddTask={onAddTask}
         officeAttendance={selectedDayOfficeAttendance}
         onAddOfficeDay={onAddOfficeDay}
