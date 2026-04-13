@@ -9,7 +9,7 @@ Legend: ⬜ not started · 🚧 in progress · ⏸ blocked · ✅ done (merged t
 | Phase                    | Status | Owner | Branch / PR | Last update | Notes                        |
 | ------------------------ | ------ | ----- | ----------- | ----------- | ---------------------------- |
 | 0 Scaffold               | ✅     | —     | —           | 2026-04-13  | Merged to master in d99027ac |
-| 1 Auth + Networking      | ✅     | —     | —           | 2026-04-13  | Merged to master              |
+| 1 Auth + Networking      | ✅     | —     | —           | 2026-04-13  | Merged to master in 63052d7c  |
 | 2 Projects + Core Wiring | ⬜     | —     | —           | —           | —                            |
 | 3a Shared Views          | ⬜     | —     | —           | —           | —                            |
 | 3b Shops                 | ⬜     | —     | —           | —           | —                            |
@@ -70,7 +70,7 @@ _Append entries as phases merge to master. Date + PR link is enough. This is the
 -->
 
 - 2026-04-13 — Phase 0 Scaffold merged in d99027ac (pushed direct to master, no PR)
-- 2026-04-13 — Phase 1 Auth + Networking pushed direct to master (no PR). Includes Cognito Terraform change adding `kairos://auth/callback` to callback URLs — CI applies on merge. Apple sign-in is UI-only pending Cognito IdP wiring (see Open questions).
+- 2026-04-13 — Phase 1 Auth + Networking merged in 63052d7c (pushed direct to master, no PR). Includes Cognito Terraform change adding `kairos://auth/callback` to callback URLs — CI applies on merge. Apple sign-in is UI-only pending Cognito IdP wiring (see Open questions).
 
 ---
 
