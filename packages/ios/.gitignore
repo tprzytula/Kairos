@@ -1,0 +1,18 @@
+# Xcode / Swift build artifacts
+**/xcuserdata/
+**/*.xcuserdatad/
+**/*.xcuserstate
+**/DerivedData/
+.build/
+.swiftpm/
+
+# Xcode workspace user state
+**/*.xcworkspace/xcuserdata/
+**/project.xcworkspace/xcuserdata/
+
+# Swift Package Manager
+Package.resolved.lock
+*.resolved.backup
+
+# macOS
+.DS_Store

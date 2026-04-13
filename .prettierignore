@@ -3,4 +3,5 @@
 **/.parcel-cache
 **/.coverage
 packages/infra
+packages/ios
 **/yarn.lock
