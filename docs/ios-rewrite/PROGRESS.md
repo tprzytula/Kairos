@@ -24,8 +24,9 @@ Legend: ⬜ not started · 🚧 in progress · ⏸ blocked · ✅ done (merged t
 | 7d Office Attendance     | ⬜     | —     | —           | —           | —                            |
 | 8a Project Members       | ⬜     | —     | —           | —           | —                            |
 | 8b Polish                | ⬜     | —     | —           | —           | —                            |
-| 9 Push Notifications     | ⬜     | —     | —           | —           | —                            |
-| 10 App Store             | ⬜     | —     | —           | —           | —                            |
+| 9a Push Notifications    | ⬜     | —     | —           | —           | —                            |
+| 9b Sign in with Apple    | ⬜     | —     | —           | —           | App-Store-blocking; UI in place from Phase 1 |
+| 10 App Store             | ⬜     | —     | —           | —           | Needs 9b done first          |
 
 ## Active work
 
@@ -48,7 +49,7 @@ _Things an agent can't resolve without input. Remove entries once answered._
 -->
 
 - [2026-04-13, phase 0] `xcode-select` points at CommandLineTools — documented in `packages/ios/README.md` (Prerequisites / `xcode-select` gotcha). Non-blocking ask: run `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer` once to drop the per-command prefix in future phases.
-- [2026-04-13, phase 1] **Sign in with Apple — backend wiring needed before App Store submission**. The button is in the LoginView UI but `AuthStore.signInWithApple()` only shows a "coming soon" alert. App Store Review Guideline 4.8 requires Apple sign-in alongside any third-party social login, so this is a hard blocker for Phase 10. Backend work: add Apple as an IdP on the Cognito user-pool client (Terraform: `packages/infra/modules/cognito/main.tf`), then implement the credential exchange in `AuthStore`. Estimate: small PR — Apple developer team config + ~30 lines of Terraform + ~50 lines Swift.
+- ~~[2026-04-13, phase 1] Sign in with Apple — backend wiring needed before App Store submission.~~ **Resolved**: tracked as Phase 9b — see `phase-9b-apple-signin.md` for the full step-by-step.
 
 ## Deviations from the plan
 

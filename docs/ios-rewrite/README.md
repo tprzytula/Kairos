@@ -35,14 +35,15 @@ Phase 0 (Scaffold)
               ├── Phase 7c (Noise Tracking)      ── needs 3a  │
               ├── Phase 7d (Office Attendance)   ── needs 3a  │
               ├── Phase 8a (Project Members)                  │
-              └── Phase 9 (Push Notifications)                │
+              ├── Phase 9a (Push Notifications)               │
+              └── Phase 9b (Sign in with Apple)               │
                                                               │
 Phase 6 (Home Dashboard) ── needs 3b, 4, 5, 7a–d ─────────────┘
 Phase 8b (Polish)        ── needs all above
-Phase 10 (App Store)     ── needs all above
+Phase 10 (App Store)     ── needs all above (incl. 9b — App Store guideline 4.8)
 ```
 
-**Parallelizable after Phase 3a completes**: 3b, 4, 5, 7a, 7b, 7c, 7d, 8a, 9.
+**Parallelizable after Phase 3a completes**: 3b, 4, 5, 7a, 7b, 7c, 7d, 8a, 9a, 9b.
 
 ## Phase index
 
@@ -62,7 +63,8 @@ Phase 10 (App Store)     ── needs all above
 - [Phase 7d — Office Attendance](phase-7d-office-attendance.md)
 - [Phase 8a — Project Members](phase-8a-project-members.md)
 - [Phase 8b — Polish](phase-8b-polish.md)
-- [Phase 9 — Push Notifications](phase-9-push-notifications.md)
+- [Phase 9a — Push Notifications](phase-9a-push-notifications.md)
+- [Phase 9b — Sign in with Apple](phase-9b-apple-signin.md) *(prerequisite for Phase 10 — App Store guideline 4.8)*
 - [Phase 10 — App Store Prep](phase-10-app-store.md)
 
 ## Critical files in the monorepo to reference during implementation
