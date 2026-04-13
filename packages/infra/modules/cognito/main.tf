@@ -90,16 +90,19 @@ resource "aws_cognito_user_pool_client" "kairos_user_pool_client" {
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
 
-  # Callback URLs for your CloudFront hosted app and localhost development
+  # Callback URLs for your CloudFront hosted app, localhost development,
+  # and the native iOS app (kairos:// URL scheme registered in Info.plist).
   callback_urls = [
     "https://d1568c842iynon.cloudfront.net/auth/callback",
     "http://localhost:1234/auth/callback",
-    "http://127.0.0.1:1234/auth/callback"
+    "http://127.0.0.1:1234/auth/callback",
+    "kairos://auth/callback"
   ]
   logout_urls = [
     "https://d1568c842iynon.cloudfront.net/",
     "http://localhost:1234/",
-    "http://127.0.0.1:1234/"
+    "http://127.0.0.1:1234/",
+    "kairos://"
   ]
 
   # Token configuration
