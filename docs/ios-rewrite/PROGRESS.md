@@ -10,7 +10,7 @@ Legend: ⬜ not started · 🚧 in progress · ⏸ blocked · ✅ done (merged t
 | ------------------------ | ------ | ----- | ----------- | ----------- | ---------------------------- |
 | 0 Scaffold               | ✅     | —     | —           | 2026-04-13  | Merged to master in d99027ac |
 | 1 Auth + Networking      | ✅     | —     | —           | 2026-04-13  | Merged to master in 63052d7c  |
-| 2 Projects + Core Wiring | ✅     | —     | —           | 2026-04-15  | Merged direct to master      |
+| 2 Projects + Core Wiring | ✅     | —     | —           | 2026-04-15  | Merged to master in 5e701e3a |
 | 3a Shared Views          | ⬜     | —     | —           | —           | —                            |
 | 3b Shops                 | ⬜     | —     | —           | —           | —                            |
 | 3c Grocery Store         | ⬜     | —     | —           | —           | —                            |
@@ -74,7 +74,7 @@ _Append entries as phases merge to master. Date + PR link is enough. This is the
 
 - 2026-04-13 — Phase 0 Scaffold merged in d99027ac (pushed direct to master, no PR)
 - 2026-04-13 — Phase 1 Auth + Networking merged in 63052d7c (pushed direct to master, no PR). Includes Cognito Terraform change adding `kairos://auth/callback` to callback URLs — CI applies on merge. Apple sign-in is UI-only pending Cognito IdP wiring (see Open questions).
-- 2026-04-15 — Phase 2 Projects + Core Wiring merged direct to master (no PR). Adds `ProjectStore` (fetch + switch, user-scoped), `AppStateStore` (ephemeral UI state), `ProjectSwitcherView`, `UserMenuView`, and a placeholder-tab toolbar entry point. Wired into `DependencyContainer`/`KairosApp` via the append-only pattern + a private `ProjectIdProviderBox` to break the APIClient↔ProjectStore cycle. Fixes the Phase-0 Info.plist miss by adding `UILaunchScreen` directly (full-screen rendering now works on all tabs). `MockAPIClient` added for store tests; 67/67 tests pass.
+- 2026-04-15 — Phase 2 Projects + Core Wiring merged in 5e701e3a (pushed direct to master, no PR). Adds `ProjectStore` (fetch + switch, user-scoped), `AppStateStore` (ephemeral UI state), `ProjectSwitcherView`, `UserMenuView`, and a placeholder-tab toolbar entry point. Wired into `DependencyContainer`/`KairosApp` via the append-only pattern + a private `ProjectIdProviderBox` to break the APIClient↔ProjectStore cycle. Fixes the Phase-0 Info.plist miss by adding `UILaunchScreen` directly (full-screen rendering now works on all tabs). `MockAPIClient` added for store tests; 67/67 tests pass.
 
 ---
 
