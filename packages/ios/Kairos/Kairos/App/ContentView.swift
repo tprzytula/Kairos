@@ -14,10 +14,11 @@ struct ContentView: View {
     }
 }
 
-/// Phase-1 placeholder. Each tab gets its real content in later phases.
+/// Phase-2 placeholder. Each tab gets its real content in later phases.
+/// Every tab surfaces a trailing toolbar button that opens the user menu
+/// (project switch + sign out) so the project-switching flow is reachable
+/// before the domain tabs exist.
 private struct RootTabView: View {
-    @Environment(AuthStore.self) private var authStore
-
     var body: some View {
         TabView {
             placeholder(title: "Home", systemImage: "house.fill")
@@ -39,23 +40,62 @@ private struct RootTabView: View {
 
     @ViewBuilder
     private func placeholder(title: String, systemImage: String) -> some View {
+        PlaceholderTab(title: title, systemImage: systemImage)
+    }
+}
+
+private struct PlaceholderTab: View {
+    @Environment(ProjectStore.self) private var projectStore
+    let title: String
+    let systemImage: String
+    @State private var isShowingUserMenu = false
+
+    var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
-                Image(systemName: systemImage)
-                    .font(.system(size: 56))
-                    .foregroundStyle(.tint)
-                Text(title)
-                    .font(.title2)
-                Text("Coming in a later phase.")
-                    .foregroundStyle(.secondary)
-                Button("Sign out") {
-                    Task { await authStore.signOut() }
+            centerContent
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(.systemBackground))
+                .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            HapticFeedback.impact(.light)
+                            isShowingUserMenu = true
+                        } label: {
+                            Image(systemName: "person.crop.circle")
+                                .accessibilityLabel("Account menu")
+                        }
+                    }
                 }
-                .buttonStyle(.bordered)
-                .padding(.top, 8)
+                .sheet(isPresented: $isShowingUserMenu) {
+                    UserMenuView()
+                }
+        }
+    }
+
+    @ViewBuilder
+    private var centerContent: some View {
+        if projectStore.isError {
+            ContentUnavailableView {
+                Label("Couldn't load your projects", systemImage: "exclamationmark.triangle")
+            } description: {
+                Text("Check your connection and try again.")
+            } actions: {
+                Button("Retry") {
+                    Task { await projectStore.fetch() }
+                }
+                .buttonStyle(.borderedProminent)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationTitle(title)
+        } else if projectStore.isLoading && projectStore.projects.isEmpty {
+            ProgressView()
+                .controlSize(.large)
+        } else {
+            ContentUnavailableView {
+                Label(title, systemImage: systemImage)
+            } description: {
+                Text("Coming in a later phase.")
+            }
         }
     }
 }

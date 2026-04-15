@@ -10,7 +10,7 @@ Legend: ⬜ not started · 🚧 in progress · ⏸ blocked · ✅ done (merged t
 | ------------------------ | ------ | ----- | ----------- | ----------- | ---------------------------- |
 | 0 Scaffold               | ✅     | —     | —           | 2026-04-13  | Merged to master in d99027ac |
 | 1 Auth + Networking      | ✅     | —     | —           | 2026-04-13  | Merged to master in 63052d7c  |
-| 2 Projects + Core Wiring | ⬜     | —     | —           | —           | —                            |
+| 2 Projects + Core Wiring | ✅     | —     | —           | 2026-04-15  | Merged direct to master      |
 | 3a Shared Views          | ⬜     | —     | —           | —           | —                            |
 | 3b Shops                 | ⬜     | —     | —           | —           | —                            |
 | 3c Grocery Store         | ⬜     | —     | —           | —           | —                            |
@@ -40,6 +40,7 @@ _Handoff notes for phases currently in progress. Keep short — enough for a fre
 - Any surprises or decisions made: ...
 -->
 
+
 ## Open questions / blockers for the user
 
 _Things an agent can't resolve without input. Remove entries once answered._
@@ -61,6 +62,7 @@ _If you had to adapt something, record it here with a brief reason, so future ag
 
 - [2026-04-13, phase 1] Built `LoginView` to match the web `LoginScreen` (gradient + card + Google CTA + feature list) instead of a minimal stub. Added `Utilities/BrandColors.swift` (hex palette + 135° brand gradient) and a `GoogleLogo` asset catalog imageset. Reason: stub login looked nothing like the web app — agreed with user to keep visual parity from day one rather than defer to Phase 8b. Phase doc not updated; this is presentation polish, not new architectural surface area.
 - [2026-04-13, phase 1] **Pivoted away from web parity on `LoginView`** after design review. Reason: the web design (gradient + card + emoji + 4-feature marketing block) is dated and was failing iOS-specific concerns — no Apple sign-in (App Store blocker), no dark mode, no Dynamic Type, missing VoiceOver labels, footer contrast below WCAG AA, generic Tailwind purple gradient, generic 🏠 emoji as brand mark. Replaced with an edge-to-edge minimal design — `hourglass` SF Symbol in brand purple, `Kairos` largeTitle, "Plan with intent." tagline, Sign-in-with-Apple button (UI only — see Open questions), Continue-with-Google button (proper colorful logo, system-gray button), legal footer. Drops the feature list + description (those belong in onboarding). Brand color is now trait-aware (lighter shade in dark mode). Added `Utilities/HapticFeedback.swift`. Phase doc not updated — this is still presentation work.
+- [2026-04-15, phase 2] **Added `UILaunchScreen` (empty dict) to `Kairos/Resources/Info.plist`.** The Phase-0 scaffold relied on `project.yml`'s `INFOPLIST_KEY_UILaunchScreen_Generation: YES` to inject it, but because the target also supplies an explicit `INFOPLIST_FILE`, that auto-generated key is *not* merged in — iOS 26 treated the app as legacy and forced a 320×480 scaled canvas, so `GeometryReader` reported 320×384 on iPhone 17 Pro and content only filled half the screen. Adding the key directly to the plist flipped the app into native resolution. This is invisible on `LoginView` (content is small and centered) but obvious on any full-screen tab — worth knowing for every downstream phase.
 
 ## Completed phases (audit trail)
 
@@ -72,6 +74,7 @@ _Append entries as phases merge to master. Date + PR link is enough. This is the
 
 - 2026-04-13 — Phase 0 Scaffold merged in d99027ac (pushed direct to master, no PR)
 - 2026-04-13 — Phase 1 Auth + Networking merged in 63052d7c (pushed direct to master, no PR). Includes Cognito Terraform change adding `kairos://auth/callback` to callback URLs — CI applies on merge. Apple sign-in is UI-only pending Cognito IdP wiring (see Open questions).
+- 2026-04-15 — Phase 2 Projects + Core Wiring merged direct to master (no PR). Adds `ProjectStore` (fetch + switch, user-scoped), `AppStateStore` (ephemeral UI state), `ProjectSwitcherView`, `UserMenuView`, and a placeholder-tab toolbar entry point. Wired into `DependencyContainer`/`KairosApp` via the append-only pattern + a private `ProjectIdProviderBox` to break the APIClient↔ProjectStore cycle. Fixes the Phase-0 Info.plist miss by adding `UILaunchScreen` directly (full-screen rendering now works on all tabs). `MockAPIClient` added for store tests; 67/67 tests pass.
 
 ---
 
