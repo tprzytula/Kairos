@@ -1,3 +1,4 @@
+import { Portal } from "@mui/material"
 import { Container } from "./index.styled"
 import Alert from "../Alert"
 import { useAppState } from "../../providers/AppStateProvider"
@@ -33,9 +34,11 @@ const AlertContainer = () => {
   )
 
   return (
-    <Container aria-label="Alert Container">
-      {alertList}
-    </Container>
+    <Portal>
+      <Container aria-label="Alert Container">
+        {alertList}
+      </Container>
+    </Portal>
   )
 }
 

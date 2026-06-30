@@ -63,7 +63,7 @@ describe('Given the getBody function', () => {
         });
     });
 
-    describe.each(['name', 'quantity', 'unit', 'shopId', 'imagePath'])(
+    describe.each(['name', 'quantity', 'unit', 'shopId'])(
         'When an item is missing the %s field',
         (field) => {
             it('should return null', () => {
@@ -76,10 +76,27 @@ describe('Given the getBody function', () => {
         },
     );
 
+    describe('When an item is missing the imagePath field', () => {
+        it('should accept the item since imagePath is optional', () => {
+            const itemWithoutImage = { ...EXAMPLE_ITEM, imagePath: undefined };
+            const body = getBody(JSON.stringify({ items: [itemWithoutImage] }));
+
+            expect(body).toEqual({ items: [{ ...EXAMPLE_ITEM, imagePath: undefined }] });
+        });
+    });
+
     describe('When an item has invalid quantity', () => {
-        it('should return null for quantity less than 1', () => {
+        it('should return null for quantity of zero', () => {
             const body = getBody(JSON.stringify({
                 items: [{ ...EXAMPLE_ITEM, quantity: 0 }],
+            }));
+
+            expect(body).toBeNull();
+        });
+
+        it('should return null for negative quantity', () => {
+            const body = getBody(JSON.stringify({
+                items: [{ ...EXAMPLE_ITEM, quantity: -1 }],
             }));
 
             expect(body).toBeNull();
@@ -91,6 +108,15 @@ describe('Given the getBody function', () => {
             }));
 
             expect(body).toBeNull();
+        });
+    });
+
+    describe('When an item has a fractional quantity', () => {
+        it('should accept quantities below one', () => {
+            const fractionalItem = { ...EXAMPLE_ITEM, quantity: 0.5 };
+            const body = getBody(JSON.stringify({ items: [fractionalItem] }));
+
+            expect(body).toEqual({ items: [fractionalItem] });
         });
     });
 

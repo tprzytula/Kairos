@@ -4,7 +4,7 @@ import { IRequestBody, IRequestBodyItem } from "./types";
 const MAX_BATCH_SIZE = 25;
 
 const validateItem = (item: IRequestBodyItem) => {
-  if (!item.name || !item.unit || !item.shopId || !item.imagePath) {
+  if (!item.name || !item.unit || !item.shopId) {
     return false;
   }
 
@@ -13,7 +13,7 @@ const validateItem = (item: IRequestBodyItem) => {
   }
 
   const quantity = Number(item.quantity);
-  if (isNaN(quantity) || quantity < 1) {
+  if (isNaN(quantity) || quantity <= 0) {
     return false;
   }
 
